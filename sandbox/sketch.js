@@ -252,9 +252,10 @@ class Unit {
 
 class rayTracer extends Unit {
   constructor(x,y,player,size) { 
+  
+    super();
     this.xx=x;
     this.yy=y;
-    super();
     //this.secondpriorx=0;
   }
   displayUnit() { 
