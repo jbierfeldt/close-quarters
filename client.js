@@ -32,6 +32,11 @@ dis.stage = {
 	]
 };
 
+// put board on grid
+dis.stage.grid = game.board;
+
+console.log(game.board);
+
 console.log(game, dis.backgroundColor);
 
 dis.backgroundColor = 100;
