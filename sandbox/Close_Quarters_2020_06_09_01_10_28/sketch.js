@@ -2,12 +2,11 @@
 //Copyright © 2020 Tom Wesley.
 //Coder: Thomas Wesley 
 //Last Edit 6/7/2020
-//Notes 
+//Notes - dij
 
 //Variable Declarations - Need Cleaned Up
 
 let colors=[4];
-let imgOne;
  
 let Units = [];
 
@@ -35,7 +34,6 @@ let radius;
 
 let set=0;
 
-let title;
 let sinAngle = 0;
 let sinOne=0;
 let sinx = 0;
@@ -84,28 +82,24 @@ let player =1;
 let budget=10;
 
 
-
+let gameSketch;
+let baseOne;
 function preload() {
-  title = loadFont("volt.ttf");
  // table = loadTable('leaderboard.csv', 'csv', 'header'); 
-  imgOne=loadImage("YellowGal.jpg");
 }
 
 
 function setup() {
   createCanvas(1280,720);
-    colors[0]=color(1,100,87,255);
-  colors[1]=color(255,240,0,255);
-  colors[2]=color(128,0,0,255);
-  colors[2]=color(128,128,126,255);
-
+  //Passing the rows and columns
+  gameSketch= new Sketch(width,height,30,20);
   //Create arrays of the class objects to be utilized in the draw phase
 /*
   for (let i = 0; i < 1; i++) {
     Units[i] = new Unit();
   }*/
-  let unitCount=1;
- 
+  
+  let unitCount=1; 
   /*var firebaseConfig = {
     apiKey: "AIzaSyC7KRHKPJUlp997AFgUN1FwwbWxOZf1mII",
     authDomain: "singularity-c216f.firebaseapp.com",
@@ -141,73 +135,43 @@ function draw() {
     firstBaseSpot=0;
     turn=1;
     phase=1;
-    background(0);
     speed=0.8;  
-    textFont(title);
-    fill(255,240,0,255);
-    textSize(width/10);
-    text("Enter An Alias",1*width/9,height/4)
-    textSize(width/23);       
-    text("Confirm",3.05*width/5,4.8*height/9)
-    
-    stroke(255,255);
-      fill(255,150);
-      if(mouseX<(width-width/5) && mouseX>3*width/5 && mouseY<5*height/9 && mouseY>4*height/9){
-        rect(3*width/5,4*height/9,width/5,height/9);
-      }
+    gameSketch.sketchNameEntryScreen();
     if(mouseIsPressed && mouseX<(width-width/5) && mouseX>3*width/5 && mouseY<5*height/9 && mouseY>4*height/9){
-      fullscreen(full);
-     // playerName=addName();
+      
+      //fullscreen(full);
+      ///playerName=addName();
     //  playerName=playerName.slice(0,8);
      // input.remove();
       mouseIsPressed=false;
       resizeCanvas(displayWidth, displayHeight);
       nameIn=1;
       delay=0;
-    }  
-    
- 
-  }
-  
+    }      
+  }  
   else{
 //Past The Name Entry Screen  
-  let rowStep=width/30;
-  let colStep=height/20
-  delay=delay+0.5;
-    cursor(CROSS);
-    if(phase==0){
+  delay=delay+0.5;    
+  if(phase==0){
 //IMPORTANT - screen between here for joining other players, waiting for all players
     }
-    if(phase==1){
-      if(budget==0){
-        phase=2;       
-      }
-      background(0);
-      if(player==1){
-        if(turn==1){
-          if(firstBaseSpot==0){
-            pOneInitialBaseX=int(random(15))
-            pOneInitialBaseY=int(random(11))
+  if(phase==1){
+    if(budget==0){
+      phase=2;       
+    }
+    if(turn==1){
+      if(firstBaseSpot==0){
+        pOneInitialBaseX=int(random(15))
+        pOneInitialBaseY=int(random(11))
           }
-          firstBaseSpot=1;          
-        turn=2;
+      firstBaseSpot=1;
+      turn=2;
         }
-        fill(colors[0]);   rect(pOneInitialBaseX*rowStep,pOneInitialBaseY*colStep,rowStep,colStep);
-        strokeWeight(1.5);
-        stroke(colors[0]);
-        for(let i =0;i<11;i=i+1){          
-          line(0,i*colStep,15*rowStep,i*colStep);
-               }
-        for(let i =0;i<16;i=i+1){          
-          line(i*rowStep,0,i*rowStep,10*colStep);
-               }
+      let baseOne=new Base(pOneInitialBaseX,pOneInitialBaseY,100,1);
+      let unitList=[]
+      let baseList=[baseOne];      gameSketch.sketchUpdateQuarterBoard(1,unitList,baseList);
         
-        //Unit Menu
-        stroke(255);
-        fill(100,100,100,40);
-        rect(width/2+width/15,width/15,6*width/15,7*width/15);
-        
-      }
+      
   speed=0.9;
   translate(width/2,height/2);
   rotate(delay*PI/2000);
@@ -220,9 +184,7 @@ function draw() {
       timer=0;
       background(0);
       while(timer<60){
-        
-        
-       timer=timer+1; 
+        timer=timer+1; 
       }
     }
 }
@@ -230,6 +192,56 @@ function draw() {
 }
 
 //Class Documentation
+//Sketching 
+class Sketch{
+  constructor(w,h,r,c) {
+       this.r=r;
+       this.c=c;
+       this.title = loadFont("volt.ttf");
+       this.rowStep=w/r;
+       this.colStep=h/c;
+       this.wid=w;
+       this.hei=h;
+       this.baseX=0;
+       this.baseY=0;
+       this.colors=[color(1,100,87,255),color(255,240,0,255),color(128,0,0,255),color(128,128,126,255)];
+  }
+  sketchNameEntryScreen(){
+      background(0);
+      textFont(this.title);
+      fill(255,240,0,255);
+      textSize(this.wid/10);
+      text("Enter An Alias",1*this.wid/9,this.hei/4)
+      textSize(this.wid/23);       
+      text("Confirm",3.05*this.wid/5,4.8*this.hei/9)
+      stroke(255,255);
+      fill(255,150);
+      if(mouseX<(this.wid-this.wid/5) && mouseX>3*this.wid/5 && mouseY<5*this.hei/9 && mouseY>4*this.hei/9){
+        rect(3*this.wid/5,4*this.hei/9,this.wid/5,this.hei/9);
+        }
+  }
+  sketchUpdateQuarterBoard(playerNumber,playerUnits,playerBases){
+        background(0);
+    //Bases
+        fill(this.colors[playerNumber]);
+    for (let j = 0; j < playerBases.length; j++){
+      this.baseX=playerBases[j].x;
+      this.basey=playerBases[j].y;      rect(this.baseX*this.rowStep,this.baseY*this.colStep,this.rowStep,this.colStep);
+    } 
+    //Board
+        strokeWeight(2);
+        stroke(this.colors[playerNumber]);
+        for(let i =0;i<(this.c/2+1);i=i+1){   line(0,i*this.colStep,this.r/2*this.rowStep,i*this.colStep);
+                                          }
+    for(let i =0;i<(this.r/2+1);i=i+1){         line(i*this.rowStep,0,i*this.rowStep,this.c/2*this.colStep);}        
+        //Unit Menu
+        stroke(255);
+        fill(215,215,215,35);
+        rect(6*(this.wid)/10,(this.hei)/10,(4*this.wid)/10,(10*this.hei)/10);
+  
+  }
+}
+
 function keyPressed() {
   if (keyCode ==="M") {
     phase =2;
@@ -237,6 +249,18 @@ function keyPressed() {
     value = 2;
   }
 }  
+
+class Base {
+  constructor(inX,inY,h,p) { 
+    this.x=inX;
+    this.y=inY;
+    this.health=h;
+    this.player=p;
+    //this.secondpriorx=0;
+  }
+  updateBase() {      
+  }
+}
   
 class Unit {
   constructor() { 
