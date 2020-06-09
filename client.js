@@ -2,8 +2,6 @@
 import Game from './lib/shared/Game.js';
 import Display from './lib/client/Display.js';
 
-console.log('test');
-
 let game = new Game();
 game.init();
 let dis = new Display();
@@ -34,12 +32,6 @@ dis.stage = {
 
 // put board on grid
 dis.stage.grid = game.board;
-
-console.log(game.board);
-
-console.log(game, dis.backgroundColor);
-
-dis.backgroundColor = 100;
 
 // const P5 = new p5(sketch);
 
