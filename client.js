@@ -31,8 +31,12 @@ dis.stage = {
 };
 
 // put board on grid
+
 dis.stage.grid = game.board;
 dis.phase = game.gamePhase;
+dis.unitList=game.gameUnitList;
+dis.board=game.board;
+
 
 // const P5 = new p5(sketch);
 
