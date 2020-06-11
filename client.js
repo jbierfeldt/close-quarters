@@ -33,7 +33,7 @@ dis.stage = {
 // put board on grid
 
 dis.stage.grid = game.board;
-dis.phase = game.gamePhase;
+//dis.phase = game.gamePhase;
 dis.unitList=game.gameUnitList;
 dis.board=game.board;
 
