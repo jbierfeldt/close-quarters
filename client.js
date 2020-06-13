@@ -6,7 +6,7 @@ import {DEBUG} from './lib/shared/utilities.js';
 
 
 
-window.debug = new DEBUG(true, 0);
+window.debug = new DEBUG(true, 2);
 
 
 class App {
