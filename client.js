@@ -11,25 +11,31 @@ game.init();
 let dis = new Display();
 dis.init();
 
-
 const ray1 = new Units.RayTracer(100, 75, game.players[1]);
 const ray2 = new Units.RayTracer(0, null, game.players[1]);
 
-// game.registerGameObject(ray1);
-// game.registerGameObject(ray2);
+// turn 1 begins
 
 game.addObjectAtCoord(ray1, 2, 2);
 game.registerGameObject(ray1);
-debug.log(0, JSON.parse(JSON.stringify(game.board)));
-
-// game.removeObjectAtCoord(ray1, 2, 2);
-// // debug.log(0, JSON.parse(JSON.stringify(game.board)));
-
-// game.moveObject(ray1, 2, 2, 2, 3);
-// debug.log(0, JSON.parse(JSON.stringify(game.board)));
-
 
 game.runSimulation();
+
+// turn 2 beings
+
+game.addObjectAtCoord(ray2, 3, 6);
+game.registerGameObject(ray2);
+
+game.runSimulation();
+
+// log history for turns 1 and 2
+
+debug.log(0, game.history);
+
+
+
+
+// DISPLAY STUFF
 
 // put board on grid
 
