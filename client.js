@@ -4,33 +4,46 @@ import Display from './lib/client/Display.js';
 import * as Units from './lib/shared/Unit.js';
 import {DEBUG} from './lib/shared/utilities.js';
 
-window.debug = new DEBUG(true, 0);
+window.debug = new DEBUG(true, 2);
 
-let game = new Game();
-game.init();
-let dis = new Display();
-dis.init();
+class App {
 
-const ray1 = new Units.RayTracer(100, 75, game.players[1]);
-const ray2 = new Units.RayTracer(0, null, game.players[1]);
+	constructor(game = new Game(), display = new Display(this)) {
+		this.game = game;
+		this.display = display;
+	}
+
+	init() {
+		this.game.init();
+		this.display.init();
+	}
+}
+
+const app = new App();
+app.init();
+
+debug.log(2, app);
+
+const ray1 = new Units.RayTracer(100, 75, app.game.players[1]);
+const ray2 = new Units.RayTracer(0, null, app.game.players[1]);
 
 // turn 1 begins
 
-game.addObjectAtCoord(ray1, 2, 2);
-game.registerGameObject(ray1);
+app.game.addObjectAtCoord(ray1, 2, 2);
+app.game.registerGameObject(ray1);
 
-game.runSimulation();
+app.game.runSimulation();
 
 // turn 2 beings
 
-game.addObjectAtCoord(ray2, 3, 6);
-game.registerGameObject(ray2);
+app.game.addObjectAtCoord(ray2, 3, 6);
+app.game.registerGameObject(ray2);
 
-game.runSimulation();
+app.game.runSimulation();
 
 // log history for turns 1 and 2
 
-debug.log(0, game.history);
+debug.log(0, app.game.history);
 
 
 
