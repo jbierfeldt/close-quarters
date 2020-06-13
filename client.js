@@ -41,6 +41,8 @@ app.game.registerGameObject(ray2);
 
 app.game.runSimulation();
 
+debug.log(2, ray1.serialize());
+
 // log history for turns 1 and 2
 
 debug.log(0, app.game.history);
@@ -52,10 +54,10 @@ debug.log(0, app.game.history);
 
 // put board on grid
 
-dis.stage.grid = game.board;
+app.display.stage.grid = app.game.board;
 //dis.phase = game.gamePhase;
-dis.unitList=game.gameUnitList;
-dis.board=game.board;
+app.display.unitList = app.game.gameUnitList;
+app.display.board = app.game.board;
 
 
 // const P5 = new p5(sketch);
