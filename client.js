@@ -4,7 +4,10 @@ import Display from './lib/client/Display.js';
 import * as Units from './lib/shared/Unit.js';
 import {DEBUG} from './lib/shared/utilities.js';
 
-window.debug = new DEBUG(true, 2);
+
+
+window.debug = new DEBUG(true, 3);
+
 
 class App {
 
@@ -24,8 +27,11 @@ app.init();
 
 debug.log(2, app);
 
-const ray1 = new Units.RayTracer(100, 75, app.game.players[1]);
-const ray2 = new Units.RayTracer(0, null, app.game.players[1]);
+
+const ray1 = new Units.RayTracer(100, 75, 1);
+const ray2 = new Units.RayTracer(0, 0, 1);
+const ray3 = new Units.RayTracer(0, 0, 2);
+
 
 // turn 1 begins
 
@@ -39,9 +45,11 @@ app.game.runSimulation();
 app.game.addObjectAtCoord(ray2, 3, 6);
 app.game.registerGameObject(ray2);
 
+
 app.game.runSimulation();
 
 debug.log(2, ray1.serialize());
+
 
 // log history for turns 1 and 2
 
@@ -53,7 +61,6 @@ debug.log(0, app.game.history);
 // DISPLAY STUFF
 
 // put board on grid
-
 app.display.stage.grid = app.game.board;
 //dis.phase = game.gamePhase;
 app.display.unitList = app.game.gameUnitList;
