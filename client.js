@@ -64,7 +64,7 @@ debug.log(0, app.game.history);
 app.display.stage.grid = app.game.board;
 //dis.phase = game.gamePhase;
 app.display.unitList = app.game.gameUnitList;
-app.display.board = app.game.board;
+app.display.board = app.game.history.turn[2];
 
 
 // const P5 = new p5(sketch);
