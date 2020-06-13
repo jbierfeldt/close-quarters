@@ -1,0 +1,11 @@
+Game Engine
+===
+
+- Combine registering objects to gameObject and adding them to the board
+- Handle validation so that projectiles disappear at the edges of the board but units
+turn around
+
+Display/Input
+===
+
+- Menus that allow the creation of units and bases and pass input to the game
