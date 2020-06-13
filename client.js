@@ -6,7 +6,7 @@ import {DEBUG} from './lib/shared/utilities.js';
 
 
 
-window.debug = new DEBUG(true, 3);
+window.debug = new DEBUG(true, 0);
 
 
 class App {
@@ -20,12 +20,17 @@ class App {
 		this.game.init();
 		this.display.init();
 	}
+
+	makeRayTracer() {
+
+	}
+
 }
 
 const app = new App();
 app.init();
 
-debug.log(2, app);
+debug.log(2, app.game.board[19][30]);
 
 
 const ray1 = new Units.RayTracer(100, 75, 1);
