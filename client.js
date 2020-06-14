@@ -6,7 +6,7 @@ import {DEBUG} from './lib/shared/utilities.js';
 
 
 
-window.debug = new DEBUG(true, 3);
+window.debug = new DEBUG(true, 0);
 
 
 class App {
@@ -21,8 +21,13 @@ class App {
 		this.display.init();
 	}
 
-	makeRayTracer() {
-
+	makeRayTracer(player,x,y) {
+		let oneUnit = new Units.RayTracer(100,100,player);
+		this.game.addObjectAtCoord(oneUnit, x, y);
+		this.game.registerGameObject(oneUnit);
+	}
+	appRunSimulation() {
+		this.game.runSimulation();
 	}
 
 }
