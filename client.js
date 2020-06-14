@@ -6,7 +6,7 @@ import {DEBUG} from './lib/shared/utilities.js';
 
 
 
-window.debug = new DEBUG(true, 2);
+window.debug = new DEBUG(true, 3);
 
 
 class App {
@@ -30,12 +30,12 @@ class App {
 const app = new App();
 app.init();
 
-debug.log(2, app.game.board[19][30]);
+//debug.log(2, app.game.board[19][30]);
 
 
 const ray1 = new Units.RayTracer(100, 75, 1);
 const ray2 = new Units.RayTracer(0, 0, 1);
-const ray3 = new Units.RayTracer(0, 0, 2);
+const mag1 = new Units.Maglev(10, 10, 1);
 
 
 // turn 1 begins
@@ -49,6 +49,9 @@ app.game.runSimulation();
 
 app.game.addObjectAtCoord(ray2, 3, 6);
 app.game.registerGameObject(ray2);
+
+app.game.addObjectAtCoord(mag1, 10, 10);
+app.game.registerGameObject(mag1);
 
 
 app.game.runSimulation();
