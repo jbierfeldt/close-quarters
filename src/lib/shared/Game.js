@@ -96,7 +96,7 @@ export default class Game {
 			this.board[new_y][new_x].push(object);
 			this.removeObjectAtCoord(object, old_x, old_y);
 		}
-		else { 
+		else {
 			this.removeObjectAtCoord(object, old_x, old_y);
 			this.deregisterGameObject(object);
 		}
@@ -154,7 +154,7 @@ export default class Game {
 									this.addObjectAtCoord(newProj, j + newProj.orientation[0], i + newProj.orientation[1]);
 									}
 								}
-	
+
 								// if object has speed and orientation, move to next position (if valid)
 								if (gameObj.speed > 0) {
 									let new_x = j + (gameObj.speed * gameObj.orientation[0]);
