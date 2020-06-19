@@ -30,6 +30,7 @@ export default class Display {
 			let titleFont;
 			let bRayTracer;
 			let unitButtons=[];
+			let unitsAllowed=1;
 			s.preload = () =>{
   			titleFont = s.loadFont('static/volt.ttf');
 			}
@@ -42,7 +43,7 @@ export default class Display {
     		s.draw = () => {
     			this.delay=this.delay+.25;
     			s.background(0);
-					//debug.log(3,titleFont);
+
 					s.textFont(titleFont);
 					s.textSize(tempConfig.canvasX/9);
 					s.fill(255,0,128);
@@ -68,12 +69,11 @@ export default class Display {
 						unitButtons.push(bRayTracer);
 						//bRayTracer.drawButton(wi/2+si,si*3,wi/2-si*2,si*3);
 						if(this.player<2){
-
 							bRayTracer.drawButton(wi/2+si,si*3,wi/2-si*2,si*3);
 					  }
 					  else{
-						bRayTracer.drawButton(si,si*3,wi/2-si*2,si*3);
-					}
+							bRayTracer.drawButton(si,si*3,wi/2-si*2,si*3);
+						}
     				let hoverX=s.int(s.mouseX/tempConfig.size);
     				let hoverY=s.int(s.mouseY/tempConfig.size);
     				s.fill(255,100);
@@ -84,7 +84,11 @@ export default class Display {
 						if(s.mouseIsPressed){
 							for(let i=0;i<unitButtons.length;i=i+1){
 								if(unitButtons[i].isInRange(s.mouseX,s.mouseY)){
+									unitButtons[i].highlightButton();
+									if(unitsAllowed>0)	{
 									this.app.makeRayTracer(1,1,1);
+									unitsAllowed=unitsAllowed-1;
+									}
 								}
 							}
 
@@ -92,7 +96,6 @@ export default class Display {
     				if(s.keyIsPressed){
 							//buttonRay.remove();
 						//	buttonRay.hide();
-							debug.log(3,s.windowWidth);
     					this.phase=2;
     					this.t=1;
 							this.app.appRunSimulation()
@@ -133,10 +136,9 @@ export default class Display {
 						}
 					}
 				}
-
 			}
 		}
-    	}
+  }
     		//FUNCTIONS BELOW THIS LINE
 				class Buttoned {
 					constructor(x,y,xlen,ylen,text,func) {
@@ -171,7 +173,7 @@ export default class Display {
 							return false;
 						}
 					}
-					highLightButton(){
+					highlightButton(){
 						s.noStroke();
  					  s.fill(255,255,255,50);
  					  s.rect(this.xx,this.yy,this.xlen,this.ylen);

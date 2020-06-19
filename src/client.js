@@ -26,12 +26,13 @@ class App {
 		let oneUnit = new Units.RayTracer(100,100,player);
 		this.game.addObjectAtCoord(oneUnit, x, y);
 		this.game.registerGameObject(oneUnit);
-		//debug.log(3,player)
+
 	}
 
 	appRunSimulation() {
 		this.game.runSimulation();
 		this.display.board = this.loadSerializedGameState(app.game.s_history.turn[this.game.turnNumber-1]);
+		debug.log(3,app.game.history);
 	}
 
 	loadSerializedGameState(serializedGameState) {
@@ -74,11 +75,6 @@ app.init();
 
 
 // log history for turns 1 and 2
-
-// debug.log(2, app.game.history);
-// debug.log(2, app.game.s_history);
-// debug.log(2, app.game.s_history.turn[1]);
-// debug.log(2, app.game.loadSerializedGameState(app.game.s_history.turn[2]));
 
 
 
