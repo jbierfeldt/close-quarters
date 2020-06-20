@@ -79,16 +79,27 @@ export default class Display {
     				s.fill(255,100);
 						s.noStroke();
     				s.rect(hoverX*tempConfig.size,hoverY*tempConfig.size,tempConfig.size,tempConfig.size);
+						//CHECK IF THE COORDINATES ARE IN RANGE BASED ON THE PLAYER
+						for(let h=0;h<unitButtons.length;h=h+1){
+							if(unitButtons[h].isPressed==true){
+								unitButtons[h].highlightButton();
+								if(s.mouseIsPressed){
+									if(this.player==2 && hoverX>14 && hoverY<10){
+									if(unitsAllowed>0)	{
+										this.app.makeRayTracer(1,hoverX,hoverY);
+										unitsAllowed=unitsAllowed-1;
+									}
+									}
+								}
+							}
+						}
 						//Buttons Section
 						//buttonRay.mousePressed(function () { this.app.makeRayTracer(1,1,1) });
 						if(s.mouseIsPressed){
 							for(let i=0;i<unitButtons.length;i=i+1){
 								if(unitButtons[i].isInRange(s.mouseX,s.mouseY)){
-									unitButtons[i].highlightButton();
-									if(unitsAllowed>0)	{
-									this.app.makeRayTracer(1,1,1);
-									unitsAllowed=unitsAllowed-1;
-									}
+									 //Got to fix this so it retains in the update
+									unitButtons[i].buttonHasBeenPressed();
 								}
 							}
 
@@ -139,6 +150,11 @@ export default class Display {
 			}
 		}
   }
+
+
+
+
+	
     		//FUNCTIONS BELOW THIS LINE
 				class Buttoned {
 					constructor(x,y,xlen,ylen,text,func) {
