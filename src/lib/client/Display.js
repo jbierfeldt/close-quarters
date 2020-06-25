@@ -10,7 +10,7 @@ const tempConfig = {
 export default class Display {
 
  	constructor(app = undefined, engine = undefined,  stage = new Object) {
-    	this.app = app;
+    this.app = app;
  		this.engine = engine;
  		this.stage = stage;
  		this.phase = 0;
@@ -18,7 +18,6 @@ export default class Display {
 		this.unitList =[];
 		this.delay=0;
 		this.board=[[]];
-		this.player=2;
 		this.t=1;
 	}
 
@@ -65,8 +64,8 @@ export default class Display {
     			}
     			else if(this.phase==1){
 
-    				drawQuarterGrid(this.stage.grid,this.playerColors,this.player);
-    				drawUnitMenu(this.playerColors,this.player,this.app,buttonRay)
+    				drawQuarterGrid(this.stage.grid,this.playerColors,this.app.playerNumber);
+    				drawUnitMenu(this.playerColors,this.app.playerNumber,this.app,buttonRay)
 
 
 						//bRayTracer.drawButton(wi/2+si,si*3,wi/2-si*2,si*3);
@@ -78,7 +77,7 @@ export default class Display {
     				s.rect(hoverX*tempConfig.size,hoverY*tempConfig.size,tempConfig.size,tempConfig.size);
 						//CHECK IF THE COORDINATES ARE IN RANGE BASED ON THE PLAYER
 						for(let h=0;h<unitButtons.length;h=h+1){
-							if(this.player<2){
+							if(this.app.playerNumber<3){
 							 unitButtons[h].drawButton(wi/2+si,si*3,wi/2-si*2,si*3);
 						  }
 						  else{
@@ -86,19 +85,21 @@ export default class Display {
 							}
 							//unitButtons[h].highlightButton();
 						if(s.mouseIsPressed){
+							console.log(this.app.playerNumber);
+
 							if(unitButtons[h].isPressed==true){
 
-								if(this.player==2 && hoverX>14 && hoverY<10){
+								if(this.app.playerNumber==3 && hoverX>14 && hoverY<10){
 									if(unitsAllowed>0)	{
 										//this.app.makeRayTracer(this.player,hoverX,hoverY);
-										unitButtons[h].func.call(this.app, this.player,hoverX,hoverY);
+										unitButtons[h].func.call(this.app, this.app.playerNumber,hoverX,hoverY);
 										unitsAllowed=unitsAllowed-1;
 										}
 									}
-								else if(this.player==1 && hoverX<=14 && hoverY<10){
+								else if(this.app.playerNumber==2 && hoverX<=14 && hoverY<10){
 									if(unitsAllowed>0)	{
 										//this.app.makeRayTracer(this.player,hoverX,hoverY);
-										unitButtons[h].func.call(this.app, this.player,hoverX,hoverY);
+										unitButtons[h].func.call(this.app, this.app.playerNumber,hoverX,hoverY);
 										unitsAllowed=unitsAllowed-1;
 										}
 								}

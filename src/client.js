@@ -35,6 +35,7 @@ class App {
 		this.socket.on('updatePlayerState', (data) => {
 			this.clientID = data.clientID;
 			this.playerNumber = data.playerNumber;
+			debug.log(3, 'updating PlayerState');
 		})
 	}
 
