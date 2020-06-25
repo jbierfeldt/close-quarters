@@ -1,3 +1,7 @@
+import {DEBUG} from './utilities.js';
+
+const debug = new DEBUG(true, 5);
+
 export default class Player {
 
 	constructor(id = 0)  {

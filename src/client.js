@@ -4,7 +4,7 @@ import Display from './lib/client/Display.js';
 import * as Units from './lib/shared/Unit.js';
 import {DEBUG} from './lib/shared/utilities.js';
 
-window.debug = new DEBUG(true, 0);
+window.debug = new DEBUG(true, 1);
 
 const debugData = {
 	'playerNumber': 1
@@ -32,11 +32,16 @@ class App {
 			this.updateDebugInfo();
 		});
 
+		this.socket.on('updateGameState', (data) => {
+			console.log('got game state from server');
+			this.updateGameState(data);
+		});
+
 		this.socket.on('updatePlayerState', (data) => {
 			this.clientID = data.clientID;
 			this.playerNumber = data.playerNumber;
 			debug.log(3, 'updating PlayerState');
-		})
+		});
 	}
 
 	makeRayTracer(player,x,y) {
@@ -59,6 +64,12 @@ class App {
   			tickContainer.tick[key] = JSON.parse(value);
 		}
 		return tickContainer;
+	}
+
+	updateGameState (s_history) {
+		debug.log(1, "updated Game State");
+		this.display.board = this.loadSerializedGameState(s_history.turn[1]);
+		debug.log(1, "displayboard", this.display.board);
 	}
 
 	updateDebugInfo () {

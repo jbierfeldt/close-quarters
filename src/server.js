@@ -35,6 +35,8 @@ class GameController {
 
   init() {
 
+		this.game.init();
+
     this.io.on('connection', (socket) => {
       debug.log(0, 'a new client connected');
 
@@ -78,12 +80,17 @@ class GameController {
 		debug.log(1, this.playerControllers);
 	}
 
+	sendGameState () {
+		this.io.emit('updateGameState', this.game.s_history);
+	}
+
   makeRayTracer(player,x,y) {
 		let oneUnit = new Units.RayTracer(100,100,player);
 		this.game.addObjectAtCoord(oneUnit, x, y);
 		this.game.registerGameObject(oneUnit);
     this.game.runSimulation();
 		console.log("Made RayTracer");
+		this.sendGameState();
 	}
 
 }
