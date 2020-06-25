@@ -134,7 +134,7 @@ export default class Display {
 
     					this.phase=2;
     					this.t=1;
-							this.app.appRunSimulation()
+							// this.app.appRunSimulation()
     				}
     			}
 				// if phase where grid should be shown, draw grid

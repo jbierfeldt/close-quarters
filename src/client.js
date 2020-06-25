@@ -19,6 +19,7 @@ class App {
 		this.socket = undefined;
 
 		// info from server
+		this.turnNumber = undefined;
 		this.clientID = undefined;
 		this.playerNumber = undefined;
 	}
@@ -29,6 +30,7 @@ class App {
 		this.socket = io();
 
 		this.socket.on('debugInfoUpdate', (data) => {
+			console.log('update debug');
 			this.updateDebugInfo();
 		});
 
@@ -45,17 +47,11 @@ class App {
 	}
 
 	makeRayTracer(player,x,y) {
-		this.socket.emit('createRay');
-		// let oneUnit = new Units.RayTracer(100,100,player);
-		// this.game.addObjectAtCoord(oneUnit, x, y);
-		// this.game.registerGameObject(oneUnit);
-		//debug.log(3,player)
-	}
-
-	appRunSimulation() {
-		this.game.runSimulation();
-		this.display.board = this.loadSerializedGameState(app.game.s_history.turn[this.game.turnNumber-1]);
-		debug.log(3,app.game.history);
+		this.socket.emit('createRay', {
+			player: player,
+			x: x,
+			y: y
+		});
 	}
 
 	loadSerializedGameState(serializedGameState) {
@@ -66,20 +62,25 @@ class App {
 		return tickContainer;
 	}
 
-	updateGameState (s_history) {
+	updateGameState (data) {
+		this.turnNumber = data.turnNumber;
+		console.log("updateGamestate", this.turnNumber, data.s_history);
+		this.display.board = this.loadSerializedGameState(data.s_history.turn[this.turnNumber - 1]);
 		debug.log(1, "updated Game State");
-		this.display.board = this.loadSerializedGameState(s_history.turn[1]);
-		debug.log(1, "displayboard", this.display.board);
+
+		this.updateDebugInfo();
 	}
 
 	updateDebugInfo () {
 
 		const debugData = {
 			'clientID': this.clientID,
-			'playerNumber': this.playerNumber
+			'playerNumber': this.playerNumber,
+			'turnNumber': this.turnNumber
 		}
 
 		const debugWindow = document.getElementById("debug-info");
+		debugWindow.innerHTML = '';
 		for (let el in debugData) {
 			let newEl = document.createElement("div");
 			newEl.innerHTML = String(el + ": " + debugData[el]);

@@ -81,7 +81,11 @@ class GameController {
 	}
 
 	sendGameState () {
-		this.io.emit('updateGameState', this.game.s_history);
+		console.log(this.game.turnNumber);
+		this.io.emit('updateGameState', {
+			s_history: this.game.s_history,
+			turnNumber: this.game.turnNumber
+		});
 	}
 
   makeRayTracer(player,x,y) {
@@ -113,7 +117,8 @@ class PlayerController {
     });
 
     this.socket.on('createRay', (data) => {
-      this.gameController.makeRayTracer(1, 2, 2);
+			console.log("creatRay response", data);
+      this.gameController.makeRayTracer(data.player, data.x, data.y);
     });
 
     this.socket.on('disconnect', () => {
