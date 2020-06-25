@@ -89,14 +89,28 @@ export default class Display {
 
 							if(unitButtons[h].isPressed==true){
 
-								if(this.app.playerNumber==3 && hoverX>14 && hoverY<10){
+								if(this.app.playerNumber==1 && hoverX<=14 && hoverY<=10){
 									if(unitsAllowed>0)	{
 										//this.app.makeRayTracer(this.player,hoverX,hoverY);
 										unitButtons[h].func.call(this.app, this.app.playerNumber,hoverX,hoverY);
 										unitsAllowed=unitsAllowed-1;
 										}
 									}
-								else if(this.app.playerNumber==2 && hoverX<=14 && hoverY<10){
+								else if(this.app.playerNumber==2 && hoverX<=14 && hoverY>10){
+									if(unitsAllowed>0)	{
+										//this.app.makeRayTracer(this.player,hoverX,hoverY);
+										unitButtons[h].func.call(this.app, this.app.playerNumber,hoverX,hoverY);
+										unitsAllowed=unitsAllowed-1;
+										}
+								}
+								else if(this.app.playerNumber==3 && hoverX>14 && hoverY<=10){
+									if(unitsAllowed>0)	{
+										//this.app.makeRayTracer(this.player,hoverX,hoverY);
+										unitButtons[h].func.call(this.app, this.app.playerNumber,hoverX,hoverY);
+										unitsAllowed=unitsAllowed-1;
+										}
+								}
+								else if(this.app.playerNumber==4 && hoverX>14 && hoverY>10){
 									if(unitsAllowed>0)	{
 										//this.app.makeRayTracer(this.player,hoverX,hoverY);
 										unitButtons[h].func.call(this.app, this.app.playerNumber,hoverX,hoverY);
