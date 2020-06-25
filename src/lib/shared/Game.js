@@ -121,7 +121,7 @@ export default class Game {
 		// updates game state based on ticks. Sweeps board and updates
 		// any game object on the board
 		// note: j is x and i is y
-		debug.log(0, "Running simulation for turn " + this.turnNumber);
+		// debug.log(0, "Running simulation for turn " + this.turnNumber);
 		this.history.turn[this.turnNumber] = {
 			'tick': {}
 		};
@@ -130,7 +130,7 @@ export default class Game {
 		};
 
 		for (let tick = 1; tick <= ticksPerTurn; tick++) {
-			debug.log(0, "Processing tick #" + tick, JSON.parse(JSON.stringify(this.board)));
+			// debug.log(0, "Processing tick #" + tick, JSON.parse(JSON.stringify(this.board)));
 
 			// enable movement at beginning of tick
 			for (let i = 0; i < this.gameObjects.length; i++) {

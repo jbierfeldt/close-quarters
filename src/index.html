@@ -16,6 +16,14 @@
   <!-- CSS
   –––––––––––––––––––––––––––––––––––––––––––––––––– -->
 
+  <style>
+  #debug-info {
+    position: absolute;
+    top: 0;
+    right: 0;
+  }
+  </style>
+
   <!-- <link rel="stylesheet" type="text/css" href="css/style.css"> -->
 
 
@@ -29,12 +37,13 @@
 –––––––––––––––––––––––––––––––––––––––––––––––––– -->
 <body>
 
+  <div id="debug-info">
+  </div>
+
   <!-- End Document
   –––––––––––––––––––––––––––––––––––––––––––––––––– -->
-  <script type="text/javascript" src="static/bundle.js"></script>
   <script type="text/javascript" src="socket.io/socket.io.js"></script>
-  <script>
-    var socket = io();
-  </script>
+  <script type="text/javascript" src="static/bundle.js"></script>
+
 </body>
 </html>

@@ -4,10 +4,11 @@ import Display from './lib/client/Display.js';
 import * as Units from './lib/shared/Unit.js';
 import {DEBUG} from './lib/shared/utilities.js';
 
-
-
 window.debug = new DEBUG(true, 0);
 
+const debugData = {
+	'playerNumber': 1
+};
 
 class App {
 
@@ -15,17 +16,33 @@ class App {
 		this.game = game;
 		this.display = display;
 		this.gameState = undefined;
+		this.socket = undefined;
+
+		// info from server
+		this.clientID = undefined;
+		this.playerNumber = undefined;
 	}
 
 	init() {
 		this.game.init();
 		this.display.init();
+		this.socket = io();
+
+		this.socket.on('debugInfoUpdate', (data) => {
+			this.updateDebugInfo();
+		});
+
+		this.socket.on('updatePlayerState', (data) => {
+			this.clientID = data.clientID;
+			this.playerNumber = data.playerNumber;
+		})
 	}
 
 	makeRayTracer(player,x,y) {
-		let oneUnit = new Units.RayTracer(100,100,player);
-		this.game.addObjectAtCoord(oneUnit, x, y);
-		this.game.registerGameObject(oneUnit);
+		this.socket.emit('createRay');
+		// let oneUnit = new Units.RayTracer(100,100,player);
+		// this.game.addObjectAtCoord(oneUnit, x, y);
+		// this.game.registerGameObject(oneUnit);
 		//debug.log(3,player)
 	}
 
@@ -42,12 +59,25 @@ class App {
 		return tickContainer;
 	}
 
+	updateDebugInfo () {
+
+		const debugData = {
+			'clientID': this.clientID,
+			'playerNumber': this.playerNumber
+		}
+
+		const debugWindow = document.getElementById("debug-info");
+		for (let el in debugData) {
+			let newEl = document.createElement("div");
+			newEl.innerHTML = String(el + ": " + debugData[el]);
+			debugWindow.append(newEl);
+		}
+	}
+
 }
 
 const app = new App();
 app.init();
-
-
 
 // const ray1 = new Units.RayTracer(100, 75, 1);
 // const ray2 = new Units.RayTracer(0, 0, 1);
