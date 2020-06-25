@@ -1,4 +1,7 @@
 import {createID} from './utilities.js';
+import {DEBUG} from './utilities.js';
+
+const debug = new DEBUG(true, 5);
 
 export default class Projectile {
 	constructor(initialOrientation = [0, 0], initialSpeed = 0) {
