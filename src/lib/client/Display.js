@@ -25,46 +25,97 @@ export default class Display {
 	init() {
 
 		let sketch = (s) => {
+			//let buttonRay;
+			let buttonRay;
+			let titleFont;
+			let bRayTracer;
+			let unitButtons=[];
+			let unitsAllowed=1;
+			s.preload = () =>{
+  			titleFont = s.loadFont('static/volt.ttf');
+			}
 			s.setup = () =>{
 				s.createCanvas(tempConfig.canvasX, tempConfig.canvasY);
 				//s.colors=[color(1,100,87,255),color(255,240,0,255),color(128,0,0,255),color(128,128,126,255)];
+
   			}
 
     		s.draw = () => {
     			this.delay=this.delay+.25;
     			s.background(0);
+
+					s.textFont(titleFont);
+					s.textSize(tempConfig.canvasX/9);
+					s.fill(255,0,128);
+					//text("Close Quarters")
     			///Phase 0 is the title screen, phase 1 the unit placement, and phase 2 the game loop
     			if(this.phase==0){
     				titleSequence(tempConfig.canvasX,tempConfig.canvasY,this.delay,tempConfig.size/2);
     				if(s.mouseIsPressed){
     					this.phase=1;
     				}
+						//buttonRay=0;
+						s.fill(255,0,128);
+						s.text("Close Quarters",tempConfig.canvasX/22,tempConfig.canvasY/2);
     			}
     			else if(this.phase==1){
-    				//console.log(this.phase);
-    				//s.background(0);
-    				drawQuarterGrid(this.stage.grid,this.playerColors,this.player);
-    				drawUnitMenu(this.playerColors,this.player,this.app)
 
+    				drawQuarterGrid(this.stage.grid,this.playerColors,this.player);
+    				drawUnitMenu(this.playerColors,this.player,this.app,buttonRay)
+						let wi=tempConfig.canvasX;
+						let he=tempConfig.canvasY;
+						let si=tempConfig.size;
+						bRayTracer=new Buttoned(wi/2+si,si*3,wi/2-si*2,si*3,"Ray Tracer","func");
+						unitButtons.push(bRayTracer);
+						//bRayTracer.drawButton(wi/2+si,si*3,wi/2-si*2,si*3);
+						if(this.player<2){
+							bRayTracer.drawButton(wi/2+si,si*3,wi/2-si*2,si*3);
+					  }
+					  else{
+							bRayTracer.drawButton(si,si*3,wi/2-si*2,si*3);
+						}
     				let hoverX=s.int(s.mouseX/tempConfig.size);
     				let hoverY=s.int(s.mouseY/tempConfig.size);
-
-    				s.fill(255);
+    				s.fill(255,100);
+						s.noStroke();
     				s.rect(hoverX*tempConfig.size,hoverY*tempConfig.size,tempConfig.size,tempConfig.size);
+						//CHECK IF THE COORDINATES ARE IN RANGE BASED ON THE PLAYER
+						for(let h=0;h<unitButtons.length;h=h+1){
+							if(unitButtons[h].isPressed==true){
+								unitButtons[h].highlightButton();
+								if(s.mouseIsPressed){
+									if(this.player==2 && hoverX>14 && hoverY<10){
+									if(unitsAllowed>0)	{
+										this.app.makeRayTracer(1,hoverX,hoverY);
+										unitsAllowed=unitsAllowed-1;
+									}
+									}
+								}
+							}
+						}
+						//Buttons Section
+						//buttonRay.mousePressed(function () { this.app.makeRayTracer(1,1,1) });
+						if(s.mouseIsPressed){
+							for(let i=0;i<unitButtons.length;i=i+1){
+								if(unitButtons[i].isInRange(s.mouseX,s.mouseY)){
+									 //Got to fix this so it retains in the update
+									unitButtons[i].buttonHasBeenPressed();
+								}
+							}
 
-					/*	if(s.mouseIsPressed && s.mouseX < tempConfig.canvasX- ){
-
-					}*/
-    				//this.app.makeRayTracer(1,1,1)
+						}
     				if(s.keyIsPressed){
+							//buttonRay.remove();
+						//	buttonRay.hide();
     					this.phase=2;
     					this.t=1;
 							this.app.appRunSimulation()
     				}
-
     			}
 				// if phase where grid should be shown, draw grid
 				else if(this.phase==2){
+					//buttonRay.size(0,0);
+				//buttonRay.remove();
 				//for(let t=1;t<41;t=t+1){
 					if(s.keyIsPressed){
 						this.t=this.t+keyPressed();
@@ -72,8 +123,8 @@ export default class Display {
 
 					if(this.t<41 && this.t>0){
 
-						drawGrid(this.stage.grid,this.playerColors);
-						let b = this.board.tick[this.t].board;
+					drawGrid(this.stage.grid,this.playerColors);
+					let b = this.board.tick[this.t].board;
 					for(var k=0; k<b.length; k=k+1){
 						for(var l=0; l<b[k].length; l=l+1){
 							if(b[k][l].length != 0){
@@ -96,21 +147,60 @@ export default class Display {
 						}
 					}
 				}
-
 			}
 		}
-    	}
-    		//FUNCTIONS BELOW THIS LINE
-				function buttonHasBeenPressed(x,y) {
+  }
 
+
+
+
+	
+    		//FUNCTIONS BELOW THIS LINE
+				class Buttoned {
+					constructor(x,y,xlen,ylen,text,func) {
+					 this.isPressed=false;
+					 this.xx=x;
+					 this.yy=y;
+					 this.text=text;
+					 this.xlen=xlen;
+					 this.ylen=ylen;
+					}
+					callBack(player,damage){
+
+					}
+					drawButton(x,y,xlen,ylen){
+					 this.xx=x;
+ 					 this.yy=y;
+					 this.xlen=xlen;
+					 this.ylen=ylen;
+					 s.noStroke();
+					 s.fill(255,0,128,255);
+					 s.rect(this.xx,this.yy,this.xlen,this.ylen);
+
+					}
+					buttonHasBeenPressed(){
+						this.isPressed=true;
+					}
+					isInRange(x,y){
+						if(x<(this.xx+this.xlen) && x>this.xx && y>this.yy && y<(this.yy+this.ylen)){
+							return true;
+						}
+						else{
+							return false;
+						}
+					}
+					highlightButton(){
+						s.noStroke();
+ 					  s.fill(255,255,255,50);
+ 					  s.rect(this.xx,this.yy,this.xlen,this.ylen);
+					}
 				}
+
     		function drawRect(rect) {
     			s.fill(rect.color[0], rect.color[1], rect.color[2]);
     			s.rect(rect.x, rect.y, rect.size, rect.size);
     		}
-    		function drawUnitMenu(pColors, player, apple){
-					let buttonRay;
-					buttonRay = s.createButton('Ray Tracer');
+    		function drawUnitMenu(pColors, player, apple,bRay){
 
     			let wid=tempConfig.canvasX;
     			let hei=tempConfig.canvasY;
@@ -118,24 +208,15 @@ export default class Display {
     			s.strokeWeight(2);
     			s.stroke(255);
     			if(player<2){
-    				//s.line(s,4*(hei)/40,38*(wid)/40,4*(hei)/40);
       			s.fill(225,225,225,45);
 						s.quad(wid/2+siz,siz,wid/2+siz,hei-siz,wid-siz,hei-siz,wid-siz,siz);
-						buttonRay.position((wid/2+siz), siz*3);
-						buttonRay.size(wid/2-siz*2,siz*3);
-      //textFont(this.title);
-
       		}
       		else{
       			s.translate(-wid/2,0);
 						s.fill(225,225,225,45);
 						s.quad(wid/2+siz,siz,wid/2+siz,hei-siz,wid-siz,hei-siz,wid-siz,siz);
-						buttonRay.position((wid/2+siz), siz*3);
-						buttonRay.size(wid/2-siz*2,siz*3);
       			s.translate(wid/2,0);
       		}
-					//debug.log(3,apple)
-					buttonRay.mousePressed(function () { apple.makeRayTracer(1,1,1) });
       // text("Unit",22*this.wid/40,3*this.hei/40);
       //text("Report",28*this.wid/40,3*this.hei/40);
       //text("H",36*this.wid/40,3*this.hei/40);
