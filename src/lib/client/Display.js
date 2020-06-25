@@ -59,11 +59,15 @@ export default class Display {
 						s.fill(255,0,128);
 						s.text("Close Quarters",tempConfig.canvasX/22,tempConfig.canvasY/2);
 						let buttonScale=2;
-						bRayTracer=new Buttoned(wi/2+si,si*buttonScale,wi/2-si*2,si*buttonScale,"Ray Tracer",this.app.makeRayTracer);
+						let playerShifter=0;
+						if(this.app.playerNumber>2){
+							playerShifter=wi/2;
+						}
+						bRayTracer=new Buttoned(wi/2+si-playerShifter,si*buttonScale,wi/2-si*2,si*buttonScale,"Ray Tracer",this.app.makeRayTracer);
 						unitButtons.push(bRayTracer);
-						bMaglev=new Buttoned(wi/2+si,si*buttonScale*2,wi/2-si*2,si*buttonScale,"Maglev",this.app.makeMaglev);
+						bMaglev=new Buttoned(wi/2+si-playerShifter,si*buttonScale*2,wi/2-si*2,si*buttonScale,"Maglev",this.app.makeMaglev);
 						unitButtons.push(bMaglev);
-						bJuggernode=new Buttoned(wi/2+si,si*buttonScale*3,wi/2-si*2,si*buttonScale,"Juggernode",this.app.makeMaglev);
+						bJuggernode=new Buttoned(wi/2+si-playerShifter,si*buttonScale*3,wi/2-si*2,si*buttonScale,"Juggernode",this.app.makeMaglev);
 						unitButtons.push(bJuggernode);
     			}
     			else if(this.phase==1){
@@ -77,12 +81,9 @@ export default class Display {
     				s.rect(hoverX*tempConfig.size,hoverY*tempConfig.size,tempConfig.size,tempConfig.size);
 						//CHECK IF THE COORDINATES ARE IN RANGE BASED ON THE PLAYER
 						for(let h=0;h<unitButtons.length;h=h+1){
-							if(this.app.playerNumber<3){
+
 							 unitButtons[h].drawButton();
-						  }
-						  else{
-								unitButtons[h].drawButton();
-							}
+
 						if(s.mouseIsPressed){
 							if(unitButtons[h].isPressed==true){
 								if(this.app.playerNumber==1 && hoverX<=14 && hoverY<=10){
