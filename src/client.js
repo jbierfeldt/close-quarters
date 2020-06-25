@@ -19,7 +19,7 @@ class App {
 		this.socket = undefined;
 
 		// info from server
-		this.turnNumber = undefined;
+		this.turnNumber = 1;
 		this.clientID = undefined;
 		this.playerNumber = undefined;
 	}
@@ -43,6 +43,15 @@ class App {
 			this.clientID = data.clientID;
 			this.playerNumber = data.playerNumber;
 			debug.log(3, 'updating PlayerState');
+		});
+	}
+
+	sendCreateUnit (unitType, player, x, y) {
+		this.socket.emit('createUnit', {
+			unitType: unitType,
+			player: player,
+			x: x,
+			y: y
 		});
 	}
 
@@ -92,6 +101,8 @@ class App {
 
 const app = new App();
 app.init();
+
+// app.sendCreateUnit("Maglev", 1, 3, 2);
 
 // const ray1 = new Units.RayTracer(100, 75, 1);
 // const ray2 = new Units.RayTracer(0, 0, 1);

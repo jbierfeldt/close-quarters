@@ -88,6 +88,15 @@ class GameController {
 		});
 	}
 
+	createUnit(unitType, player, x, y) {
+		let oneUnit = new Units[unitType](100,100,player);
+		this.game.addObjectAtCoord(oneUnit, x, y);
+		this.game.registerGameObject(oneUnit);
+    this.game.runSimulation();
+		console.log("Made ", unitType);
+		this.sendGameState();
+	}
+
   makeRayTracer(player,x,y) {
 		let oneUnit = new Units.RayTracer(100,100,player);
 		this.game.addObjectAtCoord(oneUnit, x, y);
@@ -113,7 +122,7 @@ class PlayerController {
 		this.socket.emit("message", `You are player ${this.playerNumber}`);
 
     this.socket.on('createUnit', (data) => {
-      debug.log(0, data);
+			this.gameController.createUnit(data.unitType, data.player, data.x, data.y);
     });
 
     this.socket.on('createRay', (data) => {
