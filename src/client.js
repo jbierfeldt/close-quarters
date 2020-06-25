@@ -74,6 +74,7 @@ class App {
 	updateGameState (data) {
 		this.turnNumber = data.turnNumber;
 		console.log("updateGamestate", this.turnNumber, data.s_history);
+		console.log(this.loadSerializedGameState(data.s_history.turn[this.turnNumber - 1]));
 		this.display.board = this.loadSerializedGameState(data.s_history.turn[this.turnNumber - 1]);
 		debug.log(1, "updated Game State");
 
@@ -102,7 +103,7 @@ class App {
 const app = new App();
 app.init();
 
-// app.sendCreateUnit("Maglev", 1, 3, 2);
+ app.sendCreateUnit("Juggernode", 1, 3, 2);
 
 // const ray1 = new Units.RayTracer(100, 75, 1);
 // const ray2 = new Units.RayTracer(0, 0, 1);

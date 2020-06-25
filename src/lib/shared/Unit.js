@@ -86,6 +86,7 @@ export class Juggernode extends Unit {
 
 	}
 	update(tick) {
+		this.firing=false;
 	if(tick%4 !== 0){
 		this.invulnerable==true;
 	}
