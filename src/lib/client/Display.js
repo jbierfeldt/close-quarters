@@ -221,7 +221,7 @@ export default class Display {
 					let siz =tempConfig.size;
     			s.strokeWeight(2);
     			s.stroke(255);
-    			if(player<2){
+    			if(player<3){
       			s.fill(225,225,225,45);
 						s.quad(wid/2+siz,siz,wid/2+siz,hei-siz,wid-siz,hei-siz,wid-siz,siz);
       		}
@@ -247,25 +247,25 @@ export default class Display {
     					let rectX = j* tempConfig.canvasY/ grid.length;
     					if(i<=grid.length/2-1 && j <= grid[i].length/2-1){
     						s.fill(pColors[0][0],pColors[0][1],pColors[0][2],pColors[0][3])
-    						if(player==0){
+    						if(player==1){
     							s.rect(rectX, rectY, rectSize, rectSize);
     						}
     					}
     					else if(i>=grid.length/2-1 && j <= grid[i].length/2-1) {
     						s.fill(pColors[1][0],pColors[1][1],pColors[1][2],pColors[1][3])
-    						if(player==1){
+    						if(player==2){
     							s.rect(rectX, rectY, rectSize, rectSize);
     						}
     					}
     					else if(i<=grid.length/2-1 && j >= grid[i].length/2-1) {
     						s.fill(pColors[2][0],pColors[2][1],pColors[2][2],pColors[2][3])
-    						if(player==2){
+    						if(player==3){
     							s.rect(rectX, rectY, rectSize, rectSize);
     						}
     					}
     					else if(i>=grid.length/2-1 && j >= grid[i].length/2-1) {
     						s.fill(pColors[3][0],pColors[3][1],pColors[3][2],pColors[3][3])
-    						if(player==3){
+    						if(player==4){
     							s.rect(rectX, rectY, rectSize, rectSize);
     						}
     					}
