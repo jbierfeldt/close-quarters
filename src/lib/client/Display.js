@@ -24,10 +24,11 @@ export default class Display {
 	init() {
 
 		let sketch = (s) => {
-			//let buttonRay;
-			let buttonRay;
+
 			let titleFont;
 			let bRayTracer;
+			let bMaglev;
+			let bJuggernode;
 			let unitButtons=[];
 			let unitsAllowed=1;
 			s.preload = () =>{
@@ -49,27 +50,26 @@ export default class Display {
 					s.textFont(titleFont);
 					s.textSize(tempConfig.canvasX/9);
 					s.fill(255,0,128);
-					//text("Close Quarters")
     			///Phase 0 is the title screen, phase 1 the unit placement, and phase 2 the game loop
     			if(this.phase==0){
     				titleSequence(tempConfig.canvasX,tempConfig.canvasY,this.delay,tempConfig.size/2);
     				if(s.mouseIsPressed){
     					this.phase=1;
     				}
-						//buttonRay=0;
 						s.fill(255,0,128);
 						s.text("Close Quarters",tempConfig.canvasX/22,tempConfig.canvasY/2);
-						bRayTracer=new Buttoned(wi/2+si,si*3,wi/2-si*2,si*3,"Ray Tracer",this.app.makeRayTracer);
+						let buttonScale=2;
+						bRayTracer=new Buttoned(wi/2+si,si*buttonScale,wi/2-si*2,si*buttonScale,"Ray Tracer",this.app.makeRayTracer);
 						unitButtons.push(bRayTracer);
+						bMaglev=new Buttoned(wi/2+si,si*buttonScale*2,wi/2-si*2,si*buttonScale,"Maglev",this.app.makeMaglev);
+						unitButtons.push(bMaglev);
+						bJuggernode=new Buttoned(wi/2+si,si*buttonScale*3,wi/2-si*2,si*buttonScale,"Juggernode",this.app.makeMaglev);
+						unitButtons.push(bJuggernode);
     			}
     			else if(this.phase==1){
 
     				drawQuarterGrid(this.stage.grid,this.playerColors,this.app.playerNumber);
-    				drawUnitMenu(this.playerColors,this.app.playerNumber,this.app,buttonRay)
-
-
-						//bRayTracer.drawButton(wi/2+si,si*3,wi/2-si*2,si*3);
-
+    				drawUnitMenu(this.playerColors,this.app.playerNumber,this.app)
     				let hoverX=s.int(s.mouseX/tempConfig.size);
     				let hoverY=s.int(s.mouseY/tempConfig.size);
     				s.fill(255,100);
@@ -78,17 +78,13 @@ export default class Display {
 						//CHECK IF THE COORDINATES ARE IN RANGE BASED ON THE PLAYER
 						for(let h=0;h<unitButtons.length;h=h+1){
 							if(this.app.playerNumber<3){
-							 unitButtons[h].drawButton(wi/2+si,si*3,wi/2-si*2,si*3);
+							 unitButtons[h].drawButton();
 						  }
 						  else{
-								unitButtons[h].drawButton(si,si*3,wi/2-si*2,si*3);
+								unitButtons[h].drawButton();
 							}
-							//unitButtons[h].highlightButton();
 						if(s.mouseIsPressed){
-							console.log(this.app.playerNumber);
-
 							if(unitButtons[h].isPressed==true){
-
 								if(this.app.playerNumber==1 && hoverX<=14 && hoverY<=10){
 									if(unitsAllowed>0)	{
 										//this.app.makeRayTracer(this.player,hoverX,hoverY);
@@ -132,11 +128,10 @@ export default class Display {
 						}
 					}
 						//Buttons Section
-						//buttonRay.mousePressed(function () { this.app.makeRayTracer(1,1,1) });
+
 
     				if(s.keyIsPressed){
-							//buttonRay.remove();
-						//	buttonRay.hide();
+
     					this.phase=2;
     					this.t=1;
 							this.app.appRunSimulation()
@@ -144,15 +139,12 @@ export default class Display {
     			}
 				// if phase where grid should be shown, draw grid
 				else if(this.phase==2){
-					//buttonRay.size(0,0);
-				//buttonRay.remove();
+
 				//for(let t=1;t<41;t=t+1){
 					if(s.keyIsPressed){
 						this.t=this.t+keyPressed();
 						}
-
 					if(this.t<41 && this.t>0){
-
 					drawGrid(this.stage.grid,this.playerColors);
 					let b = this.board.tick[this.t].board;
 					for(var k=0; k<b.length; k=k+1){
@@ -172,7 +164,13 @@ export default class Display {
 										}
 										if(displayObject.identifier == "Mag"){
 												drawMaglev(l,k,displayObject.player,tempConfig.size,displayObject.health,this.playerColors);
-								}
+										}
+										if(displayObject.identifier == "Jug"){
+												drawJuggernode(l,k,displayObject.player,tempConfig.size,displayObject.health,this.playerColors);
+										}
+										if(displayObject.identifier == "JugProj"){
+												drawJuggernodeProjectile(l,k,displayObject.player,tempConfig.size,displayObject.health,this.playerColors);
+										}
 							}
 						}
 					}
@@ -193,15 +191,12 @@ export default class Display {
 					 this.ylen=ylen;
 					 this.func=func;
 					}
-					drawButton(x,y,xlen,ylen){
-					 this.xx=x;
- 					 this.yy=y;
-					 this.xlen=xlen;
-					 this.ylen=ylen;
+					drawButton(){
+
 					 s.noStroke();
 					 //s.fill(255,0,128,255);
 					 //console.log(3,this.isPressed);
-					 s.fill(255,0,128,255);
+					 s.fill(255,0,0+this.yy/2,255);
 					 s.rect(this.xx,this.yy,this.xlen,this.ylen);
 					 if(this.isPressed==true){
 						 s.fill(255,255,255,100);
@@ -228,7 +223,7 @@ export default class Display {
     			s.fill(rect.color[0], rect.color[1], rect.color[2]);
     			s.rect(rect.x, rect.y, rect.size, rect.size);
     		}
-    		function drawUnitMenu(pColors, player, apple,bRay){
+    		function drawUnitMenu(pColors, player, apple){
 
     			let wid=tempConfig.canvasX;
     			let hei=tempConfig.canvasY;
@@ -337,6 +332,18 @@ export default class Display {
         		for(let i = -6;i < 6;i=i+.2){
         		s.ellipse(x*size+size/2,y*size+size/2+i*size/20,s.abs(i)*size/10,s.abs(i))*size/10;
         	    }
+        	}
+					function drawJuggernode(x,y,player,size,health,pColors){
+        		//s.fill(pColors[player][0],pColors[player][1],pColors[player][2],pColors[player][3])
+        		s.fill(0);
+        		s.stroke(0);
+        		s.fill(0);
+        		//console.log(y)
+
+        		s.ellipse(x*size+size/4,y*size+size/4,size/4,size/4);
+						s.ellipse(x*size+size/2,y*size+size/4,size/4,size/4);
+						s.ellipse(x*size+size/2,y*size+size/2,size/4,size/4);
+						s.ellipse(x*size+size/4,y*size+size/2,size/4,size/4);
 
         	}
         	function titleSequence(width,height,delay,scale){
@@ -355,11 +362,16 @@ export default class Display {
    							s.quad(-width/2+i*scale,-height/2+i*scale,-width/2+i*scale,height/2-i*scale,width/2-i*scale,height/2-i*scale,width/2-i*scale,-height/2+i*scale);
    						}
    					}
-   					s.fill(152, 255, 152,255);
-   					for(var angle=delay*3;angle<delay*3+360;angle=angle+40){
+
+   					for(var angle=delay*3;angle<delay*3+360;angle=angle+30){
     				let titleX=(height/3+90*s.cos(3.14*s.radians(delay)))*s.cos(s.radians(angle))-0;
     				let titleY=(height/3+2*s.tan(3.14*s.radians(delay/20)))*s.sin(s.radians(angle))+0;
-    				s.ellipse(titleX,titleY,height/10,height/10);
+						s.fill(152, 255, 152,255);
+    				s.ellipse(titleX,titleY,height/15,height/15);
+						s.fill(152, 255, 152,25);
+    				s.ellipse(titleX,titleY,height/14,height/14);
+						s.fill(152, 255, 152,20);
+    				s.ellipse(titleX,titleY,height/13,height/13);
    					}
 						s.translate(-width/2,-height/2);
         	}
@@ -381,6 +393,13 @@ export default class Display {
         		s.fill(255,255,255,255-(50-damage)*2);
         		s.stroke(0);
                 s.rect(refx,refy,size,size);
+        	}
+					function drawJuggernodeProjectile(x,y,player,size,pColors,damage){
+        		let refx=x*size;
+        		let refy=y*size;
+        		s.fill(255,240,0,105);
+        		s.noStroke();
+                s.ellipse(refx,refy,size,size);
         	}
         	function keyPressed() {
   				if (s.keyCode === s.LEFT_ARROW) {
