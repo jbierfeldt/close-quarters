@@ -23,6 +23,7 @@ class App {
 	}
 
 	makeRayTracer(player,x,y) {
+		debug.log(3,this);
 		let oneUnit = new Units.RayTracer(100,100,player);
 		this.game.addObjectAtCoord(oneUnit, x, y);
 		this.game.registerGameObject(oneUnit);

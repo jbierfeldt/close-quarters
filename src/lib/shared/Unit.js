@@ -14,7 +14,7 @@ export default class Unit {
 	}
 
 	unitDestroyed() {
-		
+
 	}
 
 }
@@ -32,10 +32,10 @@ export class RayTracer extends Unit {
 
 	startAttack(orientation){
 
-		//initialize a project object and pass in the direction based on the tick 
-		this.firing = true; 
+		//initialize a project object and pass in the direction based on the tick
+		this.firing = true;
 		this.projArr[0]  = new Projectiles.RayBullet(orientation, 1);
-	
+
 		debug.log(0, "    Unit " + this.id + "  is firing Projectile " + this.firing.id);
 
 	}
@@ -48,7 +48,13 @@ export class RayTracer extends Unit {
 
 		// Ray Tracer fires every 4 ticks
 		if (tick%10 === 0) {
+			if(this.player==1 || this.player==3){
 			this.startAttack([1,0]);
+
+			}
+			else if(this.player==2 || this.player==4){
+				this.startAttack([-1,0]);
+			}
 		}
 		else if (tick%5 === 0){
 			this.startAttack([0,1]);
@@ -85,14 +91,14 @@ export class Maglev extends Unit {
 		const arr = []
 		let i = 0;
 		for(let a = -1; a < 2; a = a + 1){
-			for(let b = -1; b < 2; b = b + 1){			   
+			for(let b = -1; b < 2; b = b + 1){
 			   if(a !== 0 || b !== 0){
 		       	this.projArr[i] = new Projectiles.MagBullet([a,b], 1);
 		       	i = i + 1;
 		 }
 		}
 	  }
-	  this.firing = true; 
+	  this.firing = true;
 
 	}
 	update(tick) {
