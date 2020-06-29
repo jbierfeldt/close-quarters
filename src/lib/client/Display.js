@@ -33,6 +33,7 @@ export default class Display {
 			let unitsAllowed=1;
 			let randX;
 			let randY;
+			let buttonMaker=1; //So buttons only get created once
 			s.preload = () =>{
   			titleFont = s.loadFont('static/volt.ttf');
 			}
@@ -46,15 +47,14 @@ export default class Display {
 					let he=tempConfig.canvasY;
 					let si=tempConfig.size;
 					//Randomize the first base placement
-
     			this.delay=this.delay+.25;
     			s.background(0);
-
 					s.textFont(titleFont);
 					s.textSize(tempConfig.canvasX/9);
 					s.fill(255,0,128);
     			///Phase 0 is the title screen, phase 1 the unit placement, and phase 2 the game loop
     			if(this.phase==0){
+
 						if(this.app.playerNumber==1 || this.app.playerNumber==2){
 							//Randomize the first base placement
 							let randX=s.int(s.random(2,12));
@@ -73,66 +73,82 @@ export default class Display {
 						if(this.app.playerNumber>2){
 							playerShifter=wi/2;
 						}
+						if(buttonMaker===1){
 						bRayTracer=new Buttoned(wi/2+si-playerShifter,si*buttonScale,wi/2-si*2,si*buttonScale,"RayTracer",this.app.sendCreateUnit);
-						unitButtons.push(bRayTracer);
+            unitButtons.push(bRayTracer);
 						bMaglev=new Buttoned(wi/2+si-playerShifter,si*buttonScale*2,wi/2-si*2,si*buttonScale,"Maglev",this.app.sendCreateUnit);
 						unitButtons.push(bMaglev);
 						bJuggernode=new Buttoned(wi/2+si-playerShifter,si*buttonScale*3,wi/2-si*2,si*buttonScale,"Juggernode",this.app.sendCreateUnit);
 						unitButtons.push(bJuggernode);
+					}
+					buttonMaker=0;
     			}
     			else if(this.phase==1){
-
     				drawQuarterGrid(this.stage.grid,this.playerColors,this.app.playerNumber);
     				drawUnitMenu(this.playerColors,this.app.playerNumber,this.app)
     				let hoverX=s.int(s.mouseX/tempConfig.size);
     				let hoverY=s.int(s.mouseY/tempConfig.size);
-    				s.fill(255,100);
-						s.noStroke();
-    				s.rect(hoverX*tempConfig.size,hoverY*tempConfig.size,tempConfig.size,tempConfig.size);
-						//CHECK IF THE COORDINATES ARE IN RANGE BASED ON THE PLAYER
-						for(let h=0;h<unitButtons.length;h=h+1){
 
-							 unitButtons[h].drawButton();
+						//CHECK IF THE COORDINATES ARE IN RANGE BASED ON THE PLAYER
+						for(let i=0;i<unitButtons.length;i=i+1){
+							 unitButtons[i].drawButton();
+						 }
 
 						if(s.mouseIsPressed){
-							if(unitButtons[h].isPressed==true){
+						for(let yy=0;yy<unitButtons.length;yy=yy+1){
+							debug.log(3,unitButtons[1]);
+							if(unitButtons[yy].isPressed==true){
 								if(this.app.playerNumber==1 && hoverX<=14 && hoverY<=10){
 									if(unitsAllowed>0)	{
+										s.fill(255,100);
+										s.noStroke();
+				    				s.rect(hoverX*tempConfig.size,hoverY*tempConfig.size,tempConfig.size,tempConfig.size);
 										//this.app.makeRayTracer(this.player,hoverX,hoverY);
-										unitButtons[h].func.call(this.app,unitButtons[h].text, this.app.playerNumber,hoverX,hoverY);
+										unitButtons[yy].func.call(this.app,unitButtons[yy].text, this.app.playerNumber,hoverX,hoverY);
 										unitsAllowed=unitsAllowed-1;
 										}
 									}
 								else if(this.app.playerNumber==2 && hoverX<=14 && hoverY>10){
 									if(unitsAllowed>0)	{
+										s.fill(255,100);
+										s.noStroke();
+				    				s.rect(hoverX*tempConfig.size,hoverY*tempConfig.size,tempConfig.size,tempConfig.size);
 										//this.app.makeRayTracer(this.player,hoverX,hoverY);
-										unitButtons[h].func.call(this.app,unitButtons[h].text, this.app.playerNumber,hoverX,hoverY);
+										unitButtons[yy].func.call(this.app,unitButtons[yy].text, this.app.playerNumber,hoverX,hoverY);
 										unitsAllowed=unitsAllowed-1;
 										}
 								}
 								else if(this.app.playerNumber==3 && hoverX>14 && hoverY<=10){
 									if(unitsAllowed>0)	{
+										s.fill(255,100);
+										s.noStroke();
+				    				s.rect(hoverX*tempConfig.size,hoverY*tempConfig.size,tempConfig.size,tempConfig.size);
 										//this.app.makeRayTracer(this.player,hoverX,hoverY);
-										unitButtons[h].func.call(this.app,unitButtons[h].text, this.app.playerNumber,hoverX,hoverY);
+										unitButtons[yy].func.call(this.app,unitButtons[yy].text, this.app.playerNumber,hoverX,hoverY);
 										unitsAllowed=unitsAllowed-1;
 										}
 								}
 								else if(this.app.playerNumber==4 && hoverX>14 && hoverY>10){
 									if(unitsAllowed>0)	{
+										s.fill(255,100);
+										s.noStroke();
+				    				s.rect(hoverX*tempConfig.size,hoverY*tempConfig.size,tempConfig.size,tempConfig.size);
 										//this.app.makeRayTracer(this.player,hoverX,hoverY);
-										unitButtons[h].func.call(this.app,unitButtons[h].text,this.app.playerNumber,hoverX,hoverY);
+										unitButtons[yy].func.call(this.app,unitButtons[yy].text,this.app.playerNumber,hoverX,hoverY);
 										unitsAllowed=unitsAllowed-1;
-										}
+									}
 								}
 							}
+
 							else{
-									for(let i=0;i<unitButtons.length;i=i+1){
-										if(unitButtons[i].isInRange(s.mouseX,s.mouseY)){
+									for(let zz=0;zz<unitButtons.length;zz=zz+1){
+										if(unitButtons[zz].isInRange(s.mouseX,s.mouseY)){
 											 //Got to fix this so it retains in the update
-											unitButtons[i].buttonHasBeenPressed();
+											unitButtons[zz].buttonHasBeenPressed();
+											debug.log(3,unitButtons[zz]);
 										}
 										else{
-											unitButtons[i].isPressed=false;
+											unitButtons[zz].isPressed=false;
 										}
 									}
 							}
