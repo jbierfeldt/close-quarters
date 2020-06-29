@@ -97,11 +97,24 @@ export default class Display {
  						s.noStroke();
  						s.rect(hoverX*tempConfig.size,hoverY*tempConfig.size,tempConfig.size,tempConfig.size);
 						if(s.mouseIsPressed){
+							let newButtonPressed=-1;
+							for(let i=0;i<unitButtons.length;i=i+1){
+								if(unitButtons[i].isInRange(s.mouseX,s.mouseY)){
+									unitButtons[i].buttonHasBeenPressed();
+									newButtonPressed=i;
+								}
+							}
+							if(newButtonPressed >=0){
+							for(let j=0;j<unitButtons.length;j=j+1){
+								if(j!=newButtonPressed){
+									unitButtons[j].isPressed=false;
+								}
+							}
+						}
 							for(let yy=0;yy<unitButtons.length;yy=yy+1){
-								debug.log(3,unitButtons[1]);
+
 								if(unitButtons[yy].isPressed===true){
 									if(this.app.playerNumber==1 && hoverX<=14 && hoverY<=10){
-
 									if(unitsAllowed>0)	{
 										//this.app.makeRayTracer(this.player,hoverX,hoverY);
 										unitButtons[yy].func.call(this.app,unitButtons[yy].text, this.app.playerNumber,hoverX,hoverY);
@@ -109,25 +122,20 @@ export default class Display {
 										}
 									}
 								else if(this.app.playerNumber==2 && hoverX<=14 && hoverY>10){
-
 									if(unitsAllowed>0)	{
-
 										//this.app.makeRayTracer(this.player,hoverX,hoverY);
 										unitButtons[yy].func.call(this.app,unitButtons[yy].text, this.app.playerNumber,hoverX,hoverY);
 										unitsAllowed=unitsAllowed-1;
 										}
 								}
 								else if(this.app.playerNumber==3 && hoverX>14 && hoverY<=10){
-
 									if(unitsAllowed>0)	{
-
 										//this.app.makeRayTracer(this.player,hoverX,hoverY);
 										unitButtons[yy].func.call(this.app,unitButtons[yy].text, this.app.playerNumber,hoverX,hoverY);
 										unitsAllowed=unitsAllowed-1;
 										}
 								}
 								else if(this.app.playerNumber==4 && hoverX>14 && hoverY>10){
-
 									if(unitsAllowed>0)	{
 										//this.app.makeRayTracer(this.player,hoverX,hoverY);
 										unitButtons[yy].func.call(this.app,unitButtons[yy].text,this.app.playerNumber,hoverX,hoverY);
@@ -135,8 +143,7 @@ export default class Display {
 									}
 								}
 							}
-
-							else{
+							/*else{
 									for(let zz=0;zz<unitButtons.length;zz=zz+1){
 										if(unitButtons[zz].isInRange(s.mouseX,s.mouseY)){
 											 //Got to fix this so it retains in the update
@@ -149,7 +156,7 @@ export default class Display {
 											unitButtons[zz].isPressed=false;
 										}
 									}
-							  }
+							  }*/
 						  }
 				   	}
 						//Buttons Section
