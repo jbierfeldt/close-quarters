@@ -31,6 +31,8 @@ export default class Display {
 			let bJuggernode;
 			let unitButtons=[];
 			let unitsAllowed=1;
+			let randX;
+			let randY;
 			s.preload = () =>{
   			titleFont = s.loadFont('static/volt.ttf');
 			}
@@ -39,11 +41,12 @@ export default class Display {
 				//s.colors=[color(1,100,87,255),color(255,240,0,255),color(128,0,0,255),color(128,128,126,255)];
 
   			}
-
-    		s.draw = () => {
+    	s.draw = () => {
 					let wi=tempConfig.canvasX;
 					let he=tempConfig.canvasY;
 					let si=tempConfig.size;
+					//Randomize the first base placement
+
     			this.delay=this.delay+.25;
     			s.background(0);
 
@@ -52,6 +55,13 @@ export default class Display {
 					s.fill(255,0,128);
     			///Phase 0 is the title screen, phase 1 the unit placement, and phase 2 the game loop
     			if(this.phase==0){
+						if(this.app.playerNumber==1 || this.app.playerNumber==2){
+							//Randomize the first base placement
+							let randX=s.int(s.random(2,12));
+						}
+						else{
+							let randX=s.int(s.random(17,27));
+						}
     				titleSequence(tempConfig.canvasX,tempConfig.canvasY,this.delay,tempConfig.size/2);
     				if(s.mouseIsPressed){
     					this.phase=1;
@@ -63,11 +73,11 @@ export default class Display {
 						if(this.app.playerNumber>2){
 							playerShifter=wi/2;
 						}
-						bRayTracer=new Buttoned(wi/2+si-playerShifter,si*buttonScale,wi/2-si*2,si*buttonScale,"Ray Tracer",this.app.makeRayTracer);
+						bRayTracer=new Buttoned(wi/2+si-playerShifter,si*buttonScale,wi/2-si*2,si*buttonScale,"RayTracer",this.app.sendCreateUnit);
 						unitButtons.push(bRayTracer);
-						bMaglev=new Buttoned(wi/2+si-playerShifter,si*buttonScale*2,wi/2-si*2,si*buttonScale,"Maglev",this.app.makeMaglev);
+						bMaglev=new Buttoned(wi/2+si-playerShifter,si*buttonScale*2,wi/2-si*2,si*buttonScale,"Maglev",this.app.sendCreateUnit);
 						unitButtons.push(bMaglev);
-						bJuggernode=new Buttoned(wi/2+si-playerShifter,si*buttonScale*3,wi/2-si*2,si*buttonScale,"Juggernode",this.app.makeMaglev);
+						bJuggernode=new Buttoned(wi/2+si-playerShifter,si*buttonScale*3,wi/2-si*2,si*buttonScale,"Juggernode",this.app.sendCreateUnit);
 						unitButtons.push(bJuggernode);
     			}
     			else if(this.phase==1){
@@ -89,28 +99,28 @@ export default class Display {
 								if(this.app.playerNumber==1 && hoverX<=14 && hoverY<=10){
 									if(unitsAllowed>0)	{
 										//this.app.makeRayTracer(this.player,hoverX,hoverY);
-										unitButtons[h].func.call(this.app, this.app.playerNumber,hoverX,hoverY);
+										unitButtons[h].func.call(this.app,unitButtons[h].text, this.app.playerNumber,hoverX,hoverY);
 										unitsAllowed=unitsAllowed-1;
 										}
 									}
 								else if(this.app.playerNumber==2 && hoverX<=14 && hoverY>10){
 									if(unitsAllowed>0)	{
 										//this.app.makeRayTracer(this.player,hoverX,hoverY);
-										unitButtons[h].func.call(this.app, this.app.playerNumber,hoverX,hoverY);
+										unitButtons[h].func.call(this.app,unitButtons[h].text, this.app.playerNumber,hoverX,hoverY);
 										unitsAllowed=unitsAllowed-1;
 										}
 								}
 								else if(this.app.playerNumber==3 && hoverX>14 && hoverY<=10){
 									if(unitsAllowed>0)	{
 										//this.app.makeRayTracer(this.player,hoverX,hoverY);
-										unitButtons[h].func.call(this.app, this.app.playerNumber,hoverX,hoverY);
+										unitButtons[h].func.call(this.app,unitButtons[h].text, this.app.playerNumber,hoverX,hoverY);
 										unitsAllowed=unitsAllowed-1;
 										}
 								}
 								else if(this.app.playerNumber==4 && hoverX>14 && hoverY>10){
 									if(unitsAllowed>0)	{
 										//this.app.makeRayTracer(this.player,hoverX,hoverY);
-										unitButtons[h].func.call(this.app, this.app.playerNumber,hoverX,hoverY);
+										unitButtons[h].func.call(this.app,unitButtons[h].text,this.app.playerNumber,hoverX,hoverY);
 										unitsAllowed=unitsAllowed-1;
 										}
 								}
@@ -129,10 +139,7 @@ export default class Display {
 						}
 					}
 						//Buttons Section
-
-
     				if(s.keyIsPressed){
-
     					this.phase=2;
     					this.t=1;
 							// this.app.appRunSimulation()
@@ -194,18 +201,18 @@ export default class Display {
 					}
 					drawButton(){
 
-					 s.noStroke();
-					 //s.fill(255,0,128,255);
-					 //console.log(3,this.isPressed);
-					 s.fill(255,0,0+this.yy/2,255);
-					 s.rect(this.xx,this.yy,this.xlen,this.ylen);
-					 if(this.isPressed==true){
-						 s.fill(255,255,255,100);
+						 s.noStroke();
+						 //s.fill(255,0,128,255);
+						 //console.log(3,this.isPressed);
+						 s.fill(255,0,0+this.yy/2,255);
 						 s.rect(this.xx,this.yy,this.xlen,this.ylen);
-					 }
-					 s.fill(0);
-					 s.textSize(this.xlen/8);
-					 s.text(this.text,this.xx+this.xlen/10,this.yy+this.ylen/1.25);
+						 if(this.isPressed==true){
+							 s.fill(255,255,255,100);
+							 s.rect(this.xx,this.yy,this.xlen,this.ylen);
+						 }
+						 s.fill(0);
+						 s.textSize(this.xlen/8);
+						 s.text(this.text,this.xx+this.xlen/10,this.yy+this.ylen/1.25);
 					}
 					buttonHasBeenPressed(){
 						this.isPressed=true;

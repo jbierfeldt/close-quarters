@@ -103,7 +103,9 @@ class App {
 const app = new App();
 app.init();
 
- app.sendCreateUnit("Juggernode", 1, 3, 2);
+ //app.sendCreateUnit("Juggernode", 1, 3, 2);
+ app.sendCreateUnit("Maglev", 1, 10, 5);
+
 
 // const ray1 = new Units.RayTracer(100, 75, 1);
 // const ray2 = new Units.RayTracer(0, 0, 1);
