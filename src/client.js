@@ -4,7 +4,7 @@ import Display from './lib/client/Display.js';
 import * as Units from './lib/shared/Unit.js';
 import {DEBUG} from './lib/shared/utilities.js';
 
-window.debug = new DEBUG(true, 1);
+window.debug = new DEBUG(true, 0);
 
 const debugData = {
 	'playerNumber': 1
@@ -29,6 +29,8 @@ class App {
 		this.display.init();
 		this.socket = io();
 
+		this.debugInit();
+
 		this.socket.on('debugInfoUpdate', (data) => {
 			console.log('update debug');
 			this.updateDebugInfo();
@@ -46,7 +48,12 @@ class App {
 		});
 	}
 
+	debugInit () {
+		document.getElementById("submit-turn").addEventListener("click", this.sendSubmitTurn.bind(this));
+	}
+
 	sendCreateUnit (unitType, player, x, y) {
+		debug.log(1, "making unit");
 		this.socket.emit('createUnit', {
 			unitType: unitType,
 			player: player,
@@ -55,12 +62,9 @@ class App {
 		});
 	}
 
-	makeRayTracer(player,x,y) {
-		this.socket.emit('createRay', {
-			player: player,
-			x: x,
-			y: y
-		});
+	sendSubmitTurn () {
+		debug.log(1, "submit turn!");
+		this.socket.emit('submitTurn');
 	}
 
 	loadSerializedGameState(serializedGameState) {
@@ -104,7 +108,7 @@ const app = new App();
 app.init();
 
  //app.sendCreateUnit("Juggernode", 1, 3, 2);
- app.sendCreateUnit("Maglev", 1, 10, 5);
+ // app.sendCreateUnit("Maglev", 1, 10, 5);
 
 
 // const ray1 = new Units.RayTracer(100, 75, 1);
