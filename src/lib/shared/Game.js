@@ -108,7 +108,7 @@ export default class Game {
 
 	isValidCoord(x, y) {
     	try {
-			if (this.board[y][x] !== undefined) {
+			if (this.board[y][x].length === 0) {
 				return true;
 			}
 			else {
