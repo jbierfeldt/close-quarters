@@ -73,7 +73,7 @@ export default class Display {
 						if(this.app.playerNumber>2){
 							playerShifter=wi/2;
 						}
-						if(buttonMaker===1){
+					if(buttonMaker===1){
 						bRayTracer=new Buttoned(wi/2+si-playerShifter,si*buttonScale,wi/2-si*2,si*buttonScale,"RayTracer",this.app.sendCreateUnit);
             unitButtons.push(bRayTracer);
 						bMaglev=new Buttoned(wi/2+si-playerShifter,si*buttonScale*2,wi/2-si*2,si*buttonScale,"Maglev",this.app.sendCreateUnit);
@@ -93,46 +93,42 @@ export default class Display {
 						for(let i=0;i<unitButtons.length;i=i+1){
 							 unitButtons[i].drawButton();
 						 }
-
+						 s.fill(255,100);
+ 						s.noStroke();
+ 						s.rect(hoverX*tempConfig.size,hoverY*tempConfig.size,tempConfig.size,tempConfig.size);
 						if(s.mouseIsPressed){
-						for(let yy=0;yy<unitButtons.length;yy=yy+1){
-							debug.log(3,unitButtons[1]);
-							if(unitButtons[yy].isPressed==true){
-								if(this.app.playerNumber==1 && hoverX<=14 && hoverY<=10){
+							for(let yy=0;yy<unitButtons.length;yy=yy+1){
+								debug.log(3,unitButtons[1]);
+								if(unitButtons[yy].isPressed===true){
+									if(this.app.playerNumber==1 && hoverX<=14 && hoverY<=10){
+
 									if(unitsAllowed>0)	{
-										s.fill(255,100);
-										s.noStroke();
-				    				s.rect(hoverX*tempConfig.size,hoverY*tempConfig.size,tempConfig.size,tempConfig.size);
 										//this.app.makeRayTracer(this.player,hoverX,hoverY);
 										unitButtons[yy].func.call(this.app,unitButtons[yy].text, this.app.playerNumber,hoverX,hoverY);
 										unitsAllowed=unitsAllowed-1;
 										}
 									}
 								else if(this.app.playerNumber==2 && hoverX<=14 && hoverY>10){
+
 									if(unitsAllowed>0)	{
-										s.fill(255,100);
-										s.noStroke();
-				    				s.rect(hoverX*tempConfig.size,hoverY*tempConfig.size,tempConfig.size,tempConfig.size);
+
 										//this.app.makeRayTracer(this.player,hoverX,hoverY);
 										unitButtons[yy].func.call(this.app,unitButtons[yy].text, this.app.playerNumber,hoverX,hoverY);
 										unitsAllowed=unitsAllowed-1;
 										}
 								}
 								else if(this.app.playerNumber==3 && hoverX>14 && hoverY<=10){
+
 									if(unitsAllowed>0)	{
-										s.fill(255,100);
-										s.noStroke();
-				    				s.rect(hoverX*tempConfig.size,hoverY*tempConfig.size,tempConfig.size,tempConfig.size);
+
 										//this.app.makeRayTracer(this.player,hoverX,hoverY);
 										unitButtons[yy].func.call(this.app,unitButtons[yy].text, this.app.playerNumber,hoverX,hoverY);
 										unitsAllowed=unitsAllowed-1;
 										}
 								}
 								else if(this.app.playerNumber==4 && hoverX>14 && hoverY>10){
+
 									if(unitsAllowed>0)	{
-										s.fill(255,100);
-										s.noStroke();
-				    				s.rect(hoverX*tempConfig.size,hoverY*tempConfig.size,tempConfig.size,tempConfig.size);
 										//this.app.makeRayTracer(this.player,hoverX,hoverY);
 										unitButtons[yy].func.call(this.app,unitButtons[yy].text,this.app.playerNumber,hoverX,hoverY);
 										unitsAllowed=unitsAllowed-1;
@@ -145,15 +141,17 @@ export default class Display {
 										if(unitButtons[zz].isInRange(s.mouseX,s.mouseY)){
 											 //Got to fix this so it retains in the update
 											unitButtons[zz].buttonHasBeenPressed();
-											debug.log(3,unitButtons[zz]);
+											//debug.log(3,unitButtons[zz]);
+										}
+										else if(unitButtons[zz].isPressed==true){
 										}
 										else{
 											unitButtons[zz].isPressed=false;
 										}
 									}
-							}
-						}
-					}
+							  }
+						  }
+				   	}
 						//Buttons Section
     				if(s.keyIsPressed){
     					this.phase=2;
