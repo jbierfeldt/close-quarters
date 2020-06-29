@@ -17,10 +17,14 @@
   –––––––––––––––––––––––––––––––––––––––––––––––––– -->
 
   <style>
-  #debug-info {
+  #debug {
     position: absolute;
     top: 0;
     right: 0;
+  }
+
+  #debug-controls {
+    float: left;
   }
   </style>
 
@@ -37,7 +41,13 @@
 –––––––––––––––––––––––––––––––––––––––––––––––––– -->
 <body>
 
-  <div id="debug-info">
+  <div id="debug">
+    <div id="debug-info">
+    </div>
+
+    <div id="debug-controls">
+      <button type="button"  id="submit-turn">Submit Turn!</button>
+    </div>
   </div>
 
   <!-- End Document

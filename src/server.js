@@ -36,6 +36,7 @@ class GameController {
   init() {
 
 		this.game.init();
+		this.game.runSimulation();
 
     this.io.on('connection', (socket) => {
       debug.log(0, 'a new client connected');
@@ -49,6 +50,7 @@ class GameController {
 			}
 			else {
 				this.newPlayerController(socket, playerSpot);
+				this.sendGameState();
 			}
 
     });
@@ -92,17 +94,14 @@ class GameController {
 		let oneUnit = new Units[unitType](100,100,player);
 		this.game.addObjectAtCoord(oneUnit, x, y);
 		this.game.registerGameObject(oneUnit);
-    this.game.runSimulation();
-		console.log("Made ", unitType);
+    // this.game.runSimulation();
+		console.log("Made", unitType, "at", x, y);
 		this.sendGameState();
 	}
 
-  makeRayTracer(player,x,y) {
-		let oneUnit = new Units.RayTracer(100,100,player);
-		this.game.addObjectAtCoord(oneUnit, x, y);
-		this.game.registerGameObject(oneUnit);
-    this.game.runSimulation();
-		console.log("Made RayTracer");
+	runSimulation() {
+		console.log("Running simulation...");
+		this.game.runSimulation();
 		this.sendGameState();
 	}
 
@@ -125,10 +124,11 @@ class PlayerController {
 			this.gameController.createUnit(data.unitType, data.player, data.x, data.y);
     });
 
-    this.socket.on('createRay', (data) => {
-			console.log("creatRay response", data);
-      this.gameController.makeRayTracer(data.player, data.x, data.y);
-    });
+		this.socket.on('submitTurn', (data) =>  {
+			// will update game controller saying that this player has submitted their turn
+			// for now, just forcing runSimulation
+			this.gameController.runSimulation();
+		});
 
     this.socket.on('disconnect', () => {
        debug.log(0, 'a user disconnected');
