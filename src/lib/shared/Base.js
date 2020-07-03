@@ -4,7 +4,7 @@ const debug = new DEBUG(true, 5);
 
 export default class Base {
 
-	constructor(id = 0,player)  {
+	constructor(id, player)  {
 		this.id = id;
 		this.maxHealth = 300;
 		this.health = 300;

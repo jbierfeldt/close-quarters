@@ -1,6 +1,7 @@
 import {DEBUG} from './lib/shared/utilities.js';
 import Game from './lib/shared/Game.js';
 import * as Units from './lib/shared/Unit.js';
+import * as Bases from './lib/shared/Base.js';
 
 const debug = new DEBUG(true, 0);
 
@@ -89,7 +90,14 @@ class GameController {
 			turnNumber: this.game.turnNumber
 		});
 	}
-
+	createBase(baseType, player, x, y) {
+		let oneBase = new Bases[baseType](1,player);
+		this.game.addObjectAtCoord(oneBase, x, y);
+		this.game.registerGameObject(oneUnit);
+    // this.game.runSimulation();
+		console.log("Made", unitType, "at", x, y);
+		this.sendGameState();
+	}
 	createUnit(unitType, player, x, y) {
 		let oneUnit = new Units[unitType](100,100,player);
 		this.game.addObjectAtCoord(oneUnit, x, y);

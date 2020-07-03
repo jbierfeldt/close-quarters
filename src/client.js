@@ -2,6 +2,7 @@
 import Game from './lib/shared/Game.js';
 import Display from './lib/client/Display.js';
 import * as Units from './lib/shared/Unit.js';
+import * as Bases from './lib/shared/Base.js';
 import {DEBUG} from './lib/shared/utilities.js';
 
 window.debug = new DEBUG(true, 0);
@@ -51,7 +52,15 @@ class App {
 	debugInit () {
 		document.getElementById("submit-turn").addEventListener("click", this.sendSubmitTurn.bind(this));
 	}
-
+	sendCreateBase (baseType, player, x, y) {
+		debug.log(1, "making base");
+		this.socket.emit('createBase', {
+			baseType: baseType,
+			player: player,
+			x: x,
+			y: y
+		});
+	}
 	sendCreateUnit (unitType, player, x, y) {
 		debug.log(1, "making unit");
 		this.socket.emit('createUnit', {

@@ -25,69 +25,99 @@ export default class Display {
 
 		let sketch = (s) => {
 
+			//Declarations prior to the draw loop & setup
 			let titleFont;
 			let bRayTracer;
 			let bMaglev;
 			let bJuggernode;
-			let unitButtons=[];
-			let unitsAllowed=1;
+			let unitButtons=[]; //List of the Buttons for unit creation
 			let randX;
 			let randY;
-			let buttonMaker=1; //So buttons only get created once
+			let buttonMaker=1; //Variable so buttons only get created once
+
+			//Preload the fonts and other assets below
 			s.preload = () =>{
   			titleFont = s.loadFont('static/volt.ttf');
 			}
+
+			//Create the canvas based on the size of the user window
 			s.setup = () =>{
 				s.createCanvas(tempConfig.canvasX, tempConfig.canvasY);
-				//s.colors=[color(1,100,87,255),color(255,240,0,255),color(128,0,0,255),color(128,128,126,255)];
+			}
 
-  			}
+			//The draw function loops continuously while the sketch is active
+			//Different screens of the game are portioned off using trigger variables and user input to move between them
     	s.draw = () => {
-					let wi=tempConfig.canvasX;
-					let he=tempConfig.canvasY;
-					let si=tempConfig.size;
-					//Randomize the first base placement
-    			this.delay=this.delay+.25;
-    			s.background(0);
-					s.textFont(titleFont);
-					s.textSize(tempConfig.canvasX/9);
-					s.fill(255,0,128);
-    			///Phase 0 is the title screen, phase 1 the unit placement, and phase 2 the game loop
-    			if(this.phase==0){
 
-						if(this.app.playerNumber==1 || this.app.playerNumber==2){
-							//Randomize the first base placement
-							let randX=s.int(s.random(2,12));
-						}
-						else{
-							let randX=s.int(s.random(17,27));
-						}
-    				titleSequence(tempConfig.canvasX,tempConfig.canvasY,this.delay,tempConfig.size/2);
-    				if(s.mouseIsPressed){
-    					this.phase=1;
-    				}
-						s.fill(255,0,128);
-						s.text("Close Quarters",tempConfig.canvasX/22,tempConfig.canvasY/2);
-						let buttonScale=2;
-						let playerShifter=0;
-						if(this.app.playerNumber>2){
-							playerShifter=wi/2;
-						}
+				//The below variables to be filled in by the size of the players current window
+				let wi=tempConfig.canvasX; //The width of the canvas
+				let he=tempConfig.canvasY; //The height of the canvas
+				let si=tempConfig.size; //the side length of each cell in canvas
+
+				//Delay serves as a variable that has a constant increment for animation
+    		this.delay=this.delay+.25;
+
+				//Sets the background to black each time around the loop in order to prevent sketch objects from stacking on each other
+				s.background(0);
+
+				//Sets the default text font and its size
+				s.textFont(titleFont);
+				s.textSize(wi/9);
+
+    		//Phase begins at 0 via the constructor of Display(see above)
+				//Phase 0 is the Title Sccreen, Phase 1 is Unit Placement, and Phase 2 is the Battle Phase
+    		if(this.phase==0){
+
+					//Pre-Graphics phase where assignments are established
+          //Pick random locations for the first base placement(switch this to game.js soon)
+					if(this.app.playerNumber==1 || this.app.playerNumber==2){
+						let randX=s.int(s.random(2,12));
+					}
+					else{
+						let randX=s.int(s.random(17,27));
+					}
+					//The below function displays the title sequence
+					titleSequence(wi,he,this.delay,si/2);
+
+					//Display the game title on top of the title sequence
+					s.fill(255,0,128);
+					s.text("Close Quarters",tempConfig.canvasX/22,tempConfig.canvasY/2);
+
+					//buttonScale sets the size of the buttons(dependent on their overall number)
+					let buttonScale=2;
+
+					//playerShifter shifts the Button Menu if the player is on the right side of the screen
+					let playerShifter=0;
+					if(this.app.playerNumber>2){
+						playerShifter=wi/2;
+					}
+
+					//Only execute the following block once so the buttons are only created a single time
 					if(buttonMaker===1){
 						bRayTracer=new Buttoned(wi/2+si-playerShifter,si*buttonScale,wi/2-si*2,si*buttonScale,"RayTracer",this.app.sendCreateUnit);
-            unitButtons.push(bRayTracer);
+	          unitButtons.push(bRayTracer);
 						bMaglev=new Buttoned(wi/2+si-playerShifter,si*buttonScale*2,wi/2-si*2,si*buttonScale,"Maglev",this.app.sendCreateUnit);
 						unitButtons.push(bMaglev);
 						bJuggernode=new Buttoned(wi/2+si-playerShifter,si*buttonScale*3,wi/2-si*2,si*buttonScale,"Juggernode",this.app.sendCreateUnit);
 						unitButtons.push(bJuggernode);
 					}
 					buttonMaker=0;
-    			}
-    			else if(this.phase==1){
-    				drawQuarterGrid(this.stage.grid,this.playerColors,this.app.playerNumber);
-    				drawUnitMenu(this.playerColors,this.app.playerNumber,this.app)
-    				let hoverX=s.int(s.mouseX/tempConfig.size);
-    				let hoverY=s.int(s.mouseY/tempConfig.size);
+
+					//Exit this phase and move to the Battle Phase if the mouse is pressed(button trigger to be added)
+					if(s.mouseIsPressed){
+						this.phase=1;
+					}
+    		}
+
+    		else if(this.phase==1){
+
+					//Run the functions for drawing the players quadrant and the unit menu
+    			drawQuarterGrid(this.stage.grid,this.playerColors,this.app.playerNumber);
+    			drawUnitMenu(this.playerColors,this.app.playerNumber,this.app)
+
+					//Calculate which cell the mouse is currently hovering over
+    			let hoverX=s.int(s.mouseX/si);
+    			let hoverY=s.int(s.mouseY/si);
 
 						//CHECK IF THE COORDINATES ARE IN RANGE BASED ON THE PLAYER
 						for(let i=0;i<unitButtons.length;i=i+1){
@@ -115,32 +145,25 @@ export default class Display {
 
 								if(unitButtons[yy].isPressed===true){
 									if(this.app.playerNumber==1 && hoverX<=14 && hoverY<=10){
-									if(unitsAllowed>0)	{
 										//this.app.makeRayTracer(this.player,hoverX,hoverY);
 										unitButtons[yy].func.call(this.app,unitButtons[yy].text, this.app.playerNumber,hoverX,hoverY);
-										unitsAllowed=unitsAllowed-1;
-										}
+
 									}
 								else if(this.app.playerNumber==2 && hoverX<=14 && hoverY>10){
-									if(unitsAllowed>0)	{
+
 										//this.app.makeRayTracer(this.player,hoverX,hoverY);
 										unitButtons[yy].func.call(this.app,unitButtons[yy].text, this.app.playerNumber,hoverX,hoverY);
-										unitsAllowed=unitsAllowed-1;
-										}
+
 								}
 								else if(this.app.playerNumber==3 && hoverX>14 && hoverY<=10){
-									if(unitsAllowed>0)	{
 										//this.app.makeRayTracer(this.player,hoverX,hoverY);
 										unitButtons[yy].func.call(this.app,unitButtons[yy].text, this.app.playerNumber,hoverX,hoverY);
-										unitsAllowed=unitsAllowed-1;
-										}
 								}
 								else if(this.app.playerNumber==4 && hoverX>14 && hoverY>10){
-									if(unitsAllowed>0)	{
+
 										//this.app.makeRayTracer(this.player,hoverX,hoverY);
 										unitButtons[yy].func.call(this.app,unitButtons[yy].text,this.app.playerNumber,hoverX,hoverY);
-										unitsAllowed=unitsAllowed-1;
-									}
+
 								}
 							}
 							/*else{
