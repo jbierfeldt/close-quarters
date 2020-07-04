@@ -4,7 +4,7 @@ import * as Units from './Unit.js';
 import * as Projectiles from './Projectile.js';
 import {DEBUG} from './utilities.js';
 
-const debug = new DEBUG(true, 5);
+const debug = new DEBUG(true, 0);
 
 const tempConfig = {
 	boardDimensions: [20, 30],
@@ -18,7 +18,7 @@ export default class Game {
  		this.id = 'game'+createID();
  		this.players = players;
  		this.board = board;
- 		this.gameObjects = [];
+ 		this.gameObjects = new Map();
  		this.turnNumber =  turnNumber;
  		this.history = {
  			'turn': {}
@@ -45,16 +45,48 @@ export default class Game {
 
 	}
 
-	saveGameState(tick) {
+	createGameSnapshot () {
+
+		// custom serialize gameObjects using serialize method
+		let gameObjs = [...this.gameObjects];
+		for (let i = 0; i < gameObjs.length; i++) {
+			gameObjs[i][1] = JSON.stringify(gameObjs[i][1].serialize());
+		}
 
 		// create serialized GameState with serialized GameObjects and board
-		const serialObj = {
+		const snapshotObj = {
 			id: this.id,
 			players: this.players,
 			board: this.board,
-			gameObjects: this.gameObjects
+			gameObjects: gameObjs
 		}
-		return serialObj;
+
+		return snapshotObj;
+	}
+
+	loadGameSnapshot (snapshotObj) {
+
+		this.board = snapshotObj.board;
+		this.players = snapshotObj.players;
+
+		// rebuild classes from serialized data
+		for (let i = 0; i < snapshotObj.gameObjects.length; i++) {
+			snapshotObj.gameObjects[i][1] = JSON.parse(snapshotObj.gameObjects[i][1]);
+			let newObject = snapshotObj.gameObjects[i][1];
+			switch (newObject.objCategory) {
+				case "Units":
+					newObject = Units[newObject.class].createFromSerialized(newObject);
+					break
+				case "Projectiles":
+					newObject = Projectiles[newObject.class].createFromSerialized(newObject);
+					break
+			}
+			snapshotObj.gameObjects[i][1] = newObject;
+		}
+
+		// rebuild map with reconstructed classes
+		this.gameObjects = new Map(snapshotObj.gameObjects);
+
 	}
 
 	serializeGameState(gameState) {
@@ -70,33 +102,48 @@ export default class Game {
 	loadSerializedGameState(serializedGameState) {
 
 		return JSON.parse(serializedGameState);
+		// let props = JSON.parse(gameObjs[i][1]);
+		// switch (props.objCategory) {
+		// 	case "Units":
+		// 		console.log(Units[props.class].createFromSerialized(props));
+		// 		break
+		// 	case "Projectiles":
+		// 		console.log(Projectiles[props.class].createFromSerialized(props));
+		// 		break
+		// }
 
+	}
+
+	// creates new unit using type, player, and coordinates
+	createNewUnitAtCoord(unitType, player, x, y) {
+		let newUnit = new Units[unitType](player);
+		this.registerGameObject(newUnit);
+		this.addObjectAtCoord(newUnit, x, y);
 	}
 
 	registerGameObject(object) {
 		// validate object
-		this.gameObjects.push(object);
+		this.gameObjects.set(object.id, object);
 	}
 
 	deregisterGameObject(object) {
-		let idx = this.gameObjects.indexOf(object);
-		this.gameObjects.splice(idx, 1);
+		this.gameObjects.delete(object.id);
 	}
 
 	addObjectAtCoord(object, x, y) {
 		if (this.isValidCoord(x, y)) {
-			this.board[y][x].push(object);
+			this.board[y][x].push(object.id);
 		}
 	}
 
 	removeObjectAtCoord(object, x, y) {
-		const objIndex = this.board[y][x].indexOf(object);
+		const objIndex = this.board[y][x].indexOf(object.id);
 		this.board[y][x].splice(objIndex, 1);
 	}
 
 	moveObject(object, old_x, old_y, new_x, new_y) {
 		if (this.isValidCoord(new_x, new_y)) {
-			this.board[new_y][new_x].push(object);
+			this.addObjectAtCoord(object, new_x, new_y);
 			this.removeObjectAtCoord(object, old_x, old_y);
 		}
 		else {
@@ -133,18 +180,18 @@ export default class Game {
 		};
 
 		for (let tick = 1; tick <= ticksPerTurn; tick++) {
-			// debug.log(0, "Processing tick #" + tick, JSON.parse(JSON.stringify(this.board)));
+			// debug.log(0, "Processing tick #" + tick);
 
 			// enable movement at beginning of tick
-			for (let i = 0; i < this.gameObjects.length; i++) {
-				this.gameObjects[i].updatedThisTick = false;
-			}
+			this.gameObjects.forEach( (value, key, ownerMap) => {
+				value.updatedThisTick = false;
+			});
 
 			for (let i = 0; i < this.board.length; i++)  {
 				for (let j = 0; j < this.board[i].length; j++) {
 					if (this.board[i][j].length != 0) {
 						for (let k = 0; k < this.board[i][j].length; k++) {
-							let gameObj = this.board[i][j][k] // game obj to be updated
+							let gameObj = this.gameObjects.get(this.board[i][j][k]); // game obj to be updated
 							if (gameObj.updatedThisTick === false) {
 
 								gameObj.update(tick);
@@ -176,8 +223,8 @@ export default class Game {
 			// update
 			// validate
 			// saveState
-			this.history.turn[this.turnNumber].tick[tick] = this.saveGameState();
-			this.s_history.turn[this.turnNumber].tick[tick] = this.serializeGameState(this.saveGameState());
+			this.history.turn[this.turnNumber].tick[tick] = this.createGameSnapshot();
+			this.s_history.turn[this.turnNumber].tick[tick] = this.serializeGameState(this.createGameSnapshot());
 		}
 
 		// move to next Turn

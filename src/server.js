@@ -91,10 +91,7 @@ class GameController {
 	}
 
 	createUnit(unitType, player, x, y) {
-		let oneUnit = new Units[unitType](100,100,player);
-		this.game.addObjectAtCoord(oneUnit, x, y);
-		this.game.registerGameObject(oneUnit);
-    // this.game.runSimulation();
+		this.game.createNewUnitAtCoord(unitType, player, x, y);
 		console.log("Made", unitType, "at", x, y);
 		this.sendGameState();
 	}

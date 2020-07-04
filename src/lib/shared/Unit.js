@@ -6,32 +6,47 @@ const debug = new DEBUG(true, 5);
 
 export default class Unit {
 
-	constructor(maxHealth = 0)  {
-		this.id = 'unit'+createID();
-		this.maxHealth = maxHealth;
+	constructor(id = undefined)  {
+		this.id = id || 'unit'+createID();
 		this.health = 0;
 		this.invulnerable=false;
+	}
+
+	static createFromSerialized (serializedObject) {
+		console.log(JSON.parse(serializedObject));
 	}
 
 	update (tick) {
 		debug.log(0, "    Updating Unit " + this.id + "  for tick #" + tick);
 	}
 
-	unitDestroyed() {
-
+	serialize () {
+		return {
+			id: this.id,
+			objCategory: "Units",
+			class: this.constructor.name,
+			player: this.player,
+			health: this.health,
+			firing: this.firing
+		}
 	}
 
 }
 
 export class RayTracer extends Unit {
 
-	constructor(maxHealth = 0, health =  maxHealth, player = 1)  {
-		super(maxHealth);
-		this.health = health;
+	constructor(player, health, firing, id)  {
+		super(id);
 		this.player = player;
+		this.health = health || 100;
+		this.firing = firing || false;
+		this.maxHealth = 100;
 		this.identifier = "Ray";
-		this.firing = false;
 		this.projArr = [];
+	}
+
+	static createFromSerialized (props) {
+		return new RayTracer(props.player, props.health, props.firing, props.id)
 	}
 
 	startAttack(orientation){
@@ -68,44 +83,64 @@ export class RayTracer extends Unit {
 			}
 		}
 	}
+
+	serialize () {
+		return super.serialize.call(this);
+	}
+
 }
+
 export class Juggernode extends Unit {
 
-	constructor(maxHealth = 0, health =  maxHealth, player = undefined)  {
-		super(maxHealth);
-		this.health = health;
+	constructor(player, health, firing, id)  {
+		super(id);
 		this.player = player;
+		this.health = health || 500;
+		this.firing = firing || false;
+		this.maxHealth = 500;
 		this.identifier="Jug";
 		this.projArr = [];
-		this.firing = false;
 	}
 
-	startAttack(orientation){
+	static createFromSerialized (props) {
+		return new Juggernode(props.player, props.health, props.firing, props.id)
+	}
+
+	startAttack (orientation){
 		this.firing = true;
 		this.projArr[0]  = new Projectiles.JugBullet(orientation, 1);
+	}
 
-	}
-	update(tick) {
+	update (tick) {
 		this.firing=false;
-	if(tick%4 !== 0){
-		this.invulnerable==true;
+		if (tick%4 !== 0) {
+			this.invulnerable == true;
+		}
+		else {
+			this.invulnerable == false;
+			this.startAttack([1,1]);
+		}
 	}
-	else{
-		this.invulnerable==false;
-		this.startAttack([1,1]);
-	}
+
+	serialize () {
+		return super.serialize.call(this);
 	}
 }
 
 export class Maglev extends Unit {
 
-	constructor(maxHealth = 0, health =  maxHealth, player = undefined)  {
-		super(maxHealth);
-		this.health = health;
+	constructor(player, health, firing, id)  {
+		super(id);
 		this.player = player;
+		this.health = health || 100;
+		this.firing = firing || false;
+		this.maxHealth = 100;
 		this.identifier = "Mag"
-		this.firing = false;
 		this.projArr = [];
+	}
+
+	static createFromSerialized (props) {
+		return new Juggernode(props.player, props.health, props.firing, props.id)
 	}
 
 	startAttack(tick){
@@ -120,8 +155,8 @@ export class Maglev extends Unit {
 				}
 	  }
 	  this.firing = true;
-
 	}
+
 	update(tick) {
 		super.update(tick);
 
@@ -132,6 +167,10 @@ export class Maglev extends Unit {
 		if (tick % 8 === 0) {
 			this.startAttack();
 		}
+	}
+
+	serialize () {
+		return super.serialize.call(this);
 	}
 
 }

@@ -10,8 +10,18 @@ export default class Base {
 		this.health = 300;
 		this.player=player;
 	}
+
 	updateBase(player,damage){
 		this.health=this.health-damage;
+	}
+
+	serialize () {
+		return {
+			id: this.id,
+			class: this.constructor.name,
+			player: this.player,
+			health: this.health
+		}
 	}
 
 }
