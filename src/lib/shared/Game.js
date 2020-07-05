@@ -57,17 +57,14 @@ export default class Game {
 		const snapshotObj = {
 			id: this.id,
 			players: this.players,
-			board: this.board,
+			board: JSON.parse(JSON.stringify(this.board)),
 			gameObjects: gameObjs
 		}
 
 		return snapshotObj;
 	}
 
-	loadGameSnapshot (snapshotObj) {
-
-		this.board = snapshotObj.board;
-		this.players = snapshotObj.players;
+	rebuildGameSnapshot (snapshotObj) {
 
 		// rebuild classes from serialized data
 		for (let i = 0; i < snapshotObj.gameObjects.length; i++) {
@@ -85,7 +82,16 @@ export default class Game {
 		}
 
 		// rebuild map with reconstructed classes
-		this.gameObjects = new Map(snapshotObj.gameObjects);
+		snapshotObj.gameObjects = new Map(snapshotObj.gameObjects);
+
+		return snapshotObj;
+	}
+
+	loadGameSnapshot (snapshotObj) {
+
+		this.board = snapshotObj.board;
+		this.players = snapshotObj.players;
+		this.gameObjects = snapshotObj.gameObjects;
 
 	}
 
@@ -215,11 +221,11 @@ export default class Game {
 			// validate
 			// saveState
 			this.history.turn[this.turnNumber].tick[tick] = this.createGameSnapshot();
-			this.s_history.turn[this.turnNumber].tick[tick] = this.serializeGameState(this.createGameSnapshot());
+			// this.s_history.turn[this.turnNumber].tick[tick] = this.serializeGameState(this.createGameSnapshot());
 		}
 
 		// move to next Turn
-		this.s_history.turn[this.turnNumber] = this.saveSerializedTurn(this.s_history.turn[this.turnNumber]);
+		// this.s_history.turn[this.turnNumber] = this.saveSerializedTurn(this.s_history.turn[this.turnNumber]);
 		this.turnNumber++;
 	}
 

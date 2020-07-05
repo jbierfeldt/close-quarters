@@ -36,9 +36,9 @@ class App {
 			this.updateDebugInfo();
 		});
 
-		this.socket.on('updateGameState', (data) => {
-			console.log('got game state from server');
-			this.updateGameState(data);
+		this.socket.on('updateGameHistory', (data) => {
+			console.log('got game history from server');
+			this.updateGameHistory(data);
 		});
 
 		this.socket.on('updatePlayerState', (data) => {
@@ -75,16 +75,26 @@ class App {
 		return tickContainer;
 	}
 
-	updateGameState (data) {
+	loadSerializedTurnHistory(serializedHistory)  {
+		let historyObj = JSON.parse(serializedHistory);
+		console.log("hisobj", historyObj);
+		for (const [key, value] of Object.entries(historyObj.turn)) {
+  			let tickContainer = historyObj.turn[key].tick;
+				for (const [key2, value2] of Object.entries(tickContainer)) {
+					tickContainer[key2] = this.game.rebuildGameSnapshot(tickContainer[key2]);
+				}
+		}
+		return historyObj;
+	}
+
+	updateGameHistory (data) {
 		this.turnNumber = data.turnNumber;
-		// console.log("updateGamestate", this.turnNumber, data.s_history);
-		// console.log(this.loadSerializedGameState(data.s_history.turn[this.turnNumber - 1]));
-		let turn = this.loadSerializedGameState(data.s_history.turn[this.turnNumber - 1]);
-		this.game.loadGameSnapshot(turn.tick[40]);
-		console.log("return", this.game.gameObjects, this.game.board);
-		console.log("sent to display", turn);
-		this.display.board = this.loadSerializedGameState(data.s_history.turn[this.turnNumber - 1]);
-		debug.log(1, "updated Game State");
+		let history = this.loadSerializedTurnHistory(data.s_history);
+		this.game.history = history;
+		this.display.simulationDisplayTurn = this.game.history.turn[this.turnNumber - 1];
+		console.log("sent to Display", this.display.simulationDisplayTurn);
+		// this.display.board = this.loadSerializedGameState(data.s_history.turn[this.turnNumber - 1]);
+		// debug.log(1, "updated Game State");
 
 		this.updateDebugInfo();
 	}
