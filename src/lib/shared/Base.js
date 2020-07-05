@@ -11,7 +11,16 @@ export default class Base {
 		this.player=player;
 	}
 	update(tick){
-		
+
+	}
+
+	serialize () {
+		return {
+			id: this.id,
+			class: this.constructor.name,
+			player: this.player,
+			health: this.health
+		}
 	}
 
 }

@@ -37,9 +37,9 @@ class App {
 			this.updateDebugInfo();
 		});
 
-		this.socket.on('updateGameState', (data) => {
-			console.log('got game state from server');
-			this.updateGameState(data);
+		this.socket.on('updateGameHistory', (data) => {
+			console.log('got game history from server');
+			this.updateGameHistory(data);
 		});
 
 		this.socket.on('updatePlayerState', (data) => {
@@ -84,12 +84,26 @@ class App {
 		return tickContainer;
 	}
 
-	updateGameState (data) {
+	loadSerializedTurnHistory(serializedHistory)  {
+		let historyObj = JSON.parse(serializedHistory);
+		console.log("hisobj", historyObj);
+		for (const [key, value] of Object.entries(historyObj.turn)) {
+  			let tickContainer = historyObj.turn[key].tick;
+				for (const [key2, value2] of Object.entries(tickContainer)) {
+					tickContainer[key2] = this.game.rebuildGameSnapshot(tickContainer[key2]);
+				}
+		}
+		return historyObj;
+	}
+
+	updateGameHistory (data) {
 		this.turnNumber = data.turnNumber;
-		console.log("updateGamestate", this.turnNumber, data.s_history);
-		console.log(this.loadSerializedGameState(data.s_history.turn[this.turnNumber - 1]));
-		this.display.board = this.loadSerializedGameState(data.s_history.turn[this.turnNumber - 1]);
-		debug.log(1, "updated Game State");
+		let history = this.loadSerializedTurnHistory(data.s_history);
+		this.game.history = history;
+		this.display.simulationDisplayTurn = this.game.history.turn[this.turnNumber - 1];
+		console.log("sent to Display", this.display.simulationDisplayTurn);
+		// this.display.board = this.loadSerializedGameState(data.s_history.turn[this.turnNumber - 1]);
+		// debug.log(1, "updated Game State");
 
 		this.updateDebugInfo();
 	}
@@ -113,48 +127,22 @@ class App {
 
 }
 
+// const game = new Game();
+// game.init();
+// debug.log(0, game);
+//
+// let oneUnit = new Units["RayTracer"](100,100,1);
+// game.addObjectAtCoord(oneUnit, 2, 2);
+// game.registerGameObject(oneUnit);
+//
+// game.runSimulation();
+//
+// debug.log(0, game);
+
 const app = new App();
 app.init();
-
- //app.sendCreateUnit("Juggernode", 1, 3, 2);
- // app.sendCreateUnit("Maglev", 1, 10, 5);
-
-
-// const ray1 = new Units.RayTracer(100, 75, 1);
-// const ray2 = new Units.RayTracer(0, 0, 1);
-// const mag1 = new Units.Maglev(10, 10, 1);
-
-
-// turn 1 begins
-
-// app.game.addObjectAtCoord(ray1, 2, 2);
-// app.game.registerGameObject(ray1);
-
-// app.game.runSimulation();
-
-// // turn 2 beings
-
-// app.game.addObjectAtCoord(ray2, 3, 6);
-// app.game.registerGameObject(ray2);
-
-// app.game.addObjectAtCoord(mag1, 10, 10);
-// app.game.registerGameObject(mag1);
-
-
-// app.game.runSimulation();
-
-
-// log history for turns 1 and 2
-
-
 
 // DISPLAY STUFF
 
 // put board on grid
 app.display.stage.grid = app.game.board;
-//dis.phase = game.gamePhase;
-app.display.unitList = app.game.gameUnitList;
-// app.display.board = app.game.loadSerializedGameState(app.game.s_history.turn[1]);
-
-
-// const P5 = new p5(sketch);

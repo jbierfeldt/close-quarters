@@ -9,7 +9,7 @@ const tempConfig = {
 
 export default class Display {
 
- 	constructor(app = undefined, engine = undefined,  stage = new Object) {
+ 	constructor(app = undefined, engine = undefined, stage = new Object) {
     this.app = app;
  		this.engine = engine;
  		this.stage = stage;
@@ -212,12 +212,13 @@ export default class Display {
 						}
 					if(this.t<41 && this.t>0){
 					drawGrid(this.stage.grid,this.playerColors);
-					let b = this.board.tick[this.t].board;
+					let b = this.simulationDisplayTurn.tick[this.t].board;
 					for(var k=0; k<b.length; k=k+1){
 						for(var l=0; l<b[k].length; l=l+1){
 							if(b[k][l].length != 0){
 								for(var m=0; m<b[k][l].length;m=m+1){
-									let displayObject=b[k][l][m];
+									// let displayObject=b[k][l][m];
+									let displayObject = this.simulationDisplayTurn.tick[this.t].gameObjects.get(b[k][l][m]);
 									//console.log(this.board[k][l]);
 											if(displayObject.identifier == "Ray"){
 												drawRayTracer(l,k,displayObject.player,tempConfig.size,displayObject.health,this.playerColors);

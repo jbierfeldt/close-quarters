@@ -51,7 +51,8 @@ class GameController {
 			}
 			else {
 				this.newPlayerController(socket, playerSpot);
-				this.sendGameState();
+				this.sendGameHistory();
+				// this.sendGameState();
 			}
 
     });
@@ -83,10 +84,10 @@ class GameController {
 		debug.log(1, this.playerControllers);
 	}
 
-	sendGameState () {
+	sendGameHistory () {
 		console.log(this.game.turnNumber);
-		this.io.emit('updateGameState', {
-			s_history: this.game.s_history,
+		this.io.emit('updateGameHistory', {
+			s_history: JSON.stringify(this.game.history),
 			turnNumber: this.game.turnNumber
 		});
 	}
@@ -103,18 +104,15 @@ class GameController {
 		this.sendGameState();
 	}
 	createUnit(unitType, player, x, y) {
-		let oneUnit = new Units[unitType](100,100,player);
-		this.game.addObjectAtCoord(oneUnit, x, y);
-		this.game.registerGameObject(oneUnit);
-    // this.game.runSimulation();
+		this.game.createNewUnitAtCoord(unitType, player, x, y);
 		console.log("Made", unitType, "at", x, y);
-		this.sendGameState();
+		// this.sendGameState();
 	}
 
 	runSimulation() {
 		console.log("Running simulation...");
 		this.game.runSimulation();
-		this.sendGameState();
+		this.sendGameHistory();
 	}
 
 }
