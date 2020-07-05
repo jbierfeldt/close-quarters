@@ -102,15 +102,6 @@ export default class Game {
 	loadSerializedGameState(serializedGameState) {
 
 		return JSON.parse(serializedGameState);
-		// let props = JSON.parse(gameObjs[i][1]);
-		// switch (props.objCategory) {
-		// 	case "Units":
-		// 		console.log(Units[props.class].createFromSerialized(props));
-		// 		break
-		// 	case "Projectiles":
-		// 		console.log(Projectiles[props.class].createFromSerialized(props));
-		// 		break
-		// }
 
 	}
 

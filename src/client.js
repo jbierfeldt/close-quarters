@@ -80,9 +80,9 @@ class App {
 		// console.log("updateGamestate", this.turnNumber, data.s_history);
 		// console.log(this.loadSerializedGameState(data.s_history.turn[this.turnNumber - 1]));
 		let turn = this.loadSerializedGameState(data.s_history.turn[this.turnNumber - 1]);
-		console.log("from load", turn.tick[40]);
 		this.game.loadGameSnapshot(turn.tick[40]);
 		console.log("return", this.game.gameObjects, this.game.board);
+		console.log("sent to display", turn);
 		this.display.board = this.loadSerializedGameState(data.s_history.turn[this.turnNumber - 1]);
 		debug.log(1, "updated Game State");
 
@@ -127,4 +127,3 @@ app.init();
 
 // put board on grid
 app.display.stage.grid = app.game.board;
-app.display.unitList = app.game.gameUnitList;
