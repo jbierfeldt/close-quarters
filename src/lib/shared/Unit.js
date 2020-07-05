@@ -4,6 +4,9 @@ import {DEBUG} from './utilities.js';
 
 const debug = new DEBUG(true, 5);
 
+
+//Make sure game checks if a unit is invulnerable before applying damage!!!
+
 export default class Unit {
 
 	constructor(maxHealth = 0)  {
