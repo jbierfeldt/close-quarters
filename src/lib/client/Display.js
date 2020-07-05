@@ -203,27 +203,8 @@ export default class Display {
 						for(var l=0; l<b[k].length; l=l+1){
 							if(b[k][l].length != 0){
 								for(var m=0; m<b[k][l].length;m=m+1){
-									// let displayObject=b[k][l][m];
 									let displayObject = this.simulationDisplayTurn.tick[this.t].gameObjects.get(b[k][l][m]);
-									//console.log(this.board[k][l]);
-											if(displayObject.identifier == "Ray"){
-												drawRayTracer(l,k,displayObject.player,tempConfig.size,displayObject.health,this.playerColors);
-										}
-											if(displayObject.identifier == "RayProj"){
-												drawRayTracerProjectile(l,k,displayObject.player,tempConfig.size,this.playerColors,displayObject.orientation);
-										}
-										if(displayObject.identifier == "MagProj"){
-												drawMaglevProjectile(l,k,displayObject.player,tempConfig.size,this.playerColors,displayObject.damage);
-										}
-										if(displayObject.identifier == "Mag"){
-												drawMaglev(l,k,displayObject.player,tempConfig.size,displayObject.health,this.playerColors);
-										}
-										if(displayObject.identifier == "Jug"){
-												drawJuggernode(l,k,displayObject.player,tempConfig.size,displayObject.health,this.playerColors);
-										}
-										if(displayObject.identifier == "JugProj"){
-												drawJuggernodeProjectile(l,k,displayObject.player,tempConfig.size,displayObject.health,this.playerColors);
-										}
+									drawDisplayObject(displayObject,l,k,tempConfig.size,this.playerColors);
 							}
 						}
 					}
@@ -231,6 +212,7 @@ export default class Display {
 			}
 		}
   }
+
 
 
     		//FUNCTIONS BELOW THIS LINE
@@ -271,6 +253,31 @@ export default class Display {
 						}
 					}
 				}
+
+				function drawDisplayObject(displayObject,x,y,size,colors) {
+					if(displayObject.identifier == "Base"){
+							drawBase(x,y,displayObject.player,size,displayObject.health,displayObject.maxHealth,colors);
+					}
+					if(displayObject.identifier == "Ray"){
+							drawRayTracer(x,y,displayObject.player,size,displayObject.health,displayObject.maxHealth,colors);
+					}
+					if(displayObject.identifier == "Mag"){
+							drawMaglev(x,y,displayObject.player,size,displayObject.health,displayObject.maxHealth,colors);
+					}
+					if(displayObject.identifier == "Jug"){
+							drawJuggernode(x,y,displayObject.player,size,displayObject.health,displayObject.maxHealth,colors);
+					}
+					if(displayObject.identifier == "JugProj"){
+							drawJuggernodeProjectile(x,y,displayObject.player,size,displayObject.health,colors);
+					}
+					if(displayObject.identifier == "RayProj"){
+						drawRayTracerProjectile(x,y,displayObject.player,size,colors,displayObject.orientation);
+					}
+					if(displayObject.identifier == "MagProj"){
+						drawMaglevProjectile(x,y,displayObject.player,size,colors,displayObject.damage);
+					}
+				}
+
 
     		function drawRect(rect) {
     			s.fill(rect.color[0], rect.color[1], rect.color[2]);
@@ -367,30 +374,46 @@ export default class Display {
     			s.rect(x*size-size/2,y*size-size/2,size,size);
         		//Figures out which tile to highlight base on mouse hover and then colors it
         	}
-        	function drawRayTracer(x,y,player,size,health,pColors){
+
+					function drawBase(x,y,player,size,health,max,pColors){
+        		//s.fill(pColors[player][0],pColors[player][1],pColors[player][2],pColors[player][3])
+						//x,y,radius,npoints
+        		s.fill(0);
+        		s.stroke(0);
+        		s.fill(255*(max-health));
+						let offset=size/8;
+        		//console.log(y)
+						for(let row = x*size+offset; row < (x*size+size); row = row + offset*2){
+							for(let col = y*size+offset; col < (y*size+size); col = col + offset*2){
+							 polygon(row,col,offset,8);
+							}
+						}
+					}
+
+        	function drawRayTracer(x,y,player,size,health,max,pColors){
         		//s.fill(pColors[player][0],pColors[player][1],pColors[player][2],pColors[player][3])
         		s.fill(0);
         		s.stroke(0);
-        		s.fill(0);
+        		s.fill(255*(max-health));
         		//console.log(y)
         		s.ellipse(x*size+size/2,y*size+size/2,size,size);
 
         	}
-        	function drawMaglev(x,y,player,size,health,pColors){
+        	function drawMaglev(x,y,player,size,health,max,pColors){
         		//s.fill(pColors[player][0],pColors[player][1],pColors[player][2],pColors[player][3])
         		s.fill(0);
         		s.stroke(0);
-        		s.fill(0);
+        		s.fill(255*(max-health));
         		//console.log(y)
         		for(let i = -6;i < 6;i=i+.2){
         		s.ellipse(x*size+size/2,y*size+size/2+i*size/20,s.abs(i)*size/10,s.abs(i))*size/10;
         	    }
         	}
-					function drawJuggernode(x,y,player,size,health,pColors){
+					function drawJuggernode(x,y,player,size,health,max,pColors){
         		//s.fill(pColors[player][0],pColors[player][1],pColors[player][2],pColors[player][3])
         		s.fill(0);
         		s.stroke(0);
-        		s.fill(0);
+        		s.fill(255*(max-health));
         		//console.log(y)
 
         		s.ellipse(x*size+size/4,y*size+size/4,size/4,size/4);
@@ -464,6 +487,16 @@ export default class Display {
   					return 0;
   				}
   				return false;
+			}
+			function polygon(x, y, radius, npoints) {
+			  let angle = Math.PI*2 / npoints;
+			  s.beginShape();
+			  for (let a = 0; a < Math.PI*2; a += angle) {
+			    let sx = x + s.cos(a) * radius;
+			    let sy = y + s.sin(a) * radius;
+			    s.vertex(sx, sy);
+			  }
+			  s.endShape();
 			}
 		}
 

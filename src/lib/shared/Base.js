@@ -11,6 +11,7 @@ export class Base {
 		this.maxHealth = 300;
 		this.health = health || this.maxHealth;
 		this.objCategory = "Bases";
+		this.identifier = "Base"
 	}
 
 	static createFromSerialized (props) {
