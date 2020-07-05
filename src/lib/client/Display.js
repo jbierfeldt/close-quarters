@@ -27,9 +27,13 @@ export default class Display {
 
 			//Declarations prior to the draw loop & setup
 			let titleFont;
+
+			//Button Declarations
+			let bBase;
 			let bRayTracer;
 			let bMaglev;
 			let bJuggernode;
+
 			let unitButtons=[]; //List of the Buttons for unit creation
 			let randX;
 			let randY;
@@ -94,6 +98,8 @@ export default class Display {
 
 					//Only execute the following block once so the buttons are only created a single time
 					if(buttonMaker===1){
+						bBase=new Buttoned(wi/2+si-playerShifter,si*buttonScale*4,wi/2-si*2,si*buttonScale,"Base",this.app.sendCreateBase);
+						unitButtons.push(bBase);
 						bRayTracer=new Buttoned(wi/2+si-playerShifter,si*buttonScale,wi/2-si*2,si*buttonScale,"RayTracer",this.app.sendCreateUnit);
 	          unitButtons.push(bRayTracer);
 						bMaglev=new Buttoned(wi/2+si-playerShifter,si*buttonScale*2,wi/2-si*2,si*buttonScale,"Maglev",this.app.sendCreateUnit);
@@ -113,19 +119,27 @@ export default class Display {
 
 					//Run the functions for drawing the players quadrant and the unit menu
     			drawQuarterGrid(this.stage.grid,this.playerColors,this.app.playerNumber);
-    			drawUnitMenu(this.playerColors,this.app.playerNumber,this.app)
 
-					//Calculate which cell the mouse is currently hovering over
+
+					//Calculate which cell the mouse is currently hovering over and highlight it
     			let hoverX=s.int(s.mouseX/si);
     			let hoverY=s.int(s.mouseY/si);
 
+					s.fill(255,100);
+				 	s.noStroke();
+				 	s.rect(hoverX*tempConfig.size,hoverY*tempConfig.size,tempConfig.size,tempConfig.size);
+
 						//CHECK IF THE COORDINATES ARE IN RANGE BASED ON THE PLAYER
+						drawUnitMenu(this.playerColors,this.app.playerNumber,this.app)
+						//unitButtons[0].drawButton();
+						//add base logic
+
+
+
 						for(let i=0;i<unitButtons.length;i=i+1){
 							 unitButtons[i].drawButton();
 						 }
-						 s.fill(255,100);
- 						s.noStroke();
- 						s.rect(hoverX*tempConfig.size,hoverY*tempConfig.size,tempConfig.size,tempConfig.size);
+
 						if(s.mouseIsPressed){
 							let newButtonPressed=-1;
 							for(let i=0;i<unitButtons.length;i=i+1){

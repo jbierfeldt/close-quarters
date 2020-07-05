@@ -1,7 +1,7 @@
 import {DEBUG} from './lib/shared/utilities.js';
 import Game from './lib/shared/Game.js';
 import * as Units from './lib/shared/Unit.js';
-import * as Bases from './lib/shared/Base.js';
+import Base from './lib/shared/Base.js';
 
 const debug = new DEBUG(true, 0);
 
@@ -91,11 +91,15 @@ class GameController {
 		});
 	}
 	createBase(baseType, player, x, y) {
-		let oneBase = new Bases[baseType](1,player);
+		let oneBase = new Base(player,x,y);
+		debug.log(3,oneBase);
 		this.game.addObjectAtCoord(oneBase, x, y);
-		this.game.registerGameObject(oneUnit);
+		this.game.addObjectAtCoord(oneBase, x+1, y);
+		this.game.addObjectAtCoord(oneBase, x, y+1);
+		this.game.addObjectAtCoord(oneBase, x+1, y+1);
+		this.game.registerGameObject(oneBase);
     // this.game.runSimulation();
-		console.log("Made", unitType, "at", x, y);
+		console.log("Made", baseType, "at", x, y);
 		this.sendGameState();
 	}
 	createUnit(unitType, player, x, y) {
@@ -130,6 +134,10 @@ class PlayerController {
 
     this.socket.on('createUnit', (data) => {
 			this.gameController.createUnit(data.unitType, data.player, data.x, data.y);
+    });
+
+		this.socket.on('createBase', (data) => {
+			this.gameController.createBase(data.unitType, data.player, data.x, data.y);
     });
 
 		this.socket.on('submitTurn', (data) =>  {
