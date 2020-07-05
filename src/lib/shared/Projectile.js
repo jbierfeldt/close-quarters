@@ -10,6 +10,7 @@ export default class Projectile {
 		this.speed = initialSpeed;
 		this.updatedThisTick = true;
 		this.liquid=true; //Determines whether to destroy this projectile upon contact with a base or unit
+		this.objCategory = "Projectiles";
 	}
 
 	update(tick) {
@@ -33,7 +34,6 @@ export class RayBullet extends Projectile {
 		super(initialOrientation, initialSpeed);
 		this.identifier = "RayProj";
 		this.damage=8;
-		this.liquid=true;
 	}
 
 	static createFromSerialized (props) {
@@ -76,7 +76,6 @@ export class JugBullet extends Projectile {
 		super(initialOrientation, initialSpeed);
 		this.identifier = "JugProj";
 		this.damage = 5;
-		this.liquid=true;
 	}
 
 	static createFromSerialized (props) {

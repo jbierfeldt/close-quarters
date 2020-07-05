@@ -10,6 +10,7 @@ export class Base {
 		this.player = player;
 		this.maxHealth = 300;
 		this.health = health || this.maxHealth;
+		this.objCategory = "Bases";
 	}
 
 	static createFromSerialized (props) {

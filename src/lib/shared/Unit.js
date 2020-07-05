@@ -13,6 +13,7 @@ export default class Unit {
 		this.id = id || 'unit'+createID();
 		this.health = 0;
 		this.invulnerable=false;
+		this.objCategory = "Units";
 	}
 
 	static createFromSerialized (serializedObject) {

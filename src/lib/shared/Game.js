@@ -33,8 +33,6 @@ export default class Game {
 
 	init() {
 
-		console.log("bssjdflk", Bases["Base"]);
-
 		// create new players
 		for (var i = 0; i < tempConfig.numOfPlayers; i++) {
 			let newPlayer = new Player(i);
@@ -124,13 +122,22 @@ export default class Game {
 	}
 
 	createNewBaseAtCoord(baseType, player, x, y) {
-		console.log(Bases["Base"]);
 		let newBase = new Bases[baseType](player);
 		this.registerGameObject(newBase);
 		this.addObjectAtCoord(newBase, x, y);
 		this.addObjectAtCoord(newBase, x+1, y);
 		this.addObjectAtCoord(newBase, x, y+1);
 		this.addObjectAtCoord(newBase, x+1, y+1);
+	}
+
+	createObjectAtCoord (object, x, y) {
+		this.registerGameObject(object);
+		this.addObjectAtCoord(object, x, y);
+	}
+
+	deleteObjectAtCoord (object, x, y) {
+		this.deregisterGameObject(object);
+		this.removeObjectAtCoord(object, x, y);
 	}
 
 	registerGameObject(object) {
@@ -179,15 +186,27 @@ export default class Game {
       	}
 	}
 
+	clearProjectiles () {
+		for (let i = 0; i < this.board.length; i++)  {
+			for (let j = 0; j < this.board[i].length; j++) {
+				if (this.board[i][j].length != 0) {
+					for (let k = 0; k < this.board[i][j].length; k++) {
+						let gameObj = this.gameObjects.get(this.board[i][j][k]); // game obj to be updated
+						if (gameObj.objCategory === "Projectiles") {
+							this.deleteObjectAtCoord(gameObj, j, i);
+						}
+					}
+				}
+			}
+		}
+	}
+
 	runSimulation(ticksPerTurn = tempConfig.ticksPerTurn) {
 		// updates game state based on ticks. Sweeps board and updates
 		// any game object on the board
 		// note: j is x and i is y
 		// debug.log(0, "Running simulation for turn " + this.turnNumber);
 		this.history.turn[this.turnNumber] = {
-			'tick': {}
-		};
-		this.s_history.turn[this.turnNumber] = {
 			'tick': {}
 		};
 
@@ -210,10 +229,9 @@ export default class Game {
 
 								// if  unit is firing, add projectile to list and place on board
 								if (gameObj.firing) {
-									for(let l = 0; l < gameObj.projArr.length; l = l + 1){
+									for (let l = 0; l < gameObj.projArr.length; l++){
 									let newProj = gameObj.projArr[l];
-									this.registerGameObject(newProj);
-									this.addObjectAtCoord(newProj, j + newProj.orientation[0], i + newProj.orientation[1]);
+									this.createObjectAtCoord(newProj, j + newProj.orientation[0], i + newProj.orientation[1])
 									}
 								}
 
@@ -236,11 +254,10 @@ export default class Game {
 			// validate
 			// saveState
 			this.history.turn[this.turnNumber].tick[tick] = this.createGameSnapshot();
-			// this.s_history.turn[this.turnNumber].tick[tick] = this.serializeGameState(this.createGameSnapshot());
 		}
 
 		// move to next Turn
-		// this.s_history.turn[this.turnNumber] = this.saveSerializedTurn(this.s_history.turn[this.turnNumber]);
+		this.clearProjectiles(); // clear all projectiles at the end of the turn
 		this.turnNumber++;
 	}
 
