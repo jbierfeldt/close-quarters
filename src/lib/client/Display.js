@@ -33,6 +33,7 @@ export default class Display {
 			let bRayTracer;
 			let bMaglev;
 			let bJuggernode;
+			let bBallast;
 
 			let unitButtons=[]; //List of the Buttons for unit creation
 			let randX;
@@ -106,6 +107,8 @@ export default class Display {
 						unitButtons.push(bMaglev);
 						bJuggernode=new Buttoned(wi/2+si-playerShifter,si*buttonScale*3,wi/2-si*2,si*buttonScale,"Juggernode",this.app.sendCreateUnit);
 						unitButtons.push(bJuggernode);
+						bBallast=new Buttoned(wi/2+si-playerShifter,si*buttonScale*5,wi/2-si*2,si*buttonScale,"Ballast",this.app.sendCreateUnit);
+						unitButtons.push(bBallast);
 					}
 					buttonMaker=0;
 
@@ -134,8 +137,6 @@ export default class Display {
 						//unitButtons[0].drawButton();
 						//add base logic
 
-
-
 						for(let i=0;i<unitButtons.length;i=i+1){
 							 unitButtons[i].drawButton();
 						 }
@@ -161,26 +162,21 @@ export default class Display {
 									if(this.app.playerNumber==1 && hoverX<=14 && hoverY<=10){
 										//this.app.makeRayTracer(this.player,hoverX,hoverY);
 										unitButtons[yy].func.call(this.app,unitButtons[yy].text, this.app.playerNumber,hoverX,hoverY);
-
 									}
 								else if(this.app.playerNumber==2 && hoverX<=14 && hoverY>10){
-
 										//this.app.makeRayTracer(this.player,hoverX,hoverY);
 										unitButtons[yy].func.call(this.app,unitButtons[yy].text, this.app.playerNumber,hoverX,hoverY);
-
 								}
 								else if(this.app.playerNumber==3 && hoverX>14 && hoverY<=10){
 										//this.app.makeRayTracer(this.player,hoverX,hoverY);
 										unitButtons[yy].func.call(this.app,unitButtons[yy].text, this.app.playerNumber,hoverX,hoverY);
 								}
 								else if(this.app.playerNumber==4 && hoverX>14 && hoverY>10){
-
 										//this.app.makeRayTracer(this.player,hoverX,hoverY);
 										unitButtons[yy].func.call(this.app,unitButtons[yy].text,this.app.playerNumber,hoverX,hoverY);
-
 								}
 							}
-						  }
+						 }
 				   	}
 						//Buttons Section
     				if(s.keyIsPressed){
@@ -191,7 +187,6 @@ export default class Display {
     			}
 				// if phase where grid should be shown, draw grid
 				else if(this.phase==2){
-
 				//for(let t=1;t<41;t=t+1){
 					if(s.keyIsPressed){
 						this.t=this.t+keyPressed();
@@ -255,6 +250,7 @@ export default class Display {
 				}
 
 				function drawDisplayObject(displayObject,x,y,size,colors) {
+
 					if(displayObject.identifier == "Base"){
 							drawBase(x,y,displayObject.player,size,displayObject.health,displayObject.maxHealth,colors);
 					}
@@ -267,6 +263,9 @@ export default class Display {
 					if(displayObject.identifier == "Jug"){
 							drawJuggernode(x,y,displayObject.player,size,displayObject.health,displayObject.maxHealth,colors);
 					}
+					if(displayObject.identifier == "Bal"){
+							drawBallast(x,y,displayObject.player,size,displayObject.health,displayObject.maxHealth,colors);
+					}
 					if(displayObject.identifier == "JugProj"){
 							drawJuggernodeProjectile(x,y,displayObject.player,size,displayObject.health,colors);
 					}
@@ -275,6 +274,9 @@ export default class Display {
 					}
 					if(displayObject.identifier == "MagProj"){
 						drawMaglevProjectile(x,y,displayObject.player,size,colors,displayObject.damage);
+					}
+					if(displayObject.identifier == "BalProj"){
+						drawBallastProjectile(x,y,displayObject.player,size,colors,displayObject.damage);
 					}
 				}
 
@@ -415,13 +417,30 @@ export default class Display {
         		s.stroke(0);
         		s.fill(255*(max-health));
         		//console.log(y)
-
         		s.ellipse(x*size+size/4,y*size+size/4,size/4,size/4);
 						s.ellipse(x*size+size/2,y*size+size/4,size/4,size/4);
 						s.ellipse(x*size+size/2,y*size+size/2,size/4,size/4);
 						s.ellipse(x*size+size/4,y*size+size/2,size/4,size/4);
 
         	}
+
+					function drawBallast(x,y,player,size,health,max,pColors){
+        		//s.fill(pColors[player][0],pColors[player][1],pColors[player][2],pColors[player][3])
+        		s.fill(0);
+        		s.stroke(0);
+        		s.fill(255*(max-health));
+        		//console.log(y)
+						s.ellipse(x*size+size/2,y*size+3*size/4,size*.9,size*.2);
+						s.beginShape();
+						s.vertex(x*size+2*size/3,y*size+3*size/4);
+						s.vertex(x*size+3*size/4,y*size+size/2);
+						s.vertex(x*size+size/2,y*size+size/8);
+						s.vertex(x*size+size/4,y*size+size/2);
+						s.vertex(x*size+size/3,y*size+3*size/4);
+						s.endShape();
+
+        	}
+
         	function titleSequence(width,height,delay,scale){
         		s.background(0);
         		s.translate(width/2,height/2);
@@ -477,27 +496,34 @@ export default class Display {
         		s.noStroke();
                 s.ellipse(refx,refy,size,size);
         	}
+					function drawBallastProjectile(x,y,player,size,pColors,damage){
+        		let refx=x*size;
+        		let refy=y*size;
+        		s.fill(255,0,128,185);
+        		s.noStroke();
+            s.rect(refx,refy,size,size);
+        	}
         	function keyPressed() {
-  				if (s.keyCode === s.LEFT_ARROW) {
-    				return -1;
-  				} else if (s.keyCode === s.RIGHT_ARROW) {
-    				return 1;
-  				}
-  				else{
-  					return 0;
-  				}
-  				return false;
-			}
-			function polygon(x, y, radius, npoints) {
-			  let angle = Math.PI*2 / npoints;
-			  s.beginShape();
-			  for (let a = 0; a < Math.PI*2; a += angle) {
-			    let sx = x + s.cos(a) * radius;
-			    let sy = y + s.sin(a) * radius;
-			    s.vertex(sx, sy);
-			  }
-			  s.endShape();
-			}
+	  				if (s.keyCode === s.LEFT_ARROW) {
+	    				return -1;
+	  				} else if (s.keyCode === s.RIGHT_ARROW) {
+	    				return 1;
+	  				}
+	  				else{
+	  					return 0;
+	  				}
+	  				return false;
+					}
+					function polygon(x, y, radius, npoints) {
+					  let angle = Math.PI*2 / npoints;
+					  s.beginShape();
+					  for (let a = 0; a < Math.PI*2; a += angle) {
+					    let sx = x + s.cos(a) * radius;
+					    let sy = y + s.sin(a) * radius;
+					    s.vertex(sx, sy);
+					  }
+					  s.endShape();
+					}
 		}
 
 		this.engine = new p5(sketch);

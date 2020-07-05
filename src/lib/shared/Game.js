@@ -228,6 +228,9 @@ export default class Game {
 								gameObj.update(tick);
 
 								// if  unit is firing, add projectile to list and place on board
+								if (gameObj.dump) {
+									this.deleteObjectAtCoord (gameObj, j, i);
+								}
 								if (gameObj.firing) {
 									for (let l = 0; l < gameObj.projArr.length; l++){
 									let newProj = gameObj.projArr[l];

@@ -11,6 +11,7 @@ export default class Projectile {
 		this.updatedThisTick = true;
 		this.liquid=true; //Determines whether to destroy this projectile upon contact with a base or unit
 		this.objCategory = "Projectiles";
+		this.dump=false;
 	}
 
 	update(tick) {
@@ -55,6 +56,7 @@ export class MagBullet extends Projectile {
 		this.identifier = "MagProj";
 		this.damage = 50;
 		this.liquid=false;
+		this.distance=1;
 	}
 
 	static createFromSerialized (props) {
@@ -62,7 +64,11 @@ export class MagBullet extends Projectile {
 	}
 
 	update(tick) {
-		this.damage = this.damage - 10;
+		this.damage = this.damage - 1*distance*distance;
+		if(this.damage < 0){
+			this.damage=0;
+		}
+		this.distance=distance+1;
 		super.update(tick);
 	}
 
@@ -76,6 +82,7 @@ export class JugBullet extends Projectile {
 		super(initialOrientation, initialSpeed);
 		this.identifier = "JugProj";
 		this.damage = 5;
+
 	}
 
 	static createFromSerialized (props) {
@@ -83,8 +90,33 @@ export class JugBullet extends Projectile {
 	}
 
 	update(tick) {
-		this.damage = this.damage - 10;
 		super.update(tick);
+	}
+
+	serialize () {
+		return super.serialize.call(this);
+	}
+}
+
+export class BalBullet extends Projectile {
+	constructor(initialOrientation = [0, 0], initialSpeed = 0)  {
+		super(initialOrientation, initialSpeed);
+		this.identifier = "BalProj";
+		this.damage = 45;
+		this.created = 5;
+		this.dump=false;
+	}
+
+	static createFromSerialized (props) {
+		return new BalBullet(props.orientation, props.speed);
+	}
+
+	update(tick) {
+		super.update(tick);
+		this.created = this.created - 1;
+		if(this.created === 0){
+			this.dump=true;
+		}
 	}
 
 	serialize () {
