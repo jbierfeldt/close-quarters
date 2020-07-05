@@ -9,6 +9,7 @@ export default class Projectile {
 		this.orientation = initialOrientation;
 		this.speed = initialSpeed;
 		this.updatedThisTick = true;
+		this.liquid=true; //Determines whether to destroy this projectile upon contact with a base or unit
 	}
 
 	update(tick) {
@@ -21,6 +22,7 @@ export class RayBullet extends Projectile {
 		super(initialOrientation, initialSpeed);
 		this.identifier = "RayProj";
 		this.damage=8;
+		this.liquid=true;
 	}
 
 	update(tick) {
@@ -33,6 +35,7 @@ export class MagBullet extends Projectile {
 		super(initialOrientation, initialSpeed);
 		this.identifier = "MagProj";
 		this.damage = 50;
+		this.liquid=false;
 	}
 
 	update(tick) {
@@ -45,6 +48,7 @@ export class JugBullet extends Projectile {
 		super(initialOrientation, initialSpeed);
 		this.identifier = "JugProj";
 		this.damage = 5;
+		this.liquid=true;
 	}
 
 	update(tick) {
