@@ -52,6 +52,7 @@ class App {
 	debugInit () {
 		document.getElementById("submit-turn").addEventListener("click", this.sendSubmitTurn.bind(this));
 	}
+
 	sendCreateBase (baseType, player, x, y) {
 		debug.log(1, "making base");
 		this.socket.emit('createBase', {
@@ -61,6 +62,7 @@ class App {
 			y: y
 		});
 	}
+
 	sendCreateUnit (unitType, player, x, y) {
 		debug.log(1, "making unit");
 		this.socket.emit('createUnit', {

@@ -2,6 +2,7 @@ import {create2DArray, createID} from './utilities.js';
 import Player from './Player.js';
 import * as Units from './Unit.js';
 import * as Projectiles from './Projectile.js';
+import * as Bases from './Base.js';
 import {DEBUG} from './utilities.js';
 
 const debug = new DEBUG(true, 0);
@@ -31,6 +32,8 @@ export default class Game {
 	}
 
 	init() {
+
+		console.log("bssjdflk", Bases["Base"]);
 
 		// create new players
 		for (var i = 0; i < tempConfig.numOfPlayers; i++) {
@@ -77,6 +80,8 @@ export default class Game {
 				case "Projectiles":
 					newObject = Projectiles[newObject.class].createFromSerialized(newObject);
 					break
+				case "Bases":
+					newObject = Bases[newObject.class].createFromSerialized(newObject);
 			}
 			snapshotObj.gameObjects[i][1] = newObject;
 		}
@@ -118,12 +123,22 @@ export default class Game {
 		this.addObjectAtCoord(newUnit, x, y);
 	}
 
+	createNewBaseAtCoord(baseType, player, x, y) {
+		console.log(Bases["Base"]);
+		let newBase = new Bases[baseType](player);
+		this.registerGameObject(newBase);
+		this.addObjectAtCoord(newBase, x, y);
+		this.addObjectAtCoord(newBase, x+1, y);
+		this.addObjectAtCoord(newBase, x, y+1);
+		this.addObjectAtCoord(newBase, x+1, y+1);
+	}
+
 	registerGameObject(object) {
 		// validate object
 		this.gameObjects.set(object.id, object);
 	}
 
-	deregisterGameObject(object) {
+	deregisterGameObject (object) {
 		this.gameObjects.delete(object.id);
 	}
 

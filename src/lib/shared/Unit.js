@@ -143,7 +143,7 @@ export class Maglev extends Unit {
 	}
 
 	static createFromSerialized (props) {
-		return new Juggernode(props.player, props.health, props.firing, props.id)
+		return new Maglev(props.player, props.health, props.firing, props.id)
 	}
 
 	startAttack(tick){

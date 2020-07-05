@@ -1,22 +1,29 @@
 import {DEBUG} from './utilities.js';
+import {createID} from './utilities.js';
 
 const debug = new DEBUG(true, 5);
 
-export default class Base {
+export class Base {
 
-	constructor(player,x,y)  {
-
+	constructor(player, health, id) {
+		this.id = id || 'base'+createID();
+		this.player = player;
 		this.maxHealth = 300;
-		this.health = 300;
-		this.player=player;
+		this.health = health || this.maxHealth;
 	}
-	update(tick){
+
+	static createFromSerialized (props) {
+		return new Base(props.player, props.health, props.id)
+	}
+
+	update(tick) {
 
 	}
 
 	serialize () {
 		return {
 			id: this.id,
+			objCategory: "Bases",
 			class: this.constructor.name,
 			player: this.player,
 			health: this.health

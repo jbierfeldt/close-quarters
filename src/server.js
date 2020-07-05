@@ -91,18 +91,13 @@ class GameController {
 			turnNumber: this.game.turnNumber
 		});
 	}
+
 	createBase(baseType, player, x, y) {
-		let oneBase = new Base(player,x,y);
-		debug.log(3,oneBase);
-		this.game.addObjectAtCoord(oneBase, x, y);
-		this.game.addObjectAtCoord(oneBase, x+1, y);
-		this.game.addObjectAtCoord(oneBase, x, y+1);
-		this.game.addObjectAtCoord(oneBase, x+1, y+1);
-		this.game.registerGameObject(oneBase);
-    // this.game.runSimulation();
+		this.game.createNewBaseAtCoord(baseType, player, x, y);
 		console.log("Made", baseType, "at", x, y);
-		this.sendGameState();
+		// this.sendGameState();
 	}
+
 	createUnit(unitType, player, x, y) {
 		this.game.createNewUnitAtCoord(unitType, player, x, y);
 		console.log("Made", unitType, "at", x, y);
@@ -135,7 +130,7 @@ class PlayerController {
     });
 
 		this.socket.on('createBase', (data) => {
-			this.gameController.createBase(data.unitType, data.player, data.x, data.y);
+			this.gameController.createBase(data.baseType, data.player, data.x, data.y);
     });
 
 		this.socket.on('submitTurn', (data) =>  {

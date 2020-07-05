@@ -180,20 +180,6 @@ export default class Display {
 
 								}
 							}
-							/*else{
-									for(let zz=0;zz<unitButtons.length;zz=zz+1){
-										if(unitButtons[zz].isInRange(s.mouseX,s.mouseY)){
-											 //Got to fix this so it retains in the update
-											unitButtons[zz].buttonHasBeenPressed();
-											//debug.log(3,unitButtons[zz]);
-										}
-										else if(unitButtons[zz].isPressed==true){
-										}
-										else{
-											unitButtons[zz].isPressed=false;
-										}
-									}
-							  }*/
 						  }
 				   	}
 						//Buttons Section
