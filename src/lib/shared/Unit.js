@@ -158,7 +158,7 @@ export class Maglev extends Unit {
 		       	i = i + 1;
 					}
 				}
-	  }  
+	  }
 	}
 
 	update(tick) {
@@ -202,9 +202,23 @@ export class Ballast extends Unit {
 
 	update (tick) {
 		this.firing=false;
-		if(tick % 9 === 0){
-			this.startAttack([6,3]);
-			//randomize this
+		if(tick % 6 === 0){
+			let rando = Math.random()*5;
+			if(rando < 1){
+				this.startAttack([6,3]);
+			}
+			else if(rando < 2){
+				this.startAttack([6,-3]);
+			}
+			else if(rando < 3){
+				this.startAttack([3,6]);
+			}
+			else if(rando < 4){
+				this.startAttack([-3,6]);
+			}
+			else if(rando < 5){
+				this.startAttack([-6,3]);
+			}
 		}
 	}
 
