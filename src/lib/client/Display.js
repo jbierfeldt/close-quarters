@@ -187,11 +187,12 @@ export default class Display {
     			}
 				// if phase where grid should be shown, draw grid
 				else if(this.phase==2){
-				//for(let t=1;t<41;t=t+1){
+
 					if(s.keyIsPressed){
 						this.t=this.t+keyPressed();
-						}
+					}
 					if(this.t<41 && this.t>0){
+					for(let animate = 0; animate <= 9; animate = animate + 3){
 					drawGrid(this.stage.grid,this.playerColors);
 					let b = this.simulationDisplayTurn.tick[this.t].board;
 					for(var k=0; k<b.length; k=k+1){
@@ -199,7 +200,10 @@ export default class Display {
 							if(b[k][l].length != 0){
 								for(var m=0; m<b[k][l].length;m=m+1){
 									let displayObject = this.simulationDisplayTurn.tick[this.t].gameObjects.get(b[k][l][m]);
-									drawDisplayObject(displayObject,l,k,tempConfig.size,this.playerColors);
+
+										drawDisplayObject(displayObject,l,k,tempConfig.size,this.playerColors,animate);
+
+								}
 							}
 						}
 					}
@@ -212,7 +216,7 @@ export default class Display {
 
     		//FUNCTIONS BELOW THIS LINE
 				class Buttoned {
-					constructor(x,y,xlen,ylen,text,func) {
+					constructor(x, y, xlen, ylen, text, func) {
 					 this.isPressed=false;
 					 this.xx=x;
 					 this.yy=y;
@@ -222,7 +226,6 @@ export default class Display {
 					 this.func=func;
 					}
 					drawButton(){
-
 						 s.noStroke();
 						 //s.fill(255,0,128,255);
 						 //console.log(3,this.isPressed);
@@ -239,8 +242,8 @@ export default class Display {
 					buttonHasBeenPressed(){
 						this.isPressed=true;
 					}
-					isInRange(x,y){
-						if(x<(this.xx+this.xlen) && x>this.xx && y>this.yy && y<(this.yy+this.ylen)){
+					isInRange(x, y){
+						if(x < (this.xx+this.xlen) && x > this.xx && y > this.yy && y < (this.yy+this.ylen)){
 							return true;
 						}
 						else{
@@ -249,7 +252,10 @@ export default class Display {
 					}
 				}
 
-				function drawDisplayObject(displayObject,x,y,size,colors) {
+				function drawDisplayObject(displayObject, x, y, size, colors, a) {
+				  //	s.fill(255,0,128,255);
+					//s.stroke(0);
+					//s.rect(x*size,y*size,size,size);
 
 					if(displayObject.identifier == "Base"){
 							drawBase(x,y,displayObject.player,size,displayObject.health,displayObject.maxHealth,colors);
@@ -267,16 +273,16 @@ export default class Display {
 							drawBallast(x,y,displayObject.player,size,displayObject.health,displayObject.maxHealth,colors);
 					}
 					if(displayObject.identifier == "JugProj"){
-							drawJuggernodeProjectile(x,y,displayObject.player,size,displayObject.health,colors);
+							drawJuggernodeProjectile(x,y,displayObject.player,size,displayObject.health,colors, a);
 					}
 					if(displayObject.identifier == "RayProj"){
-						drawRayTracerProjectile(x,y,displayObject.player,size,colors,displayObject.orientation);
+						drawRayTracerProjectile(x,y,displayObject.player,size,colors,displayObject.orientation, a);
 					}
 					if(displayObject.identifier == "MagProj"){
-						drawMaglevProjectile(x,y,displayObject.player,size,colors,displayObject.damage);
+						drawMaglevProjectile(x,y,displayObject.player,size,colors,displayObject.damage, a);
 					}
 					if(displayObject.identifier == "BalProj"){
-						drawBallastProjectile(x,y,displayObject.player,size,colors,displayObject.damage);
+						drawBallastProjectile(x,y,displayObject.player,size,colors,displayObject.damage, a);
 					}
 				}
 
@@ -285,22 +291,22 @@ export default class Display {
     			s.fill(rect.color[0], rect.color[1], rect.color[2]);
     			s.rect(rect.x, rect.y, rect.size, rect.size);
     		}
-    		function drawUnitMenu(pColors, player, apple){
 
+    		function drawUnitMenu(pColors, player, apple){
     			let wid=tempConfig.canvasX;
     			let hei=tempConfig.canvasY;
 					let siz =tempConfig.size;
     			s.strokeWeight(2);
     			s.stroke(255);
-    			if(player<3){
+    			if(player < 3){
       			s.fill(225,225,225,45);
 						s.quad(wid/2+siz,siz,wid/2+siz,hei-siz,wid-siz,hei-siz,wid-siz,siz);
       		}
       		else{
-      			s.translate(-wid/2,0);
-						s.fill(225,225,225,45);
+      			s.translate(-wid/2, 0);
+						s.fill(225, 225, 225, 45);
 						s.quad(wid/2+siz,siz,wid/2+siz,hei-siz,wid-siz,hei-siz,wid-siz,siz);
-      			s.translate(wid/2,0);
+      			s.translate(wid/2, 0);
       		}
       // text("Unit",22*this.wid/40,3*this.hei/40);
       //text("Report",28*this.wid/40,3*this.hei/40);
@@ -318,25 +324,25 @@ export default class Display {
     					let rectX = j* tempConfig.canvasY/ grid.length;
     					if(i<=grid.length/2-1 && j <= grid[i].length/2-1){
     						s.fill(pColors[0][0],pColors[0][1],pColors[0][2],pColors[0][3])
-    						if(player==1){
+    						if(player == 1){
     							s.rect(rectX, rectY, rectSize, rectSize);
     						}
     					}
-    					else if(i>=grid.length/2-1 && j <= grid[i].length/2-1) {
+    					else if(i >= grid.length/2-1 && j <= grid[i].length/2-1) {
     						s.fill(pColors[1][0],pColors[1][1],pColors[1][2],pColors[1][3])
-    						if(player==2){
+    						if(player == 2){
     							s.rect(rectX, rectY, rectSize, rectSize);
     						}
     					}
-    					else if(i<=grid.length/2-1 && j >= grid[i].length/2-1) {
+    					else if(i <= grid.length/2-1 && j >= grid[i].length/2-1) {
     						s.fill(pColors[2][0],pColors[2][1],pColors[2][2],pColors[2][3])
-    						if(player==3){
+    						if(player == 3){
     							s.rect(rectX, rectY, rectSize, rectSize);
     						}
     					}
-    					else if(i>=grid.length/2-1 && j >= grid[i].length/2-1) {
+    					else if(i >= grid.length/2-1 && j >= grid[i].length/2-1) {
     						s.fill(pColors[3][0],pColors[3][1],pColors[3][2],pColors[3][3])
-    						if(player==4){
+    						if(player == 4){
     							s.rect(rectX, rectY, rectSize, rectSize);
     						}
     					}
@@ -470,33 +476,39 @@ export default class Display {
    					}
 						s.translate(-width/2,-height/2);
         	}
-        	function drawRayTracerProjectile(x,y,player,size,pColors,orient){
+        	function drawRayTracerProjectile(x,y,player,size,pColors,orient, a){
         		let refx=x*size;
         		let refy=y*size;
         		s.stroke(0)
         		s.strokeWeight(3);
         		if(orient[0]==0){
-                	s.line(refx+size/2,refy,refx+size/2,refy+size);
+            	//s.line(refx+size/2,refy+a*size/10,refx+size/2,refy+(a+1)*size/10);
+							s.fill(255, 0, 128, 255);
+							s.strokeWeight(1);
+							s.ellipse(refx+size/2,refy+(a+1)*size/10,size/4,size/4);
         		}
         		else if(orient[1]==0){
-        			s.line(refx,refy+size/2,refx+size,refy+size/2);
+        			//s.line(refx+a*size/10,refy+size/2,refx+(a+1)*size/10,refy+size/2);
+							s.fill(255, 0, 128, 255);
+							s.strokeWeight(1);
+							s.ellipse(refx+(a+1)*size/10,refy+size/2,size/4,size/4);
         		}
         	}
-        	function drawMaglevProjectile(x,y,player,size,pColors,damage){
+        	function drawMaglevProjectile(x,y,player,size,pColors,damage, a){
         		let refx=x*size;
         		let refy=y*size;
         		s.fill(255,255,255,255-(50-damage)*2);
         		s.stroke(0);
                 s.rect(refx,refy,size,size);
         	}
-					function drawJuggernodeProjectile(x,y,player,size,pColors,damage){
+					function drawJuggernodeProjectile(x,y,player,size,pColors,damage, a){
         		let refx=x*size;
         		let refy=y*size;
         		s.fill(255,240,0,105);
         		s.noStroke();
                 s.ellipse(refx,refy,size,size);
         	}
-					function drawBallastProjectile(x,y,player,size,pColors,damage){
+					function drawBallastProjectile(x,y,player,size,pColors,damage, a){
         		let refx=x*size;
         		let refy=y*size;
         		s.fill(255,0,128,185);
