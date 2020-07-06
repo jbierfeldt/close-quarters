@@ -72,15 +72,6 @@ export default class Display {
     		//Phase begins at 0 via the constructor of Display(see above)
 				//Phase 0 is the Title Sccreen, Phase 1 is Unit Placement, and Phase 2 is the Battle Phase
     		if(this.phase==0){
-
-					//Pre-Graphics phase where assignments are established
-          //Pick random locations for the first base placement(switch this to game.js soon)
-					if(this.app.playerNumber==1 || this.app.playerNumber==2){
-						let randX=s.int(s.random(2,12));
-					}
-					else{
-						let randX=s.int(s.random(17,27));
-					}
 					//The below function displays the title sequence
 					titleSequence(wi,he,this.delay,si/2);
 
@@ -188,29 +179,33 @@ export default class Display {
 				// if phase where grid should be shown, draw grid
 				else if(this.phase==2){
 
-					if(s.keyIsPressed){
+				/*	if(s.keyIsPressed){
 						this.t=this.t+keyPressed();
-					}
+					}*/
+					this.t=this.t+1;
 					if(this.t<41 && this.t>0){
-					for(let animate = 0; animate <= 9; animate = animate + 3){
-					drawGrid(this.stage.grid,this.playerColors);
-					let b = this.simulationDisplayTurn.tick[this.t].board;
-					for(var k=0; k<b.length; k=k+1){
-						for(var l=0; l<b[k].length; l=l+1){
-							if(b[k][l].length != 0){
-								for(var m=0; m<b[k][l].length;m=m+1){
-									let displayObject = this.simulationDisplayTurn.tick[this.t].gameObjects.get(b[k][l][m]);
+						for(let animate = 0; animate <= 9; animate = animate + .5){
+						drawGrid(this.stage.grid,this.playerColors);
+						let b = this.simulationDisplayTurn.tick[this.t].board;
+						for(var k=0; k<b.length; k=k+1){
+							for(var l=0; l<b[k].length; l=l+1){
+								if(b[k][l].length != 0){
+									for(var m=0; m<b[k][l].length;m=m+1){
+										let displayObject = this.simulationDisplayTurn.tick[this.t].gameObjects.get(b[k][l][m]);
 
-										drawDisplayObject(displayObject,l,k,tempConfig.size,this.playerColors,animate);
+											drawDisplayObject(displayObject,l,k,tempConfig.size,this.playerColors,animate);
 
+									}
 								}
 							}
 						}
 					}
 				}
+				else{
+					this.phase=1;
+				}
 			}
-		}
-  }
+  	}
 
 
 
