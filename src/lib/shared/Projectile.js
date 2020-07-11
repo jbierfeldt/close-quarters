@@ -64,11 +64,11 @@ export class MagBullet extends Projectile {
 	}
 
 	update(tick) {
-		this.damage = this.damage - 1*distance*distance;
+		this.damage = 50/(1+this.distance*this.distance*.1);
 		if(this.damage < 0){
 			this.damage=0;
 		}
-		this.distance=distance+1;
+		this.distance=this.distance+1;
 		super.update(tick);
 	}
 
