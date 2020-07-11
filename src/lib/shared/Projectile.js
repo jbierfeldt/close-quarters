@@ -8,6 +8,7 @@ export default class Projectile {
 		this.id = 'proj'+createID();
 		this.orientation = initialOrientation;
 		this.speed = initialSpeed;
+		this.damage = 0;
 		this.updatedThisTick = true;
 		this.liquid=true; //Determines whether to destroy this projectile upon contact with a base or unit
 		this.objCategory = "Projectiles";
