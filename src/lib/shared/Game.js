@@ -118,21 +118,21 @@ export default class Game {
 	createNewUnitAtCoord(unitType, player, x, y) {
 		let newUnit = new Units[unitType](player);
 		this.registerGameObject(newUnit);
-		this.addObjectAtCoord(newUnit, x, y);
+		this.addObjectAtEmptyCoord(newUnit, x, y);
 	}
 
 	createNewBaseAtCoord(baseType, player, x, y) {
 		let newBase = new Bases[baseType](player);
 		this.registerGameObject(newBase);
-		this.addObjectAtCoord(newBase, x, y);
-		this.addObjectAtCoord(newBase, x+1, y);
-		this.addObjectAtCoord(newBase, x, y+1);
-		this.addObjectAtCoord(newBase, x+1, y+1);
+		this.addObjectAtEmptyCoord(newBase, x, y);
+		this.addObjectAtEmptyCoord(newBase, x+1, y);
+		this.addObjectAtEmptyCoord(newBase, x, y+1);
+		this.addObjectAtEmptyCoord(newBase, x+1, y+1);
 	}
 
 	createObjectAtCoord (object, x, y) {
 		this.registerGameObject(object);
-		this.addObjectAtCoord(object, x, y);
+		this.addObjectAtEmptyCoord(object, x, y);
 	}
 
 	deleteObjectAtCoord (object, x, y) {
@@ -149,15 +149,47 @@ export default class Game {
 		this.gameObjects.delete(object.id);
 	}
 
-	addObjectAtCoord(object, x, y) {
-		if (this.isValidCoord(x, y)) {
+	addObjectAtEmptyCoord(object, x, y) {
+		if (this.isEmptyCoord(x, y)) {
 			this.board[y][x].push(object.id);
 		}
+	}
+
+	addObjectAtCoord(object, x, y) {
+			this.board[y][x].push(object.id);
 	}
 
 	removeObjectAtCoord(object, x, y) {
 		const objIndex = this.board[y][x].indexOf(object.id);
 		this.board[y][x].splice(objIndex, 1);
+	}
+
+	getObjectsAtCoord(x, y) {
+		try {
+			if (this.board[y][x].length !== 0) {
+				return this.board[y][x];
+			}
+			else {
+				// debug.log(0, "No objects at Coord");
+				return false;
+			}
+		} catch (e) {
+			// debug.log(0, "Edge of map");
+			return false;
+		}
+	}
+
+	collideProjWithObject(proj, obj) {
+		switch (obj.objCategory) {
+			case "Units":
+				debug.log(1, obj.id, " hit by ", proj.id, " doing ", proj.damage, "damage!");
+				obj.health = obj.health - proj.damage;
+				break
+			case "Bases":
+				debug.log(1, obj.id, " hit by ", proj.id, " doing ", proj.damage, "damage!");
+				obj.health = obj.health - proj.damage;
+				break
+		}
 	}
 
 	moveObject(object, old_x, old_y, new_x, new_y) {
@@ -166,22 +198,38 @@ export default class Game {
 			this.removeObjectAtCoord(object, old_x, old_y);
 		}
 		else {
+			// debug.log(0, "edge of map, removing", new_x, new_y);
 			this.removeObjectAtCoord(object, old_x, old_y);
 			this.deregisterGameObject(object);
 		}
 
 	}
 
-	isValidCoord(x, y) {
-    	try {
+	isEmptyCoord(x, y) {
+		try {
 			if (this.board[y][x].length === 0) {
 				return true;
 			}
 			else {
-				debug.log(0, "Invalid Coord");
+				debug.log(0, "Coord is full");
+				return false;
+			}
+		} catch (e) {
+			return false;
+		}
+	}
+
+	isValidCoord(x, y) {
+    	try {
+			if (this.board[y][x]) {
+				return true;
+			}
+			else {
+				// debug.log(0, "Invalid Coord", x, y);
 				return false;
 			}
       	} catch (e) {
+					// debug.log(0, "Invalid Coord", x, y);
         	return false;
       	}
 	}
@@ -211,13 +259,14 @@ export default class Game {
 		};
 
 		for (let tick = 1; tick <= ticksPerTurn; tick++) {
-			// debug.log(0, "Processing tick #" + tick);
+			debug.log(0, "Processing tick #" + tick);
 
 			// enable movement at beginning of tick
 			this.gameObjects.forEach( (value, key, ownerMap) => {
 				value.updatedThisTick = false;
 			});
 
+			// update walk
 			for (let i = 0; i < this.board.length; i++)  {
 				for (let j = 0; j < this.board[i].length; j++) {
 					if (this.board[i][j].length != 0) {
@@ -247,6 +296,27 @@ export default class Game {
 
 								// after object has been updated, set updatedThisTick to true
 								gameObj.updatedThisTick = true;
+							}
+						}
+					}
+				}
+			}
+
+			// validate walk (collision detection)
+			for (let i = 0; i < this.board.length; i++)  {
+				for (let j = 0; j < this.board[i].length; j++) {
+					if (this.board[i][j].length > 1) {
+						let collisionStack = this.board[i][j];
+						console.log("collide", collisionStack);
+						for (let k = 0; k < collisionStack.length; k++) {
+							let obj = this.gameObjects.get(this.board[i][j][k]);
+							if (obj.objCategory === "Projectiles") {
+								for (let m = 0; m < collisionStack.length; m++) {
+
+									let collisionObj = this.gameObjects.get(collisionStack[m]);
+									this.collideProjWithObject(obj, collisionObj);
+
+								}
 							}
 						}
 					}
