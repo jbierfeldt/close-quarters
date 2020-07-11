@@ -148,6 +148,7 @@ export class Maglev extends Unit {
 	}
 
 	startAttack(tick){
+		this.firing = true;
 		const arr = []
 		let i = 0;
 		for(let a = -1; a < 2; a = a + 1){
@@ -158,7 +159,6 @@ export class Maglev extends Unit {
 					}
 				}
 	  }
-	  this.firing = true;
 	}
 
 	update(tick) {
@@ -177,4 +177,52 @@ export class Maglev extends Unit {
 		return super.serialize.call(this);
 	}
 
+}
+
+export class Ballast extends Unit {
+
+	constructor(player, health, firing, id)  {
+		super(id);
+		this.player = player;
+		this.health = health || 300;
+		this.firing = firing || false;
+		this.maxHealth = 300;
+		this.identifier="Bal";
+		this.projArr = [];
+	}
+
+	static createFromSerialized (props) {
+		return new Ballast(props.player, props.health, props.firing, props.id)
+	}
+
+	startAttack (orientation){
+		this.firing = true;
+		this.projArr[0]  = new Projectiles.BalBullet(orientation, 0);
+	}
+
+	update (tick) {
+		this.firing=false;
+		if(tick % 6 === 0){
+			let rando = Math.random()*5;
+			if(rando < 1){
+				this.startAttack([6,3]);
+			}
+			else if(rando < 2){
+				this.startAttack([6,-3]);
+			}
+			else if(rando < 3){
+				this.startAttack([3,6]);
+			}
+			else if(rando < 4){
+				this.startAttack([-3,6]);
+			}
+			else if(rando < 5){
+				this.startAttack([-6,3]);
+			}
+		}
+	}
+
+	serialize () {
+		return super.serialize.call(this);
+	}
 }
