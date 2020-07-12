@@ -27,6 +27,8 @@ export default class Game {
 		this.currentTurnInitialState = {};
 
  		this.currentPhase = 0;
+
+		this.cleanUpArray = [];
 	}
 
 	init() {
@@ -125,10 +127,8 @@ export default class Game {
 	}
 
 	placeInitialRandomBases () {
-		console.log("placing bases");
 		for (let i = 1; i <= 4; i++) {
 			let randCoord = this.getRandomCoordInPlayerRegion(i, 2);
-			console.log("coord", i, randCoord);
 			this.createNewBaseAtCoord("Base", i, randCoord[0], randCoord[1]);
 		}
 	}
@@ -208,7 +208,7 @@ export default class Game {
 	}
 
 	collideProjWithObject(proj, obj, x, y) {
-		console.log(proj.id, "( player", proj.player, ") hit ", obj.id, " ( player", obj.player, ")", proj.ableToBeDestroyed);
+		console.log(proj.id, "( player", proj.player, ") hit ", obj.id, " ( player", obj.player, ")", obj.health);
 		switch (obj.objCategory) {
 			case "Units":
 				if (proj.player !== obj.player) {
@@ -226,6 +226,7 @@ export default class Game {
 				if (proj.player !== obj.player) {
 					obj.health = obj.health - proj.damage;
 					if (this.isObjectAlive(obj) === false) {
+						this.cleanUpArray.push(obj.id);
 						this.deleteObjectAtCoord(obj, x, y);
 					}
 				}
@@ -315,6 +316,23 @@ export default class Game {
 		}
 	}
 
+	cleanUpByID (idToClean) {
+		console.log("cleaning...", idToClean);
+		for (let i = 0; i < this.board.length; i++)  {
+			for (let j = 0; j < this.board[i].length; j++) {
+				if (this.board[i][j].length != 0) {
+					for (let k = 0; k < this.board[i][j].length; k++) {
+						if (this.board[i][j][k] === idToClean) {
+							console.log("got one...", idToClean, j, i);
+							const idx = this.board[i][j].indexOf(this.board[i][j][k]);
+							this.board[i][j].splice(idx, 1);
+						}
+					}
+				}
+			}
+		}
+	}
+
 	runSimulation(ticksPerTurn = tempConfig.ticksPerTurn) {
 		// updates game state based on ticks. Sweeps board and updates
 		// any game object on the board
@@ -343,6 +361,7 @@ export default class Game {
 						let objsToUpdate = [...this.board[i][j]];
 
 						for (let k = 0; k < objsToUpdate.length; k++) {
+							console.log("updating", objsToUpdate[k]);
 							let gameObj = this.gameObjects.get(objsToUpdate[k]); // game obj to be updated
 							if (gameObj.updatedThisTick === false) {
 
@@ -393,6 +412,14 @@ export default class Game {
 							}
 						}
 					}
+				}
+			}
+
+			// clean up ids marked for deletion
+			if (this.cleanUpArray.length > 0) {
+				for (let i = 0; i < this.cleanUpArray.length; i++) {
+					this.cleanUpByID(this.cleanUpArray[i]);
+					this.cleanUpArray.splice(i, 1);
 				}
 			}
 
