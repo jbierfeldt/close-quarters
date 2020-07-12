@@ -117,6 +117,23 @@ export default class Display {
 
 					//Run the functions for drawing the players quadrant and the unit menu
     			drawQuarterGrid(this.stage.grid,this.playerColors,this.app.playerNumber);
+					//drawGrid(wi, he, si, this.playerColors);
+					let board = this.app.game.board;
+					for(var k=0; k<board.length; k=k+1){
+						for(var l=0; l<board[k].length; l=l+1){
+							//drawTile(l, k, si, this.playerColors, wi, he);
+							if(board[k][l].length != 0){
+								for(var m=0; m<board[k][l].length;m=m+1){
+									let displayObject = this.app.game.gameObjects.get(board[k][l][m]);
+										if(displayObject !== undefined){
+											if(displayObject.player == this.app.playerNumber){
+												drawDisplayObject(displayObject, l, k,tempConfig.size, this.playerColors, animate);
+											}
+									}
+								}
+							}
+						}
+					}
 
 
 					//Calculate which cell the mouse is currently hovering over and highlight it
