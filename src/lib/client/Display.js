@@ -368,6 +368,7 @@ export default class Display {
 				}
 
     		function drawGrid(wi, he, si, pColors) {
+					s.noStroke();
 					s.fill(pColors[0][0],pColors[0][1],pColors[0][2],pColors[0][3]);
 					s.rect(0,0,wi/2,he/2);
 					s.fill(pColors[1][0],pColors[1][1],pColors[1][2],pColors[1][3]);
@@ -398,7 +399,8 @@ export default class Display {
 						//x,y,radius,npoints
         		s.fill(0);
         		s.stroke(0);
-        		s.fill(255*(max-health));
+        		s.fill(pColors[player-1][0]+(max-health),pColors[player-1][1]+(max-health),pColors[player-1][2]+(max-health),255);
+						s.strokeWeight(3);
 						let offset=size/8;
         		//console.log(y)
 						for(let row = x*size+offset; row < (x*size+size); row = row + offset*2){
@@ -410,9 +412,9 @@ export default class Display {
 
         	function drawRayTracer(x,y,player,size,health,max,pColors){
         		//s.fill(pColors[player][0],pColors[player][1],pColors[player][2],pColors[player][3])
-        		s.fill(0);
         		s.stroke(0);
-        		s.fill(255*(max-health));
+						s.strokeWeight(2);
+        		s.fill(0+(max-health)*2);
         		//console.log(y)
         		s.ellipse(x*size+size/2,y*size+size/2,size,size);
 
@@ -420,8 +422,9 @@ export default class Display {
         	function drawMaglev(x,y,player,size,health,max,pColors){
         		//s.fill(pColors[player][0],pColors[player][1],pColors[player][2],pColors[player][3])
         		s.fill(0);
-        		s.stroke(0);
-        		s.fill(255*(max-health));
+        		s.stroke(0+(max-health)*2);
+        		s.fill(0+(max-health)*2);
+						s.strokeWeight(1);
         		//console.log(y)
         		for(let i = -6;i < 6;i=i+.2){
         			s.ellipse(x*size+size/2,y*size+size/2+i*size/20,s.abs(i)*size/10,s.abs(i))*size/10;
