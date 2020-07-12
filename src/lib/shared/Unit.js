@@ -136,9 +136,9 @@ export class Maglev extends Unit {
 	constructor(player, health, firing, id)  {
 		super(id);
 		this.player = player;
-		this.health = health || 100;
+		this.health = health || 250;
 		this.firing = firing || false;
-		this.maxHealth = 100;
+		this.maxHealth = 250;
 		this.identifier = "Mag"
 		this.projArr = [];
 	}

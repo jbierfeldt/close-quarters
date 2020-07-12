@@ -159,7 +159,27 @@ class App {
 const app = new App();
 app.init();
 
+if(app.turnNumber == 1 ){
+	let pOneX = Math.round(Math.random()*12);
+	let pOneY = Math.round(Math.random()*8);
+	app.sendCreateBase("Base", 1, pOneX, pOneY);
+
+	let pTwoX = Math.round(Math.random()*12);
+	let pTwoY = 10+Math.round(Math.random()*8);
+	app.sendCreateBase("Base", 2, pTwoX, pTwoY);
+
+	let pThreeX = 15+Math.round(Math.random()*12);
+	let pThreeY = Math.round(Math.random()*8);
+	app.sendCreateBase("Base", 3, pThreeX, pThreeY);
+
+	let pFourX = 15+Math.round(Math.random()*12);
+	let pFourY = 10+Math.round(Math.random()*8);
+	app.sendCreateBase("Base", 4, pFourX, pFourY);
+	//app.createGameSnapshot();
+	//app.game.loadGameSnapshot(app.game.currentTurnInitialState);
+}
+
+app.display.stage.grid = app.game.board;
 // DISPLAY STUFF
 
 // put board on grid
-app.display.stage.grid = app.game.board;

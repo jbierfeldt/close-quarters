@@ -57,7 +57,7 @@ export default class Display {
 			//The draw function loops continuously while the sketch is active
 			//Different screens of the game are portioned off using trigger variables and user input to move between them
     	s.draw = () => {
-
+				s.cursor(s.CROSS);
 				//The below variables to be filled in by the size of the players current window
 				let wi=tempConfig.canvasX; //The width of the canvas
 				let he=tempConfig.canvasY; //The height of the canvas
@@ -76,6 +76,7 @@ export default class Display {
     		//Phase begins at 0 via the constructor of Display(see above)
 				//Phase 0 is the Title Sccreen, Phase 1 is Unit Placement, and Phase 2 is the Battle Phase
     		if(this.phase==0){
+
 					//The below function displays the title sequence
 					titleSequence(wi,he,this.delay,si/2);
 
@@ -140,9 +141,7 @@ export default class Display {
     			let hoverX=s.int(s.mouseX/si);
     			let hoverY=s.int(s.mouseY/si);
 
-					s.fill(255,100);
-				 	s.noStroke();
-				 	s.rect(hoverX*tempConfig.size,hoverY*tempConfig.size,tempConfig.size,tempConfig.size);
+
 
 						//CHECK IF THE COORDINATES ARE IN RANGE BASED ON THE PLAYER
 
@@ -153,6 +152,10 @@ export default class Display {
 							 unitButtons[i].drawButton();
 						 }
             drawUnitMenu(this.playerColors,this.app.playerNumber, buttonScale)
+						s.fill(255,100);
+						s.noStroke();
+						s.rect(hoverX*tempConfig.size,hoverY*tempConfig.size,tempConfig.size,tempConfig.size);
+
 						if(s.mouseIsPressed){
 							let newButtonPressed=-1;
 							for(let i=0;i<unitButtons.length;i=i+1){
@@ -382,22 +385,25 @@ export default class Display {
  						s.curveVertex(wid/2+siz*12+siz*1.5,siz*4.25);
  						s.endShape();
 						s.translate(0,-scale*siz*2);
-						//s.rect(wid/2+siz*12,siz*3.25,siz/2,siz);
-						//s.text("The Ray Tracer alternates firing projectiles vertically and horizontally. Each projectile deals 7 damage.",wid/2+siz*1.5,siz*4.45);
-						/*s.noFill();
-						s.beginShape();
-						for(let i = 0; i < siz; i = i + 3){
-							s.curveVertex(wid/2+siz*11+i,siz*2.25+15*s.noise(i));
+
+						s.translate(0,scale*siz*3);
+						s.stroke(0);
+						s.fill(255);
+						s.text("Maglev",wid/2+siz*3.75,siz*4)
+ 						s.text("250",wid/2+siz*9.9,siz*4)
+ 						s.noFill();
+ 						s.stroke(255);
+ 						s.strokeWeight(2);
+ 						s.beginShape();
+   					s.curveVertex(wid/2+siz*12,siz*4.25);
+ 						for(let i = 0; i <= siz*1.5; i = i + 1){
+							s.curveVertex(wid/2+siz*12+i,siz*4.25-25*s.abs(s.sin(1.5*s.radians(i*360/(siz*1.5)))));
 						}
-						s.endShape();
-						s.strokeWeight(2);
-						s.stroke(pColors[player-1][0],pColors[player-1][1],pColors[player-1][2],255);
-						s.beginShape();
-						for(let i = 0; i < siz; i = i + 3){
-							s.curveVertex(wid/2+siz*11+i,siz*2.25+15*s.noise(i));
-						}
-						s.endShape();*/
-					//	s.text("<3",wid/2+siz*11,siz*2.25);
+ 						s.curveVertex(wid/2+siz*12+siz*1.5,siz*4.25);
+ 						s.curveVertex(wid/2+siz*12+siz*1.5,siz*4.25);
+ 						s.endShape();
+						s.translate(0,-scale*siz*3);
+
       		}
       		else{
       			s.translate(-wid/2, 0);
