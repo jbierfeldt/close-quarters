@@ -4,8 +4,9 @@ import {DEBUG} from './utilities.js';
 const debug = new DEBUG(true, 5);
 
 export default class Projectile {
-	constructor(initialOrientation = [0, 0], initialSpeed = 0) {
+	constructor(player, initialOrientation = [0, 0], initialSpeed = 0) {
 		this.id = 'proj'+createID();
+		this.player = player;
 		this.orientation = initialOrientation;
 		this.speed = initialSpeed;
 		this.damage = 0;
@@ -22,6 +23,7 @@ export default class Projectile {
 	serialize () {
 		return {
 			id: this.id,
+			player: this.player,
 			objCategory: "Projectiles",
 			class: this.constructor.name,
 			orientation: this.orientation,
@@ -32,14 +34,14 @@ export default class Projectile {
 }
 
 export class RayBullet extends Projectile {
-	constructor(initialOrientation = [0, 0], initialSpeed = 0)  {
-		super(initialOrientation, initialSpeed);
+	constructor(player, initialOrientation = [0, 0], initialSpeed = 0)  {
+		super(player, initialOrientation, initialSpeed);
 		this.identifier = "RayProj";
 		this.damage=8;
 	}
 
 	static createFromSerialized (props) {
-		return new RayBullet(props.orientation, props.speed);
+		return new RayBullet(props.player, props.orientation, props.speed);
 	}
 
 	update(tick) {
@@ -52,8 +54,8 @@ export class RayBullet extends Projectile {
 }
 
 export class MagBullet extends Projectile {
-	constructor(initialOrientation = [0, 0], initialSpeed = 0, damage)  {
-		super(initialOrientation, initialSpeed);
+	constructor(player, initialOrientation = [0, 0], initialSpeed = 0, damage)  {
+		super(player, initialOrientation, initialSpeed);
 		this.identifier = "MagProj";
 		this.damage = damage || 50;
 		this.liquid=false;
@@ -61,7 +63,7 @@ export class MagBullet extends Projectile {
 	}
 
 	static createFromSerialized (props) {
-		return new MagBullet(props.orientation, props.speed, props.damage);
+		return new MagBullet(props.player, props.orientation, props.speed, props.damage);
 	}
 
 	update(tick) {
@@ -80,15 +82,15 @@ export class MagBullet extends Projectile {
 }
 
 export class JugBullet extends Projectile {
-	constructor(initialOrientation = [0, 0], initialSpeed = 0)  {
-		super(initialOrientation, initialSpeed);
+	constructor(player, initialOrientation = [0, 0], initialSpeed = 0)  {
+		super(player, initialOrientation, initialSpeed);
 		this.identifier = "JugProj";
 		this.damage = 5;
 
 	}
 
 	static createFromSerialized (props) {
-		return new JugBullet(props.orientation, props.speed);
+		return new JugBullet(props.player, props.orientation, props.speed);
 	}
 
 	update(tick) {
@@ -101,8 +103,8 @@ export class JugBullet extends Projectile {
 }
 
 export class BalBullet extends Projectile {
-	constructor(initialOrientation = [0, 0], initialSpeed = 0)  {
-		super(initialOrientation, initialSpeed);
+	constructor(player, initialOrientation = [0, 0], initialSpeed = 0)  {
+		super(player, initialOrientation, initialSpeed);
 		this.identifier = "BalProj";
 		this.damage = 45;
 		this.created = 5;
@@ -110,7 +112,7 @@ export class BalBullet extends Projectile {
 	}
 
 	static createFromSerialized (props) {
-		return new BalBullet(props.orientation, props.speed);
+		return new BalBullet(props.player, props.orientation, props.speed);
 	}
 
 	update(tick) {

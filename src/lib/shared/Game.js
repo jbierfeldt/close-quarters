@@ -179,15 +179,20 @@ export default class Game {
 		}
 	}
 
-	collideProjWithObject(proj, obj) {
+	collideProjWithObject(proj, obj, x, y) {
+		console.log(proj.id, "( player", proj.player, ") hit ", obj.id, " ( player", obj.player, ")");
 		switch (obj.objCategory) {
 			case "Units":
-				debug.log(1, obj.id, " hit by ", proj.id, " doing ", proj.damage, "damage!");
-				obj.health = obj.health - proj.damage;
+				if (proj.player !== obj.player) {
+					obj.health = obj.health - proj.damage;
+				}
+				this.deleteObjectAtCoord(proj, x, y);
 				break
 			case "Bases":
-				debug.log(1, obj.id, " hit by ", proj.id, " doing ", proj.damage, "damage!");
-				obj.health = obj.health - proj.damage;
+				if (proj.player !== obj.player) {
+					obj.health = obj.health - proj.damage;
+				}
+				this.deleteObjectAtCoord(proj, x, y);
 				break
 		}
 	}
@@ -321,7 +326,7 @@ export default class Game {
 								for (let m = 0; m < collisionStack.length; m++) {
 
 									let collisionObj = this.gameObjects.get(collisionStack[m]);
-									this.collideProjWithObject(obj, collisionObj);
+									this.collideProjWithObject(obj, collisionObj, j, i);
 
 								}
 							}

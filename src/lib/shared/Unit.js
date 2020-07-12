@@ -57,7 +57,7 @@ export class RayTracer extends Unit {
 
 		//initialize a project object and pass in the direction based on the tick
 		this.firing = true;
-		this.projArr[0]  = new Projectiles.RayBullet(orientation, 1);
+		this.projArr[0]  = new Projectiles.RayBullet(this.player, orientation, 1);
 
 		debug.log(0, "    Unit " + this.id + "  is firing Projectile " + this.firing.id);
 
@@ -112,7 +112,7 @@ export class Juggernode extends Unit {
 
 	startAttack (orientation){
 		this.firing = true;
-		this.projArr[0]  = new Projectiles.JugBullet(orientation, 1);
+		this.projArr[0]  = new Projectiles.JugBullet(this.player, orientation, 1);
 	}
 
 	update (tick) {
@@ -154,7 +154,7 @@ export class Maglev extends Unit {
 		for(let a = -1; a < 2; a = a + 1){
 			for(let b = -1; b < 2; b = b + 1){
 			   if(a !== 0 || b !== 0){
-		       	this.projArr[i] = new Projectiles.MagBullet([a,b], 1);
+		       	this.projArr[i] = new Projectiles.MagBullet(this.player, [a,b], 1);
 		       	i = i + 1;
 					}
 				}
@@ -197,7 +197,7 @@ export class Ballast extends Unit {
 
 	startAttack (orientation){
 		this.firing = true;
-		this.projArr[0]  = new Projectiles.BalBullet(orientation, 0);
+		this.projArr[0]  = new Projectiles.BalBullet(this.player, orientation, 0);
 	}
 
 	update (tick) {
