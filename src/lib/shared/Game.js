@@ -132,7 +132,7 @@ export default class Game {
 
 	createObjectAtCoord (object, x, y) {
 		this.registerGameObject(object);
-		this.addObjectAtEmptyCoord(object, x, y);
+		this.addObjectAtCoord(object, x, y);
 	}
 
 	deleteObjectAtCoord (object, x, y) {
@@ -270,16 +270,23 @@ export default class Game {
 			for (let i = 0; i < this.board.length; i++)  {
 				for (let j = 0; j < this.board[i].length; j++) {
 					if (this.board[i][j].length != 0) {
-						for (let k = 0; k < this.board[i][j].length; k++) {
-							let gameObj = this.gameObjects.get(this.board[i][j][k]); // game obj to be updated
+
+						// make a shallow copy of the final array
+						// so that updates that remove the object from the board
+						// do not change the array length
+						let objsToUpdate = [...this.board[i][j]];
+
+						for (let k = 0; k < objsToUpdate.length; k++) {
+							let gameObj = this.gameObjects.get(objsToUpdate[k]); // game obj to be updated
 							if (gameObj.updatedThisTick === false) {
 
 								gameObj.update(tick);
 
 								// if  unit is firing, add projectile to list and place on board
 								if (gameObj.dump) {
-									this.deleteObjectAtCoord (gameObj, j, i);
+									this.deleteObjectAtCoord(gameObj, j, i);
 								}
+
 								if (gameObj.firing) {
 									for (let l = 0; l < gameObj.projArr.length; l++){
 									let newProj = gameObj.projArr[l];
@@ -307,7 +314,7 @@ export default class Game {
 				for (let j = 0; j < this.board[i].length; j++) {
 					if (this.board[i][j].length > 1) {
 						let collisionStack = this.board[i][j];
-						console.log("collide", collisionStack);
+						// console.log("collide", tick, i, j, collisionStack);
 						for (let k = 0; k < collisionStack.length; k++) {
 							let obj = this.gameObjects.get(this.board[i][j][k]);
 							if (obj.objCategory === "Projectiles") {
