@@ -132,7 +132,7 @@ export default class Display {
 						for(let i=0;i<unitButtons.length;i=i+1){
 							 unitButtons[i].drawButton();
 						 }
-            drawUnitMenu(this.playerColors,this.app.playerNumber,this.app)
+            drawUnitMenu(this.playerColors,this.app.playerNumber)
 						if(s.mouseIsPressed){
 							let newButtonPressed=-1;
 							for(let i=0;i<unitButtons.length;i=i+1){
@@ -192,7 +192,6 @@ export default class Display {
 
 
 					if(this.t<41 && this.t>0){
-						//for(let animate = 0; animate <= 9; animate = animate + .001){
 						drawGrid(wi, he, si, this.playerColors);
 						let b = this.simulationDisplayTurn.tick[this.t].board;
 						for(var k=0; k<b.length; k=k+1){
@@ -208,12 +207,11 @@ export default class Display {
 								}
 							}
 						}
-					//}
 				}
 				else{
 					this.phase=1;
 				}
-				animate=animate+.5;
+				animate=animate+1;
 			}
   	}
 
@@ -290,21 +288,25 @@ export default class Display {
     			s.rect(rect.x, rect.y, rect.size, rect.size);
     		}
 
-    		function drawUnitMenu(pColors, player, apple){
+    		function drawUnitMenu(pColors, player){
     			let wid=tempConfig.canvasX;
     			let hei=tempConfig.canvasY;
 					let siz =tempConfig.size;
     			s.strokeWeight(3);
     			s.stroke(255);
-					s.textSize(wid/27);
+					s.textSize(wid/23);
     			if(player < 3){
       			s.fill(225,225,225,45);
 						s.quad(wid/2+siz,siz,wid/2+siz,hei-siz,wid-siz,hei-siz,wid-siz,siz);
 						s.fill(pColors[player-1][0],pColors[player-1][1],pColors[player-1][2],255);
+						s.line(wid/2+siz*10,siz,wid/2+siz*10,hei-siz);
 						s.stroke(0);
-						s.text("Unit",wid/2+siz*1.5,siz*2.25);
-						s.text("Report",wid/2+siz*5,siz*2.25);
-						s.noFill();
+						//s.text("Unit",wid/2+siz*1.5,siz*2.25);
+						s.text("Unit Report",wid/2+siz*1.75,siz*2.45);
+						s.text("L",wid/2+siz*10.75,siz*2.45);
+						s.text("$$",wid/2+siz*12.25,siz*2.45);
+
+						/*s.noFill();
 						s.beginShape();
 						for(let i = 0; i < siz; i = i + 3){
 							s.curveVertex(wid/2+siz*11+i,siz*2.25+15*s.noise(i));
@@ -316,7 +318,7 @@ export default class Display {
 						for(let i = 0; i < siz; i = i + 3){
 							s.curveVertex(wid/2+siz*11+i,siz*2.25+15*s.noise(i));
 						}
-						s.endShape();
+						s.endShape();*/
 					//	s.text("<3",wid/2+siz*11,siz*2.25);
       		}
       		else{
@@ -512,7 +514,7 @@ export default class Display {
         		let refy=y*size;
         		s.stroke(0)
         		s.strokeWeight(3);
-						s.fill(255, 0, 128, 255);
+						s.fill(pColors[player-1][0],pColors[player-1][1],pColors[player-1][2], 255);
         		if(orient[0] == 0 && orient[1] == 1){
 							s.ellipse(refx+size/2,refy+(a+1)*size/10,size/3.5,size/3.5);
         		}
