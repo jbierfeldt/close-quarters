@@ -141,7 +141,10 @@ export class Maglev extends Unit {
 		this.maxHealth = 250;
 		this.identifier = "Mag"
 		this.projArr = [];
+
 	}
+
+
 
 	static createFromSerialized (props) {
 		return new Maglev(props.player, props.health, props.firing, props.id)
@@ -226,3 +229,9 @@ export class Ballast extends Unit {
 		return super.serialize.call(this);
 	}
 }
+
+//Unit Pricing
+Maglev.cost = 3;
+RayTracer.cost = 1;
+Juggernode.cost = 2;
+Ballast.cost = 2;
