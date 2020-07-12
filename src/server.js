@@ -37,7 +37,6 @@ class GameController {
   init() {
 
 		this.game.init();
-		this.game.runSimulation();
 
     this.io.on('connection', (socket) => {
       debug.log(0, 'a new client connected');
@@ -52,7 +51,7 @@ class GameController {
 			else {
 				this.newPlayerController(socket, playerSpot);
 				this.sendGameHistory();
-				// this.sendGameState();
+				this.sendGameState();
 			}
 
     });
@@ -87,8 +86,14 @@ class GameController {
 	sendGameHistory () {
 		console.log(this.game.turnNumber);
 		this.io.emit('updateGameHistory', {
-			s_history: JSON.stringify(this.game.history),
-			turnNumber: this.game.turnNumber
+			s_history: JSON.stringify(this.game.history)
+		});
+	}
+
+	sendGameState () {
+		this.io.emit('updateGameState',  {
+			turnNumber: this.game.turnNumber,
+			currentTurnInitialState: JSON.stringify(this.game.currentTurnInitialState)
 		});
 	}
 
@@ -108,6 +113,7 @@ class GameController {
 		console.log("Running simulation...");
 		this.game.runSimulation();
 		this.sendGameHistory();
+		this.sendGameState();
 	}
 
 }

@@ -24,9 +24,7 @@ export default class Game {
  		this.history = {
  			'turn': {}
  		};
- 		this.s_history = {
- 			'turn': {}
- 		};
+		this.currentTurnInitialState = {};
 
  		this.currentPhase = 0;
 	}
@@ -41,6 +39,16 @@ export default class Game {
 
 		// create empty grid
 		this.board = create2DArray(tempConfig.boardDimensions[0],tempConfig.boardDimensions[1]);
+
+		this.currentTurnInitialState = this.createGameSnapshot();
+
+		// creates history (temp)
+		this.history.turn[0] = {
+			'tick': {
+				1: this.currentTurnInitialState
+			}
+		};
+
 
 		debug.log(0, 'Initialized Game ' + this.id);
 
@@ -358,6 +366,8 @@ export default class Game {
 
 		// move to next Turn
 		this.clearProjectiles(); // clear all projectiles at the end of the turn
+		this.currentTurnInitialState = this.createGameSnapshot();
+
 		this.turnNumber++;
 	}
 
