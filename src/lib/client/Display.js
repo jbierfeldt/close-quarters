@@ -27,6 +27,7 @@ export default class Display {
 
 			//Declarations prior to the draw loop & setup
 			let titleFont;
+			let standardFont;
 			let animate = 0; //use to decide when a new tick value occurs
 
 			//Button Declarations
@@ -44,6 +45,7 @@ export default class Display {
 			//Preload the fonts and other assets below
 			s.preload = () =>{
   			titleFont = s.loadFont('static/volt.ttf');
+				standardFont = s.loadFont('static/ISB.ttf');
 			}
 
 			//Create the canvas based on the size of the user window
@@ -149,21 +151,20 @@ export default class Display {
 							}
 						}
 							for(let yy=0;yy<unitButtons.length;yy=yy+1){
-
 								if(unitButtons[yy].isPressed===true){
-									if(this.app.playerNumber==1 && hoverX<=14 && hoverY<=10){
+									if(this.app.playerNumber == 1 && hoverX <= 14 && hoverY < 10 && hoverX < 30 && hoverY < 20){
 										//this.app.makeRayTracer(this.player,hoverX,hoverY);
 										unitButtons[yy].func.call(this.app,unitButtons[yy].text, this.app.playerNumber,hoverX,hoverY);
 									}
-								else if(this.app.playerNumber==2 && hoverX<=14 && hoverY>10){
+								else if(this.app.playerNumber == 2 && hoverX<=14 && hoverY >= 10 && hoverX < 30 && hoverY < 20){
 										//this.app.makeRayTracer(this.player,hoverX,hoverY);
 										unitButtons[yy].func.call(this.app,unitButtons[yy].text, this.app.playerNumber,hoverX,hoverY);
 								}
-								else if(this.app.playerNumber==3 && hoverX>14 && hoverY<=10){
+								else if(this.app.playerNumber == 3 && hoverX>14 && hoverY < 10 && hoverX < 30 && hoverY < 20){
 										//this.app.makeRayTracer(this.player,hoverX,hoverY);
 										unitButtons[yy].func.call(this.app,unitButtons[yy].text, this.app.playerNumber,hoverX,hoverY);
 								}
-								else if(this.app.playerNumber==4 && hoverX>14 && hoverY>10){
+								else if(this.app.playerNumber == 4 && hoverX>14 && hoverY > 10 && hoverX < 30 && hoverY < 20){
 										//this.app.makeRayTracer(this.player,hoverX,hoverY);
 										unitButtons[yy].func.call(this.app,unitButtons[yy].text,this.app.playerNumber,hoverX,hoverY);
 								}
@@ -211,7 +212,7 @@ export default class Display {
 				else{
 					this.phase=1;
 				}
-				animate=animate+1;
+				animate=animate+.5;
 			}
   	}
 
@@ -228,15 +229,15 @@ export default class Display {
 					}
 					drawButton(){
 						 s.stroke(255,255,255,255);
-						 s.fill(255,240,0,255);
+						 s.fill(0,0,0,255);
 						 s.rect(this.xx,this.yy,this.xlen,this.ylen);
 						 if(this.isPressed==true){
 							 s.fill(255,255,255,100);
 							 s.rect(this.xx,this.yy,this.xlen,this.ylen);
 						 }
 						 s.fill(0);
-						 s.textSize(this.xlen/8);
-						 s.text(this.text,this.xx+this.xlen/10,this.yy+this.ylen/1.25);
+						// s.textSize(this.xlen/8);
+						 //s.text(this.text,this.xx+this.xlen/10,this.yy+this.ylen/1.25);
 					}
 					buttonHasBeenPressed(){
 						this.isPressed=true;
@@ -300,12 +301,16 @@ export default class Display {
 						s.quad(wid/2+siz,siz,wid/2+siz,hei-siz,wid-siz,hei-siz,wid-siz,siz);
 						s.fill(pColors[player-1][0],pColors[player-1][1],pColors[player-1][2],255);
 						s.line(wid/2+siz*10,siz,wid/2+siz*10,hei-siz);
+						s.line(wid/2+siz*11.5,siz,wid/2+siz*11.5,hei-siz);
 						s.stroke(0);
 						//s.text("Unit",wid/2+siz*1.5,siz*2.25);
-						s.text("Unit Report",wid/2+siz*1.75,siz*2.45);
+						s.text("Unit Report",wid/2+siz*1.55,siz*2.45);
 						s.text("L",wid/2+siz*10.75,siz*2.45);
 						s.text("$$",wid/2+siz*12.25,siz*2.45);
-
+						s.textSize(wid/35);
+						s.textFont(standardFont);
+						s.fill(255);
+						s.text("The Ray Tracer is a lightweight & precise ranged ",wid/2+siz*4.55,siz*4.45);
 						/*s.noFill();
 						s.beginShape();
 						for(let i = 0; i < siz; i = i + 3){

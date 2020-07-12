@@ -11,7 +11,7 @@ export default class Projectile {
 		this.speed = initialSpeed;
 		this.damage = 0;
 		this.updatedThisTick = true;
-		this.liquid=true; //Determines whether to destroy this projectile upon contact with a base or unit
+		this.ableToBeDestroyed = true; //Determines whether to destroy this projectile upon contact with a base or unit
 		this.objCategory = "Projectiles";
 		this.dump=false;
 	}
@@ -58,7 +58,7 @@ export class MagBullet extends Projectile {
 		super(player, initialOrientation, initialSpeed);
 		this.identifier = "MagProj";
 		this.damage = damage || 50;
-		this.liquid=false;
+		this.ableToBeDestroyed = false;
 		this.distance=0;
 	}
 
@@ -108,7 +108,8 @@ export class BalBullet extends Projectile {
 		this.identifier = "BalProj";
 		this.damage = 45;
 		this.created = 5;
-		this.dump=false;
+		this.ableToBeDestroyed = false;
+		this.dump = false;
 	}
 
 	static createFromSerialized (props) {
@@ -119,7 +120,7 @@ export class BalBullet extends Projectile {
 		super.update(tick);
 		this.created = this.created - 1;
 		if(this.created === 0){
-			this.dump=true;
+			this.dump = true;
 		}
 	}
 
