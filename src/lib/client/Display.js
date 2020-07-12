@@ -115,7 +115,9 @@ export default class Display {
     		}
 
     		else if(this.phase==1){
-
+					s.textSize(wi/40);
+					s.fill(255);
+					s.text("Available Credits: " + this.app.game.players[this.app.playerNumber-1].credits,wi/10,he/1.5);
 					//Run the functions for drawing the players quadrant and the unit menu
     			drawQuarterGrid(this.stage.grid,this.playerColors,this.app.playerNumber);
 					//drawGrid(wi, he, si, this.playerColors);
@@ -175,7 +177,7 @@ export default class Display {
 								if(unitButtons[yy].isPressed===true){
 									if(this.app.playerNumber == 1 && hoverX <= 14 && hoverY < 10 && hoverX < 30 && hoverY < 20){
 										//this.app.makeRayTracer(this.player,hoverX,hoverY);
-										unitButtons[yy].func.call(this.app,unitButtons[yy].text, this.app.playerNumber,hoverX,hoverY);
+										unitButtons[yy].func.call(this.app,unitButtons[yy].text, this.app.playerNumber, hoverX, hoverY);
 										unitButtons[yy].isPressed=false;
 									}
 								else if(this.app.playerNumber == 2 && hoverX<=14 && hoverY >= 10 && hoverX < 30 && hoverY < 20){

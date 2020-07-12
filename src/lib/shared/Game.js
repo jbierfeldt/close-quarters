@@ -135,10 +135,13 @@ export default class Game {
 
 	// creates new unit using type, player, and coordinates
 	createNewUnitAtCoord(unitType, player, x, y) {
-		if (this.isEmptyCoord(x, y)) {
-			let newUnit = new Units[unitType](player);
-			this.registerGameObject(newUnit);
-			this.addObjectAtCoord(newUnit, x, y);
+		if(this.players[player-1].credits >= Units[unitType].cost){
+			if (this.isEmptyCoord(x, y)) {
+				let newUnit = new Units[unitType](player);
+				this.registerGameObject(newUnit);
+				this.addObjectAtCoord(newUnit, x, y);
+			}
+			this.players[player-1].credits = this.players[player-1].credits - Units[unitType].cost;
 		}
 	}
 
@@ -404,6 +407,9 @@ export default class Game {
 		this.currentTurnInitialState = this.createGameSnapshot();
 
 		this.turnNumber++;
+		for(let p = 0; p < 4; p = p + 1){
+			this.players[p].credits = this.players[p].credits + 3;
+	 }
 	}
 
 }
