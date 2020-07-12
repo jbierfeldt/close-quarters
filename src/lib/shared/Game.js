@@ -116,18 +116,22 @@ export default class Game {
 
 	// creates new unit using type, player, and coordinates
 	createNewUnitAtCoord(unitType, player, x, y) {
-		let newUnit = new Units[unitType](player);
-		this.registerGameObject(newUnit);
-		this.addObjectAtEmptyCoord(newUnit, x, y);
+		if (this.isEmptyCoord(x, y)) {
+			let newUnit = new Units[unitType](player);
+			this.registerGameObject(newUnit);
+			this.addObjectAtCoord(newUnit, x, y);
+		}
 	}
 
 	createNewBaseAtCoord(baseType, player, x, y) {
-		let newBase = new Bases[baseType](player);
-		this.registerGameObject(newBase);
-		this.addObjectAtEmptyCoord(newBase, x, y);
-		this.addObjectAtEmptyCoord(newBase, x+1, y);
-		this.addObjectAtEmptyCoord(newBase, x, y+1);
-		this.addObjectAtEmptyCoord(newBase, x+1, y+1);
+		if (this.isEmptyCoord(x, y) && this.isEmptyCoord(x+1, y) && this.isEmptyCoord(x, y+1) && this.isEmptyCoord(x+1, y+1)) {
+			let newBase = new Bases[baseType](player);
+			this.registerGameObject(newBase);
+			this.addObjectAtCoord(newBase, x, y);
+			this.addObjectAtCoord(newBase, x+1, y);
+			this.addObjectAtCoord(newBase, x, y+1);
+			this.addObjectAtCoord(newBase, x+1, y+1);
+		}
 	}
 
 	createObjectAtCoord (object, x, y) {
@@ -147,12 +151,6 @@ export default class Game {
 
 	deregisterGameObject (object) {
 		this.gameObjects.delete(object.id);
-	}
-
-	addObjectAtEmptyCoord(object, x, y) {
-		if (this.isEmptyCoord(x, y)) {
-			this.board[y][x].push(object.id);
-		}
 	}
 
 	addObjectAtCoord(object, x, y) {
@@ -188,17 +186,26 @@ export default class Game {
 	}
 
 	collideProjWithObject(proj, obj, x, y) {
-		console.log(proj.id, "( player", proj.player, ") hit ", obj.id, " ( player", obj.player, ")");
+		console.log(proj.id, "( player", proj.player, ") hit ", obj.id, " ( player", obj.player, ")", proj.ableToBeDestroyed);
 		switch (obj.objCategory) {
 			case "Units":
 				if (proj.player !== obj.player) {
 					obj.health = obj.health - proj.damage;
+					if (this.isObjectAlive(obj) === false) {
+						this.deleteObjectAtCoord(obj, x, y);
+					}
 				}
-				this.deleteObjectAtCoord(proj, x, y);
+
+				if (proj.ableToBeDestroyed) {
+					this.deleteObjectAtCoord(proj, x, y);
+				}
 				break
 			case "Bases":
 				if (proj.player !== obj.player) {
 					obj.health = obj.health - proj.damage;
+					if (this.isObjectAlive(obj) === false) {
+						this.deleteObjectAtCoord(obj, x, y);
+					}
 				}
 				this.deleteObjectAtCoord(proj, x, y);
 				break
@@ -335,10 +342,6 @@ export default class Game {
 
 									let collisionObj = this.gameObjects.get(collisionStack[m]);
 									this.collideProjWithObject(obj, collisionObj, j, i);
-
-									if (this.isObjectAlive(collisionObj) === false) {
-										this.deleteObjectAtCoord(collisionObj, j, i);
-									}
 
 								}
 							}
