@@ -294,12 +294,30 @@ export default class Display {
     			let wid=tempConfig.canvasX;
     			let hei=tempConfig.canvasY;
 					let siz =tempConfig.size;
-    			s.strokeWeight(2);
+    			s.strokeWeight(3);
     			s.stroke(255);
+					s.textSize(wid/27);
     			if(player < 3){
       			s.fill(225,225,225,45);
 						s.quad(wid/2+siz,siz,wid/2+siz,hei-siz,wid-siz,hei-siz,wid-siz,siz);
-						s.text("Unit",wid/2+siz*2,siz*2);
+						s.fill(pColors[player-1][0],pColors[player-1][1],pColors[player-1][2],255);
+						s.stroke(0);
+						s.text("Unit",wid/2+siz*1.5,siz*2.25);
+						s.text("Report",wid/2+siz*5,siz*2.25);
+						s.noFill();
+						s.beginShape();
+						for(let i = 0; i < siz; i = i + 3){
+							s.curveVertex(wid/2+siz*11+i,siz*2.25+15*s.noise(i));
+						}
+						s.endShape();
+						s.strokeWeight(2);
+						s.stroke(pColors[player-1][0],pColors[player-1][1],pColors[player-1][2],255);
+						s.beginShape();
+						for(let i = 0; i < siz; i = i + 3){
+							s.curveVertex(wid/2+siz*11+i,siz*2.25+15*s.noise(i));
+						}
+						s.endShape();
+					//	s.text("<3",wid/2+siz*11,siz*2.25);
       		}
       		else{
       			s.translate(-wid/2, 0);
@@ -405,7 +423,7 @@ export default class Display {
         		//console.log(y)
 						for(let row = x*size+offset; row < (x*size+size); row = row + offset*2){
 							for(let col = y*size+offset; col < (y*size+size); col = col + offset*2){
-							 polygon(row,col,offset,8);
+							 polygon(row,col,offset,5);
 							}
 						}
 					}
@@ -494,27 +512,18 @@ export default class Display {
         		let refy=y*size;
         		s.stroke(0)
         		s.strokeWeight(3);
+						s.fill(255, 0, 128, 255);
         		if(orient[0] == 0 && orient[1] == 1){
-            	//s.line(refx+size/2,refy+a*size/10,refx+size/2,refy+(a+1)*size/10);
-							s.fill(255, 0, 128, 255);
-							s.strokeWeight(3);
 							s.ellipse(refx+size/2,refy+(a+1)*size/10,size/3.5,size/3.5);
         		}
 						else if(orient[0] == 0 && orient[1] == -1){
-							s.fill(255, 0, 128, 255);
-							s.strokeWeight(3);
-							s.ellipse(refx+size/2,refy-(a+1)*size/10,size/3.5,size/3.5);
+							s.ellipse(refx+size/2,refy+size-(a+1)*size/10,size/3.5,size/3.5);
 						}
         		else if(orient[0] == 1 && orient[1] == 0){
-        			//s.line(refx+a*size/10,refy+size/2,refx+(a+1)*size/10,refy+size/2);
-							s.fill(255, 0, 128, 255);
-							s.strokeWeight(3);
 							s.ellipse(refx+(a+1)*size/10,refy+size/2,size/3.5,size/3.5);
         		}
 						else if(orient[0] == -1 && orient[1] == 0){
-							s.fill(255, 0, 128, 255);
-							s.strokeWeight(3);
-							s.ellipse(refx-(a+1)*size/10,refy+size/2,size/3.5,size/3.5);
+							s.ellipse(refx+size-(a+1)*size/10,refy+size/2,size/3.5,size/3.5);
 						}
         	}
         	function drawMaglevProjectile(x, y, player, size, pColors, orient, damage, a){
