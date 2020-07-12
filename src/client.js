@@ -63,6 +63,7 @@ class App {
 
 	sendCreateBase (baseType, player, x, y) {
 		debug.log(1, "making base");
+		this.game.createNewBaseAtCoord(baseType, player, x, y);
 		this.socket.emit('createBase', {
 			baseType: baseType,
 			player: player,
@@ -73,6 +74,7 @@ class App {
 
 	sendCreateUnit (unitType, player, x, y) {
 		debug.log(1, "making unit");
+		this.game.createNewUnitAtCoord(unitType, player, x, y);
 		this.socket.emit('createUnit', {
 			unitType: unitType,
 			player: player,
