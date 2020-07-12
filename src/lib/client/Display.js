@@ -1,5 +1,6 @@
 import p5 from 'p5';
 import * as Units from '../shared/Unit.js';
+import * as Projectiles from '../shared/Projectile.js';
 
 const tempConfig = {
 	canvasX: 1000,
@@ -192,7 +193,7 @@ export default class Display {
 								}
 								else if(this.app.playerNumber == 4 && hoverX>14 && hoverY >= 10 && hoverX < 30 && hoverY < 20){
 										//this.app.makeRayTracer(this.player,hoverX,hoverY);
-										unitButtons[yy].func.call(this.app,unitButtons[yy].text,this.app.playerNumber,hoverX,hoverY);
+										unitButtons[yy].func.call(this.app,unitButtons[yy].text, this.app.playerNumber,hoverX,hoverY);
 										unitButtons[yy].isPressed=false;
 								}
 							}
@@ -282,7 +283,7 @@ export default class Display {
 				function drawDisplayObject(displayObject, x, y, size, colors, a) {
 
 						if(displayObject.identifier == "Base"){
-							drawBase(x,y,displayObject.player,size,displayObject.health,displayObject.maxHealth,colors);
+							  drawBase(x,y,displayObject.player,size,displayObject.health,displayObject.maxHealth,colors);
 						}
 						if(displayObject.identifier == "Ray"){
 								drawRayTracer(x,y,displayObject.player,size,displayObject.health,displayObject.maxHealth,colors);
@@ -303,7 +304,7 @@ export default class Display {
 							drawRayTracerProjectile(x,y,displayObject.player,size,colors,displayObject.orientation, a);
 						}
 						if(displayObject.identifier == "MagProj"){
-							drawMaglevProjectile(x,y,displayObject.player,size,colors,displayObject.orientation,displayObject.damage, a);
+							drawMaglevProjectile(x,y,displayObject.player,size,colors,displayObject.orientation, displayObject.damage, a);
 						}
 						if(displayObject.identifier == "BalProj"){
 							drawBallastProjectile(x,y,displayObject.player,size,colors,displayObject.damage, a);
@@ -618,7 +619,10 @@ export default class Display {
         		let refx=x*size;
         		let refy=y*size;
 						let scalar = size/4;
-        		s.fill(pColors[1][0],pColors[1][1],pColors[1][2],255-(50-damage)*5);
+						s.fill(pColors[player-1][0],pColors[player-1][1],pColors[player-1][2], damage*5);
+							if(damage < 5){
+							debug.log(3,damage);
+						}
         		s.stroke(0,255);
 						s.strokeWeight(2);
 						s.beginShape();

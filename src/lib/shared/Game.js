@@ -17,6 +17,7 @@ export default class Game {
 
  	constructor(gameObjects = [], players = [], board = new Object, turnNumber = 1) {
  		this.id = 'game'+createID();
+		this.baseIsPlaced = 0;
  		this.players = players;
  		this.board = board;
  		this.gameObjects = new Map();
