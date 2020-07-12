@@ -59,6 +59,7 @@ class App {
 
 	debugInit () {
 		document.getElementById("submit-turn").addEventListener("click", this.sendSubmitTurn.bind(this));
+		document.getElementById("reset-game").addEventListener("click", this.sendResetGame.bind(this));
 	}
 
 	sendCreateBase (baseType, player, x, y) {
@@ -88,6 +89,11 @@ class App {
 		this.socket.emit('submitTurn');
 	}
 
+	sendResetGame () {
+		debug.log(1, "Resetting game!");
+		this.socket.emit('resetGame');
+	}
+
 	loadSerializedGameState(serializedGameState) {
 		let gameState = JSON.parse(serializedGameState);
 		return this.game.rebuildGameSnapshot(gameState);
@@ -95,7 +101,6 @@ class App {
 
 	loadSerializedTurnHistory(serializedHistory)  {
 		let historyObj = JSON.parse(serializedHistory);
-		console.log("hisobj", historyObj);
 		for (const [key, value] of Object.entries(historyObj.turn)) {
   			let tickContainer = historyObj.turn[key].tick;
 				for (const [key2, value2] of Object.entries(tickContainer)) {
@@ -112,7 +117,7 @@ class App {
 		this.game.currentTurnInitialState = this.loadSerializedGameState(data.currentTurnInitialState);
 		this.game.loadGameSnapshot(this.game.currentTurnInitialState);
 
-		console.log(this.game.board);
+		console.log(this.game.gameObjects);
 
 		this.updateDebugInfo();
 	}
@@ -144,42 +149,7 @@ class App {
 
 }
 
-// const game = new Game();
-// game.init();
-// debug.log(0, game);
-//
-// let oneUnit = new Units["RayTracer"](100,100,1);
-// game.addObjectAtCoord(oneUnit, 2, 2);
-// game.registerGameObject(oneUnit);
-//
-// game.runSimulation();
-//
-// debug.log(0, game);
-
 const app = new App();
 app.init();
 
-/*if(app.turnNumber == 1 ){
-	let pOneX = Math.round(Math.random()*12);
-	let pOneY = Math.round(Math.random()*8);
-	app.sendCreateBase("Base", 1, pOneX, pOneY);
-
-	let pTwoX = Math.round(Math.random()*12);
-	let pTwoY = 10+Math.round(Math.random()*8);
-	app.sendCreateBase("Base", 2, pTwoX, pTwoY);
-
-	let pThreeX = 15+Math.round(Math.random()*12);
-	let pThreeY = Math.round(Math.random()*8);
-	app.sendCreateBase("Base", 3, pThreeX, pThreeY);
-
-	let pFourX = 15+Math.round(Math.random()*12);
-	let pFourY = 10+Math.round(Math.random()*8);
-	app.sendCreateBase("Base", 4, pFourX, pFourY);
-	//app.createGameSnapshot();
-	//app.game.loadGameSnapshot(app.game.currentTurnInitialState);
-}*/
-
 app.display.stage.grid = app.game.board;
-// DISPLAY STUFF
-
-// put board on grid

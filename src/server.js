@@ -57,6 +57,15 @@ class GameController {
     });
   }
 
+	resetGame () {
+		let newGame = new Game();
+		this.game = newGame;
+		this.game.init();
+
+		this.sendGameHistory();
+		this.sendGameState();
+	}
+
 	removePlayerController (playerNumber) {
 		this.playerControllers[playerNumber] = undefined;
 
@@ -145,6 +154,11 @@ class PlayerController {
 			this.gameController.runSimulation();
 		});
 
+		this.socket.on('resetGame', (data) =>  {
+			// reset Game
+			this.gameController.resetGame();
+		});
+
     this.socket.on('disconnect', () => {
        debug.log(0, 'a user disconnected');
 			 this.gameController.removePlayerController(this.playerNumber);
@@ -165,22 +179,6 @@ class PlayerController {
 
 const game1 = new GameController();
 game1.init();
-
-let pOneX = Math.round(Math.random()*12);
-let pOneY = Math.round(Math.random()*8);
-game1.createBase("Base", 1, pOneX, pOneY);
-
-let pTwoX = Math.round(Math.random()*12);
-let pTwoY = 10+Math.round(Math.random()*8);
-game1.createBase("Base", 2, pTwoX, pTwoY);
-
-let pThreeX = 15+Math.round(Math.random()*12);
-let pThreeY = Math.round(Math.random()*8);
-game1.createBase("Base", 3, pThreeX, pThreeY);
-
-let pFourX = 15+Math.round(Math.random()*12);
-let pFourY = 10+Math.round(Math.random()*8);
-game1.createBase("Base", 4, pFourX, pFourY);
 
 app.set('port', port);
 app.use('/static', express.static(__dirname + '/static'));

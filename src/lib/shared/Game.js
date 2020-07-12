@@ -40,6 +40,8 @@ export default class Game {
 		// create empty grid
 		this.board = create2DArray(tempConfig.boardDimensions[0],tempConfig.boardDimensions[1]);
 
+		this.placeInitialRandomBases();
+
 		this.currentTurnInitialState = this.createGameSnapshot();
 
 		// creates history (temp)
@@ -120,6 +122,15 @@ export default class Game {
 
 		return JSON.parse(serializedGameState);
 
+	}
+
+	placeInitialRandomBases () {
+		console.log("placing bases");
+		for (let i = 1; i <= 4; i++) {
+			let randCoord = this.getRandomCoordInPlayerRegion(i, 2);
+			console.log("coord", i, randCoord);
+			this.createNewBaseAtCoord("Base", i, randCoord[0], randCoord[1]);
+		}
 	}
 
 	// creates new unit using type, player, and coordinates
@@ -218,6 +229,30 @@ export default class Game {
 				this.deleteObjectAtCoord(proj, x, y);
 				break
 		}
+	}
+
+	getRandomCoordInPlayerRegion(playerNumber, margin = 0)  {
+
+		let min = 0 + margin;
+		let randX = Math.floor(Math.random() * (((tempConfig.boardDimensions[1]/2) - margin) - min)) + min;
+		let randY = Math.floor(Math.random() * (((tempConfig.boardDimensions[0]/2) - margin) - min)) + min;
+
+		switch (playerNumber) {
+			case 1:
+				break
+			case 2:
+				randY = randY + (tempConfig.boardDimensions[0]/2);
+				break
+			case 3:
+				randX = randX + (tempConfig.boardDimensions[1]/2);
+				break
+			case 4:
+				randX = randX + (tempConfig.boardDimensions[1]/2);
+				randY = randY + (tempConfig.boardDimensions[0]/2);
+				break
+		}
+
+		return  [randX, randY];
 	}
 
 	moveObject(object, old_x, old_y, new_x, new_y) {
