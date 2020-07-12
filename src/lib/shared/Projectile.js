@@ -28,7 +28,8 @@ export default class Projectile {
 			class: this.constructor.name,
 			orientation: this.orientation,
 			speed: this.speed,
-			damage: this.damage
+			damage: this.damage,
+			distance: this.distance
 		}
 	}
 }
@@ -54,25 +55,26 @@ export class RayBullet extends Projectile {
 }
 
 export class MagBullet extends Projectile {
-	constructor(player, initialOrientation = [0, 0], initialSpeed = 0, damage)  {
+	constructor(player, initialOrientation = [0, 0], initialSpeed = 0, damage, distance)  {
 		super(player, initialOrientation, initialSpeed);
 		this.identifier = "MagProj";
 		this.damage = damage || 50;
+		this.maxDamage = 50;
 		this.ableToBeDestroyed = false;
-		this.distance=0;
+		this.distance = distance || 0;
 	}
 
 	static createFromSerialized (props) {
-		return new MagBullet(props.player, props.orientation, props.speed, props.damage);
+		return new MagBullet(props.player, props.orientation, props.speed, props.damage, props.distance);
 	}
 
 	update(tick) {
 		super.update(tick);
-		this.damage = 50-this.distance*this.distance*.25;
-		if(this.damage < 0){
-			this.damage=0;
-		}
 		console.log(this.id, this.damage);
+		this.damage = this.maxDamage-Math.round(this.distance*this.distance*.35);
+		if(this.damage < 0){
+			this.damage = 0;
+		}
 		this.distance=this.distance+1;
 	}
 

@@ -17,6 +17,7 @@ export default class Game {
 
  	constructor(gameObjects = [], players = [], board = new Object, turnNumber = 1) {
  		this.id = 'game'+createID();
+		this.baseIsPlaced = 0;
  		this.players = players;
  		this.board = board;
  		this.gameObjects = new Map();
@@ -361,7 +362,6 @@ export default class Game {
 						let objsToUpdate = [...this.board[i][j]];
 
 						for (let k = 0; k < objsToUpdate.length; k++) {
-							console.log("updating", objsToUpdate[k]);
 							let gameObj = this.gameObjects.get(objsToUpdate[k]); // game obj to be updated
 							if (gameObj.updatedThisTick === false) {
 
