@@ -29,6 +29,7 @@ export default class Display {
 			let titleFont;
 			let standardFont;
 			let animate = 0; //use to decide when a new tick value occurs
+			let buttonScale;
 
 			//Button Declarations
 			let bBase;
@@ -83,7 +84,7 @@ export default class Display {
 					s.text("Close Quarters",tempConfig.canvasX/22,tempConfig.canvasY/2);
 
 					//buttonScale sets the size of the buttons(dependent on their overall number)
-					let buttonScale=1.5;
+					buttonScale=1.5;
 
 					//playerShifter shifts the Button Menu if the player is on the right side of the screen
 					let playerShifter=0;
@@ -97,11 +98,11 @@ export default class Display {
 						unitButtons.push(bBase);
 						bRayTracer=new Buttoned(wi/2+si-playerShifter,si*buttonScale*2,wi/2-si*2,si*buttonScale,"RayTracer",this.app.sendCreateUnit);
 	          unitButtons.push(bRayTracer);
-						bMaglev=new Buttoned(wi/2+si-playerShifter,si*buttonScale*3,wi/2-si*2,si*buttonScale,"Maglev",this.app.sendCreateUnit);
+						bMaglev=new Buttoned(wi/2+si-playerShifter,si*buttonScale*5,wi/2-si*2,si*buttonScale,"Maglev",this.app.sendCreateUnit);
 						unitButtons.push(bMaglev);
 						bJuggernode=new Buttoned(wi/2+si-playerShifter,si*buttonScale*4,wi/2-si*2,si*buttonScale,"Juggernode",this.app.sendCreateUnit);
 						unitButtons.push(bJuggernode);
-						bBallast=new Buttoned(wi/2+si-playerShifter,si*buttonScale*5,wi/2-si*2,si*buttonScale,"Ballast",this.app.sendCreateUnit);
+						bBallast=new Buttoned(wi/2+si-playerShifter,si*buttonScale*3,wi/2-si*2,si*buttonScale,"Ballast",this.app.sendCreateUnit);
 						unitButtons.push(bBallast);
 					}
 					buttonMaker=0;
@@ -134,7 +135,7 @@ export default class Display {
 						for(let i=0;i<unitButtons.length;i=i+1){
 							 unitButtons[i].drawButton();
 						 }
-            drawUnitMenu(this.playerColors,this.app.playerNumber)
+            drawUnitMenu(this.playerColors,this.app.playerNumber, buttonScale)
 						if(s.mouseIsPressed){
 							let newButtonPressed=-1;
 							for(let i=0;i<unitButtons.length;i=i+1){
@@ -293,7 +294,7 @@ export default class Display {
     			s.rect(rect.x, rect.y, rect.size, rect.size);
     		}
 
-    		function drawUnitMenu(pColors, player){
+    		function drawUnitMenu(pColors, player, scale){
     			let wid=tempConfig.canvasX;
     			let hei=tempConfig.canvasY;
 					let siz =tempConfig.size;
@@ -304,17 +305,68 @@ export default class Display {
       			s.fill(225,225,225,45);
 						s.quad(wid/2+siz,siz,wid/2+siz,hei-siz,wid-siz,hei-siz,wid-siz,siz);
 						s.fill(pColors[player-1][0],pColors[player-1][1],pColors[player-1][2],255);
-						s.line(wid/2+siz*10,siz,wid/2+siz*10,hei-siz);
+						s.line(wid/2+siz*9.5,siz,wid/2+siz*9.5,hei-siz);
 						s.line(wid/2+siz*11.5,siz,wid/2+siz*11.5,hei-siz);
 						s.stroke(0);
 						//s.text("Unit",wid/2+siz*1.5,siz*2.25);
-						s.text("Unit Report",wid/2+siz*1.55,siz*2.45);
-						s.text("L",wid/2+siz*10.75,siz*2.45);
-						s.text("$$",wid/2+siz*12.25,siz*2.45);
-						s.textSize(wid/85);
-						s.textFont(standardFont);
+						s.text("Machine",wid/2+siz*2.5,siz*2.45);
+						s.text("L",wid/2+siz*10.25,siz*2.45);
+						s.text("C",wid/2+siz*12.3,siz*2.45);
+						s.textSize(wid/35);
+						//s.textFont(standardFont);
 						s.fill(255);
-						s.text("The Ray Tracer alternates firing projectiles vertically and horizontally. Each projectile deals 7 damage.",wid/2+siz*1.5,siz*4.45);
+						s.text("Ray Tracer",wid/2+siz*3.75,siz*4)
+						s.text("100",wid/2+siz*9.9,siz*4)
+						s.noFill();
+						s.stroke(255);
+						s.strokeWeight(2);
+						s.beginShape();
+  					s.curveVertex(wid/2+siz*12,siz*4.25);
+						  for(let i = 0; i <= siz*1.5; i = i + 1){
+						    s.curveVertex(wid/2+siz*12+i,siz*4.25-25*s.abs(s.sin(.5*s.radians(i*360/(siz*1.5)))));
+						  }
+						s.curveVertex(wid/2+siz*12+siz*1.5,siz*4.25);
+						s.curveVertex(wid/2+siz*12+siz*1.5,siz*4.25);
+						s.endShape();
+
+
+						s.translate(0,scale*siz);
+						s.stroke(0);
+						s.fill(255);
+						s.text("Ballast",wid/2+siz*3.75,siz*4)
+ 						s.text("300",wid/2+siz*9.9,siz*4)
+ 						s.noFill();
+ 						s.stroke(255);
+ 						s.strokeWeight(2);
+ 						s.beginShape();
+   					s.curveVertex(wid/2+siz*12,siz*4.25);
+ 						for(let i = 0; i <= siz*1.5; i = i + 1){
+							s.curveVertex(wid/2+siz*12+i,siz*4.25-25*s.abs(s.sin(.5*s.radians(i*360/(siz*1.5)))));
+						}
+ 						s.curveVertex(wid/2+siz*12+siz*1.5,siz*4.25);
+ 						s.curveVertex(wid/2+siz*12+siz*1.5,siz*4.25);
+ 						s.endShape();
+						s.translate(0,-scale*siz);
+
+						s.translate(0,scale*siz*2);
+						s.stroke(0);
+						s.fill(255);
+						s.text("Juggernode",wid/2+siz*3.75,siz*4)
+ 						s.text("500",wid/2+siz*9.9,siz*4)
+ 						s.noFill();
+ 						s.stroke(255);
+ 						s.strokeWeight(2);
+ 						s.beginShape();
+   					s.curveVertex(wid/2+siz*12,siz*4.25);
+ 						for(let i = 0; i <= siz*1.5; i = i + 1){
+							s.curveVertex(wid/2+siz*12+i,siz*4.25-25*s.abs(s.sin(1*s.radians(i*360/(siz*1.5)))));
+						}
+ 						s.curveVertex(wid/2+siz*12+siz*1.5,siz*4.25);
+ 						s.curveVertex(wid/2+siz*12+siz*1.5,siz*4.25);
+ 						s.endShape();
+						s.translate(0,-scale*siz*2);
+						//s.rect(wid/2+siz*12,siz*3.25,siz/2,siz);
+						//s.text("The Ray Tracer alternates firing projectiles vertically and horizontally. Each projectile deals 7 damage.",wid/2+siz*1.5,siz*4.45);
 						/*s.noFill();
 						s.beginShape();
 						for(let i = 0; i < siz; i = i + 3){
