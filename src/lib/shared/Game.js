@@ -179,6 +179,14 @@ export default class Game {
 		}
 	}
 
+	isObjectAlive (obj) {
+		if (obj.health && obj.health > 0) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
 	collideProjWithObject(proj, obj, x, y) {
 		console.log(proj.id, "( player", proj.player, ") hit ", obj.id, " ( player", obj.player, ")");
 		switch (obj.objCategory) {
@@ -327,6 +335,10 @@ export default class Game {
 
 									let collisionObj = this.gameObjects.get(collisionStack[m]);
 									this.collideProjWithObject(obj, collisionObj, j, i);
+
+									if (this.isObjectAlive(collisionObj) === false) {
+										this.deleteObjectAtCoord(collisionObj, j, i);
+									}
 
 								}
 							}
