@@ -37,7 +37,7 @@ export class RayBullet extends Projectile {
 	constructor(player, initialOrientation = [0, 0], initialSpeed = 0)  {
 		super(player, initialOrientation, initialSpeed);
 		this.identifier = "RayProj";
-		this.damage=8;
+		this.damage=7;
 	}
 
 	static createFromSerialized (props) {
