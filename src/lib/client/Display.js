@@ -155,18 +155,22 @@ export default class Display {
 									if(this.app.playerNumber == 1 && hoverX <= 14 && hoverY < 10 && hoverX < 30 && hoverY < 20){
 										//this.app.makeRayTracer(this.player,hoverX,hoverY);
 										unitButtons[yy].func.call(this.app,unitButtons[yy].text, this.app.playerNumber,hoverX,hoverY);
+										unitButtons[yy].isPressed=false;
 									}
 								else if(this.app.playerNumber == 2 && hoverX<=14 && hoverY >= 10 && hoverX < 30 && hoverY < 20){
 										//this.app.makeRayTracer(this.player,hoverX,hoverY);
 										unitButtons[yy].func.call(this.app,unitButtons[yy].text, this.app.playerNumber,hoverX,hoverY);
+										unitButtons[yy].isPressed=false;
 								}
 								else if(this.app.playerNumber == 3 && hoverX>14 && hoverY < 10 && hoverX < 30 && hoverY < 20){
 										//this.app.makeRayTracer(this.player,hoverX,hoverY);
 										unitButtons[yy].func.call(this.app,unitButtons[yy].text, this.app.playerNumber,hoverX,hoverY);
+										unitButtons[yy].isPressed=false;
 								}
-								else if(this.app.playerNumber == 4 && hoverX>14 && hoverY > 10 && hoverX < 30 && hoverY < 20){
+								else if(this.app.playerNumber == 4 && hoverX>14 && hoverY >= 10 && hoverX < 30 && hoverY < 20){
 										//this.app.makeRayTracer(this.player,hoverX,hoverY);
 										unitButtons[yy].func.call(this.app,unitButtons[yy].text,this.app.playerNumber,hoverX,hoverY);
+										unitButtons[yy].isPressed=false;
 								}
 							}
 						 }
@@ -307,10 +311,10 @@ export default class Display {
 						s.text("Unit Report",wid/2+siz*1.55,siz*2.45);
 						s.text("L",wid/2+siz*10.75,siz*2.45);
 						s.text("$$",wid/2+siz*12.25,siz*2.45);
-						s.textSize(wid/35);
+						s.textSize(wid/85);
 						s.textFont(standardFont);
 						s.fill(255);
-						s.text("The Ray Tracer is a lightweight & precise ranged ",wid/2+siz*4.55,siz*4.45);
+						s.text("The Ray Tracer alternates firing projectiles vertically and horizontally. Each projectile deals 7 damage.",wid/2+siz*1.5,siz*4.45);
 						/*s.noFill();
 						s.beginShape();
 						for(let i = 0; i < siz; i = i + 3){
