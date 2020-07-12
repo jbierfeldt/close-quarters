@@ -157,8 +157,10 @@ export default class Game {
 	}
 
 	createObjectAtCoord (object, x, y) {
-		this.registerGameObject(object);
-		this.addObjectAtCoord(object, x, y);
+		if (this.isValidCoord(x, y)) {
+			this.registerGameObject(object);
+			this.addObjectAtCoord(object, x, y);
+		}
 	}
 
 	deleteObjectAtCoord (object, x, y) {
@@ -374,8 +376,8 @@ export default class Game {
 
 								if (gameObj.firing) {
 									for (let l = 0; l < gameObj.projArr.length; l++){
-									let newProj = gameObj.projArr[l];
-									this.createObjectAtCoord(newProj, j + newProj.orientation[0], i + newProj.orientation[1])
+										let newProj = gameObj.projArr[l];
+										this.createObjectAtCoord(newProj, j + newProj.orientation[0], i + newProj.orientation[1])
 									}
 								}
 
