@@ -94,6 +94,10 @@ class App {
 		this.socket.emit('resetGame');
 	}
 
+	setGamePhase (phase) {
+		this.gamePhase = phase;
+	}
+
 	loadSerializedGameState(serializedGameState) {
 		let gameState = JSON.parse(serializedGameState);
 		return this.game.rebuildGameSnapshot(gameState);
