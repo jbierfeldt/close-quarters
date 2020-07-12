@@ -5,7 +5,7 @@ import * as Units from './lib/shared/Unit.js';
 import * as Bases from './lib/shared/Base.js';
 import {DEBUG} from './lib/shared/utilities.js';
 
-window.debug = new DEBUG(true, 0);
+window.debug = new DEBUG(true, 3);
 
 const debugData = {
 	'playerNumber': 1

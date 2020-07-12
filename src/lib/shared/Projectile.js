@@ -52,25 +52,26 @@ export class RayBullet extends Projectile {
 }
 
 export class MagBullet extends Projectile {
-	constructor(initialOrientation = [0, 0], initialSpeed = 0)  {
+	constructor(initialOrientation = [0, 0], initialSpeed = 0, damage)  {
 		super(initialOrientation, initialSpeed);
 		this.identifier = "MagProj";
-		this.damage = 50;
+		this.damage = damage || 50;
 		this.liquid=false;
-		this.distance=1;
+		this.distance=0;
 	}
 
 	static createFromSerialized (props) {
-		return new MagBullet(props.orientation, props.speed);
+		return new MagBullet(props.orientation, props.speed, props.damage);
 	}
 
 	update(tick) {
-		this.damage = 50/(1+this.distance*this.distance*.1);
+		super.update(tick);
+		this.damage = 50-this.distance*this.distance*.25;
 		if(this.damage < 0){
 			this.damage=0;
 		}
+		console.log(this.id, this.damage);
 		this.distance=this.distance+1;
-		super.update(tick);
 	}
 
 	serialize () {

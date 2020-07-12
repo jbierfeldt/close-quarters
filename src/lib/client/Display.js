@@ -81,7 +81,7 @@ export default class Display {
 					s.text("Close Quarters",tempConfig.canvasX/22,tempConfig.canvasY/2);
 
 					//buttonScale sets the size of the buttons(dependent on their overall number)
-					let buttonScale=2;
+					let buttonScale=1.5;
 
 					//playerShifter shifts the Button Menu if the player is on the right side of the screen
 					let playerShifter=0;
@@ -91,13 +91,13 @@ export default class Display {
 
 					//Only execute the following block once so the buttons are only created a single time
 					if(buttonMaker===1){
-						bBase=new Buttoned(wi/2+si-playerShifter,si*buttonScale*4,wi/2-si*2,si*buttonScale,"Base",this.app.sendCreateBase);
+						bBase=new Buttoned(wi/2+si-playerShifter,si*buttonScale*6,wi/2-si*2,si*buttonScale,"Base",this.app.sendCreateBase);
 						unitButtons.push(bBase);
-						bRayTracer=new Buttoned(wi/2+si-playerShifter,si*buttonScale,wi/2-si*2,si*buttonScale,"RayTracer",this.app.sendCreateUnit);
+						bRayTracer=new Buttoned(wi/2+si-playerShifter,si*buttonScale*2,wi/2-si*2,si*buttonScale,"RayTracer",this.app.sendCreateUnit);
 	          unitButtons.push(bRayTracer);
-						bMaglev=new Buttoned(wi/2+si-playerShifter,si*buttonScale*2,wi/2-si*2,si*buttonScale,"Maglev",this.app.sendCreateUnit);
+						bMaglev=new Buttoned(wi/2+si-playerShifter,si*buttonScale*3,wi/2-si*2,si*buttonScale,"Maglev",this.app.sendCreateUnit);
 						unitButtons.push(bMaglev);
-						bJuggernode=new Buttoned(wi/2+si-playerShifter,si*buttonScale*3,wi/2-si*2,si*buttonScale,"Juggernode",this.app.sendCreateUnit);
+						bJuggernode=new Buttoned(wi/2+si-playerShifter,si*buttonScale*4,wi/2-si*2,si*buttonScale,"Juggernode",this.app.sendCreateUnit);
 						unitButtons.push(bJuggernode);
 						bBallast=new Buttoned(wi/2+si-playerShifter,si*buttonScale*5,wi/2-si*2,si*buttonScale,"Ballast",this.app.sendCreateUnit);
 						unitButtons.push(bBallast);
@@ -125,14 +125,14 @@ export default class Display {
 				 	s.rect(hoverX*tempConfig.size,hoverY*tempConfig.size,tempConfig.size,tempConfig.size);
 
 						//CHECK IF THE COORDINATES ARE IN RANGE BASED ON THE PLAYER
-						drawUnitMenu(this.playerColors,this.app.playerNumber,this.app)
+
 						//unitButtons[0].drawButton();
 						//add base logic
 
 						for(let i=0;i<unitButtons.length;i=i+1){
 							 unitButtons[i].drawButton();
 						 }
-
+            drawUnitMenu(this.playerColors,this.app.playerNumber,this.app)
 						if(s.mouseIsPressed){
 							let newButtonPressed=-1;
 							for(let i=0;i<unitButtons.length;i=i+1){
@@ -229,10 +229,8 @@ export default class Display {
 					 this.func=func;
 					}
 					drawButton(){
-						 s.noStroke();
-						 //s.fill(255,0,128,255);
-						 //console.log(3,this.isPressed);
-						 s.fill(255,0,0+this.yy/2,255);
+						 s.stroke(255,255,255,255);
+						 s.fill(255,240,0,255);
 						 s.rect(this.xx,this.yy,this.xlen,this.ylen);
 						 if(this.isPressed==true){
 							 s.fill(255,255,255,100);
@@ -279,7 +277,7 @@ export default class Display {
 							drawRayTracerProjectile(x,y,displayObject.player,size,colors,displayObject.orientation, a);
 						}
 						if(displayObject.identifier == "MagProj"){
-							drawMaglevProjectile(x,y,displayObject.player,size,colors,displayObject.damage, a);
+							drawMaglevProjectile(x,y,displayObject.player,size,colors,displayObject.orientation,displayObject.damage, a);
 						}
 						if(displayObject.identifier == "BalProj"){
 							drawBallastProjectile(x,y,displayObject.player,size,colors,displayObject.damage, a);
@@ -301,6 +299,7 @@ export default class Display {
     			if(player < 3){
       			s.fill(225,225,225,45);
 						s.quad(wid/2+siz,siz,wid/2+siz,hei-siz,wid-siz,hei-siz,wid-siz,siz);
+						s.text("Unit",wid/2+siz*2,siz*2);
       		}
       		else{
       			s.translate(-wid/2, 0);
@@ -308,7 +307,7 @@ export default class Display {
 						s.quad(wid/2+siz,siz,wid/2+siz,hei-siz,wid-siz,hei-siz,wid-siz,siz);
       			s.translate(wid/2, 0);
       		}
-      // text("Unit",22*this.wid/40,3*this.hei/40);
+
       //text("Report",28*this.wid/40,3*this.hei/40);
       //text("H",36*this.wid/40,3*this.hei/40);
       //text("C",38.5*this.wid/40,3*this.hei/40);
@@ -425,8 +424,8 @@ export default class Display {
         		s.fill(255*(max-health));
         		//console.log(y)
         		for(let i = -6;i < 6;i=i+.2){
-        		s.ellipse(x*size+size/2,y*size+size/2+i*size/20,s.abs(i)*size/10,s.abs(i))*size/10;
-        	    }
+        			s.ellipse(x*size+size/2,y*size+size/2+i*size/20,s.abs(i)*size/10,s.abs(i))*size/10;
+        	  }
         	}
 					function drawJuggernode(x,y,player,size,health,max,pColors){
         		//s.fill(pColors[player][0],pColors[player][1],pColors[player][2],pColors[player][3])
@@ -476,41 +475,58 @@ export default class Display {
    					}
 
    					for(var angle=delay*3;angle<delay*3+360;angle=angle+30){
-    				let titleX=(height/3+90*s.cos(3.14*s.radians(delay)))*s.cos(s.radians(angle))-0;
-    				let titleY=(height/3+2*s.tan(3.14*s.radians(delay/20)))*s.sin(s.radians(angle))+0;
-						s.fill(152, 255, 152,255);
-    				s.ellipse(titleX,titleY,height/15,height/15);
-						s.fill(152, 255, 152,25);
-    				s.ellipse(titleX,titleY,height/14,height/14);
-						s.fill(152, 255, 152,20);
-    				s.ellipse(titleX,titleY,height/13,height/13);
+	    				let titleX=(height/3+90*s.cos(3.14*s.radians(delay)))*s.cos(s.radians(angle))-0;
+	    				let titleY=(height/3+2*s.tan(3.14*s.radians(delay/20)))*s.sin(s.radians(angle))+0;
+							s.fill(152, 255, 152,255);
+	    				s.ellipse(titleX,titleY,height/15,height/15);
+							s.fill(152, 255, 152,25);
+	    				s.ellipse(titleX,titleY,height/14,height/14);
+							s.fill(152, 255, 152,20);
+	    				s.ellipse(titleX,titleY,height/13,height/13);
    					}
 						s.translate(-width/2,-height/2);
         	}
-        	function drawRayTracerProjectile(x,y,player,size,pColors,orient, a){
+        	function drawRayTracerProjectile(x, y, player, size, pColors, orient, a){
         		let refx=x*size;
         		let refy=y*size;
         		s.stroke(0)
         		s.strokeWeight(3);
-        		if(orient[0]==0){
+        		if(orient[0] == 0 && orient[1] == 1){
             	//s.line(refx+size/2,refy+a*size/10,refx+size/2,refy+(a+1)*size/10);
 							s.fill(255, 0, 128, 255);
 							s.strokeWeight(3);
 							s.ellipse(refx+size/2,refy+(a+1)*size/10,size/3.5,size/3.5);
         		}
-        		else if(orient[1]==0){
+						else if(orient[0] == 0 && orient[1] == -1){
+							s.fill(255, 0, 128, 255);
+							s.strokeWeight(3);
+							s.ellipse(refx+size/2,refy-(a+1)*size/10,size/3.5,size/3.5);
+						}
+        		else if(orient[0] == 1 && orient[1] == 0){
         			//s.line(refx+a*size/10,refy+size/2,refx+(a+1)*size/10,refy+size/2);
 							s.fill(255, 0, 128, 255);
 							s.strokeWeight(3);
 							s.ellipse(refx+(a+1)*size/10,refy+size/2,size/3.5,size/3.5);
         		}
+						else if(orient[0] == -1 && orient[1] == 0){
+							s.fill(255, 0, 128, 255);
+							s.strokeWeight(3);
+							s.ellipse(refx-(a+1)*size/10,refy+size/2,size/3.5,size/3.5);
+						}
         	}
-        	function drawMaglevProjectile(x,y,player,size,pColors,damage, a){
+        	function drawMaglevProjectile(x, y, player, size, pColors, orient, damage, a){
         		let refx=x*size;
         		let refy=y*size;
-        		s.fill(255,255,255,255-(50-damage)*2);
-        		s.stroke(0);
-                s.rect(refx,refy,size,size);
+						let scalar = size/4;
+        		s.fill(pColors[1][0],pColors[1][1],pColors[1][2],255-(50-damage)*5);
+        		s.stroke(0,255);
+						s.strokeWeight(2);
+						s.beginShape();
+						for(let angle = 0; angle <= 360; angle = angle + 10){
+            //s.rect(refx,refy,size,size);
+							s.curveVertex(refx+size/2+orient[0]*a*size/10+scalar*s.cos(s.radians(angle))*s.cos(s.radians(angle))*s.cos(s.radians(angle)),refy+size/2+orient[1]*a*size/10+scalar*s.sin(s.radians(angle))*s.sin(s.radians(angle))*s.sin(s.radians(angle)));
+						}
+						s.endShape();
         	}
 					function drawJuggernodeProjectile(x,y,player,size,pColors,damage, a){
         		let refx=x*size;
