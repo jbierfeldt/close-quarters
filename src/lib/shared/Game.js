@@ -130,7 +130,7 @@ export default class Game {
 	placeInitialRandomBases () {
 		for (let i = 1; i <= 4; i++) {
 			let randCoord = this.getRandomCoordInPlayerRegion(i, 2);
-			this.createNewBaseAtCoord("Base", i, randCoord[0], randCoord[1]);
+			this.createNewBaseAtCoord("Base", String(i), randCoord[0], randCoord[1]);
 		}
 	}
 
@@ -158,8 +158,10 @@ export default class Game {
 	}
 
 	createObjectAtCoord (object, x, y) {
-		this.registerGameObject(object);
-		this.addObjectAtCoord(object, x, y);
+		if (this.isValidCoord(x, y)) {
+			this.registerGameObject(object);
+			this.addObjectAtCoord(object, x, y);
+		}
 	}
 
 	deleteObjectAtCoord (object, x, y) {
@@ -224,6 +226,7 @@ export default class Game {
 				}
 				break
 			case "Bases":
+				console.log(proj.player, obj.player);
 				if (proj.player !== obj.player) {
 					obj.health = obj.health - proj.damage;
 					if (this.isObjectAlive(obj) === false) {
@@ -318,13 +321,11 @@ export default class Game {
 	}
 
 	cleanUpByID (idToClean) {
-		console.log("cleaning...", idToClean);
 		for (let i = 0; i < this.board.length; i++)  {
 			for (let j = 0; j < this.board[i].length; j++) {
 				if (this.board[i][j].length != 0) {
 					for (let k = 0; k < this.board[i][j].length; k++) {
 						if (this.board[i][j][k] === idToClean) {
-							console.log("got one...", idToClean, j, i);
 							const idx = this.board[i][j].indexOf(this.board[i][j][k]);
 							this.board[i][j].splice(idx, 1);
 						}
@@ -374,8 +375,8 @@ export default class Game {
 
 								if (gameObj.firing) {
 									for (let l = 0; l < gameObj.projArr.length; l++){
-									let newProj = gameObj.projArr[l];
-									this.createObjectAtCoord(newProj, j + newProj.orientation[0], i + newProj.orientation[1])
+										let newProj = gameObj.projArr[l];
+										this.createObjectAtCoord(newProj, j + newProj.orientation[0], i + newProj.orientation[1])
 									}
 								}
 
@@ -399,7 +400,7 @@ export default class Game {
 				for (let j = 0; j < this.board[i].length; j++) {
 					if (this.board[i][j].length > 1) {
 						let collisionStack = this.board[i][j];
-						// console.log("collide", tick, i, j, collisionStack);
+						console.log("collide", tick, i, j, collisionStack);
 						for (let k = 0; k < collisionStack.length; k++) {
 							let obj = this.gameObjects.get(this.board[i][j][k]);
 							if (obj.objCategory === "Projectiles") {
