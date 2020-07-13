@@ -31,6 +31,7 @@ export default class Display {
 			let standardFont;
 			let animate = 0; //use to decide when a new tick value occurs
 			let buttonScale;
+			let playerShifter;
 
 			//Button Declarations
 			let bBase;
@@ -89,15 +90,15 @@ export default class Display {
 					buttonScale=1.5;
 
 					//playerShifter shifts the Button Menu if the player is on the right side of the screen
-					let playerShifter=0;
+					playerShifter=0;
 					if(this.app.playerNumber>2){
 						playerShifter=wi/2;
 					}
 
 					//Only execute the following block once so the buttons are only created a single time
 					if(buttonMaker===1){
-						bBase=new Buttoned(wi/2+si-playerShifter,si*buttonScale*6,wi/2-si*2,si*buttonScale,"Base",this.app.sendCreateBase);
-						unitButtons.push(bBase);
+						bBase=new Buttoned(wi/2+si-playerShifter,si*buttonScale*2,wi/2-si*2,si*buttonScale*3,"Base",this.app.sendCreateBase);
+						//Unit Buttons Below
 						bRayTracer=new Buttoned(wi/2+si-playerShifter,si*buttonScale*2,wi/2-si*2,si*buttonScale,"RayTracer",this.app.sendCreateUnit);
 	          unitButtons.push(bRayTracer);
 						bMaglev=new Buttoned(wi/2+si-playerShifter,si*buttonScale*5,wi/2-si*2,si*buttonScale,"Maglev",this.app.sendCreateUnit);
@@ -119,7 +120,9 @@ export default class Display {
 
 					s.textSize(wi/40);
 					s.fill(255);
-					s.text("Available Credits: " + this.app.game.players[this.app.playerNumber-1].credits,wi/10,he/1.5);
+					s.stroke(0);
+					s.strokeWeight(1);
+					s.text("Available Credits: " + this.app.game.players[this.app.playerNumber-1].credits, wi/10, he/1.5);
 					//Run the functions for drawing the players quadrant and the unit menu
     			drawQuarterGrid(this.stage.grid,this.playerColors,this.app.playerNumber);
 					//drawGrid(wi, he, si, this.playerColors);
@@ -151,14 +154,49 @@ export default class Display {
 
 						//unitButtons[0].drawButton();
 						//add base logic
+						s.fill(255,100);
+						s.noStroke();
+						s.rect(hoverX*tempConfig.size,hoverY*tempConfig.size,tempConfig.size,tempConfig.size);
 
+						if(this.app.game.players[this.app.playerNumber-1].baseCount < 2){
+							bBase.drawButton();
+							s.fill(255);
+							s.stroke(0);
+							s.textSize(wi/26.5);
+							s.text("Place Second Base", wi/2+si*2-playerShifter,si*buttonScale*3.7);
+							if(s.mouseIsPressed){
+									if(bBase.isInRange(s.mouseX,s.mouseY)){
+										bBase.buttonHasBeenPressed();
+									}
+									if(bBase.isPressed===true){
+										if(this.app.playerNumber == 1 && hoverX <= 14 && hoverY < 10 && hoverX < 30 && hoverY < 20){
+											//this.app.makeRayTracer(this.player,hoverX,hoverY);
+											bBase.func.call(this.app, bBase.text, this.app.playerNumber, hoverX, hoverY);
+											bBase.isPressed=false;
+										}
+									else if(this.app.playerNumber == 2 && hoverX<=14 && hoverY >= 10 && hoverX < 30 && hoverY < 20){
+											//this.app.makeRayTracer(this.player,hoverX,hoverY);
+											bBase.func.call(this.app, bBase.text, this.app.playerNumber,hoverX,hoverY);
+											bBase.isPressed=false;
+									}
+									else if(this.app.playerNumber == 3 && hoverX>14 && hoverY < 10 && hoverX < 30 && hoverY < 20){
+											//this.app.makeRayTracer(this.player,hoverX,hoverY);
+											bBase.func.call(this.app, bBase.text, this.app.playerNumber,hoverX,hoverY);
+											bBase.isPressed=false;
+									}
+									else if(this.app.playerNumber == 4 && hoverX>14 && hoverY >= 10 && hoverX < 30 && hoverY < 20){
+											//this.app.makeRayTracer(this.player,hoverX,hoverY);
+											bBase.func.call(this.app, bBase.text, this.app.playerNumber,hoverX,hoverY);
+											bBase.isPressed=false;
+								 }
+							 }
+					   	}
+						}
+						else{
 						for(let i=0;i<unitButtons.length;i=i+1){
 							 unitButtons[i].drawButton();
 						 }
             drawUnitMenu(this.playerColors,this.app.playerNumber, buttonScale)
-						s.fill(255,100);
-						s.noStroke();
-						s.rect(hoverX*tempConfig.size,hoverY*tempConfig.size,tempConfig.size,tempConfig.size);
 
 						if(s.mouseIsPressed){
 							let newButtonPressed=-1;
@@ -196,10 +234,11 @@ export default class Display {
 										//this.app.makeRayTracer(this.player,hoverX,hoverY);
 										unitButtons[yy].func.call(this.app,unitButtons[yy].text, this.app.playerNumber,hoverX,hoverY);
 										unitButtons[yy].isPressed=false;
-								}
+							 }
 							}
 						 }
 				   	}
+					}
 						//Buttons Section
 
 
@@ -264,7 +303,7 @@ export default class Display {
 						 //s.text(this.text,this.xx+this.xlen/10,this.yy+this.ylen/1.25);
 					}
 					buttonHasBeenPressed(){
-						this.isPressed=true;
+							this.isPressed = true;
 					}
 					isInRange(x, y){
 						if(x < (this.xx+this.xlen) && x > this.xx && y > this.yy && y < (this.yy+this.ylen)){
