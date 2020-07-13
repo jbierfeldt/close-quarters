@@ -445,8 +445,87 @@ export default class Display {
       		}
       		else{
       			s.translate(-wid/2, 0);
-						s.fill(225, 225, 225, 45);
+						s.fill(225,225,225,45);
 						s.quad(wid/2+siz,siz,wid/2+siz,hei-siz,wid-siz,hei-siz,wid-siz,siz);
+						s.fill(pColors[player-1][0],pColors[player-1][1],pColors[player-1][2],255);
+						s.line(wid/2+siz*9.5,siz,wid/2+siz*9.5,hei-siz);
+						s.line(wid/2+siz*11.5,siz,wid/2+siz*11.5,hei-siz);
+						s.stroke(0);
+						//s.text("Unit",wid/2+siz*1.5,siz*2.25);
+						s.text("Machine",wid/2+siz*2.5,siz*2.45);
+						s.text("L",wid/2+siz*10.25,siz*2.45);
+						s.text("C",wid/2+siz*12.3,siz*2.45);
+						s.textSize(wid/35);
+						//s.textFont(standardFont);
+						s.fill(255);
+						s.text("Ray Tracer",wid/2+siz*3.75,siz*4)
+						s.text("100",wid/2+siz*9.9,siz*4)
+						s.noFill();
+						s.stroke(255);
+						s.strokeWeight(2);
+						s.beginShape();
+  					s.curveVertex(wid/2+siz*12,siz*4.25);
+						  for(let i = 0; i <= siz*1.5; i = i + 1){
+						    s.curveVertex(wid/2+siz*12+i,siz*4.25-25*s.abs(s.sin(.5*s.radians(i*360/(siz*1.5)))));
+						  }
+						s.curveVertex(wid/2+siz*12+siz*1.5,siz*4.25);
+						s.curveVertex(wid/2+siz*12+siz*1.5,siz*4.25);
+						s.endShape();
+
+
+						s.translate(0,scale*siz);
+						s.stroke(0);
+						s.fill(255);
+						s.text("Ballast",wid/2+siz*3.75,siz*4)
+ 						s.text("300",wid/2+siz*9.9,siz*4)
+ 						s.noFill();
+ 						s.stroke(255);
+ 						s.strokeWeight(2);
+ 						s.beginShape();
+   					s.curveVertex(wid/2+siz*12,siz*4.25);
+ 						for(let i = 0; i <= siz*1.5; i = i + 1){
+							s.curveVertex(wid/2+siz*12+i,siz*4.25-25*s.abs(s.sin(.5*s.radians(i*360/(siz*1.5)))));
+						}
+ 						s.curveVertex(wid/2+siz*12+siz*1.5,siz*4.25);
+ 						s.curveVertex(wid/2+siz*12+siz*1.5,siz*4.25);
+ 						s.endShape();
+						s.translate(0,-scale*siz);
+
+						s.translate(0,scale*siz*2);
+						s.stroke(0);
+						s.fill(255);
+						s.text("Juggernode",wid/2+siz*3.75,siz*4)
+ 						s.text("500",wid/2+siz*9.9,siz*4)
+ 						s.noFill();
+ 						s.stroke(255);
+ 						s.strokeWeight(2);
+ 						s.beginShape();
+   					s.curveVertex(wid/2+siz*12,siz*4.25);
+ 						for(let i = 0; i <= siz*1.5; i = i + 1){
+							s.curveVertex(wid/2+siz*12+i,siz*4.25-25*s.abs(s.sin(1*s.radians(i*360/(siz*1.5)))));
+						}
+ 						s.curveVertex(wid/2+siz*12+siz*1.5,siz*4.25);
+ 						s.curveVertex(wid/2+siz*12+siz*1.5,siz*4.25);
+ 						s.endShape();
+						s.translate(0,-scale*siz*2);
+
+						s.translate(0,scale*siz*3);
+						s.stroke(0);
+						s.fill(255);
+						s.text("Maglev",wid/2+siz*3.75,siz*4)
+ 						s.text("250",wid/2+siz*9.9,siz*4)
+ 						s.noFill();
+ 						s.stroke(255);
+ 						s.strokeWeight(2);
+ 						s.beginShape();
+   					s.curveVertex(wid/2+siz*12,siz*4.25);
+ 						for(let i = 0; i <= siz*1.5; i = i + 1){
+							s.curveVertex(wid/2+siz*12+i,siz*4.25-25*s.abs(s.sin(1.5*s.radians(i*360/(siz*1.5)))));
+						}
+ 						s.curveVertex(wid/2+siz*12+siz*1.5,siz*4.25);
+ 						s.curveVertex(wid/2+siz*12+siz*1.5,siz*4.25);
+ 						s.endShape();
+						s.translate(0,-scale*siz*3);
       			s.translate(wid/2, 0);
       		}
 
