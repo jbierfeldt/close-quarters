@@ -10,12 +10,12 @@ const debug = new DEBUG(true, 0);
 const tempConfig = {
 	boardDimensions: [20, 30],
 	numOfPlayers: 4,
-	ticksPerTurn: 40
+	ticksPerTurn: 100
 }
 
 export default class Game {
 
- 	constructor(gameObjects = [], players = [], board = new Object, turnNumber = 1) {
+ 	constructor(gameObjects = [], players = [], board = new Object, turnNumber = 0) {
  		this.id = 'game'+createID();
  		this.players = players;
  		this.board = board;
@@ -33,6 +33,8 @@ export default class Game {
 
 	init() {
 
+		debug.log(0, 'Initialized Game ' + this.id);
+
 		// create new players
 		for (var i = 0; i < tempConfig.numOfPlayers; i++) {
 			let newPlayer = new Player(i);
@@ -47,14 +49,7 @@ export default class Game {
 		this.currentTurnInitialState = this.createGameSnapshot();
 
 		// creates history (temp)
-		this.history.turn[0] = {
-			'tick': {
-				1: this.currentTurnInitialState
-			}
-		};
-
-
-		debug.log(0, 'Initialized Game ' + this.id);
+		this.runSimulation();
 
 	}
 
@@ -338,7 +333,7 @@ export default class Game {
 		// updates game state based on ticks. Sweeps board and updates
 		// any game object on the board
 		// note: j is x and i is y
-		// debug.log(0, "Running simulation for turn " + this.turnNumber);
+		console.log("Running simulation for turn " + this.turnNumber);
 		this.history.turn[this.turnNumber] = {
 			'tick': {}
 		};
