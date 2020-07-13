@@ -95,11 +95,11 @@ class App {
 
 	sendResetGame () {
 		debug.log(1, "Resetting game!");
+		// this.gamePhase = 0;
 		this.socket.emit('resetGame');
 	}
 
 	setGamePhase (phase) {
-		console.log(phase);
 		this.gamePhase = phase;
 	}
 
@@ -132,11 +132,11 @@ class App {
 	}
 
 	updateGameHistory (data) {
+		console.log("updateGameHistory", data);
 		let history = this.loadSerializedTurnHistory(data.s_history);
 		this.game.history = history;
-		this.display.simulationDisplayTurn = this.game.history.turn[this.turnNumber];
-		console.log("sent to Display", this.display.simulationDisplayTurn);
-		// this.display.board = this.loadSerializedGameState(data.s_history.turn[this.turnNumber - 1]);
+		this.display.simulationDisplayTurn = this.game.history.turn[this.turnNumber-1];
+		console.log("sent to Display", this.turnNumber-1, this.display.simulationDisplayTurn);
 	}
 
 	updateDebugInfo () {

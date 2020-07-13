@@ -62,8 +62,8 @@ class GameController {
 		this.game = newGame;
 		this.game.init();
 
-		this.sendGameHistory();
 		this.sendGameState();
+		this.sendGameHistory();
 	}
 
 	removePlayerController (playerNumber) {
@@ -93,7 +93,6 @@ class GameController {
 	}
 
 	sendGameHistory () {
-		console.log(this.game.turnNumber);
 		this.io.emit('updateGameHistory', {
 			s_history: JSON.stringify(this.game.history)
 		});
@@ -119,10 +118,9 @@ class GameController {
 	}
 
 	runSimulation() {
-		console.log("Running simulation...");
 		this.game.runSimulation();
-		this.sendGameHistory();
 		this.sendGameState();
+		this.sendGameHistory();
 	}
 
 }
