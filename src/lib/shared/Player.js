@@ -9,6 +9,7 @@ export default class Player {
 		this.gold = 0;
 		this.score = 0;
 		this.credits = 10;
+		this.baseCount = 0;
 	}
 
 	addBase() {

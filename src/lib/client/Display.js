@@ -76,7 +76,7 @@ export default class Display {
 
     		//Phase begins at 0 via the constructor of Display(see above)
 				//Phase 0 is the Title Sccreen, Phase 1 is Unit Placement, and Phase 2 is the Battle Phase
-    		if(this.phase==0){
+    		if(this.app.gamePhase==0){
 
 					//The below function displays the title sequence
 					titleSequence(wi,he,this.delay,si/2);
@@ -110,12 +110,13 @@ export default class Display {
 					buttonMaker=0;
 
 					//Exit this phase and move to the Battle Phase if the mouse is pressed(button trigger to be added)
-					if(s.mouseIsPressed){
-						this.phase=1;
-					}
+
     		}
 
-    		else if(this.phase==1){
+    		else if(this.app.gamePhase==1){
+					this.t=1;
+					animate=0;
+
 					s.textSize(wi/40);
 					s.fill(255);
 					s.text("Available Credits: " + this.app.game.players[this.app.playerNumber-1].credits,wi/10,he/1.5);
@@ -200,27 +201,25 @@ export default class Display {
 						 }
 				   	}
 						//Buttons Section
-    				if(s.keyIsPressed){
-    					this.phase=2;
-    					this.t=1;
-							animate=0;
+
 
 							// this.app.appRunSimulation()
-    				}
+
     			}
 				// if phase where grid should be shown, draw grid
-				else if(this.phase==2){
+				else if(this.app.gamePhase==2){
 
 				/*if(s.keyIsPressed){
 						this.t=this.t+keyPressed();
 					}*/
-				if(animate === 9){
+					//debug.log(3, this.simulationDisplayTurn.tick.length);
+				if(animate === 9 && this.t < (Object.keys(this.simulationDisplayTurn.tick).length-1)){
 				this.t=this.t+1;
 				animate=0;
 			}
 
 
-					if(this.t<41 && this.t>0){
+					if(this.t<Object.keys(this.simulationDisplayTurn.tick).length && this.t>0){
 						drawGrid(wi, he, si, this.playerColors);
 						let b = this.simulationDisplayTurn.tick[this.t].board;
 						for(var k=0; k<b.length; k=k+1){
@@ -236,10 +235,7 @@ export default class Display {
 								}
 							}
 						}
-				}
-				else{
-					this.phase=1;
-				}
+					}
 				animate=animate+.5;
 			}
   	}
