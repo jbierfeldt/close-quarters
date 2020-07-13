@@ -226,7 +226,6 @@ export default class Game {
 				}
 				break
 			case "Bases":
-				console.log(proj.player, obj.player);
 				if (proj.player !== obj.player) {
 					obj.health = obj.health - proj.damage;
 					if (this.isObjectAlive(obj) === false) {

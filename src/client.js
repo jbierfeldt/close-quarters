@@ -19,6 +19,8 @@ class App {
 		this.gameState = undefined;
 		this.socket = undefined;
 
+		this.gamePhase = 0;
+
 		// info from server
 		this.turnNumber = 1;
 		this.currentTurnInitialState = {};
@@ -60,6 +62,8 @@ class App {
 	debugInit () {
 		document.getElementById("submit-turn").addEventListener("click", this.sendSubmitTurn.bind(this));
 		document.getElementById("reset-game").addEventListener("click", this.sendResetGame.bind(this));
+		document.getElementById("phase-1").addEventListener("click", this.setGamePhase.bind(this, 1));
+		document.getElementById("phase-2").addEventListener("click", this.setGamePhase.bind(this, 2));
 	}
 
 	sendCreateBase (baseType, player, x, y) {
@@ -95,6 +99,7 @@ class App {
 	}
 
 	setGamePhase (phase) {
+		console.log(phase);
 		this.gamePhase = phase;
 	}
 
