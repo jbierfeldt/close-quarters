@@ -8,7 +8,7 @@ export default class Player {
 		this.id = id;
 		this.gold = 0;
 		this.score = 0;
-		this.credits = 10;
+		this.credits = 5;
 		this.baseCount = 0;
 	}
 

@@ -69,7 +69,7 @@ export class RayTracer extends Unit {
 		// reset firing
 		this.firing = false;
 		// Ray Tracer fires every 4 ticks
-		if (tick%10 === 0) {
+		if (tick%14 === 0) {
 			if(this.player==1 || this.player==2){
 			this.startAttack([1,0]);
 
@@ -78,7 +78,7 @@ export class RayTracer extends Unit {
 				this.startAttack([-1,0]);
 			}
 		}
-		else if (tick%5 === 0){
+		else if (tick%7 === 0){
 			if(this.player==1 || this.player==3){
 			this.startAttack([0,1]);
 			}
