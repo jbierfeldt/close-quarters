@@ -336,7 +336,7 @@ export default class Display {
 								drawBallast(x,y,displayObject.player,size,displayObject.health,displayObject.maxHealth,colors);
 						}
 						if(displayObject.identifier == "JugProj"){
-								drawJuggernodeProjectile(x,y,displayObject.player,size,colors,displayObject.damage, a);
+								drawJuggernodeProjectile(x,y,displayObject.player,size,colors,displayObject.orientation, displayObject.damage, a);
 						}
 						if(displayObject.identifier == "RayProj"){
 							drawRayTracerProjectile(x,y,displayObject.player,size,colors,displayObject.orientation, a);
@@ -742,7 +742,7 @@ export default class Display {
 						}
 						s.endShape();
         	}
-					function drawJuggernodeProjectile(x,y,player,size,pColors,damage, a){
+					function drawJuggernodeProjectile(x,y,player,size,pColors, orient, damage, a){
         		let refx=x*size;
         		let refy=y*size;
 
@@ -750,15 +750,23 @@ export default class Display {
 						s.stroke(0);
 						s.strokeWeight(3);
 						s.beginShape();
+						let xAdd = 0;
+						let yAdd = 0;
+						if(orient[1] == -1){
+							yAdd = size;
+						}
+						if(orient[0] == -1){
+							xAdd = size;
+						}
 						for(let i = a; i <= (a+8); i = i + .05){
-							s.curveVertex(refx+i*(size/10)-(size/10)*s.cos(s.radians(i*180)),refy+i*size/10+(size/10)*s.cos(s.radians(i*180)));
+							s.curveVertex(refx+xAdd+orient[0]*i*(size/10)-orient[0]*(size/10)*s.cos(s.radians(i*180)),refy+yAdd+orient[1]*i*size/10+orient[1]*(size/10)*s.cos(s.radians(i*180)));
 						}
 						s.endShape();
 						s.strokeWeight(2);
 						s.stroke(pColors[player-1][0],pColors[player-1][1],pColors[player-1][2],150);
 						s.beginShape();
 						for(let i = a; i <= (a+8); i = i + .05){
-							s.curveVertex(refx+i*(size/10)-(size/10)*s.cos(s.radians(i*180)),refy+i*size/10+(size/10)*s.cos(s.radians(i*180)));
+							s.curveVertex(refx+xAdd+orient[0]*i*(size/10)-orient[0]*(size/10)*s.cos(s.radians(i*180)),refy+yAdd+orient[1]*i*size/10+orient[1]*(size/10)*s.cos(s.radians(i*180)));
 						}
 						s.endShape();
             //s.ellipse(refx,refy,size,size);

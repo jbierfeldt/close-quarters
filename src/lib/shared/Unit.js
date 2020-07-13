@@ -117,12 +117,23 @@ export class Juggernode extends Unit {
 
 	update (tick) {
 		this.firing=false;
-		if (tick%4 !== 0) {
-			this.invulnerable == true;
+		this.invulnerable == false;
+		if (tick%8 === 0) {
+			if(this.player==1){
+				this.startAttack([1,1]);
+			}
+			else if(this.player==2){
+				this.startAttack([1,-1]);
+			}
+			else if(this.player==3){
+				this.startAttack([-1,1]);
+			}
+			else if(this.player==4){
+				this.startAttack([-1,-1]);
+			}
 		}
-		else {
-			this.invulnerable == false;
-			this.startAttack([1,1]);
+		if(tick%5 === 0){
+			this.invulernabble == true;
 		}
 	}
 
