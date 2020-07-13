@@ -55,13 +55,13 @@ export class RayBullet extends Projectile {
 }
 
 export class MagBullet extends Projectile {
-	constructor(player, initialOrientation = [0, 0], initialSpeed = 0, damage, distance, id)  {
+	constructor(player, initialOrientation = [0, 0], initialSpeed = 0, damage = 50, distance = 0, id)  {
 		super(player, initialOrientation, initialSpeed, id);
 		this.identifier = "MagProj";
-		this.damage = damage || 50;
+		this.damage = damage;
 		this.maxDamage = 50;
 		this.ableToBeDestroyed = false;
-		this.distance = distance || 0;
+		this.distance = distance;
 	}
 
 	static createFromSerialized (props) {
