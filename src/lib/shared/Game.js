@@ -210,9 +210,9 @@ export default class Game {
 	}
 
 	collideProjWithObject(proj, obj, x, y) {
-		console.log(proj.id, "( player", proj.player, ") hit ", obj.id, " ( player", obj.player, ")", obj.health);
 		switch (obj.objCategory) {
 			case "Units":
+				console.log(proj.id, "( player", proj.player, ") hit ", obj.id, " ( player", obj.player, ")", obj.health);
 				if (proj.player !== obj.player) {
 					obj.health = obj.health - proj.damage;
 					if (this.isObjectAlive(obj) === false) {
@@ -225,6 +225,7 @@ export default class Game {
 				}
 				break
 			case "Bases":
+				console.log(proj.id, "( player", proj.player, ") hit ", obj.id, " ( player", obj.player, ")", obj.health);
 				if (proj.player !== obj.player) {
 					obj.health = obj.health - proj.damage;
 					if (this.isObjectAlive(obj) === false) {
