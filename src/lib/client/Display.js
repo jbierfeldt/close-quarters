@@ -298,7 +298,7 @@ export default class Display {
 								drawBallast(x,y,displayObject.player,size,displayObject.health,displayObject.maxHealth,colors);
 						}
 						if(displayObject.identifier == "JugProj"){
-								drawJuggernodeProjectile(x,y,displayObject.player,size,displayObject.health,colors, a);
+								drawJuggernodeProjectile(x,y,displayObject.player,size,colors,displayObject.damage, a);
 						}
 						if(displayObject.identifier == "RayProj"){
 							drawRayTracerProjectile(x,y,displayObject.player,size,colors,displayObject.orientation, a);
@@ -635,9 +635,16 @@ export default class Display {
 					function drawJuggernodeProjectile(x,y,player,size,pColors,damage, a){
         		let refx=x*size;
         		let refy=y*size;
-        		s.fill(255,240,0,105);
-        		s.noStroke();
-                s.ellipse(refx,refy,size,size);
+        		s.stroke(pColors[player-1][0],pColors[player-1][1],pColors[player-1][2],150);
+        		s.noFill();
+						s.stroke(0);
+						s.strokeWeight(1);
+						s.beginShape();
+						for(let i = a; i <= (a+8); i = i + .05){
+							s.curveVertex(refx+i*(size/10)-(size/10)*s.cos(s.radians(i*360)),refy+i*size/10+(size/10)*s.cos(s.radians(i*360)));
+						}
+						s.endShape();
+            //s.ellipse(refx,refy,size,size);
         	}
 					function drawBallastProjectile(x,y,player,size,pColors,damage, a){
         		let refx=x*size;
