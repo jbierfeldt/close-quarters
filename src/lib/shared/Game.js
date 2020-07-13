@@ -148,6 +148,7 @@ export default class Game {
 			this.addObjectAtCoord(newBase, x+1, y);
 			this.addObjectAtCoord(newBase, x, y+1);
 			this.addObjectAtCoord(newBase, x+1, y+1);
+			this.players[player-1].baseCount = this.players[player-1].baseCount + 1;
 		}
 	}
 
@@ -226,6 +227,7 @@ export default class Game {
 					if (this.isObjectAlive(obj) === false) {
 						this.cleanUpArray.push(obj.id);
 						this.deleteObjectAtCoord(obj, x, y);
+						this.players[obj.player-1].baseCount = this.players[obj.player-1].baseCount - 1;
 					}
 				}
 				this.deleteObjectAtCoord(proj, x, y);
