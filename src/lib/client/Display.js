@@ -638,8 +638,16 @@ export default class Display {
         		//s.fill(pColors[player][0],pColors[player][1],pColors[player][2],pColors[player][3])
         		s.stroke(0);
 						s.strokeWeight(2);
-        		s.fill(0+(max-health)*2);
-        		s.ellipse(x*size+size/2,y*size+size/2,size,size);
+						s.translate(x*size+size/2, y*size+size/2);
+						for(let angle = 0; angle < 360; angle = angle + 90){
+						s.rotate(s.radians(angle));
+						s.line(size/2.5,size/2.5,size/6,size/8);
+						s.line(size/2.5,size/2.5,size/8,size/6);
+						s.rotate(-s.radians(angle));
+					}
+					s.translate(-x*size-size/2, -y*size-size/2);
+					s.fill(0+(max-health)*2);
+					s.ellipse(x*size+size/2,y*size+size/2,size/7,size/7);
 
         	}
         	function drawMaglev(x,y,player,size,health,max,pColors){
@@ -656,11 +664,21 @@ export default class Display {
         		//s.fill(pColors[player][0],pColors[player][1],pColors[player][2],pColors[player][3])
         		s.fill(0);
         		s.stroke(0);
-        		s.fill(255*(max-health));
-        		s.ellipse(x*size+size/4,y*size+size/4,size/4,size/4);
-						s.ellipse(x*size+size/2,y*size+size/4,size/4,size/4);
-						s.ellipse(x*size+size/2,y*size+size/2,size/4,size/4);
-						s.ellipse(x*size+size/4,y*size+size/2,size/4,size/4);
+						s.strokeWeight(2);
+						s.translate(x*size+size/2, y*size+size/2);
+
+						for(let angle = 0; angle < 360; angle = angle + 60){
+						s.rotate(s.radians(angle));
+						s.fill(pColors[player-1][0],pColors[player-1][1],pColors[player-1][2],255);
+						s.triangle(0,0,size/2.5,0,size*.5/2.5,size*.5/2.5*s.sqrt(3));
+						s.fill(0);
+						s.ellipse(size/2.5,0,size/10,size/10);
+						s.ellipse(size*.5/2.5,size*.5/2.5*s.sqrt(3),size/10,size/10);
+						s.rotate(-s.radians(angle));
+					}
+					s.fill(0,255*(health/max))
+					s.ellipse(0,0,size/6,size/6);
+					s.translate(-x*size-size/2, -y*size-size/2);
 
         	}
 
@@ -763,7 +781,7 @@ export default class Display {
 						}
 						s.endShape();
 						s.strokeWeight(2);
-						s.stroke(pColors[player-1][0],pColors[player-1][1],pColors[player-1][2],150);
+						s.stroke(pColors[player-1][0],pColors[player-1][1],pColors[player-1][2],255);
 						s.beginShape();
 						for(let i = a; i <= (a+8); i = i + .05){
 							s.curveVertex(refx+xAdd+orient[0]*i*(size/10)-orient[0]*(size/10)*s.cos(s.radians(i*180)),refy+yAdd+orient[1]*i*size/10+orient[1]*(size/10)*s.cos(s.radians(i*180)));
@@ -772,11 +790,41 @@ export default class Display {
             //s.ellipse(refx,refy,size,size);
         	}
 					function drawBallastProjectile(x,y,player,size,pColors,damage, a){
+
         		let refx=x*size;
         		let refy=y*size;
-        		s.fill(255,0,128,185);
-        		s.noStroke();
-            s.rect(refx,refy,size,size);
+        		s.stroke(pColors[player-1][0],pColors[player-1][1],pColors[player-1][2],115);
+						s.strokeWeight(1);
+						//s.stroke(0);
+						//a=a/100;
+					 //	Lissajous
+					 let amp=size/(20+2*s.abs(5-a));
+					 let n = 20+s.abs(5-a)/50;
+					 s.noFill();
+					 s.translate(refx+size/2,refy+size/2);
+					 s.beginShape();
+					 s.curveVertex((size/3+(amp)*s.sin(n*s.radians(0)))*s.cos(s.radians(0)),(size/3+(amp)*s.sin(n*s.radians(0)))*s.sin(s.radians(0)));
+
+					 for(let angle = 0; angle <= 360; angle = angle + 5){
+						 s.curveVertex((size/3+(amp)*s.sin(n*s.radians(angle)))*s.cos(s.radians(angle)),(size/3+(amp)*s.sin(n*s.radians(angle)))*s.sin(s.radians(angle)));
+					 }
+					 s.curveVertex((size/3+(amp)*s.sin(n*s.radians(0)))*s.cos(s.radians(0)),(size/3+(amp)*s.sin(n*s.radians(0)))*s.sin(s.radians(0)));
+
+					 s.endShape();
+					 s.translate(-(refx+size/2),-(refy+size/2));
+					 /*
+					 for(let i = 2; i < 12; i = i + 3){
+						 for(let j = 2; j < 12; j = j + 3){
+							 s.translate(refx+i*size/13,refy+j*size/13);
+							 s.rotate(Math.PI/4);
+							 s.rect(0,0,2*((i+j+Math.random()*4)%5)*s.sin(s.radians(360*s.noise(a))),2*((i+j+Math.random()*4)%5)*s.sin(s.radians(360*s.noise(a))));
+							 s.rotate(-Math.PI/4);
+							 s.translate(-(refx+i*size/13),-(refy+j*size/13));
+						 }
+
+					 }
+*/
+
         	}
         	function keyPressed() {
 	  				if (s.keyCode === s.LEFT_ARROW) {
