@@ -32,6 +32,7 @@ export default class Display {
 			let animate = 0; //use to decide when a new tick value occurs
 			let buttonScale;
 			let playerShifter;
+			let gameStart;
 
 			//Button Declarations
 			let bBase;
@@ -78,6 +79,7 @@ export default class Display {
     		//Phase begins at 0 via the constructor of Display(see above)
 				//Phase 0 is the Title Sccreen, Phase 1 is Unit Placement, and Phase 2 is the Battle Phase
     		if(this.app.gamePhase==0){
+					gameStart=0;
 
 					//The below function displays the title sequence
 					titleSequence(wi,he,this.delay,si/2);
@@ -158,7 +160,7 @@ export default class Display {
 						s.noStroke();
 						s.rect(hoverX*tempConfig.size,hoverY*tempConfig.size,tempConfig.size,tempConfig.size);
 
-						if(this.app.game.players[this.app.playerNumber-1].baseCount < 2){
+						if(this.app.game.players[this.app.playerNumber-1].baseCount < 2 && gameStart == 0){
 							bBase.drawButton();
 							s.fill(255);
 							s.stroke(0);
@@ -193,10 +195,11 @@ export default class Display {
 					   	}
 						}
 						else{
-						for(let i=0;i<unitButtons.length;i=i+1){
-							 unitButtons[i].drawButton();
-						 }
-            drawUnitMenu(this.playerColors,this.app.playerNumber, buttonScale)
+							gameStart=1;
+							for(let i=0;i<unitButtons.length;i=i+1){
+								 unitButtons[i].drawButton();
+							 }
+            	drawUnitMenu(this.playerColors,this.app.playerNumber, buttonScale)
 
 						if(s.mouseIsPressed){
 							let newButtonPressed=-1;
@@ -742,13 +745,20 @@ export default class Display {
 					function drawJuggernodeProjectile(x,y,player,size,pColors,damage, a){
         		let refx=x*size;
         		let refy=y*size;
-        		s.stroke(pColors[player-1][0],pColors[player-1][1],pColors[player-1][2],150);
+
         		s.noFill();
 						s.stroke(0);
-						s.strokeWeight(1);
+						s.strokeWeight(3);
 						s.beginShape();
 						for(let i = a; i <= (a+8); i = i + .05){
-							s.curveVertex(refx+i*(size/10)-(size/10)*s.cos(s.radians(i*360)),refy+i*size/10+(size/10)*s.cos(s.radians(i*360)));
+							s.curveVertex(refx+i*(size/10)-(size/10)*s.cos(s.radians(i*180)),refy+i*size/10+(size/10)*s.cos(s.radians(i*180)));
+						}
+						s.endShape();
+						s.strokeWeight(2);
+						s.stroke(pColors[player-1][0],pColors[player-1][1],pColors[player-1][2],150);
+						s.beginShape();
+						for(let i = a; i <= (a+8); i = i + .05){
+							s.curveVertex(refx+i*(size/10)-(size/10)*s.cos(s.radians(i*180)),refy+i*size/10+(size/10)*s.cos(s.radians(i*180)));
 						}
 						s.endShape();
             //s.ellipse(refx,refy,size,size);
