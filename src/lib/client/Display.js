@@ -834,7 +834,7 @@ export default class Display {
 						let meh=0;
 						let osx=0;
 						let osy=0;
-						let wave = 4+Math.random()*10;;
+						let wave = 4+(x*y)%14;
 						let rad = 360;
 						let radius=size/25;
 						s.translate(refx,refy);
