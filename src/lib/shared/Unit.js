@@ -14,7 +14,7 @@ export default class Unit {
 		this.health = 0;
 		this.invulnerable=false;
 		this.objCategory = "Units";
-		this.collidedWith = [0];
+		this.collidedWith = [];
 	}
 
 	static createFromSerialized (serializedObject) {
@@ -69,7 +69,7 @@ export class RayTracer extends Unit {
 
 	update(tick) {
 		super.update(tick);
-		this.collidedWith = false;
+		this.collidedWith = [false, 4];
 		// reset firing
 		this.firing = false;
 		// Ray Tracer fires every 4 ticks
@@ -122,7 +122,7 @@ export class Juggernode extends Unit {
 
 	update (tick) {
 		super.update(tick);
-		this.collidedWith = false;
+		this.collidedWith = [false, 4];
 		this.firing=false;
 		this.invulnerable == false;
 		if (tick%8 === 0) {
@@ -151,7 +151,7 @@ export class Juggernode extends Unit {
 
 export class Maglev extends Unit {
 
-	constructor(player, health, firing, id)  {
+	constructor(player, health, firing, id, collidedWith = [false, 4])  {
 		super(id);
 		this.player = player;
 		this.health = health || 250;
@@ -159,11 +159,9 @@ export class Maglev extends Unit {
 		this.maxHealth = 250;
 		this.identifier = "Mag"
 		this.projArr = [];
-		this.collidedWith = [false, 4];
+		this.collidedWith = collidedWith;
 
 	}
-
-
 
 	static createFromSerialized (props) {
 		return new Maglev(props.player, props.health, props.firing, props.id, props.collidedWith)
@@ -185,7 +183,7 @@ export class Maglev extends Unit {
 
 	update(tick) {
 		super.update(tick);
-
+		this.collidedWith = [false, 4];
 		// reset firing
 		this.firing = false;
 
@@ -203,7 +201,7 @@ export class Maglev extends Unit {
 
 export class Ballast extends Unit {
 
-	constructor(player, health, firing, id)  {
+	constructor(player, health, firing, id, collidedWith = [false, 4])  {
 		super(id);
 		this.player = player;
 		this.health = health || 300;
@@ -211,7 +209,7 @@ export class Ballast extends Unit {
 		this.maxHealth = 300;
 		this.identifier="Bal";
 		this.projArr = [];
-		this.collidedWith = [false, 4];
+		this.collidedWith = collidedWith;
 	}
 
 	static createFromSerialized (props) {
@@ -224,6 +222,8 @@ export class Ballast extends Unit {
 	}
 
 	update (tick) {
+		super.update(tick);
+		this.collidedWith = [false, 4];
 		this.firing=false;
 		if(tick % 6 === 0){
 			let rando = Math.random()*5;

@@ -274,7 +274,6 @@ export default class Display {
 												try{
 
 													if(displayObject.collidedWith[0] == true){
-														debug.log(3, displayObject.collidedWith[0]);
 														drawCollision(l,k, tempConfig.size, displayObject.collidedWith[1], animate, this.playerColors);
 													}
 												} catch(e){

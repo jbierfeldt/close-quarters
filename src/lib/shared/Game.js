@@ -225,6 +225,7 @@ export default class Game {
 			case "Bases":
 				console.log(proj.id, "( player", proj.player, ") hit ", obj.id, " ( player", obj.player, ")", obj.health);
 				if (proj.player !== obj.player) {
+					obj.collidedWith = [true, proj.player];
 					obj.health = obj.health - proj.damage;
 					if (this.isObjectAlive(obj) === false) {
 						this.cleanUpArray.push(obj.id);
