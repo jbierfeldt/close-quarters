@@ -834,15 +834,15 @@ export default class Display {
 						let meh=0;
 						let osx=0;
 						let osy=0;
-						let wave = 6;
+						let wave = 4+Math.random()*10;;
 						let rad = 360;
 						let radius=size/25;
 						s.translate(refx,refy);
 						for (let i = 0; i < rad; i = i +1){
-							s.stroke(pColors[player-1][0],pColors[player-1][1],pColors[player-1][2], 10);
+							s.stroke(pColors[player-1][0],pColors[player-1][1],pColors[player-1][2], 10-a);
          			theta = i*(360/rad);
          			phase=((Math.PI)/rad);
-			        meh = (radius*1.5+1.3*a)*s.sin(wave*theta+phase)*s.cos(phase);
+			        meh = (radius*1.5+11.5)*s.sin(wave*theta+phase)*s.cos(phase);
 			        osx=(size/25+meh)*s.cos(theta);
 			        osy=(size/25+meh)*s.sin(theta);
 			        s.strokeWeight(9);
@@ -851,7 +851,7 @@ export default class Display {
 			        s.point(osx,osy);
 			        s.strokeWeight(3);
 			        s.point(osx,osy);
-		          s.stroke(255,25);
+		          s.stroke(255,25-a*2);
 		          s.strokeWeight(1.5);
 		          s.point(osx,osy);
 					 }
