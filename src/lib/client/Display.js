@@ -254,7 +254,7 @@ export default class Display {
 				/*if(s.keyIsPressed){
 						this.t=this.t+keyPressed();
 					}*/
-					//debug.log(3, this.simulationDisplayTurn.tick.length);
+
 				if(animate === 9 && this.t < (Object.keys(this.simulationDisplayTurn.tick).length-1)){
 				this.t=this.t+1;
 				animate=0;
@@ -271,6 +271,15 @@ export default class Display {
 									for(var m=0; m<b[k][l].length;m=m+1){
 										let displayObject = this.simulationDisplayTurn.tick[this.t].gameObjects.get(b[k][l][m]);
 											if(displayObject !== undefined){
+												try{
+
+													if(displayObject.collidedWith[0] == true){
+														debug.log(3, displayObject.collidedWith[0]);
+														drawCollision(l,k, tempConfig.size, displayObject.collidedWith[1], animate, this.playerColors);
+													}
+												} catch(e){
+
+												}
 												drawDisplayObject(displayObject, l, k,tempConfig.size, this.playerColors, animate);
 										}
 									}
@@ -812,20 +821,44 @@ export default class Display {
 
 					 s.endShape();
 					 s.translate(-(refx+size/2),-(refy+size/2));
-					 /*
-					 for(let i = 2; i < 12; i = i + 3){
-						 for(let j = 2; j < 12; j = j + 3){
-							 s.translate(refx+i*size/13,refy+j*size/13);
-							 s.rotate(Math.PI/4);
-							 s.rect(0,0,2*((i+j+Math.random()*4)%5)*s.sin(s.radians(360*s.noise(a))),2*((i+j+Math.random()*4)%5)*s.sin(s.radians(360*s.noise(a))));
-							 s.rotate(-Math.PI/4);
-							 s.translate(-(refx+i*size/13),-(refy+j*size/13));
-						 }
-
-					 }
-*/
-
         	}
+
+					function drawCollision(x, y, size, player, a, pColors){
+        		let refx=x*size+size/2;
+        		let refy=y*size+size/2;
+						let scalar = size/4;
+
+        		s.noFill();
+						let theta=0;
+						let phase=0;
+						let meh=0;
+						let osx=0;
+						let osy=0;
+						let wave = 6;
+						let rad = 360;
+						let radius=size/25;
+						s.translate(refx,refy);
+						for (let i = 0; i < rad; i = i +1){
+							s.stroke(pColors[player-1][0],pColors[player-1][1],pColors[player-1][2], 10);
+         			theta = i*(360/rad);
+         			phase=((Math.PI)/rad);
+			        meh = (radius*1.5+1.3*a)*s.sin(wave*theta+phase)*s.cos(phase);
+			        osx=(size/25+meh)*s.cos(theta);
+			        osy=(size/25+meh)*s.sin(theta);
+			        s.strokeWeight(9);
+			        s.point(osx,osy);
+			        s.strokeWeight(6);
+			        s.point(osx,osy);
+			        s.strokeWeight(3);
+			        s.point(osx,osy);
+		          s.stroke(255,25);
+		          s.strokeWeight(1.5);
+		          s.point(osx,osy);
+					 }
+					 s.translate(-refx,-refy);
+						//s.ellipse(refx+size/2, refy+size/2, size-a, size-a);
+        }
+
         	function keyPressed() {
 	  				if (s.keyCode === s.LEFT_ARROW) {
 	    				return -1;
@@ -851,7 +884,7 @@ export default class Display {
 
 		this.engine = new p5(sketch);
 
-		console.log('Initialized Display');
+		//console.log('Initialized Display');
 	}
 
 

@@ -206,10 +206,12 @@ export default class Game {
 	}
 
 	collideProjWithObject(proj, obj, x, y) {
+		//obj.collidedWith = [true, proj.player];
 		switch (obj.objCategory) {
 			case "Units":
 				console.log(proj.id, "( player", proj.player, ") hit ", obj.id, " ( player", obj.player, ")", obj.health);
 				if (proj.player !== obj.player) {
+					obj.collidedWith = [true, proj.player];
 					obj.health = obj.health - proj.damage;
 					if (this.isObjectAlive(obj) === false) {
 						this.deleteObjectAtCoord(obj, x, y);
@@ -402,10 +404,9 @@ export default class Game {
 							let obj = this.gameObjects.get(this.board[i][j][k]);
 							if (obj.objCategory === "Projectiles") {
 								for (let m = 0; m < collisionStack.length; m++) {
-
 									let collisionObj = this.gameObjects.get(collisionStack[m]);
 									this.collideProjWithObject(obj, collisionObj, j, i);
-
+									console.log(collisionObj.collidedWith);
 								}
 							}
 						}
@@ -431,10 +432,11 @@ export default class Game {
 		this.clearProjectiles(); // clear all projectiles at the end of the turn
 		this.currentTurnInitialState = this.createGameSnapshot();
 
-		this.turnNumber++;
+
 		for(let p = 0; p < 4; p = p + 1){
 			this.players[p].credits = this.players[p].credits + 3;
 	 }
+	 this.turnNumber++;
 	}
 
 }

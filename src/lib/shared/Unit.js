@@ -14,6 +14,7 @@ export default class Unit {
 		this.health = 0;
 		this.invulnerable=false;
 		this.objCategory = "Units";
+		this.collidedWith = [0];
 	}
 
 	static createFromSerialized (serializedObject) {
@@ -21,6 +22,7 @@ export default class Unit {
 	}
 
 	update (tick) {
+		//this.collidedWith = [false, 4];
 		debug.log(0, "    Updating Unit " + this.id + "  for tick #" + tick);
 	}
 
@@ -31,7 +33,8 @@ export default class Unit {
 			class: this.constructor.name,
 			player: this.player,
 			health: this.health,
-			firing: this.firing
+			firing: this.firing,
+			collidedWith: this.collidedWith
 		}
 	}
 
@@ -39,7 +42,7 @@ export default class Unit {
 
 export class RayTracer extends Unit {
 
-	constructor(player, health, firing, id)  {
+	constructor(player, health, firing, id, collidedWith = [false, 4])  {
 		super(id);
 		this.player = player;
 		this.health = health || 100;
@@ -47,10 +50,11 @@ export class RayTracer extends Unit {
 		this.maxHealth = 100;
 		this.identifier = "Ray";
 		this.projArr = [];
+		this.collidedWith = collidedWith;
 	}
 
 	static createFromSerialized (props) {
-		return new RayTracer(props.player, props.health, props.firing, props.id)
+		return new RayTracer(props.player, props.health, props.firing, props.id, props.collidedWith)
 	}
 
 	startAttack(orientation){
@@ -65,7 +69,7 @@ export class RayTracer extends Unit {
 
 	update(tick) {
 		super.update(tick);
-
+		this.collidedWith = false;
 		// reset firing
 		this.firing = false;
 		// Ray Tracer fires every 4 ticks
@@ -96,7 +100,7 @@ export class RayTracer extends Unit {
 
 export class Juggernode extends Unit {
 
-	constructor(player, health, firing, id)  {
+	constructor(player, health, firing, id,  collidedWith = [false, 4])  {
 		super(id);
 		this.player = player;
 		this.health = health || 500;
@@ -104,10 +108,11 @@ export class Juggernode extends Unit {
 		this.maxHealth = 500;
 		this.identifier="Jug";
 		this.projArr = [];
+		this.collidedWith = collidedWith;
 	}
 
 	static createFromSerialized (props) {
-		return new Juggernode(props.player, props.health, props.firing, props.id)
+		return new Juggernode(props.player, props.health, props.firing, props.id, props.collidedWith)
 	}
 
 	startAttack (orientation){
@@ -116,6 +121,8 @@ export class Juggernode extends Unit {
 	}
 
 	update (tick) {
+		super.update(tick);
+		this.collidedWith = false;
 		this.firing=false;
 		this.invulnerable == false;
 		if (tick%8 === 0) {
@@ -152,13 +159,14 @@ export class Maglev extends Unit {
 		this.maxHealth = 250;
 		this.identifier = "Mag"
 		this.projArr = [];
+		this.collidedWith = [false, 4];
 
 	}
 
 
 
 	static createFromSerialized (props) {
-		return new Maglev(props.player, props.health, props.firing, props.id)
+		return new Maglev(props.player, props.health, props.firing, props.id, props.collidedWith)
 	}
 
 	startAttack(tick){
@@ -203,10 +211,11 @@ export class Ballast extends Unit {
 		this.maxHealth = 300;
 		this.identifier="Bal";
 		this.projArr = [];
+		this.collidedWith = [false, 4];
 	}
 
 	static createFromSerialized (props) {
-		return new Ballast(props.player, props.health, props.firing, props.id)
+		return new Ballast(props.player, props.health, props.firing, props.id, props.collidedWith)
 	}
 
 	startAttack (orientation){
