@@ -188,7 +188,7 @@ export class Maglev extends Unit {
 		this.firing = false;
 
 		// Ray Tracer fires every 4 ticks
-		if (tick % 8 === 0) {
+		if (tick % 12 === 0) {
 			this.startAttack();
 		}
 	}
