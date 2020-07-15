@@ -25,6 +25,8 @@ class GameController {
 		this.game = game;
 		this.io = socketIO(server);
 
+		this.playersOnline = [];
+
 		// player spots
     this.playerControllers = {
 			1: null,
@@ -50,6 +52,7 @@ class GameController {
 			}
 			else {
 				let newPlayerController = this.newPlayerController(socket, playerSpot);
+
 				this.sendGameStateToClient(socket);
 				this.sendGameHistoryToClient(socket);
 			}
@@ -72,6 +75,8 @@ class GameController {
 
 	removePlayerController (playerNumber) {
 		this.playerControllers[playerNumber] = null;
+		const idx = this.playersOnline.indexOf(this.playerControllers[playerNumber]);
+		this.playersOnline.splice(idx, 1);
 
 		debug.log(1, this.playerControllers);
 	}
@@ -89,6 +94,7 @@ class GameController {
 		// create new PlayerController and assign to empty spot
 		let pc = new PlayerController(this, socket, playerSpot);
 		this.playerControllers[playerSpot] = pc;
+		this.playersOnline.push(pc);
 
 		// init new player
 	  pc.init();
@@ -136,7 +142,10 @@ class GameController {
 
 		for (let i = 1; i <= 4; i++) {
 			if (this.playerControllers[i] !== null) {
-				playerControllers[i] = this.playerControllers[i].clientGamePhase;
+				playerControllers[i] = {
+					gamePhase: this.playerControllers[i].clientGamePhase,
+					ordersSubmitted: this.playerControllers[i].ordersSubmitted
+				}
 			} else {
 				playerControllers[i] = null;
 			}
@@ -147,16 +156,50 @@ class GameController {
 		});
 	}
 
-	createBase(baseType, player, x, y) {
-		this.game.createNewBaseAtCoord(baseType, player, x, y);
-		console.log("Made", baseType, "at", x, y);
-		// this.sendGameStateToAll();
+	createBase(args) {
+		this.game.createNewBaseAtCoord(args.baseType, args.player, args.x, args.y);
+		console.log("Made", args.baseType, "at", args.x, args.y);
 	}
 
-	createUnit(unitType, player, x, y) {
-		this.game.createNewUnitAtCoord(unitType, player, x, y);
-		console.log("Made", unitType, "at", x, y);
-		// this.sendGameStateToAll();
+	createUnit(args) {
+		this.game.createNewUnitAtCoord(args.unitType, args.player, args.x, args.y);
+		console.log("Made", args.unitType, "at", args.x, args.y);
+	}
+
+	checkAllOrdersSubmitted() {
+		// update all clients on who has submitted orders
+		this.sendServerStateToAll();
+
+		// check if all the online players have submitted their orders
+		// if not, return false and don't execute
+		for (let i = 0; i < this.playersOnline.length; i++) {
+			// console.log("orders submitted?", this.playersOnline[i], this.playersOnline[i].ordersSubmitted);
+			if (!this.playersOnline[i].ordersSubmitted) {
+				return false;
+			}
+		}
+
+		//if all online players have submitted their orders, execute orders
+		// execute orders
+		for (let i = 0; i < this.playersOnline.length; i++) {
+			if (this.playersOnline[i].ordersToExecute.length > 0) {
+				for (let j = 0; j < this.playersOnline[i].ordersToExecute.length; j++) {
+					this.executeOrder(this.playersOnline[i].ordersToExecute[j]);
+				}
+			}
+
+			// after orders executed, reset PlayerController
+			this.playersOnline[i].ordersSubmitted = false;
+			this.playersOnline[i].ordersToExecute = [];
+		}
+
+		// once all orders have been executed, run simulation
+		this.runSimulation();
+
+	}
+
+	executeOrder (order) {
+		this[order.orderType](order.args);
 	}
 
 	runSimulation() {
@@ -176,6 +219,9 @@ class PlayerController {
     this.gameController = gameController;
     this.socket = socket;
 
+		this.ordersToExecute = [];
+		this.ordersSubmitted = false;
+
 		this.clientGamePhase = null;
   }
 
@@ -194,7 +240,11 @@ class PlayerController {
 		this.socket.on('submitTurn', (data) =>  {
 			// will update game controller saying that this player has submitted their turn
 			// for now, just forcing runSimulation
-			this.gameController.runSimulation();
+			this.ordersToExecute = JSON.parse(data);
+			this.ordersSubmitted = true;
+
+			// try to execute orders
+			this.gameController.checkAllOrdersSubmitted();
 		});
 
 		this.socket.on('resetGame', (data) =>  {

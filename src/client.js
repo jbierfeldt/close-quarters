@@ -108,14 +108,6 @@ class App {
 				y: y
 			});
 		}
-
-		// tmp
-		this.socket.emit('createBase', {
-			baseType: baseType,
-			player: player,
-			x: x,
-			y: y
-		});
 	}
 
 	sendCreateUnit (unitType, player, x, y) {
@@ -133,19 +125,11 @@ class App {
 				y: y
 			});
 		};
-
-		// tmp
-		this.socket.emit('createUnit', {
-			unitType: unitType,
-			player: player,
-			x: x,
-			y: y
-		});
 	}
 
 	sendSubmitTurn () {
 		debug.log(1, "submit turn!");
-		this.socket.emit('submitTurn');
+		this.socket.emit('submitTurn', JSON.stringify(this.currentTurnOrders));
 	}
 
 	sendResetGame () {
@@ -234,19 +218,23 @@ class App {
 				let newPlayerDiv = document.createElement("div");
 				let newPlayerSpan = document.createElement("span");
 				if (this.playersOnServer[i] !== null) {
-					switch (this.playersOnServer[i]) {
+					switch (this.playersOnServer[i].gamePhase) {
 						case 0:
 							newPlayerSpan.innerHTML = "Loading...";
 							break
 						case 1:
-							newPlayerSpan.innerHTML = "Making Turn...";
+							if (this.playersOnServer[i].ordersSubmitted) {
+								newPlayerSpan.innerHTML = "Orders submitted.";
+							} else {
+								newPlayerSpan.innerHTML = "Making Turn...";
+							}
 							break
 						case 2:
 							newPlayerSpan.innerHTML = "Watching Simulation...";
 							break
 					}
 				} else {
-					newPlayerSpan.innerHTML = "Waiting for Player...";
+					newPlayerSpan.innerHTML = "Empty";
 				}
 				newPlayerDiv.innerHTML = String("Player " + i + ": ");
 				newPlayerDiv.append(newPlayerSpan)
