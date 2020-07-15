@@ -19,13 +19,14 @@ class App {
 		this.gameState = undefined;
 		this.socket = undefined;
 
-		this.gamePhase = 0;
+		this.gamePhase = undefined;
 
 		// info from server
 		this.turnNumber = 1;
 		this.currentTurnInitialState = {};
 		this.clientID = undefined;
 		this.playerNumber = undefined;
+		this.playersOnServer = undefined;
 	}
 
 	init() {
@@ -33,7 +34,15 @@ class App {
 		this.display.init();
 		this.socket = io();
 
+		this.setGamePhase(0);
+
 		this.debugInit();
+
+		this.socket.on('updateServerState', (data) => {
+			let players = JSON.parse(data.players);
+			this.playersOnServer = players;
+			this.updateDebugInfo();
+		});
 
 		this.socket.on('debugInfoUpdate', (data) => {
 			console.log('update debug');
@@ -101,6 +110,9 @@ class App {
 
 	setGamePhase (phase) {
 		this.gamePhase = phase;
+		this.socket.emit('updateClientPhase', {
+			newPhase: this.gamePhase
+		});
 	}
 
 	loadSerializedGameState(serializedGameState) {
@@ -144,7 +156,7 @@ class App {
 		const debugData = {
 			'clientID': this.clientID,
 			'playerNumber': this.playerNumber,
-			'turnNumber': this.turnNumber
+			'turnNumber': this.turnNumber,
 		}
 
 		const debugWindow = document.getElementById("debug-info");
@@ -154,6 +166,33 @@ class App {
 			newEl.innerHTML = String(el + ": " + debugData[el]);
 			debugWindow.append(newEl);
 		}
+
+		if (this.playersOnServer) {
+			document.getElementById("players-info").innerHTML = '';
+			for (let i = 1; i <= 4; i++) {
+				let newPlayerDiv = document.createElement("div");
+				let newPlayerSpan = document.createElement("span");
+				if (this.playersOnServer[i] !== null) {
+					switch (this.playersOnServer[i]) {
+						case 0:
+							newPlayerSpan.innerHTML = "Loading...";
+							break
+						case 1:
+							newPlayerSpan.innerHTML = "Making Turn...";
+							break
+						case 2:
+							newPlayerSpan.innerHTML = "Watching Simulation...";
+							break
+					}
+				} else {
+					newPlayerSpan.innerHTML = "Empty";
+				}
+				newPlayerDiv.innerHTML = String("Player " + i + ": ");
+				newPlayerDiv.append(newPlayerSpan)
+				document.getElementById("players-info").append(newPlayerDiv);
+			}
+		}
+
 	}
 
 }
