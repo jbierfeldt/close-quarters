@@ -27,10 +27,10 @@ class GameController {
 
 		// player spots
     this.playerControllers = {
-			1: undefined,
-			2: undefined,
-			3: undefined,
-			4: undefined
+			1: null,
+			2: null,
+			3: null,
+			4: null
 		};
 	}
 
@@ -49,12 +49,15 @@ class GameController {
 				debug.log(1, "Game full.");
 			}
 			else {
-				this.newPlayerController(socket, playerSpot);
-				this.sendGameHistory();
-				this.sendGameState();
+				let newPlayerController = this.newPlayerController(socket, playerSpot);
+				this.sendGameStateToClient(socket);
+				this.sendGameHistoryToClient(socket);
 			}
 
+			this.sendServerStateToAll();
+
     });
+
   }
 
 	resetGame () {
@@ -62,12 +65,12 @@ class GameController {
 		this.game = newGame;
 		this.game.init();
 
-		this.sendGameState();
-		this.sendGameHistory();
+		this.sendGameStateToAll();
+		this.sendGameHistoryToAll();
 	}
 
 	removePlayerController (playerNumber) {
-		this.playerControllers[playerNumber] = undefined;
+		this.playerControllers[playerNumber] = null;
 
 		debug.log(1, this.playerControllers);
 	}
@@ -75,7 +78,7 @@ class GameController {
 	getOpenPlayerSpot () {
 		// returns the id of next open player spot or false if all spots are filled
 		for (let idx in this.playerControllers) {
-			if (this.playerControllers[idx] === undefined) { return idx };
+			if (this.playerControllers[idx] === null) { return idx };
 		}
 		// if all filled
 		return false;
@@ -90,37 +93,69 @@ class GameController {
 	  pc.init();
 
 		debug.log(1, this.playerControllers);
+
+		return pc;
 	}
 
-	sendGameHistory () {
+	sendGameHistoryToAll () {
 		this.io.emit('updateGameHistory', {
 			s_history: JSON.stringify(this.game.history)
 		});
 	}
 
-	sendGameState () {
+	sendGameHistoryToClient (socket) {
+		socket.emit('updateGameHistory', {
+			s_history: JSON.stringify(this.game.history)
+		});
+	}
+
+	sendGameStateToAll () {
 		this.io.emit('updateGameState',  {
 			turnNumber: this.game.turnNumber,
 			currentTurnInitialState: JSON.stringify(this.game.currentTurnInitialState)
 		});
 	}
 
+	sendGameStateToClient (socket) {
+		socket.emit('updateGameState',  {
+			turnNumber: this.game.turnNumber,
+			currentTurnInitialState: JSON.stringify(this.game.currentTurnInitialState)
+		});
+	}
+
+	sendServerStateToAll () {
+
+		let playerControllers = {};
+
+		for (let i = 1; i <= 4; i++) {
+			if (this.playerControllers[i] !== null) {
+				playerControllers[i] = this.playerControllers[i].clientGamePhase;
+			} else {
+				playerControllers[i] = null;
+			}
+		}
+
+		this.io.emit('updateServerState', {
+			players: JSON.stringify(playerControllers)
+		});
+	}
+
 	createBase(baseType, player, x, y) {
 		this.game.createNewBaseAtCoord(baseType, player, x, y);
 		console.log("Made", baseType, "at", x, y);
-		// this.sendGameState();
+		// this.sendGameStateToAll();
 	}
 
 	createUnit(unitType, player, x, y) {
 		this.game.createNewUnitAtCoord(unitType, player, x, y);
 		console.log("Made", unitType, "at", x, y);
-		// this.sendGameState();
+		// this.sendGameStateToAll();
 	}
 
 	runSimulation() {
 		this.game.runSimulation();
-		this.sendGameState();
-		this.sendGameHistory();
+		this.sendGameStateToAll();
+		this.sendGameHistoryToAll();
 	}
 
 }
@@ -132,6 +167,8 @@ class PlayerController {
 		this.playerNumber = playerNumber;
     this.gameController = gameController;
     this.socket = socket;
+
+		this.clientGamePhase = null;
   }
 
   init() {
@@ -157,9 +194,14 @@ class PlayerController {
 			this.gameController.resetGame();
 		});
 
+		this.socket.on('updateClientPhase', (data) => {
+			this.clientGamePhase = data.newPhase;
+			this.gameController.sendServerStateToAll();
+		})
+
     this.socket.on('disconnect', () => {
-       debug.log(0, 'a user disconnected');
 			 this.gameController.removePlayerController(this.playerNumber);
+			 this.gameController.sendServerStateToAll();
     });
 
 		this.sendPlayerState();
@@ -173,6 +215,7 @@ class PlayerController {
 			'playerNumber': this.playerNumber
 		});
 	}
+
 }
 
 const game1 = new GameController();
