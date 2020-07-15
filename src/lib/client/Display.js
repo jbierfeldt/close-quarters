@@ -583,14 +583,14 @@ export default class Display {
 			//s.fill(pColors[player][0],pColors[player][1],pColors[player][2],pColors[player][3])
 			//x,y,radius,npoints
 			s.fill(0);
-			s.stroke(0);
-			s.fill(pColors[player-1][0]+(max-health),pColors[player-1][1]+(max-health),pColors[player-1][2]+(max-health),255);
+			s.stroke((max-health)*255/max);
+			s.fill(pColors[player-1][0],pColors[player-1][1],pColors[player-1][2],255);
 			s.strokeWeight(3);
 			let offset=size/8;
 
 			for(let row = x*size+offset; row < (x*size+size); row = row + offset*2){
 				for(let col = y*size+offset; col < (y*size+size); col = col + offset*2){
-					polygon(row,col,offset,5);
+					s.rect(row-offset/2,col-offset/2,offset,offset);
 				}
 			}
 		}
@@ -661,7 +661,8 @@ export default class Display {
 			//s.fill(pColors[player][0],pColors[player][1],pColors[player][2],pColors[player][3])
 			s.fill(0);
 			s.stroke(0);
-			s.fill(255*(max-health));
+			s.strokeWeight(0);
+			s.fill((max-health)*255/max);
 			s.ellipse(x*size+size/2,y*size+3*size/4,size*.9,size*.2);
 			s.beginShape();
 			s.vertex(x*size+2*size/3,y*size+3*size/4);
@@ -728,6 +729,7 @@ export default class Display {
 			s.fill(pColors[player-1][0],pColors[player-1][1],pColors[player-1][2], damage*5);
 			s.stroke(0,255);
 			s.strokeWeight(2);
+			//s.noStroke();
 			s.beginShape();
 			for(let angle = 0; angle <= 360; angle = angle + 10){
 				//s.rect(refx,refy,size,size);
@@ -790,11 +792,24 @@ export default class Display {
 		}
 
 		function drawCircuitBreakerProjectile(x, y, player, size, pColors, damage, a){
-			s.fill(pColors[player-1][0],pColors[player-1][1],pColors[player-1][2],185);
-			s.strokeWeight(2);
+			s.strokeWeight(1);
+			s.fill(pColors[player-1][0],pColors[player-1][1],pColors[player-1][2],105);
+			let crossHairOffset = size/5;
 			if(damage == 0){
-				s.stroke(0);
-				polygon(x*size+size/2, y*size+size/2,size/5, 7);
+				s.strokeWeight(2)
+				s.stroke(255,185);
+				s.ellipse(x*size+size/2, y*size+size/2,size/20,size/20);
+				s.line(x*size+size/2, y*size+size/2-size/20,x*size+size/2, y*size+size/2-crossHairOffset);
+				s.line(x*size+size/2-size/20, y*size+size/2,x*size+size/2-crossHairOffset, y*size+size/2);
+				s.line(x*size+size/2, y*size+size/2+size/20,x*size+size/2, y*size+size/2+crossHairOffset);
+				s.line(x*size+size/2+size/20, y*size+size/2,x*size+size/2+crossHairOffset, y*size+size/2);
+				s.strokeWeight(1)
+				s.stroke(pColors[player-1][0],pColors[player-1][1],pColors[player-1][2],185);
+				s.ellipse(x*size+size/2, y*size+size/2,size/20,size/20);
+				s.line(x*size+size/2, y*size+size/2-size/20,x*size+size/2, y*size+size/2-crossHairOffset);
+				s.line(x*size+size/2-size/20, y*size+size/2,x*size+size/2-crossHairOffset, y*size+size/2);
+				s.line(x*size+size/2, y*size+size/2+size/20,x*size+size/2, y*size+size/2+crossHairOffset);
+				s.line(x*size+size/2+size/20, y*size+size/2,x*size+size/2+crossHairOffset, y*size+size/2);
 			}
 			else{
 				s.noStroke();
@@ -802,7 +817,7 @@ export default class Display {
 					s.noFill();
 				}
 				else{
-					s.fill(pColors[player-1][0],pColors[player-1][1],pColors[player-1][2],185);
+					s.fill(pColors[player-1][0],pColors[player-1][1],pColors[player-1][2],105);
 				}
 				s.rect(x*size,y*size,size,size);
 			}
@@ -861,6 +876,7 @@ export default class Display {
 		function polygon(x, y, radius, npoints) {
 			let angle = Math.PI*2 / npoints;
 			s.beginShape();
+			s.vertex(x + s.cos(0) * radius, y + s.sin(0) * radius);
 			for (let a = 0; a < Math.PI*2; a += angle) {
 				let sx = x + s.cos(a) * radius;
 				let sy = y + s.sin(a) * radius;
