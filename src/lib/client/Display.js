@@ -843,7 +843,7 @@ export default class Display {
 			let rad = 360;
 			let radius=size/25;
 			s.translate(refx,refy);
-			for (let i = 0; i < rad; i = i +1){
+			for (let i = 0; i < rad; i = i + 3){
 				s.stroke(pColors[player-1][0],pColors[player-1][1],pColors[player-1][2], 10-a);
 				theta = i*(360/rad);
 				phase=((Math.PI)/rad);

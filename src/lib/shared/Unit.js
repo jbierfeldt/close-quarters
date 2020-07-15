@@ -169,13 +169,25 @@ export class Maglev extends Unit {
 
 	startAttack(tick){
 		this.firing = true;
+		let firingChoice = Math.floor(Math.random()*2);
 		const arr = []
 		let i = 0;
 		for(let a = -1; a < 2; a = a + 1){
 			for(let b = -1; b < 2; b = b + 1){
 			   if(a !== 0 || b !== 0){
+					 if(firingChoice == 0){
+					 if(a === 0 || b === 0){
 		       	this.projArr[i] = new Projectiles.MagBullet(this.player, [a,b], 1);
-		       	i = i + 1;
+						i = i + 1;
+						}
+					}
+					if(firingChoice == 1){
+						if(a !== 0  && b !== 0){
+					 		this.projArr[i] = new Projectiles.MagBullet(this.player, [a,b], 1);
+							i = i + 1;
+					 }
+				 }
+
 					}
 				}
 	  }

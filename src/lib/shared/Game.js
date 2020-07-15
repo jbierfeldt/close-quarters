@@ -438,12 +438,6 @@ export default class Game {
 				this.cleanUpArray.pop();
 				cleanUpArrayTempLength = cleanUpArrayTempLength-1;
 			}
-			/*if (this.cleanUpArray.length > 0) {
-				for (let i = 0; i < this.cleanUpArray.length; i++) {
-					this.cleanUpByID(this.cleanUpArray[i]);
-					this.cleanUpArray.splice(i, 1);
-				}
-			}*/
 
 			// update
 			// validate

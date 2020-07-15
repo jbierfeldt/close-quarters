@@ -8,7 +8,7 @@ export class Base {
 	constructor(player, health, id, collidedWith = [false, 4]) {
 		this.id = id || 'base'+createID();
 		this.player = player;
-		this.maxHealth = 300;
+		this.maxHealth = 1000;
 		this.health = health || this.maxHealth;
 		this.objCategory = "Bases";
 		this.identifier = "Base";
