@@ -5,7 +5,7 @@ import * as Units from './lib/shared/Unit.js';
 import * as Bases from './lib/shared/Base.js';
 import {DEBUG} from './lib/shared/utilities.js';
 
-window.debug = new DEBUG(true, 3);
+window.debug = new DEBUG(true, 0);
 
 const debugData = {
 	'playerNumber': 1
@@ -20,6 +20,7 @@ class App {
 		this.socket = undefined;
 
 		this.gamePhase = undefined;
+		this.currentTurnOrders = [];
 
 		// info from server
 		this.turnNumber = 1;
@@ -45,19 +46,24 @@ class App {
 		});
 
 		this.socket.on('debugInfoUpdate', (data) => {
-			console.log('update debug');
+			debug.log(0, 'update debug');
 			this.updateDebugInfo();
 		});
 
 		this.socket.on('updateGameHistory', (data) => {
-			console.log('got game history from server');
+			debug.log(0, 'got game history from server');
 			this.updateGameHistory(data);
 		});
 
 		this.socket.on('updateGameState', (data) => {
-			console.log('got game state from server', data);
+			debug.log(0, 'got game state from server', data);
 			this.updateGameState(data);
 		});
+
+		this.socket.on('updateClientGamePhase', (data) => {
+			debug.log(0, 'got new phase from server', data.newPhase);
+			this.setGamePhase(data.newPhase);
+		})
 
 
 
@@ -75,9 +81,35 @@ class App {
 		document.getElementById("phase-2").addEventListener("click", this.setGamePhase.bind(this, 2));
 	}
 
+	createOrder (orderType, args) {
+		let order = {
+			player: this.playerNumber,
+			turnNumber: this.turnNumber,
+			orderType: orderType,
+			args: args
+		}
+
+		this.currentTurnOrders.push(order);
+		this.updateDebugInfo();
+	}
+
 	sendCreateBase (baseType, player, x, y) {
 		debug.log(1, "making base");
-		this.game.createNewBaseAtCoord(baseType, player, x, y);
+
+		// validate if unit placement is allowed
+		let createNewBase = this.game.createNewBaseAtCoord(baseType, player, x, y);
+
+		// if so, create new order
+		if (createNewBase) {
+			this.createOrder('createBase', {
+				baseType: baseType,
+				player: player,
+				x: x,
+				y: y
+			});
+		}
+
+		// tmp
 		this.socket.emit('createBase', {
 			baseType: baseType,
 			player: player,
@@ -88,7 +120,21 @@ class App {
 
 	sendCreateUnit (unitType, player, x, y) {
 		debug.log(1, "making unit");
-		this.game.createNewUnitAtCoord(unitType, player, x, y);
+
+		// validate if unit placement is allowed
+		let createNewUnit = this.game.createNewUnitAtCoord(unitType, player, x, y);
+
+		// if so, create new order
+		if (createNewUnit) {
+			this.createOrder('createUnit', {
+				unitType: unitType,
+				player: player,
+				x: x,
+				y: y
+			});
+		};
+
+		// tmp
 		this.socket.emit('createUnit', {
 			unitType: unitType,
 			player: player,
@@ -104,7 +150,7 @@ class App {
 
 	sendResetGame () {
 		debug.log(1, "Resetting game!");
-		// this.gamePhase = 0;
+		this.setGamePhase(0);
 		this.socket.emit('resetGame');
 	}
 
@@ -113,6 +159,12 @@ class App {
 		this.socket.emit('updateClientPhase', {
 			newPhase: this.gamePhase
 		});
+	}
+
+	setTurnNumber (turnNumber) {
+		this.turnNumber = turnNumber;
+		this.game.turnNumber = turnNumber;
+		this.currentTurnOrders = [];
 	}
 
 	loadSerializedGameState(serializedGameState) {
@@ -132,23 +184,20 @@ class App {
 	}
 
 	updateGameState (data) {
-		console.log("updating Game State");
-		this.turnNumber = data.turnNumber;
-		this.game.turnNumber = data.turnNumber;
+		debug.log(0, "updating Game State");
+		this.setTurnNumber(data.turnNumber);
 		this.game.currentTurnInitialState = this.loadSerializedGameState(data.currentTurnInitialState);
 		this.game.loadGameSnapshot(this.game.currentTurnInitialState);
-
-		console.log(this.game.gameObjects);
 
 		this.updateDebugInfo();
 	}
 
 	updateGameHistory (data) {
-		console.log("updateGameHistory", data);
+		debug.log(0, "updateGameHistory", data);
 		let history = this.loadSerializedTurnHistory(data.s_history);
 		this.game.history = history;
 		this.display.simulationDisplayTurn = this.game.history.turn[this.turnNumber-1];
-		console.log("sent to Display", this.turnNumber-1, this.display.simulationDisplayTurn);
+		debug.log(0, "sent to Display", this.turnNumber-1, this.display.simulationDisplayTurn);
 	}
 
 	updateDebugInfo () {
@@ -165,6 +214,18 @@ class App {
 			let newEl = document.createElement("div");
 			newEl.innerHTML = String(el + ": " + debugData[el]);
 			debugWindow.append(newEl);
+		}
+
+		document.getElementById("orders-info").innerHTML = '';
+		if (this.currentTurnOrders.length > 0) {
+			for (let i = 0; i < this.currentTurnOrders.length; i++) {
+				let newOrderDiv = document.createElement("div");
+				newOrderDiv.innerHTML = String("Order " + (i+1) + ": " + this.currentTurnOrders[i].orderType);
+				if (this.currentTurnOrders[i].args.unitType) {
+					newOrderDiv.innerHTML += String(" " + this.currentTurnOrders[i].args.unitType);
+				}
+				document.getElementById("orders-info").append(newOrderDiv);
+			}
 		}
 
 		if (this.playersOnServer) {
@@ -185,7 +246,7 @@ class App {
 							break
 					}
 				} else {
-					newPlayerSpan.innerHTML = "Empty";
+					newPlayerSpan.innerHTML = "Waiting for Player...";
 				}
 				newPlayerDiv.innerHTML = String("Player " + i + ": ");
 				newPlayerDiv.append(newPlayerSpan)
