@@ -231,6 +231,7 @@ export default class Display {
 							for(let i=0;i<unitButtons.length;i=i+1){
 								if(unitButtons[i].isInRange(s.mouseX,s.mouseY)){
 									unitButtons[i].buttonHasBeenPressed();
+									//unitButtons[i].displayDescription();
 									newButtonPressed=i;
 								}
 							}
@@ -593,12 +594,6 @@ export default class Display {
 			}
 		}
 
-		function highlightTile(x,y, player) {
-			s.noStroke();
-			s.fill(100,100,100,100);
-			s.rect(x*size-size/2,y*size-size/2,size,size);
-			//Figures out which tile to highlight base on mouse hover and then colors it
-		}
 
 		function drawBase(x,y,player,size,health,max,pColors){
 			//s.fill(pColors[player][0],pColors[player][1],pColors[player][2],pColors[player][3])

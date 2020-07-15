@@ -351,6 +351,9 @@ export default class Game {
 		// updates game state based on ticks. Sweeps board and updates
 		// any game object on the board
 		// note: j is x and i is y
+		for(let i = 0; i < 4; i = i + 1){
+			this.players[i].score = 0;
+		}
 		console.log("Running simulation for turn " + this.turnNumber);
 		this.history.turn[this.turnNumber] = {
 			'tick': {}
@@ -382,11 +385,10 @@ export default class Game {
 								gameObj.update(tick);
 								if(tick == ticksPerTurn){
 								if(gameObj.objCategory == "Units"){
-									this.players[gameObj.player-1].score = this.players[gameObj.player-1].score + 50*gameObj.value*Math.floor((gameObj.health/gameObj.maxHealth));
-									console.log(gameObj.value);
+									this.players[gameObj.player-1].score = this.players[gameObj.player-1].score + Math.floor(50*gameObj.value*(gameObj.health/gameObj.maxHealth));
 									}
 									if(gameObj.objCategory == "Bases"){
-										this.players[gameObj.player-1].score = this.players[gameObj.player-1].score + 1000*Math.floor((gameObj.health/gameObj.maxHealth));
+										this.players[gameObj.player-1].score = this.players[gameObj.player-1].score + Math.floor(1000*(gameObj.health/gameObj.maxHealth));
 									}
 								}
 
