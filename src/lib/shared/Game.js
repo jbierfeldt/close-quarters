@@ -384,6 +384,7 @@ export default class Game {
 								// if  unit is firing, add projectile to list and place on board
 								if (gameObj.dump) {
 									this.cleanUpArray.push(gameObj.id);
+									console.log("In Game",gameObj.id);
 									//this.deleteObjectAtCoord(gameObj, j, i);
 								}
 
@@ -430,12 +431,19 @@ export default class Game {
 			}
 
 			// clean up ids marked for deletion
-			if (this.cleanUpArray.length > 0) {
+			let cleanUpArrayTempLength = this.cleanUpArray.length;
+			while ( cleanUpArrayTempLength > 0 ){
+				console.log(cleanUpArrayTempLength);
+				this.cleanUpByID(this.cleanUpArray[cleanUpArrayTempLength-1]);
+				this.cleanUpArray.pop();
+				cleanUpArrayTempLength = cleanUpArrayTempLength-1;
+			}
+			/*if (this.cleanUpArray.length > 0) {
 				for (let i = 0; i < this.cleanUpArray.length; i++) {
 					this.cleanUpByID(this.cleanUpArray[i]);
 					this.cleanUpArray.splice(i, 1);
 				}
-			}
+			}*/
 
 			// update
 			// validate

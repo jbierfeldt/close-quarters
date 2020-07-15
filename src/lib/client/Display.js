@@ -473,7 +473,7 @@ export default class Display {
 				s.translate(0,scale*siz*4);
 				s.stroke(0);
 				s.fill(255);
-				s.text("Circuit Breaker",wid/2+siz*3.75,siz*4)
+				s.text("Resonator",wid/2+siz*3.75,siz*4)
 				s.text("400",wid/2+siz*9.9,siz*4)
 				s.noFill();
 				s.stroke(255);
@@ -621,17 +621,19 @@ export default class Display {
 			}
 		}
 		function drawCircuitBreaker(x,y,player,size,health,max,pColors){
-			s.fill((max-health)*255/max)
+			s.fill((max-health)*255/max);
 			s.stroke(0);
 			s.strokeWeight(2);
 			s.translate(size*x+size/2,size*y+size/2);
-			for(let i = 0; i < 360; i = i + 30){
+			for(let i = 0; i < 360; i = i + 15){
 				s.rotate(s.radians(i));
 				s.line(0,0,size/2.5,0);
 				s.rotate(-s.radians(i));
 			}
+			s.stroke(pColors[player-1][0],pColors[player-1][1],pColors[player-1][2],255);
+			s.strokeWeight(.5);
+			s.ellipse(0,0,size/3,size/3);
 			s.translate(-(size*x+size/2),-(size*y+size/2));
-			s.ellipse(0,0,size/4.5,size/4.5);
 
 		}
 
