@@ -321,9 +321,10 @@ export default class Display {
 						let hoverObject = this.simulationDisplayTurn.tick[this.t].gameObjects.get(this.simulationDisplayTurn.tick[this.t].board[hoverY][hoverX][0]);
 						if(hoverObject){
 						s.stroke(0);
-						s.fill(255,75);
+						s.strokeWeight(3);
+						s.fill(255,105);
 						s.rect(hoverX*si+si,hoverY*si+si,si*4,si*3);
-						s.fill(255);
+						s.fill(this.playerColors[hoverObject.player-1][0], this.playerColors[hoverObject.player-1][1], this.playerColors[hoverObject.player-1][2], this.playerColors[hoverObject.player-1][3]);
 						s.stroke(0);
 
 						s.textFont(standardFont);
