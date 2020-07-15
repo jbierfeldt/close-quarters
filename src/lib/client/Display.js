@@ -46,6 +46,8 @@ export default class Display {
 			let randX;
 			let randY;
 			let buttonMaker=1; //Variable so buttons only get created once
+			let hoverX;
+			let hoverY;
 
 			//Preload the fonts and other assets below
 			s.preload = () =>{
@@ -172,8 +174,8 @@ export default class Display {
 
 
 					//Calculate which cell the mouse is currently hovering over and highlight it
-					let hoverX=s.int(s.mouseX/si);
-					let hoverY=s.int(s.mouseY/si);
+					hoverX=s.int(s.mouseX/si);
+					hoverY=s.int(s.mouseY/si);
 
 
 
@@ -313,8 +315,29 @@ export default class Display {
 							}
 						}
 					}
+					hoverX=s.int(s.mouseX/si);
+					hoverY=s.int(s.mouseY/si);
+					try{
+						let hoverObject = this.simulationDisplayTurn.tick[this.t].gameObjects.get(this.simulationDisplayTurn.tick[this.t].board[hoverY][hoverX][0]);
+						if(hoverObject){
+						s.stroke(0);
+						s.fill(255,75);
+						s.rect(hoverX*si+si,hoverY*si+si,si*4,si*3);
+						s.fill(255);
+						s.stroke(0);
+
+						s.textFont(standardFont);
+						s.textSize(si/2.5);
+						s.text(hoverObject.identifier, hoverX*si+si*1.2,hoverY*si+si*1.5);
+						s.text("Health: " + hoverObject.health, hoverX*si+si*1.2,hoverY*si+si*2);
+					}
+					}
+				  catch(e){
+
+					}
 				}
 				animate=animate+.5;
+
 			}
 		}
 
