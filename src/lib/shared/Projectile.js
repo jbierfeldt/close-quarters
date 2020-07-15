@@ -129,3 +129,33 @@ export class BalBullet extends Projectile {
 		return super.serialize.call(this);
 	}
 }
+
+export class CirBullet extends Projectile {
+	constructor(player, initialOrientation = [0, 0], initialSpeed = 0, damage = 0, distance = 5, id)  {
+		super(player, initialOrientation, initialSpeed, id);
+		this.identifier = "CirProj";
+		this.damage = damage;
+		this.ableToBeDestroyed = false;
+		this.dump = false;
+		this.distance = distance;
+	}
+
+	static createFromSerialized (props) {
+		return new CirBullet(props.player, props.orientation, props.speed, props.damage, props.distance, props.id);
+	}
+
+	update(tick) {
+		super.update(tick);
+		if(this.distance == 1){
+			this.damage = 150;
+		}
+		if(this.distance == 0){
+			this.dump = true;
+		}
+		this.distance = this.distance - 1;
+	}
+
+	serialize () {
+		return super.serialize.call(this);
+	}
+}

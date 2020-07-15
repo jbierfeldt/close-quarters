@@ -370,7 +370,8 @@ export default class Game {
 
 								// if  unit is firing, add projectile to list and place on board
 								if (gameObj.dump) {
-									this.deleteObjectAtCoord(gameObj, j, i);
+									this.cleanUpArray.push(gameObj.id);
+									//this.deleteObjectAtCoord(gameObj, j, i);
 								}
 
 								if (gameObj.firing) {
@@ -407,7 +408,7 @@ export default class Game {
 								for (let m = 0; m < collisionStack.length; m++) {
 									let collisionObj = this.gameObjects.get(collisionStack[m]);
 									this.collideProjWithObject(obj, collisionObj, j, i);
-									console.log(collisionObj.collidedWith);
+									//console.log(collisionObj.collidedWith);
 								}
 							}
 						}

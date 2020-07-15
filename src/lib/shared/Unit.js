@@ -250,7 +250,78 @@ export class Ballast extends Unit {
 	}
 }
 
+export class CircuitBreaker extends Unit {
+
+	constructor(player, health, firing, id, collidedWith = [false, 4])  {
+		super(id);
+		this.player = player;
+		this.health = health || 400;
+		this.firing = firing || false;
+		this.maxHealth = 400;
+		this.identifier="Cir";
+		this.projArr = [];
+		this.collidedWith = collidedWith;
+	}
+
+	static createFromSerialized (props) {
+		return new CircuitBreaker(props.player, props.health, props.firing, props.id, props.collidedWith)
+	}
+
+	startAttack (orientation){
+		this.firing = true;
+		this.projArr[0]  = new Projectiles.CirBullet(this.player, orientation, 2);
+	}
+
+	update (tick) {
+		super.update(tick);
+		this.collidedWith = [false, 4];
+		this.firing=false;
+		if(tick % 9 === 0){
+			let rando = Math.random()*3;
+			if(rando < 1){
+				if(this.player == 1 || this.player == 2){
+				this.startAttack([1,0]);
+				}
+				else{
+					this.startAttack([-1,0]);
+				}
+			}
+			else if(rando < 2){
+				if(this.player == 1){
+				this.startAttack([1,1]);
+				}
+				else if(this.player == 2){
+					this.startAttack([1,-1]);
+				}
+				else if(this.player == 3){
+					this.startAttack([-1,1]);
+				}
+				else if(this.player == 4){
+					this.startAttack([-1,-1]);
+				}
+			}
+			else if(rando <= 3){
+				if(this.player == 1 || this.player == 3){
+				this.startAttack([0,1]);
+				}
+				else{
+					this.startAttack([0,-1]);
+				}
+			}
+		}
+	}
+
+	serialize () {
+		return super.serialize.call(this);
+	}
+}
+
+
+
+
+
 //Unit Pricing
+CircuitBreaker.cost = 3;
 Maglev.cost = 3;
 RayTracer.cost = 1;
 Juggernode.cost = 2;
