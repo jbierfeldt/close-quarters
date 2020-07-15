@@ -123,7 +123,15 @@ export default class Display {
 				else if(this.app.gamePhase==1){
 					this.t=1;
 					animate=0;
-
+					if(this.app.playerNumber == 2){
+						s.translate(0,-he/2);
+					}
+					else if(this.app.playerNumber == 3){
+						s.translate(wi/2,0);
+					}
+					else if(this.app.playerNumber == 4){
+						s.translate(wi/2,-he/2);
+					}
 					s.textSize(wi/40);
 					s.fill(255);
 					s.stroke(0);
@@ -132,6 +140,15 @@ export default class Display {
 					for(let a = 0; a < 4; a = a + 1){
 						  s.fill(this.playerColors[a][0], this.playerColors[a][1], this.playerColors[a][2], this.playerColors[a][3]);
 							s.text("Player " + (a+1) + " Score: " + this.app.game.players[a].score, wi/10, he/1.3+a*si);
+					}
+					if(this.app.playerNumber == 2){
+						s.translate(-0,he/2);
+					}
+					else if(this.app.playerNumber == 3){
+						s.translate(-wi/2,0);
+					}
+					else if(this.app.playerNumber == 4){
+						s.translate(-wi/2,he/2);
 					}
 					//Run the functions for drawing the players quadrant and the unit menu
 					drawQuarterGrid(this.stage.grid,this.playerColors,this.app.playerNumber);
