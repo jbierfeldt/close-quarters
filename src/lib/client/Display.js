@@ -71,7 +71,7 @@ export default class Display {
 				let si=tempConfig.size; //the side length of each cell in canvas
 
 				//Delay serves as a variable that has a constant increment for animation
-				this.delay=this.delay+.25;
+				this.delay=this.delay+.19;
 
 				//Sets the background to black each time around the loop in order to prevent sketch objects from stacking on each other
 				s.background(0);
@@ -86,11 +86,26 @@ export default class Display {
 					gameStart=0;
 
 					//The below function displays the title sequence
+					// Add bar magnet field lines
 					titleSequence(wi,he,this.delay,si/2);
 
 					//Display the game title on top of the title sequence
-					s.fill(255,0,128);
-					s.text("Close Quarters",tempConfig.canvasX/22,tempConfig.canvasY/2);
+
+					if(this.delay>25){
+						s.stroke(0,(this.delay-25)*2.9);
+					s.fill(255,0,128,(this.delay-25)*2.9);
+				}
+				else{
+					s.noFill();
+					s.noStroke();
+				}
+					if((this.delay-25)*2.9>200){
+						s.fill(255,0,128,201);
+					}
+
+					s.strokeWeight(4);
+					s.text("Close",tempConfig.canvasX/3.05,tempConfig.canvasY/2.4);
+					s.text("Quarters",tempConfig.canvasX/4.45,tempConfig.canvasY/1.6);
 
 					//buttonScale sets the size of the buttons(dependent on their overall number)
 					buttonScale=1.5;
@@ -199,22 +214,18 @@ export default class Display {
 							}
 							if(bBase.isPressed===true){
 								if(this.app.playerNumber == 1 && hoverX <= 14 && hoverY < 10 && hoverX < 30 && hoverY < 20){
-									//this.app.makeRayTracer(this.player,hoverX,hoverY);
 									bBase.func.call(this.app, bBase.text, this.app.playerNumber, hoverX, hoverY);
 									bBase.isPressed=false;
 								}
 								else if(this.app.playerNumber == 2 && hoverX<=14 && hoverY >= 10 && hoverX < 30 && hoverY < 20){
-									//this.app.makeRayTracer(this.player,hoverX,hoverY);
 									bBase.func.call(this.app, bBase.text, this.app.playerNumber,hoverX,hoverY);
 									bBase.isPressed=false;
 								}
 								else if(this.app.playerNumber == 3 && hoverX>14 && hoverY < 10 && hoverX < 30 && hoverY < 20){
-									//this.app.makeRayTracer(this.player,hoverX,hoverY);
 									bBase.func.call(this.app, bBase.text, this.app.playerNumber,hoverX,hoverY);
 									bBase.isPressed=false;
 								}
 								else if(this.app.playerNumber == 4 && hoverX>14 && hoverY >= 10 && hoverX < 30 && hoverY < 20){
-									//this.app.makeRayTracer(this.player,hoverX,hoverY);
 									bBase.func.call(this.app, bBase.text, this.app.playerNumber,hoverX,hoverY);
 									bBase.isPressed=false;
 								}
@@ -226,6 +237,7 @@ export default class Display {
 						for(let i=0;i<unitButtons.length;i=i+1){
 							unitButtons[i].drawButton();
 						}
+
 						drawUnitMenu(this.playerColors,this.app.playerNumber, buttonScale)
 
 						if(s.mouseIsPressed){
@@ -678,7 +690,6 @@ export default class Display {
 		}
 
 		function drawJuggernode(x,y,player,size,health,max,pColors){
-			//s.fill(pColors[player][0],pColors[player][1],pColors[player][2],pColors[player][3])
 			s.fill(0);
 			s.stroke(0);
 			s.strokeWeight(2);
@@ -700,7 +711,6 @@ export default class Display {
 		}
 
 		function drawBallast(x,y,player,size,health,max,pColors){
-			//s.fill(pColors[player][0],pColors[player][1],pColors[player][2],pColors[player][3])
 			s.fill(0);
 			s.stroke(0);
 			s.strokeWeight(0);
@@ -722,6 +732,7 @@ export default class Display {
 			s.noStroke();
 			s.noFill();
 			s.stroke(176,196,243,255);
+			s.strokeWeight(1);
 			if(delay<200){
 				for(var i=0; i<delay; i=i+1){
 					s.quad(-width/2+i*scale,-height/2+i*scale,-width/2+i*scale,height/2-i*scale,width/2-i*scale,height/2-i*scale,width/2-i*scale,-height/2+i*scale);
@@ -732,16 +743,14 @@ export default class Display {
 					s.quad(-width/2+i*scale,-height/2+i*scale,-width/2+i*scale,height/2-i*scale,width/2-i*scale,height/2-i*scale,width/2-i*scale,-height/2+i*scale);
 				}
 			}
-
+			s.noStroke();
 			for(var angle=delay*3;angle<delay*3+360;angle=angle+30){
 				let titleX=(height/3+90*s.cos(3.14*s.radians(delay)))*s.cos(s.radians(angle))-0;
 				let titleY=(height/3+2*s.tan(3.14*s.radians(delay/20)))*s.sin(s.radians(angle))+0;
-				s.fill(152, 255, 152,255);
-				s.ellipse(titleX,titleY,height/15,height/15);
-				s.fill(152, 255, 152,25);
-				s.ellipse(titleX,titleY,height/14,height/14);
-				s.fill(152, 255, 152,20);
-				s.ellipse(titleX,titleY,height/13,height/13);
+				for(let o = 255; o > 0; o = o - 5){
+				s.fill(152, 255, 152, o);
+				s.ellipse(titleX,titleY,height/12-o*height/(255*12),height/12-o*height/(255*12));
+				}
 			}
 			s.translate(-width/2,-height/2);
 		}
@@ -819,7 +828,12 @@ export default class Display {
 			//	Lissajous
 			let amp=size/(20+2*s.abs(5-a));
 			let n = 20+s.abs(5-a)/50;
+
+
 			s.noFill();
+
+			s.strokeWeight(2);
+			s.stroke(0,255);
 			s.translate(refx+size/2,refy+size/2);
 			s.beginShape();
 			s.curveVertex((size/3+(amp)*s.sin(n*s.radians(0)))*s.cos(s.radians(0)),(size/3+(amp)*s.sin(n*s.radians(0)))*s.sin(s.radians(0)));
@@ -831,6 +845,20 @@ export default class Display {
 
 			s.endShape();
 			s.translate(-(refx+size/2),-(refy+size/2));
+	s.strokeWeight(1);
+			s.stroke(pColors[player-1][0],pColors[player-1][1],pColors[player-1][2],255);
+			s.translate(refx+size/2,refy+size/2);
+			s.beginShape();
+			s.curveVertex((size/3+(amp)*s.sin(n*s.radians(0)))*s.cos(s.radians(0)),(size/3+(amp)*s.sin(n*s.radians(0)))*s.sin(s.radians(0)));
+
+			for(let angle = 0; angle <= 360; angle = angle + 5){
+				s.curveVertex((size/3+(amp)*s.sin(n*s.radians(angle)))*s.cos(s.radians(angle)),(size/3+(amp)*s.sin(n*s.radians(angle)))*s.sin(s.radians(angle)));
+			}
+			s.curveVertex((size/3+(amp)*s.sin(n*s.radians(0)))*s.cos(s.radians(0)),(size/3+(amp)*s.sin(n*s.radians(0)))*s.sin(s.radians(0)));
+
+			s.endShape();
+			s.translate(-(refx+size/2),-(refy+size/2));
+
 		}
 
 		function drawCircuitBreakerProjectile(x, y, player, size, pColors, damage, a){

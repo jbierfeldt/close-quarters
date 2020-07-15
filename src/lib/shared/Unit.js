@@ -42,11 +42,11 @@ export default class Unit {
 
 export class RayTracer extends Unit {
 
-	constructor(player, health, firing, id, collidedWith = [false, 4])  {
+	constructor(player, health = 100, firing = false, id, collidedWith = [false, 4])  {
 		super(id);
 		this.player = player;
-		this.health = health || 100;
-		this.firing = firing || false;
+		this.health = health;
+		this.firing = firing;
 		this.maxHealth = 100;
 		this.identifier = "Ray";
 		this.projArr = [];
@@ -101,11 +101,11 @@ export class RayTracer extends Unit {
 
 export class Juggernode extends Unit {
 
-	constructor(player, health, firing, id,  collidedWith = [false, 4])  {
+	constructor(player, health = 500, firing = false, id,  collidedWith = [false, 4])  {
 		super(id);
 		this.player = player;
-		this.health = health || 500;
-		this.firing = firing || false;
+		this.health = health;
+		this.firing = firing;
 		this.maxHealth = 500;
 		this.identifier="Jug";
 		this.projArr = [];
@@ -126,7 +126,6 @@ export class Juggernode extends Unit {
 		super.update(tick);
 		this.collidedWith = [false, 4];
 		this.firing=false;
-		this.invulnerable == false;
 		if (tick%8 === 0) {
 			if(this.player==1){
 				this.startAttack([1,1]);
@@ -141,9 +140,6 @@ export class Juggernode extends Unit {
 				this.startAttack([-1,-1]);
 			}
 		}
-		if(tick%5 === 0){
-			this.invulernabble == true;
-		}
 	}
 
 	serialize () {
@@ -153,11 +149,11 @@ export class Juggernode extends Unit {
 
 export class Maglev extends Unit {
 
-	constructor(player, health, firing, id, collidedWith = [false, 4])  {
+	constructor(player, health = 250, firing = false, id, collidedWith = [false, 4])  {
 		super(id);
 		this.player = player;
-		this.health = health || 250;
-		this.firing = firing || false;
+		this.health = health;
+		this.firing = firing;
 		this.maxHealth = 250;
 		this.identifier = "Mag"
 		this.projArr = [];
@@ -216,11 +212,11 @@ export class Maglev extends Unit {
 
 export class Ballast extends Unit {
 
-	constructor(player, health, firing, id, collidedWith = [false, 4])  {
+	constructor(player, health = 300, firing = false, id, collidedWith = [false, 4])  {
 		super(id);
 		this.player = player;
-		this.health = health || 300;
-		this.firing = firing || false;
+		this.health = health;
+		this.firing = firing;
 		this.maxHealth = 300;
 		this.identifier="Bal";
 		this.projArr = [];
@@ -241,7 +237,7 @@ export class Ballast extends Unit {
 		super.update(tick);
 		this.collidedWith = [false, 4];
 		this.firing=false;
-		if(tick % 6 === 0){
+		if(tick % 7 === 0){
 			let rando = Math.random()*5;
 			if(rando < 1){
 				this.startAttack([6,3]);
@@ -268,11 +264,11 @@ export class Ballast extends Unit {
 
 export class CircuitBreaker extends Unit {
 
-	constructor(player, health, firing, id, collidedWith = [false, 4])  {
+	constructor(player, health = 400, firing = false, id, collidedWith = [false, 4])  {
 		super(id);
 		this.player = player;
-		this.health = health || 400;
-		this.firing = firing || false;
+		this.health = health;
+		this.firing = firing;
 		this.maxHealth = 400;
 		this.identifier="Cir";
 		this.projArr = [];
