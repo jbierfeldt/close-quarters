@@ -276,7 +276,7 @@ export class CircuitBreaker extends Unit {
 		super.update(tick);
 		this.collidedWith = [false, 4];
 		this.firing=false;
-		if(tick % 9 === 0){
+		if(tick % 10 === 0){
 			let rando = Math.random()*3;
 			if(rando < 1){
 				if(this.player == 1 || this.player == 2){
