@@ -65,6 +65,7 @@ class GameController {
 		this.game = newGame;
 		this.game.init();
 
+		this.setGamePhaseForAll(0);
 		this.sendGameStateToAll();
 		this.sendGameHistoryToAll();
 	}
@@ -95,6 +96,12 @@ class GameController {
 		debug.log(1, this.playerControllers);
 
 		return pc;
+	}
+
+	setGamePhaseForAll (phase) {
+		this.io.emit('updateClientGamePhase', {
+			newPhase: phase
+		});
 	}
 
 	sendGameHistoryToAll () {
@@ -156,6 +163,7 @@ class GameController {
 		this.game.runSimulation();
 		this.sendGameStateToAll();
 		this.sendGameHistoryToAll();
+		this.setGamePhaseForAll(2);
 	}
 
 }

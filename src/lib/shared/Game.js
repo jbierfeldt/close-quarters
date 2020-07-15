@@ -49,7 +49,15 @@ export default class Game {
 		this.currentTurnInitialState = this.createGameSnapshot();
 
 		// creates history (temp)
-		this.runSimulation();
+		this.history.turn[0] = {
+			'tick': {
+				1: this.currentTurnInitialState,
+				2: this.currentTurnInitialState
+			}
+		};
+
+		this.turnNumber = 1;
+		// this.runSimulation();
 
 	}
 
@@ -135,9 +143,12 @@ export default class Game {
 				let newUnit = new Units[unitType](player);
 				this.registerGameObject(newUnit);
 				this.addObjectAtCoord(newUnit, x, y);
+				this.players[player-1].credits = this.players[player-1].credits - Units[unitType].cost;
+				return true;
 			}
-			this.players[player-1].credits = this.players[player-1].credits - Units[unitType].cost;
+			return false;
 		}
+		return false;
 	}
 
 	createNewBaseAtCoord(baseType, player, x, y) {
@@ -149,7 +160,9 @@ export default class Game {
 			this.addObjectAtCoord(newBase, x, y+1);
 			this.addObjectAtCoord(newBase, x+1, y+1);
 			this.players[player-1].baseCount = this.players[player-1].baseCount + 1;
+			return true;
 		}
+		return false;
 	}
 
 	createObjectAtCoord (object, x, y) {
