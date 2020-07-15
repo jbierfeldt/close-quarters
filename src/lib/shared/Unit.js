@@ -51,6 +51,7 @@ export class RayTracer extends Unit {
 		this.identifier = "Ray";
 		this.projArr = [];
 		this.collidedWith = collidedWith;
+		this.value = 1;
 	}
 
 	static createFromSerialized (props) {
@@ -109,6 +110,7 @@ export class Juggernode extends Unit {
 		this.identifier="Jug";
 		this.projArr = [];
 		this.collidedWith = collidedWith;
+		this.value = 2;
 	}
 
 	static createFromSerialized (props) {
@@ -160,6 +162,7 @@ export class Maglev extends Unit {
 		this.identifier = "Mag"
 		this.projArr = [];
 		this.collidedWith = collidedWith;
+		this.value = 3;
 
 	}
 
@@ -222,6 +225,7 @@ export class Ballast extends Unit {
 		this.identifier="Bal";
 		this.projArr = [];
 		this.collidedWith = collidedWith;
+		this.value = 2;
 	}
 
 	static createFromSerialized (props) {
@@ -273,6 +277,7 @@ export class CircuitBreaker extends Unit {
 		this.identifier="Cir";
 		this.projArr = [];
 		this.collidedWith = collidedWith;
+		this.value = 3;
 	}
 
 	static createFromSerialized (props) {

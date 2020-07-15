@@ -380,6 +380,15 @@ export default class Game {
 							if (gameObj.updatedThisTick === false) {
 
 								gameObj.update(tick);
+								if(tick == ticksPerTurn){
+								if(gameObj.objCategory == "Units"){
+									this.players[gameObj.player-1].score = this.players[gameObj.player-1].score + 50*gameObj.value*Math.floor((gameObj.health/gameObj.maxHealth));
+									console.log(gameObj.value);
+									}
+									if(gameObj.objCategory == "Bases"){
+										this.players[gameObj.player-1].score = this.players[gameObj.player-1].score + 1000*Math.floor((gameObj.health/gameObj.maxHealth));
+									}
+								}
 
 								// if  unit is firing, add projectile to list and place on board
 								if (gameObj.dump) {

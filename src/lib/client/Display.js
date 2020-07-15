@@ -129,6 +129,10 @@ export default class Display {
 					s.stroke(0);
 					s.strokeWeight(1);
 					s.text("Available Credits: " + this.app.game.players[this.app.playerNumber-1].credits, wi/10, he/1.5);
+					for(let a = 0; a < 4; a = a + 1){
+						  s.fill(this.playerColors[a][0], this.playerColors[a][1], this.playerColors[a][2], this.playerColors[a][3]);
+							s.text("Player " + (a+1) + " Score: " + this.app.game.players[a].score, wi/10, he/1.3+a*si);
+					}
 					//Run the functions for drawing the players quadrant and the unit menu
 					drawQuarterGrid(this.stage.grid,this.playerColors,this.app.playerNumber);
 					//drawGrid(wi, he, si, this.playerColors);
