@@ -76,7 +76,7 @@ export class RayTracer extends Unit {
 		// Ray Tracer fires every 4 ticks
 		if (tick%14 === 0) {
 			if(this.player==1 || this.player==2){
-			this.startAttack([1,0]);
+				this.startAttack([1,0]);
 
 			}
 			else if(this.player==3 || this.player==4){
@@ -85,7 +85,7 @@ export class RayTracer extends Unit {
 		}
 		else if (tick%7 === 0){
 			if(this.player==1 || this.player==3){
-			this.startAttack([0,1]);
+				this.startAttack([0,1]);
 			}
 			else if(this.player==2 || this.player==4){
 				this.startAttack([0,-1]);
@@ -173,23 +173,23 @@ export class Maglev extends Unit {
 		let i = 0;
 		for(let a = -1; a < 2; a = a + 1){
 			for(let b = -1; b < 2; b = b + 1){
-			   if(a !== 0 || b !== 0){
-					 if(firingChoice == 0){
-					 if(a === 0 || b === 0){
-		       	this.projArr[i] = new Projectiles.MagBullet(this.player, [a,b], 1);
-						i = i + 1;
+				if(a !== 0 || b !== 0){
+					if(firingChoice == 0){
+						if(a === 0 || b === 0){
+							this.projArr[i] = new Projectiles.MagBullet(this.player, [a,b], 1);
+							i = i + 1;
 						}
 					}
 					if(firingChoice == 1){
 						if(a !== 0  && b !== 0){
-					 		this.projArr[i] = new Projectiles.MagBullet(this.player, [a,b], 1);
+							this.projArr[i] = new Projectiles.MagBullet(this.player, [a,b], 1);
 							i = i + 1;
-					 }
-				 }
-
+						}
 					}
+
 				}
-	  }
+			}
+		}
 	}
 
 	update(tick) {
@@ -293,7 +293,7 @@ export class CircuitBreaker extends Unit {
 			let rando = Math.random()*3;
 			if(rando < 1){
 				if(this.player == 1 || this.player == 2){
-				this.startAttack([1,0]);
+					this.startAttack([1,0]);
 				}
 				else{
 					this.startAttack([-1,0]);
@@ -301,7 +301,7 @@ export class CircuitBreaker extends Unit {
 			}
 			else if(rando < 2){
 				if(this.player == 1){
-				this.startAttack([1,1]);
+					this.startAttack([1,1]);
 				}
 				else if(this.player == 2){
 					this.startAttack([1,-1]);
@@ -315,7 +315,7 @@ export class CircuitBreaker extends Unit {
 			}
 			else if(rando <= 3){
 				if(this.player == 1 || this.player == 3){
-				this.startAttack([0,1]);
+					this.startAttack([0,1]);
 				}
 				else{
 					this.startAttack([0,-1]);

@@ -165,10 +165,10 @@ class App {
 	loadSerializedTurnHistory(serializedHistory)  {
 		let historyObj = JSON.parse(serializedHistory);
 		for (const [key, value] of Object.entries(historyObj.turn)) {
-  			let tickContainer = historyObj.turn[key].tick;
-				for (const [key2, value2] of Object.entries(tickContainer)) {
-					tickContainer[key2] = this.game.rebuildGameSnapshot(tickContainer[key2]);
-				}
+			let tickContainer = historyObj.turn[key].tick;
+			for (const [key2, value2] of Object.entries(tickContainer)) {
+				tickContainer[key2] = this.game.rebuildGameSnapshot(tickContainer[key2]);
+			}
 		}
 		return historyObj;
 	}
@@ -226,18 +226,18 @@ class App {
 				if (this.playersOnServer[i] !== null) {
 					switch (this.playersOnServer[i].gamePhase) {
 						case 0:
-							newPlayerSpan.innerHTML = "Loading...";
-							break
+						newPlayerSpan.innerHTML = "Loading...";
+						break
 						case 1:
-							if (this.playersOnServer[i].ordersSubmitted) {
-								newPlayerSpan.innerHTML = "Orders submitted.";
-							} else {
-								newPlayerSpan.innerHTML = "Making Turn...";
-							}
-							break
+						if (this.playersOnServer[i].ordersSubmitted) {
+							newPlayerSpan.innerHTML = "Orders submitted.";
+						} else {
+							newPlayerSpan.innerHTML = "Making Turn...";
+						}
+						break
 						case 2:
-							newPlayerSpan.innerHTML = "Watching Simulation...";
-							break
+						newPlayerSpan.innerHTML = "Watching Simulation...";
+						break
 					}
 				} else {
 					newPlayerSpan.innerHTML = "Empty";

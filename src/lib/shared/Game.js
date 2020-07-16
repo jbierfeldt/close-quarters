@@ -15,18 +15,18 @@ const tempConfig = {
 
 export default class Game {
 
- 	constructor(gameObjects = [], players = [], board = new Object, turnNumber = 0) {
- 		this.id = 'game'+createID();
- 		this.players = players;
- 		this.board = board;
- 		this.gameObjects = new Map();
- 		this.turnNumber =  turnNumber;
- 		this.history = {
- 			'turn': {}
- 		};
+	constructor(gameObjects = [], players = [], board = new Object, turnNumber = 0) {
+		this.id = 'game'+createID();
+		this.players = players;
+		this.board = board;
+		this.gameObjects = new Map();
+		this.turnNumber =  turnNumber;
+		this.history = {
+			'turn': {}
+		};
 		this.currentTurnInitialState = {};
 
- 		this.currentPhase = 0;
+		this.currentPhase = 0;
 
 		this.cleanUpArray = [];
 	}
@@ -88,13 +88,13 @@ export default class Game {
 			let newObject = snapshotObj.gameObjects[i][1];
 			switch (newObject.objCategory) {
 				case "Units":
-					newObject = Units[newObject.class].createFromSerialized(newObject);
-					break
+				newObject = Units[newObject.class].createFromSerialized(newObject);
+				break
 				case "Projectiles":
-					newObject = Projectiles[newObject.class].createFromSerialized(newObject);
-					break
+				newObject = Projectiles[newObject.class].createFromSerialized(newObject);
+				break
 				case "Bases":
-					newObject = Bases[newObject.class].createFromSerialized(newObject);
+				newObject = Bases[newObject.class].createFromSerialized(newObject);
 			}
 			snapshotObj.gameObjects[i][1] = newObject;
 		}
@@ -187,7 +187,7 @@ export default class Game {
 	}
 
 	addObjectAtCoord(object, x, y) {
-			this.board[y][x].push(object.id);
+		this.board[y][x].push(object.id);
 	}
 
 	removeObjectAtCoord(object, x, y) {
@@ -222,32 +222,32 @@ export default class Game {
 		//obj.collidedWith = [true, proj.player];
 		switch (obj.objCategory) {
 			case "Units":
-				console.log(proj.id, "( player", proj.player, ") hit ", obj.id, " ( player", obj.player, ")", obj.health);
-				if (proj.player !== obj.player) {
-					obj.collidedWith = [true, proj.player];
-					obj.health = obj.health - proj.damage;
-					if (this.isObjectAlive(obj) === false) {
-						this.deleteObjectAtCoord(obj, x, y);
-					}
+			console.log(proj.id, "( player", proj.player, ") hit ", obj.id, " ( player", obj.player, ")", obj.health);
+			if (proj.player !== obj.player) {
+				obj.collidedWith = [true, proj.player];
+				obj.health = obj.health - proj.damage;
+				if (this.isObjectAlive(obj) === false) {
+					this.deleteObjectAtCoord(obj, x, y);
 				}
+			}
 
-				if (proj.ableToBeDestroyed) {
-					this.deleteObjectAtCoord(proj, x, y);
-				}
-				break
-			case "Bases":
-				console.log(proj.id, "( player", proj.player, ") hit ", obj.id, " ( player", obj.player, ")", obj.health);
-				if (proj.player !== obj.player) {
-					obj.collidedWith = [true, proj.player];
-					obj.health = obj.health - proj.damage;
-					if (this.isObjectAlive(obj) === false) {
-						this.cleanUpArray.push(obj.id);
-						this.deleteObjectAtCoord(obj, x, y);
-						this.players[obj.player-1].baseCount = this.players[obj.player-1].baseCount - 1;
-					}
-				}
+			if (proj.ableToBeDestroyed) {
 				this.deleteObjectAtCoord(proj, x, y);
-				break
+			}
+			break
+			case "Bases":
+			console.log(proj.id, "( player", proj.player, ") hit ", obj.id, " ( player", obj.player, ")", obj.health);
+			if (proj.player !== obj.player) {
+				obj.collidedWith = [true, proj.player];
+				obj.health = obj.health - proj.damage;
+				if (this.isObjectAlive(obj) === false) {
+					this.cleanUpArray.push(obj.id);
+					this.deleteObjectAtCoord(obj, x, y);
+					this.players[obj.player-1].baseCount = this.players[obj.player-1].baseCount - 1;
+				}
+			}
+			this.deleteObjectAtCoord(proj, x, y);
+			break
 		}
 	}
 
@@ -259,17 +259,17 @@ export default class Game {
 
 		switch (playerNumber) {
 			case 1:
-				break
+			break
 			case 2:
-				randY = randY + (tempConfig.boardDimensions[0]/2);
-				break
+			randY = randY + (tempConfig.boardDimensions[0]/2);
+			break
 			case 3:
-				randX = randX + (tempConfig.boardDimensions[1]/2);
-				break
+			randX = randX + (tempConfig.boardDimensions[1]/2);
+			break
 			case 4:
-				randX = randX + (tempConfig.boardDimensions[1]/2);
-				randY = randY + (tempConfig.boardDimensions[0]/2);
-				break
+			randX = randX + (tempConfig.boardDimensions[1]/2);
+			randY = randY + (tempConfig.boardDimensions[0]/2);
+			break
 		}
 
 		return  [randX, randY];
@@ -303,7 +303,7 @@ export default class Game {
 	}
 
 	isValidCoord(x, y) {
-    	try {
+		try {
 			if (this.board[y][x]) {
 				return true;
 			}
@@ -311,10 +311,10 @@ export default class Game {
 				// debug.log(0, "Invalid Coord", x, y);
 				return false;
 			}
-      	} catch (e) {
-					// debug.log(0, "Invalid Coord", x, y);
-        	return false;
-      	}
+		} catch (e) {
+			// debug.log(0, "Invalid Coord", x, y);
+			return false;
+		}
 	}
 
 	clearProjectiles () {
@@ -384,8 +384,8 @@ export default class Game {
 
 								gameObj.update(tick);
 								if(tick == ticksPerTurn){
-								if(gameObj.objCategory == "Units"){
-									this.players[gameObj.player-1].score = this.players[gameObj.player-1].score + Math.floor(50*gameObj.value*(gameObj.health/gameObj.maxHealth));
+									if(gameObj.objCategory == "Units"){
+										this.players[gameObj.player-1].score = this.players[gameObj.player-1].score + Math.floor(50*gameObj.value*(gameObj.health/gameObj.maxHealth));
 									}
 									if(gameObj.objCategory == "Bases"){
 										this.players[gameObj.player-1].score = this.players[gameObj.player-1].score + Math.floor(1000*(gameObj.health/gameObj.maxHealth));
@@ -463,8 +463,8 @@ export default class Game {
 
 		for(let p = 0; p < 4; p = p + 1){
 			this.players[p].credits = this.players[p].credits + 3;
-	 }
-	 this.turnNumber++;
+		}
+		this.turnNumber++;
 	}
 
 }
