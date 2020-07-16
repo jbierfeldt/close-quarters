@@ -76,6 +76,7 @@ class App {
 
 	debugInit () {
 		document.getElementById("submit-turn").addEventListener("click", this.sendSubmitTurn.bind(this));
+		document.getElementById("force-submit-turn").addEventListener("click", this.forcesendSubmitTurn.bind(this));
 		document.getElementById("reset-game").addEventListener("click", this.sendResetGame.bind(this));
 		document.getElementById("phase-1").addEventListener("click", this.setGamePhase.bind(this, 1));
 		document.getElementById("phase-2").addEventListener("click", this.setGamePhase.bind(this, 2));
@@ -130,6 +131,11 @@ class App {
 	sendSubmitTurn () {
 		debug.log(1, "submit turn!");
 		this.socket.emit('submitTurn', JSON.stringify(this.currentTurnOrders));
+	}
+
+	forcesendSubmitTurn () {
+		debug.log(1, "submit turn!");
+		this.socket.emit('forcesubmitTurn', JSON.stringify(this.currentTurnOrders));
 	}
 
 	sendResetGame () {

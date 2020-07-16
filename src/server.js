@@ -175,6 +175,7 @@ class GameController {
 		for (let i = 0; i < this.playersOnline.length; i++) {
 			// console.log("orders submitted?", this.playersOnline[i], this.playersOnline[i].ordersSubmitted);
 			if (!this.playersOnline[i].ordersSubmitted) {
+				console.log(this.playersOnline[i].playerNumber, "not ready");
 				return false;
 			}
 		}
@@ -196,6 +197,25 @@ class GameController {
 		// once all orders have been executed, run simulation
 		this.runSimulation();
 
+	}
+
+	forceOrders () {
+		//if all online players have submitted their orders, execute orders
+		// execute orders
+		for (let i = 0; i < this.playersOnline.length; i++) {
+			if (this.playersOnline[i].ordersToExecute.length > 0) {
+				for (let j = 0; j < this.playersOnline[i].ordersToExecute.length; j++) {
+					this.executeOrder(this.playersOnline[i].ordersToExecute[j]);
+				}
+			}
+
+			// after orders executed, reset PlayerController
+			this.playersOnline[i].ordersSubmitted = false;
+			this.playersOnline[i].ordersToExecute = [];
+		}
+
+		// once all orders have been executed, run simulation
+		this.runSimulation();
 	}
 
 	executeOrder (order) {
@@ -245,6 +265,16 @@ class PlayerController {
 
 			// try to execute orders
 			this.gameController.checkAllOrdersSubmitted();
+		});
+
+		this.socket.on('forcesubmitTurn', (data) =>  {
+			// will update game controller saying that this player has submitted their turn
+			// for now, just forcing runSimulation
+			this.ordersToExecute = JSON.parse(data);
+			this.ordersSubmitted = true;
+
+			// try to execute orders
+			this.gameController.forceOrders();
 		});
 
 		this.socket.on('resetGame', (data) =>  {
