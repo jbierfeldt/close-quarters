@@ -38,7 +38,7 @@ export class RayBullet extends Projectile {
 	constructor(player, initialOrientation = [0, 0], initialSpeed = 0, id)  {
 		super(player, initialOrientation, initialSpeed, id);
 		this.identifier = "RayProj";
-		this.damage=10;
+		this.damage = 10;
 	}
 
 	static createFromSerialized (props) {
@@ -55,11 +55,11 @@ export class RayBullet extends Projectile {
 }
 
 export class MagBullet extends Projectile {
-	constructor(player, initialOrientation = [0, 0], initialSpeed = 0, damage = 50, distance = 0, id)  {
+	constructor(player, initialOrientation = [0, 0], initialSpeed = 0, damage = 80, distance = 0, id)  {
 		super(player, initialOrientation, initialSpeed, id);
 		this.identifier = "MagProj";
 		this.damage = damage;
-		this.maxDamage = 45;
+		this.maxDamage = 80;
 		this.ableToBeDestroyed = false;
 		this.distance = distance;
 	}
@@ -107,7 +107,7 @@ export class BalBullet extends Projectile {
 	constructor(player, initialOrientation = [0, 0], initialSpeed = 0, created = 5, id)  {
 		super(player, initialOrientation, initialSpeed, id);
 		this.identifier = "BalProj";
-		this.damage = 13;
+		this.damage = 12;
 		this.created = created;
 		this.ableToBeDestroyed = false;
 		this.dump = false;

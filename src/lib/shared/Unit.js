@@ -151,12 +151,12 @@ export class Juggernode extends Unit {
 
 export class Maglev extends Unit {
 
-	constructor(player, health = 225, firing = false, id, collidedWith = [false, 4])  {
+	constructor(player, health = 200, firing = false, id, collidedWith = [false, 4])  {
 		super(id);
 		this.player = player;
 		this.health = health;
 		this.firing = firing;
-		this.maxHealth = 225;
+		this.maxHealth = 200;
 		this.identifier = "Mag"
 		this.projArr = [];
 		this.collidedWith = collidedWith;
@@ -214,7 +214,7 @@ export class Maglev extends Unit {
 
 export class Ballast extends Unit {
 
-	constructor(player, health = 250, firing = false, id, collidedWith = [false, 4])  {
+	constructor(player, health = 350, firing = false, id, collidedWith = [false, 4])  {
 		super(id);
 		this.player = player;
 		this.health = health;
@@ -366,3 +366,9 @@ Maglev.cost = 3;
 RayTracer.cost = 1;
 Juggernode.cost = 2;
 Ballast.cost = 2;
+
+Maglev.description = "The Maglev is a lightweight offensive powerhouse that emits indestructible magnetic pulses. It will randomly strike either in every diagonal direction or orthogonal direction. The pulses begin with a base damage of 80 and fade off exponentially as they travel, with no possibility of being stopped or destroyed.";
+CircuitBreaker.description = "The Resonator is a resiliant catapult-style machine that delivers damage in a cross shape encompassing a five-tile area. The center of its strike deals 150 damage and fades to half that amount in the adjacent tiles. The sheer power of its attack causes erratic projectile fire that falls between a distance of 4 - 9 spaces away. It will randomly strike vertically, horizontally or diagonally and does not do damage prior to reaching its destination.";
+Ballast.description = "The Ballast is an advanced, bulky machine that can be used to block key channels while hitting a limited set of targets with significant force. It strikes for five consecutive seconds, delivering 60 total damage. The attacks rotate between 6 possible target locations that are a distance of 6 or 3 tiles away horizontally and the opposite number vertically.";
+Juggernode.description = "The Juggernode is a standard defensive unit that also delivers diagonal strikes. Its photon beam fires toward the opposite corner of its location, dealing 7 damage.";
+RayTracer.description = "The Ray Tracer is a precise offensive machine used for reliable multifrontal attacks. It alternates firing horizontally and vertically, dealing 10 damage with each blast.";

@@ -13,6 +13,7 @@ export class Base {
 		this.objCategory = "Bases";
 		this.identifier = "Base";
 		this.collidedWith = collidedWith;
+		this.fullName = "Base";
 	}
 
 	static createFromSerialized (props) {

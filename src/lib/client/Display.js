@@ -153,10 +153,10 @@ export default class Display {
 					s.fill(255);
 					s.stroke(0);
 					s.strokeWeight(1);
-					s.text("Available Credits: " + this.app.game.players[this.app.playerNumber-1].credits, wi/10, he/1.5);
+					s.text("Credits: " + this.app.game.players[this.app.playerNumber-1].credits, wi/3.5, he/1.6);
 					for(let a = 0; a < 4; a = a + 1){
 						s.fill(this.playerColors[a][0], this.playerColors[a][1], this.playerColors[a][2], this.playerColors[a][3]);
-						s.text("Player " + (a+1) + " Score: " + this.app.game.players[a].score, wi/10, he/1.3+a*si);
+						s.text("Player " + (a+1) + " Score: " + this.app.game.players[a].score, wi/25, he/1.8+a*si);
 					}
 					if(this.app.playerNumber == 2){
 						s.translate(-0,he/2);
@@ -236,6 +236,10 @@ export default class Display {
 						gameStart=1;
 						for(let i=0;i<unitButtons.length;i=i+1){
 							unitButtons[i].drawButton();
+							if(unitButtons[i].isPressed == true){
+								showUnitDescription(unitButtons[i].text,this.app.playerNumber, wi, he, si);
+						}
+
 						}
 
 						drawUnitMenu(this.playerColors,this.app.playerNumber, buttonScale)
@@ -258,6 +262,7 @@ export default class Display {
 							}
 							for(let yy=0;yy<unitButtons.length;yy=yy+1){
 								if(unitButtons[yy].isPressed===true){
+
 									if(this.app.playerNumber == 1 && hoverX <= 14 && hoverY < 10 && hoverX < 30 && hoverY < 20){
 										//this.app.makeRayTracer(this.player,hoverX,hoverY);
 										unitButtons[yy].func.call(this.app,unitButtons[yy].text, this.app.playerNumber, hoverX, hoverY);
@@ -386,6 +391,7 @@ export default class Display {
 				if(this.isPressed==true){
 					s.fill(255,255,255,100);
 					s.rect(this.xx,this.yy,this.xlen,this.ylen);
+
 				}
 				s.fill(0);
 				// s.textSize(this.xlen/8);
@@ -402,6 +408,30 @@ export default class Display {
 					return false;
 				}
 			}
+		}
+
+		function showUnitDescription(unitType, player, wid, hei, siz){
+			let tranX = 0;
+			let tranY = 0;
+			if(player == 1){
+				tranY = 1
+			}
+			else if(player == 3){
+				tranX = 1;
+				tranY = 1;
+			}
+			else if(player == 4){
+				tranX = 1;
+			}
+			s.translate(wid*tranX/2, hei*tranY/2);
+			s.textFont(standardFont);
+			s.textSize(siz/2);
+			s.fill(255);
+			s.stroke(0);
+			s.strokeWeight(0);
+			s.text(Units[unitType].description, siz, siz*6, siz*12,siz*12);
+			//s.text("RIGHT HERE", siz*2, siz*7);
+			s.translate(-wid*tranX/2, -hei*tranY/2);
 		}
 
 		function drawDisplayObject(displayObject, x, y, size, colors, a) {
@@ -448,6 +478,7 @@ export default class Display {
 		}
 
 		function drawUnitMenu(pColors, player, scale){
+			s.textFont(titleFont);
 			let wid=tempConfig.canvasX;
 			let hei=tempConfig.canvasY;
 			let siz =tempConfig.size;
