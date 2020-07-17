@@ -28,7 +28,7 @@ class GameController {
 		this.playersOnline = [];
 
 		// player spots
-    this.playerControllers = {
+		this.playerControllers = {
 			1: null,
 			2: null,
 			3: null,
@@ -36,12 +36,12 @@ class GameController {
 		};
 	}
 
-  init() {
+	init() {
 
 		this.game.init();
 
-    this.io.on('connection', (socket) => {
-      debug.log(0, 'a new client connected');
+		this.io.on('connection', (socket) => {
+			debug.log(0, 'a new client connected');
 
 			// get player spot if available
 			let playerSpot = this.getOpenPlayerSpot();
@@ -59,9 +59,9 @@ class GameController {
 
 			this.sendServerStateToAll();
 
-    });
+		});
 
-  }
+	}
 
 	resetGame () {
 		let newGame = new Game();
@@ -90,14 +90,14 @@ class GameController {
 		return false;
 	}
 
-  newPlayerController (socket, playerSpot) {
+	newPlayerController (socket, playerSpot) {
 		// create new PlayerController and assign to empty spot
 		let pc = new PlayerController(this, socket, playerSpot);
 		this.playerControllers[playerSpot] = pc;
 		this.playersOnline.push(pc);
 
 		// init new player
-	  pc.init();
+		pc.init();
 
 		debug.log(1, this.playerControllers);
 
@@ -175,6 +175,7 @@ class GameController {
 		for (let i = 0; i < this.playersOnline.length; i++) {
 			// console.log("orders submitted?", this.playersOnline[i], this.playersOnline[i].ordersSubmitted);
 			if (!this.playersOnline[i].ordersSubmitted) {
+				console.log(this.playersOnline[i].playerNumber, "not ready");
 				return false;
 			}
 		}
@@ -198,6 +199,25 @@ class GameController {
 
 	}
 
+	forceOrders () {
+		//if all online players have submitted their orders, execute orders
+		// execute orders
+		for (let i = 0; i < this.playersOnline.length; i++) {
+			if (this.playersOnline[i].ordersToExecute.length > 0) {
+				for (let j = 0; j < this.playersOnline[i].ordersToExecute.length; j++) {
+					this.executeOrder(this.playersOnline[i].ordersToExecute[j]);
+				}
+			}
+
+			// after orders executed, reset PlayerController
+			this.playersOnline[i].ordersSubmitted = false;
+			this.playersOnline[i].ordersToExecute = [];
+		}
+
+		// once all orders have been executed, run simulation
+		this.runSimulation();
+	}
+
 	executeOrder (order) {
 		this[order.orderType](order.args);
 	}
@@ -213,29 +233,29 @@ class GameController {
 
 class PlayerController {
 
-  constructor(gameController, socket, playerNumber) {
+	constructor(gameController, socket, playerNumber) {
 		this.id = socket.id;
 		this.playerNumber = playerNumber;
-    this.gameController = gameController;
-    this.socket = socket;
+		this.gameController = gameController;
+		this.socket = socket;
 
 		this.ordersToExecute = [];
 		this.ordersSubmitted = false;
 
 		this.clientGamePhase = null;
-  }
+	}
 
-  init() {
+	init() {
 
 		this.socket.emit("message", `You are player ${this.playerNumber}`);
 
-    this.socket.on('createUnit', (data) => {
+		this.socket.on('createUnit', (data) => {
 			this.gameController.createUnit(data.unitType, data.player, data.x, data.y);
-    });
+		});
 
 		this.socket.on('createBase', (data) => {
 			this.gameController.createBase(data.baseType, data.player, data.x, data.y);
-    });
+		});
 
 		this.socket.on('submitTurn', (data) =>  {
 			// will update game controller saying that this player has submitted their turn
@@ -245,6 +265,16 @@ class PlayerController {
 
 			// try to execute orders
 			this.gameController.checkAllOrdersSubmitted();
+		});
+		
+		this.socket.on('forcesubmitTurn', (data) =>  {
+			// will update game controller saying that this player has submitted their turn
+			// for now, just forcing runSimulation
+			this.ordersToExecute = JSON.parse(data);
+			this.ordersSubmitted = true;
+
+			// try to execute orders
+			this.gameController.forceOrders();
 		});
 
 		this.socket.on('resetGame', (data) =>  {
@@ -257,15 +287,15 @@ class PlayerController {
 			this.gameController.sendServerStateToAll();
 		})
 
-    this.socket.on('disconnect', () => {
-			 this.gameController.removePlayerController(this.playerNumber);
-			 this.gameController.sendServerStateToAll();
-    });
+		this.socket.on('disconnect', () => {
+			this.gameController.removePlayerController(this.playerNumber);
+			this.gameController.sendServerStateToAll();
+		});
 
 		this.sendPlayerState();
 		this.socket.emit("debugInfoUpdate");
 
-  }
+	}
 
 	sendPlayerState () {
 		this.socket.emit("updatePlayerState", {
@@ -284,9 +314,9 @@ app.use('/static', express.static(__dirname + '/static'));
 
 // Routing
 app.get('/', function(request, response) {
-    response.sendFile(path.join(__dirname, 'index.html'));
+	response.sendFile(path.join(__dirname, 'index.html'));
 });
 
 server.listen(port, () => {
-  console.log('Server listening at port %d', port);
+	console.log('Server listening at port %d', port);
 });

@@ -93,12 +93,12 @@ export default class Display {
 
 					if(this.delay>25){
 						s.stroke(0,(this.delay-25)*2.9);
-					s.fill(255,0,128,(this.delay-25)*2.9);
-				}
-				else{
-					s.noFill();
-					s.noStroke();
-				}
+						s.fill(255,0,128,(this.delay-25)*2.9);
+					}
+					else{
+						s.noFill();
+						s.noStroke();
+					}
 					if((this.delay-25)*2.9>200){
 						s.fill(255,0,128,201);
 					}
@@ -155,8 +155,8 @@ export default class Display {
 					s.strokeWeight(1);
 					s.text("Available Credits: " + this.app.game.players[this.app.playerNumber-1].credits, wi/10, he/1.5);
 					for(let a = 0; a < 4; a = a + 1){
-						  s.fill(this.playerColors[a][0], this.playerColors[a][1], this.playerColors[a][2], this.playerColors[a][3]);
-							s.text("Player " + (a+1) + " Score: " + this.app.game.players[a].score, wi/10, he/1.3+a*si);
+						s.fill(this.playerColors[a][0], this.playerColors[a][1], this.playerColors[a][2], this.playerColors[a][3]);
+						s.text("Player " + (a+1) + " Score: " + this.app.game.players[a].score, wi/10, he/1.3+a*si);
 					}
 					if(this.app.playerNumber == 2){
 						s.translate(-0,he/2);
@@ -332,20 +332,20 @@ export default class Display {
 					try{
 						let hoverObject = this.simulationDisplayTurn.tick[this.t].gameObjects.get(this.simulationDisplayTurn.tick[this.t].board[hoverY][hoverX][0]);
 						if(hoverObject){
-						s.stroke(0);
-						s.strokeWeight(3);
-						s.fill(255,105);
-						s.rect(hoverX*si+si,hoverY*si+si,si*4,si*3);
-						s.fill(this.playerColors[hoverObject.player-1][0], this.playerColors[hoverObject.player-1][1], this.playerColors[hoverObject.player-1][2], this.playerColors[hoverObject.player-1][3]);
-						s.stroke(0);
+							s.stroke(0);
+							s.strokeWeight(3);
+							s.fill(255,105);
+							s.rect(hoverX*si+si,hoverY*si+si,si*4,si*3);
+							s.fill(this.playerColors[hoverObject.player-1][0], this.playerColors[hoverObject.player-1][1], this.playerColors[hoverObject.player-1][2], this.playerColors[hoverObject.player-1][3]);
+							s.stroke(0);
 
-						s.textFont(standardFont);
-						s.textSize(si/2.5);
-						s.text(hoverObject.identifier, hoverX*si+si*1.2,hoverY*si+si*1.5);
-						s.text("Health: " + hoverObject.health, hoverX*si+si*1.2,hoverY*si+si*2);
+							s.textFont(standardFont);
+							s.textSize(si/2.5);
+							s.text(hoverObject.identifier, hoverX*si+si*1.2,hoverY*si+si*1.5);
+							s.text("Health: " + hoverObject.health, hoverX*si+si*1.2,hoverY*si+si*2);
+						}
 					}
-					}
-				  catch(e){
+					catch(e){
 
 					}
 				}
@@ -443,108 +443,108 @@ export default class Display {
 			if(player == 3 || player == 4){
 				s.translate(-wid/2, 0);
 			}
-				s.fill(225,225,225,45);
-				s.quad(wid/2+siz,siz,wid/2+siz,hei-siz,wid-siz,hei-siz,wid-siz,siz);
-				s.fill(pColors[player-1][0],pColors[player-1][1],pColors[player-1][2],255);
-				s.line(wid/2+siz*9.5,siz,wid/2+siz*9.5,hei-siz);
-				s.line(wid/2+siz*11.5,siz,wid/2+siz*11.5,hei-siz);
-				s.stroke(0);
-				//s.text("Unit",wid/2+siz*1.5,siz*2.25);
-				s.text("Machine",wid/2+siz*2.5,siz*2.45);
-				s.text("L",wid/2+siz*10.25,siz*2.45);
-				s.text("C",wid/2+siz*12.3,siz*2.45);
-				s.textSize(wid/35);
-				//s.textFont(standardFont);
-				//Cost is contained in the value within the sine wave
+			s.fill(225,225,225,45);
+			s.quad(wid/2+siz,siz,wid/2+siz,hei-siz,wid-siz,hei-siz,wid-siz,siz);
+			s.fill(pColors[player-1][0],pColors[player-1][1],pColors[player-1][2],255);
+			s.line(wid/2+siz*9.5,siz,wid/2+siz*9.5,hei-siz);
+			s.line(wid/2+siz*11.5,siz,wid/2+siz*11.5,hei-siz);
+			s.stroke(0);
+			//s.text("Unit",wid/2+siz*1.5,siz*2.25);
+			s.text("Machine",wid/2+siz*2.5,siz*2.45);
+			s.text("L",wid/2+siz*10.25,siz*2.45);
+			s.text("C",wid/2+siz*12.3,siz*2.45);
+			s.textSize(wid/35);
+			//s.textFont(standardFont);
+			//Cost is contained in the value within the sine wave
 
-				//Ray Tracer Button Decoration
-				s.fill(255);
-				s.text("Ray Tracer",wid/2+siz*3.75,siz*4)
-				s.text("100",wid/2+siz*9.9,siz*4)
-				s.noFill();
-				s.stroke(255);
-				s.strokeWeight(2);
-				s.beginShape();
-				s.curveVertex(wid/2+siz*12,siz*4.25);
-				for(let i = 0; i <= siz*1.5; i = i + 1){
-					s.curveVertex(wid/2+siz*12+i,siz*4.25-25*s.abs(s.sin(.5*s.radians(i*360/(siz*1.5)))));
-				}
-				s.curveVertex(wid/2+siz*12+siz*1.5,siz*4.25);
-				s.curveVertex(wid/2+siz*12+siz*1.5,siz*4.25);
-				s.endShape();
+			//Ray Tracer Button Decoration
+			s.fill(255);
+			s.text("Ray Tracer",wid/2+siz*3.75,siz*4)
+			s.text("100",wid/2+siz*9.9,siz*4)
+			s.noFill();
+			s.stroke(255);
+			s.strokeWeight(2);
+			s.beginShape();
+			s.curveVertex(wid/2+siz*12,siz*4.25);
+			for(let i = 0; i <= siz*1.5; i = i + 1){
+				s.curveVertex(wid/2+siz*12+i,siz*4.25-25*s.abs(s.sin(.5*s.radians(i*360/(siz*1.5)))));
+			}
+			s.curveVertex(wid/2+siz*12+siz*1.5,siz*4.25);
+			s.curveVertex(wid/2+siz*12+siz*1.5,siz*4.25);
+			s.endShape();
 
-				//Ballast Button Decoration
-				s.translate(0,scale*siz);
-				s.stroke(0);
-				s.fill(255);
-				s.text("Ballast",wid/2+siz*3.75,siz*4)
-				s.text("300",wid/2+siz*9.9,siz*4)
-				s.noFill();
-				s.stroke(255);
-				s.strokeWeight(2);
-				s.beginShape();
-				s.curveVertex(wid/2+siz*12,siz*4.25);
-				for(let i = 0; i <= siz*1.5; i = i + 1){
-					s.curveVertex(wid/2+siz*12+i,siz*4.25-25*s.abs(s.sin(1*s.radians(i*360/(siz*1.5)))));
-				}
-				s.curveVertex(wid/2+siz*12+siz*1.5,siz*4.25);
-				s.curveVertex(wid/2+siz*12+siz*1.5,siz*4.25);
-				s.endShape();
-				s.translate(0,-scale*siz);
-				//Juggernode Button Decoration
-				s.translate(0,scale*siz*2);
-				s.stroke(0);
-				s.fill(255);
-				s.text("Juggernode",wid/2+siz*3.75,siz*4)
-				s.text("500",wid/2+siz*9.9,siz*4)
-				s.noFill();
-				s.stroke(255);
-				s.strokeWeight(2);
-				s.beginShape();
-				s.curveVertex(wid/2+siz*12,siz*4.25);
-				for(let i = 0; i <= siz*1.5; i = i + 1){
-					s.curveVertex(wid/2+siz*12+i,siz*4.25-25*s.abs(s.sin(1*s.radians(i*360/(siz*1.5)))));
-				}
-				s.curveVertex(wid/2+siz*12+siz*1.5,siz*4.25);
-				s.curveVertex(wid/2+siz*12+siz*1.5,siz*4.25);
-				s.endShape();
-				s.translate(0,-scale*siz*2);
-				//Maglev Button Decoration
-				s.translate(0,scale*siz*3);
-				s.stroke(0);
-				s.fill(255);
-				s.text("Maglev",wid/2+siz*3.75,siz*4)
-				s.text("250",wid/2+siz*9.9,siz*4)
-				s.noFill();
-				s.stroke(255);
-				s.strokeWeight(2);
-				s.beginShape();
-				s.curveVertex(wid/2+siz*12,siz*4.25);
-				for(let i = 0; i <= siz*1.5; i = i + 1){
-					s.curveVertex(wid/2+siz*12+i,siz*4.25-25*s.abs(s.sin(1.5*s.radians(i*360/(siz*1.5)))));
-				}
-				s.curveVertex(wid/2+siz*12+siz*1.5,siz*4.25);
-				s.curveVertex(wid/2+siz*12+siz*1.5,siz*4.25);
-				s.endShape();
-				s.translate(0,-scale*siz*3);
-				//Circuit Breaker Button Decoration
-				s.translate(0,scale*siz*4);
-				s.stroke(0);
-				s.fill(255);
-				s.text("Resonator",wid/2+siz*3.75,siz*4)
-				s.text("400",wid/2+siz*9.9,siz*4)
-				s.noFill();
-				s.stroke(255);
-				s.strokeWeight(2);
-				s.beginShape();
-				s.curveVertex(wid/2+siz*12,siz*4.25);
-				for(let i = 0; i <= siz*1.5; i = i + 1){
-					s.curveVertex(wid/2+siz*12+i,siz*4.25-25*s.abs(s.sin(1.5*s.radians(i*360/(siz*1.5)))));
-				}
-				s.curveVertex(wid/2+siz*12+siz*1.5,siz*4.25);
-				s.curveVertex(wid/2+siz*12+siz*1.5,siz*4.25);
-				s.endShape();
-				s.translate(0,-scale*siz*4);
+			//Ballast Button Decoration
+			s.translate(0,scale*siz);
+			s.stroke(0);
+			s.fill(255);
+			s.text("Ballast",wid/2+siz*3.75,siz*4)
+			s.text("300",wid/2+siz*9.9,siz*4)
+			s.noFill();
+			s.stroke(255);
+			s.strokeWeight(2);
+			s.beginShape();
+			s.curveVertex(wid/2+siz*12,siz*4.25);
+			for(let i = 0; i <= siz*1.5; i = i + 1){
+				s.curveVertex(wid/2+siz*12+i,siz*4.25-25*s.abs(s.sin(1*s.radians(i*360/(siz*1.5)))));
+			}
+			s.curveVertex(wid/2+siz*12+siz*1.5,siz*4.25);
+			s.curveVertex(wid/2+siz*12+siz*1.5,siz*4.25);
+			s.endShape();
+			s.translate(0,-scale*siz);
+			//Juggernode Button Decoration
+			s.translate(0,scale*siz*2);
+			s.stroke(0);
+			s.fill(255);
+			s.text("Juggernode",wid/2+siz*3.75,siz*4)
+			s.text("500",wid/2+siz*9.9,siz*4)
+			s.noFill();
+			s.stroke(255);
+			s.strokeWeight(2);
+			s.beginShape();
+			s.curveVertex(wid/2+siz*12,siz*4.25);
+			for(let i = 0; i <= siz*1.5; i = i + 1){
+				s.curveVertex(wid/2+siz*12+i,siz*4.25-25*s.abs(s.sin(1*s.radians(i*360/(siz*1.5)))));
+			}
+			s.curveVertex(wid/2+siz*12+siz*1.5,siz*4.25);
+			s.curveVertex(wid/2+siz*12+siz*1.5,siz*4.25);
+			s.endShape();
+			s.translate(0,-scale*siz*2);
+			//Maglev Button Decoration
+			s.translate(0,scale*siz*3);
+			s.stroke(0);
+			s.fill(255);
+			s.text("Maglev",wid/2+siz*3.75,siz*4)
+			s.text("250",wid/2+siz*9.9,siz*4)
+			s.noFill();
+			s.stroke(255);
+			s.strokeWeight(2);
+			s.beginShape();
+			s.curveVertex(wid/2+siz*12,siz*4.25);
+			for(let i = 0; i <= siz*1.5; i = i + 1){
+				s.curveVertex(wid/2+siz*12+i,siz*4.25-25*s.abs(s.sin(1.5*s.radians(i*360/(siz*1.5)))));
+			}
+			s.curveVertex(wid/2+siz*12+siz*1.5,siz*4.25);
+			s.curveVertex(wid/2+siz*12+siz*1.5,siz*4.25);
+			s.endShape();
+			s.translate(0,-scale*siz*3);
+			//Circuit Breaker Button Decoration
+			s.translate(0,scale*siz*4);
+			s.stroke(0);
+			s.fill(255);
+			s.text("Resonator",wid/2+siz*3.75,siz*4)
+			s.text("400",wid/2+siz*9.9,siz*4)
+			s.noFill();
+			s.stroke(255);
+			s.strokeWeight(2);
+			s.beginShape();
+			s.curveVertex(wid/2+siz*12,siz*4.25);
+			for(let i = 0; i <= siz*1.5; i = i + 1){
+				s.curveVertex(wid/2+siz*12+i,siz*4.25-25*s.abs(s.sin(1.5*s.radians(i*360/(siz*1.5)))));
+			}
+			s.curveVertex(wid/2+siz*12+siz*1.5,siz*4.25);
+			s.curveVertex(wid/2+siz*12+siz*1.5,siz*4.25);
+			s.endShape();
+			s.translate(0,-scale*siz*4);
 
 			if(player == 3 || player == 4){
 				s.translate(wid/2, 0);
@@ -748,8 +748,8 @@ export default class Display {
 				let titleX=(height/3+90*s.cos(3.14*s.radians(delay)))*s.cos(s.radians(angle))-0;
 				let titleY=(height/3+2*s.tan(3.14*s.radians(delay/20)))*s.sin(s.radians(angle))+0;
 				for(let o = 255; o > 0; o = o - 5){
-				s.fill(152, 255, 152, o);
-				s.ellipse(titleX,titleY,height/12-o*height/(255*12),height/12-o*height/(255*12));
+					s.fill(152, 255, 152, o);
+					s.ellipse(titleX,titleY,height/12-o*height/(255*12),height/12-o*height/(255*12));
 				}
 			}
 			s.translate(-width/2,-height/2);
@@ -845,7 +845,7 @@ export default class Display {
 
 			s.endShape();
 			s.translate(-(refx+size/2),-(refy+size/2));
-	s.strokeWeight(1);
+			s.strokeWeight(1);
 			s.stroke(pColors[player-1][0],pColors[player-1][1],pColors[player-1][2],255);
 			s.translate(refx+size/2,refy+size/2);
 			s.beginShape();
