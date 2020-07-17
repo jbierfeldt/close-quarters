@@ -101,12 +101,12 @@ export class RayTracer extends Unit {
 
 export class Juggernode extends Unit {
 
-	constructor(player, health = 500, firing = false, id,  collidedWith = [false, 4])  {
+	constructor(player, health = 400, firing = false, id,  collidedWith = [false, 4])  {
 		super(id);
 		this.player = player;
 		this.health = health;
 		this.firing = firing;
-		this.maxHealth = 500;
+		this.maxHealth = 400;
 		this.identifier="Jug";
 		this.projArr = [];
 		this.collidedWith = collidedWith;
@@ -149,12 +149,12 @@ export class Juggernode extends Unit {
 
 export class Maglev extends Unit {
 
-	constructor(player, health = 250, firing = false, id, collidedWith = [false, 4])  {
+	constructor(player, health = 225, firing = false, id, collidedWith = [false, 4])  {
 		super(id);
 		this.player = player;
 		this.health = health;
 		this.firing = firing;
-		this.maxHealth = 250;
+		this.maxHealth = 225;
 		this.identifier = "Mag"
 		this.projArr = [];
 		this.collidedWith = collidedWith;
@@ -212,12 +212,12 @@ export class Maglev extends Unit {
 
 export class Ballast extends Unit {
 
-	constructor(player, health = 300, firing = false, id, collidedWith = [false, 4])  {
+	constructor(player, health = 250, firing = false, id, collidedWith = [false, 4])  {
 		super(id);
 		this.player = player;
 		this.health = health;
 		this.firing = firing;
-		this.maxHealth = 300;
+		this.maxHealth = 250;
 		this.identifier="Bal";
 		this.projArr = [];
 		this.collidedWith = collidedWith;
@@ -238,21 +238,44 @@ export class Ballast extends Unit {
 		this.collidedWith = [false, 4];
 		this.firing=false;
 		if(tick % 7 === 0){
-			let rando = Math.random()*5;
+			let rando = Math.random()*6;
+			let multx = 1;
+			let multy = 1;
+			let targOne = 6;
+			let targTwo = 3;
+			if(this.player == 1){
+				multx = 1;
+				multy = 1;
+			}
+			else if(this.player == 2){
+				multx = 1;
+				multy = -1;
+			}
+			else if(this.player == 3){
+				multx = -1;
+				multy = 1;
+			}
+			else if(this.player == 4){
+				multx = -1;
+				multy = -1;
+			}
 			if(rando < 1){
-				this.startAttack([6,3]);
+				this.startAttack([multx*targOne, multy*targTwo]);
 			}
 			else if(rando < 2){
-				this.startAttack([6,-3]);
+				this.startAttack([multx*targOne, multy*-targTwo]);
 			}
 			else if(rando < 3){
-				this.startAttack([3,6]);
+				this.startAttack([multx*targTwo, multy*targOne]);
 			}
 			else if(rando < 4){
-				this.startAttack([-3,6]);
+				this.startAttack([multx*targTwo, multy*-targOne]);
 			}
 			else if(rando < 5){
-				this.startAttack([-6,3]);
+				this.startAttack([multx*-targTwo, multy*targOne]);
+			}
+			else if(rando < 6){
+				this.startAttack([multx*-targOne, multy*targTwo]);
 			}
 		}
 	}
@@ -264,12 +287,12 @@ export class Ballast extends Unit {
 
 export class CircuitBreaker extends Unit {
 
-	constructor(player, health = 400, firing = false, id, collidedWith = [false, 4])  {
+	constructor(player, health = 300, firing = false, id, collidedWith = [false, 4])  {
 		super(id);
 		this.player = player;
 		this.health = health;
 		this.firing = firing;
-		this.maxHealth = 400;
+		this.maxHealth = 300;
 		this.identifier="Cir";
 		this.projArr = [];
 		this.collidedWith = collidedWith;
