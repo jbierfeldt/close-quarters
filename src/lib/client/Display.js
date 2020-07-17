@@ -335,14 +335,28 @@ export default class Display {
 							s.stroke(0);
 							s.strokeWeight(3);
 							s.fill(255,105);
+							let transX = 0;
+							let transY = 0;
+							if(hoverX >= wi/(si*2) && hoverY < he/(si*2)){
+									transX = 1;
+							}
+							else if(hoverX >= wi/(si*2) && hoverY >= he/(si*2)){
+									transX = 1;
+									transY = 1;
+							}
+							else if(hoverX < wi/(si*2) && hoverY >= he/(si*2)){
+									transY = 1;
+							}
+							s.translate(-si*5*transX, -si*4*transY);
 							s.rect(hoverX*si+si,hoverY*si+si,si*4,si*3);
 							s.fill(this.playerColors[hoverObject.player-1][0], this.playerColors[hoverObject.player-1][1], this.playerColors[hoverObject.player-1][2], this.playerColors[hoverObject.player-1][3]);
 							s.stroke(0);
 
 							s.textFont(standardFont);
 							s.textSize(si/2.5);
-							s.text(hoverObject.identifier, hoverX*si+si*1.2,hoverY*si+si*1.5);
+							s.text(hoverObject.fullName, hoverX*si+si*1.2,hoverY*si+si*1.5);
 							s.text("Health: " + hoverObject.health, hoverX*si+si*1.2,hoverY*si+si*2);
+							s.translate(si*5*transX, si*4*transY);
 						}
 					}
 					catch(e){
@@ -758,19 +772,20 @@ export default class Display {
 			let refx=x*size;
 			let refy=y*size;
 			s.stroke(0)
-			s.strokeWeight(3);
+			s.strokeWeight(2);
+			let projSize = size/5;
 			s.fill(pColors[player-1][0],pColors[player-1][1],pColors[player-1][2], 255);
 			if(orient[0] == 0 && orient[1] == 1){
-				s.ellipse(refx+size/2,refy+(a+1)*size/10,size/3.5,size/3.5);
+				s.ellipse(refx+size/2,refy+(a+1)*size/10,projSize,projSize);
 			}
 			else if(orient[0] == 0 && orient[1] == -1){
-				s.ellipse(refx+size/2,refy+size-(a+1)*size/10,size/3.5,size/3.5);
+				s.ellipse(refx+size/2,refy+size-(a+1)*size/10,projSize,projSize);
 			}
 			else if(orient[0] == 1 && orient[1] == 0){
-				s.ellipse(refx+(a+1)*size/10,refy+size/2,size/3.5,size/3.5);
+				s.ellipse(refx+(a+1)*size/10,refy+size/2,projSize,projSize);
 			}
 			else if(orient[0] == -1 && orient[1] == 0){
-				s.ellipse(refx+size-(a+1)*size/10,refy+size/2,size/3.5,size/3.5);
+				s.ellipse(refx+size-(a+1)*size/10,refy+size/2,projSize,projSize);
 			}
 		}
 		function drawMaglevProjectile(x, y, player, size, pColors, orient, damage, a){
