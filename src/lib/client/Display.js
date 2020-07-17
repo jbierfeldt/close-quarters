@@ -660,7 +660,7 @@ export default class Display {
 			}
 			s.translate(-x*size-size/2, -y*size-size/2);
 			s.fill(0+(max-health)*2);
-			s.ellipse(x*size+size/2,y*size+size/2,size/7,size/7);
+			s.ellipse(x*size+size/2,y*size+size/2,size/5,size/5);
 
 		}
 		function drawMaglev(x,y,player,size,health,max,pColors){
@@ -782,7 +782,7 @@ export default class Display {
 			s.strokeWeight(2);
 			//s.noStroke();
 			s.beginShape();
-			for(let angle = 0; angle <= 360; angle = angle + 10){
+			for(let angle = 0; angle <= 360; angle = angle + 20){
 				//s.rect(refx,refy,size,size);
 				s.curveVertex(refx+size/2+orient[0]*a*size/10+scalar*s.cos(s.radians(angle))*s.cos(s.radians(angle))*s.cos(s.radians(angle)),refy+size/2+orient[1]*a*size/10+scalar*s.sin(s.radians(angle))*s.sin(s.radians(angle))*s.sin(s.radians(angle)));
 			}
@@ -911,7 +911,7 @@ export default class Display {
 			let rad = 360;
 			let radius=size/25;
 			s.translate(refx,refy);
-			for (let i = 0; i < rad; i = i + 3){
+			for (let i = 0; i < rad; i = i + 30){
 				s.stroke(pColors[player-1][0],pColors[player-1][1],pColors[player-1][2], 10-a);
 				theta = i*(360/rad);
 				phase=((Math.PI)/rad);
