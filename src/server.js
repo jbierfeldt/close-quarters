@@ -73,14 +73,6 @@ class GameController {
 		this.sendGameHistoryToAll();
 	}
 
-	removePlayerController (playerNumber) {
-		this.playerControllers[playerNumber] = null;
-		const idx = this.playersOnline.indexOf(this.playerControllers[playerNumber]);
-		this.playersOnline.splice(idx, 1);
-
-		debug.log(1, this.playerControllers);
-	}
-
 	getOpenPlayerSpot () {
 		// returns the id of next open player spot or false if all spots are filled
 		for (let idx in this.playerControllers) {
@@ -100,8 +92,17 @@ class GameController {
 		pc.init();
 
 		debug.log(1, this.playerControllers);
+		// debug.log(1, this.playersOnline);
 
 		return pc;
+	}
+
+	removePlayerController (playerController) {
+		this.playerControllers[playerController.playerNumber] = null;
+		const idx = this.playersOnline.indexOf(playerController);
+		this.playersOnline.splice(idx, 1);
+
+		debug.log(1, this.playerControllers);
 	}
 
 	setGamePhaseForAll (phase) {
@@ -175,7 +176,6 @@ class GameController {
 		for (let i = 0; i < this.playersOnline.length; i++) {
 			// console.log("orders submitted?", this.playersOnline[i], this.playersOnline[i].ordersSubmitted);
 			if (!this.playersOnline[i].ordersSubmitted) {
-				console.log(this.playersOnline[i].playerNumber, "not ready");
 				return false;
 			}
 		}
@@ -218,8 +218,19 @@ class GameController {
 		this.runSimulation();
 	}
 
+	printServerData () {
+		console.log("Players Online:")
+		for (let i =  0; i < this.playersOnline.length; i++) {
+			console.log(this.playersOnline[i].id, this.playersOnline[i].playerNumber, this.playersOnline[i].ordersSubmitted, this.playersOnline[i].ordersToExecute);
+		}
+	}
+
 	executeOrder (order) {
-		this[order.orderType](order.args);
+		try {
+			this[order.orderType](order.args);
+		} catch (e) {
+			console.log("Order didn't execute", order);
+		}
 	}
 
 	runSimulation() {
@@ -247,7 +258,15 @@ class PlayerController {
 
 	init() {
 
+		this.bindListeners();
 		this.socket.emit("message", `You are player ${this.playerNumber}`);
+
+		this.sendPlayerState();
+		this.socket.emit("debugInfoUpdate");
+
+	}
+
+	bindListeners () {
 
 		this.socket.on('createUnit', (data) => {
 			this.gameController.createUnit(data.unitType, data.player, data.x, data.y);
@@ -266,7 +285,7 @@ class PlayerController {
 			// try to execute orders
 			this.gameController.checkAllOrdersSubmitted();
 		});
-		
+
 		this.socket.on('forcesubmitTurn', (data) =>  {
 			// will update game controller saying that this player has submitted their turn
 			// for now, just forcing runSimulation
@@ -275,6 +294,10 @@ class PlayerController {
 
 			// try to execute orders
 			this.gameController.forceOrders();
+		});
+
+		this.socket.on('printServerData', () => {
+			this.gameController.printServerData();
 		});
 
 		this.socket.on('resetGame', (data) =>  {
@@ -288,12 +311,9 @@ class PlayerController {
 		})
 
 		this.socket.on('disconnect', () => {
-			this.gameController.removePlayerController(this.playerNumber);
+			this.gameController.removePlayerController(this);
 			this.gameController.sendServerStateToAll();
 		});
-
-		this.sendPlayerState();
-		this.socket.emit("debugInfoUpdate");
 
 	}
 
