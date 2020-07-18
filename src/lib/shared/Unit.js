@@ -100,6 +100,58 @@ export class RayTracer extends Unit {
 
 }
 
+export class Oscillator extends Unit {
+
+	constructor(player, health = 275, firing = false, id, collidedWith = [false, 4])  {
+		super(id);
+		this.player = player;
+		this.health = health;
+		this.firing = firing;
+		this.maxHealth = 275;
+		this.identifier = "Osc";
+		this.projArr = [];
+		this.collidedWith = collidedWith;
+		this.value = 1;
+		this.fullName = "Oscillator";
+	}
+
+	static createFromSerialized (props) {
+		return new Oscillator(props.player, props.health, props.firing, props.id, props.collidedWith)
+	}
+
+	startAttack(orientation){
+
+		//initialize a project object and pass in the direction based on the tick
+		this.firing = true;
+		this.projArr[0]  = new Projectiles.OscBullet(this.player, orientation, 1);
+
+		debug.log(0, "    Unit " + this.id + "  is firing Projectile " + this.firing.id);
+
+	}
+
+	update(tick) {
+		super.update(tick);
+		this.collidedWith = [false, 4];
+		// reset firing
+		this.firing = false;
+		// Ray Tracer fires every 4 ticks
+		if (tick === 1) {
+			if(this.player==1 || this.player==2){
+				this.startAttack([1,0]);
+
+			}
+			else if(this.player==3 || this.player==4){
+				this.startAttack([-1,0]);
+			}
+		}
+	}
+
+	serialize () {
+		return super.serialize.call(this);
+	}
+
+}
+
 export class Juggernode extends Unit {
 
 	constructor(player, health = 400, firing = false, id,  collidedWith = [false, 4])  {
@@ -364,6 +416,7 @@ export class CircuitBreaker extends Unit {
 CircuitBreaker.cost = 3;
 Maglev.cost = 3;
 RayTracer.cost = 1;
+Oscillator.cost = 1;
 Juggernode.cost = 2;
 Ballast.cost = 2;
 
@@ -372,3 +425,4 @@ CircuitBreaker.description = "The Resonator is a resiliant catapult-style machin
 Ballast.description = "The Ballast is an advanced, bulky machine that can be used to block key channels while hitting a limited set of targets with significant force. It strikes for five consecutive seconds, delivering 60 total damage. The attacks rotate between 6 possible target locations that are a distance of 6 or 3 tiles away horizontally and the opposite number vertically.";
 Juggernode.description = "The Juggernode is a standard defensive unit that also delivers diagonal strikes. Its photon beam fires toward the opposite corner of its location, dealing 7 damage.";
 RayTracer.description = "The Ray Tracer is a precise offensive machine used for reliable multifrontal attacks. It alternates firing horizontally and vertically, dealing 10 damage with each blast.";
+Oscillator.description = "The Oscillator is...";

@@ -54,6 +54,38 @@ export class RayBullet extends Projectile {
 	}
 }
 
+export class OscBullet extends Projectile {
+	constructor(player, initialOrientation = [0, 0], initialSpeed = 0, created = 0, id)  {
+		super(player, initialOrientation, initialSpeed, id);
+		this.identifier = "OscProj";
+		this.damage = 100;
+		this.orientation = initialOrientation;
+		this.created = created;
+	}
+
+	static createFromSerialized (props) {
+		return new OscBullet(props.player, props.orientation, props.speed, props.created, props.id);
+	}
+
+	update(tick) {
+		super.update(tick);
+		if(this.created % 5 == 0){
+			let randX = Math.floor(Math.random()*3)-1;
+			let randY = Math.floor(Math.random()*3)-1;
+			this.orientation = [randX, randY];
+		}
+		else{
+			this.orientation = [0,0];
+		}
+
+		this.created = this.created + 1;
+	}
+
+	serialize () {
+		return super.serialize.call(this);
+	}
+}
+
 export class MagBullet extends Projectile {
 	constructor(player, initialOrientation = [0, 0], initialSpeed = 0, damage = 80, distance = 0, id)  {
 		super(player, initialOrientation, initialSpeed, id);

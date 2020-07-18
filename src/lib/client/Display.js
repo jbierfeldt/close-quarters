@@ -41,6 +41,7 @@ export default class Display {
 			let bJuggernode;
 			let bBallast;
 			let bCircuitBreaker;
+			let bOscillator;
 
 			let unitButtons=[]; //List of the Buttons for unit creation
 			let randX;
@@ -122,14 +123,16 @@ export default class Display {
 						//Unit Buttons Below
 						bRayTracer=new Buttoned(wi/2+si-playerShifter,si*buttonScale*2,wi/2-si*2,si*buttonScale,"RayTracer",this.app.sendCreateUnit);
 						unitButtons.push(bRayTracer);
-						bBallast=new Buttoned(wi/2+si-playerShifter,si*buttonScale*3,wi/2-si*2,si*buttonScale,"Ballast",this.app.sendCreateUnit);
+						bBallast=new Buttoned(wi/2+si-playerShifter,si*buttonScale*4,wi/2-si*2,si*buttonScale,"Ballast",this.app.sendCreateUnit);
 						unitButtons.push(bBallast);
-						bJuggernode=new Buttoned(wi/2+si-playerShifter,si*buttonScale*4,wi/2-si*2,si*buttonScale,"Juggernode",this.app.sendCreateUnit);
+						bJuggernode=new Buttoned(wi/2+si-playerShifter,si*buttonScale*5,wi/2-si*2,si*buttonScale,"Juggernode",this.app.sendCreateUnit);
 						unitButtons.push(bJuggernode);
-						bMaglev=new Buttoned(wi/2+si-playerShifter,si*buttonScale*5,wi/2-si*2,si*buttonScale,"Maglev",this.app.sendCreateUnit);
+						bMaglev=new Buttoned(wi/2+si-playerShifter,si*buttonScale*6,wi/2-si*2,si*buttonScale,"Maglev",this.app.sendCreateUnit);
 						unitButtons.push(bMaglev);
-						bCircuitBreaker=new Buttoned(wi/2+si-playerShifter,si*buttonScale*6,wi/2-si*2,si*buttonScale,"CircuitBreaker",this.app.sendCreateUnit);
+						bCircuitBreaker=new Buttoned(wi/2+si-playerShifter,si*buttonScale*7,wi/2-si*2,si*buttonScale,"CircuitBreaker",this.app.sendCreateUnit);
 						unitButtons.push(bCircuitBreaker);
+						bOscillator=new Buttoned(wi/2+si-playerShifter,si*buttonScale*3,wi/2-si*2,si*buttonScale,"Oscillator",this.app.sendCreateUnit);
+						unitButtons.push(bOscillator);
 					}
 					buttonMaker=0;
 
@@ -425,7 +428,7 @@ export default class Display {
 			}
 			s.translate(wid*tranX/2, hei*tranY/2);
 			s.textFont(standardFont);
-			s.textSize(siz/2);
+			s.textSize(siz/2.5);
 			s.fill(255);
 			s.stroke(0);
 			s.strokeWeight(0);
@@ -441,6 +444,9 @@ export default class Display {
 			}
 			if(displayObject.identifier == "Ray"){
 				drawRayTracer(x,y,displayObject.player,size,displayObject.health,displayObject.maxHealth,colors);
+			}
+			if(displayObject.identifier == "Osc"){
+				drawOscillator(x,y,displayObject.player,size,displayObject.health,displayObject.maxHealth,colors);
 			}
 			if(displayObject.identifier == "Mag"){
 				drawMaglev(x,y,displayObject.player,size,displayObject.health,displayObject.maxHealth,colors);
@@ -459,6 +465,9 @@ export default class Display {
 			}
 			if(displayObject.identifier == "RayProj"){
 				drawRayTracerProjectile(x,y,displayObject.player,size,colors,displayObject.orientation, a);
+			}
+			if(displayObject.identifier == "OscProj"){
+				drawOscillatorProjectile(x,y,displayObject.player,size,colors,displayObject.orientation, a);
 			}
 			if(displayObject.identifier == "MagProj"){
 				drawMaglevProjectile(x,y,displayObject.player,size,colors,displayObject.orientation, displayObject.damage, a);
@@ -517,9 +526,26 @@ export default class Display {
 			s.curveVertex(wid/2+siz*12+siz*1.5,siz*4.25);
 			s.curveVertex(wid/2+siz*12+siz*1.5,siz*4.25);
 			s.endShape();
-
+			//Oscillator Button Decoration
+			s.translate(0,scale*siz*1);
+			s.stroke(0);
+			s.fill(255);
+			s.text("Oscillator",wid/2+siz*3.75,siz*4)
+			s.text("275",wid/2+siz*9.9,siz*4)
+			s.noFill();
+			s.stroke(255);
+			s.strokeWeight(2);
+			s.beginShape();
+			s.curveVertex(wid/2+siz*12,siz*4.25);
+			for(let i = 0; i <= siz*1.5; i = i + 1){
+				s.curveVertex(wid/2+siz*12+i,siz*4.25-25*s.abs(s.sin(.5*s.radians(i*360/(siz*1.5)))));
+			}
+			s.curveVertex(wid/2+siz*12+siz*1.5,siz*4.25);
+			s.curveVertex(wid/2+siz*12+siz*1.5,siz*4.25);
+			s.endShape();
+			s.translate(0,-scale*siz*1);
 			//Ballast Button Decoration
-			s.translate(0,scale*siz);
+			s.translate(0,scale*siz*2);
 			s.stroke(0);
 			s.fill(255);
 			s.text("Ballast",wid/2+siz*3.75,siz*4)
@@ -535,9 +561,9 @@ export default class Display {
 			s.curveVertex(wid/2+siz*12+siz*1.5,siz*4.25);
 			s.curveVertex(wid/2+siz*12+siz*1.5,siz*4.25);
 			s.endShape();
-			s.translate(0,-scale*siz);
+			s.translate(0,-scale*siz*2);
 			//Juggernode Button Decoration
-			s.translate(0,scale*siz*2);
+			s.translate(0,scale*siz*3);
 			s.stroke(0);
 			s.fill(255);
 			s.text("Juggernode",wid/2+siz*3.75,siz*4)
@@ -553,9 +579,9 @@ export default class Display {
 			s.curveVertex(wid/2+siz*12+siz*1.5,siz*4.25);
 			s.curveVertex(wid/2+siz*12+siz*1.5,siz*4.25);
 			s.endShape();
-			s.translate(0,-scale*siz*2);
+			s.translate(0,-scale*siz*3);
 			//Maglev Button Decoration
-			s.translate(0,scale*siz*3);
+			s.translate(0,scale*siz*4);
 			s.stroke(0);
 			s.fill(255);
 			s.text("Maglev",wid/2+siz*3.75,siz*4)
@@ -571,9 +597,9 @@ export default class Display {
 			s.curveVertex(wid/2+siz*12+siz*1.5,siz*4.25);
 			s.curveVertex(wid/2+siz*12+siz*1.5,siz*4.25);
 			s.endShape();
-			s.translate(0,-scale*siz*3);
+			s.translate(0,-scale*siz*4);
 			//Circuit Breaker Button Decoration
-			s.translate(0,scale*siz*4);
+			s.translate(0,scale*siz*5);
 			s.stroke(0);
 			s.fill(255);
 			s.text("Resonator",wid/2+siz*3.75,siz*4)
@@ -589,7 +615,7 @@ export default class Display {
 			s.curveVertex(wid/2+siz*12+siz*1.5,siz*4.25);
 			s.curveVertex(wid/2+siz*12+siz*1.5,siz*4.25);
 			s.endShape();
-			s.translate(0,-scale*siz*4);
+			s.translate(0,-scale*siz*5);
 
 			if(player == 3 || player == 4){
 				s.translate(wid/2, 0);
@@ -708,6 +734,20 @@ export default class Display {
 			s.ellipse(x*size+size/2,y*size+size/2,size/5,size/5);
 
 		}
+
+		function drawOscillator(x,y,player,size,health,max,pColors){
+			s.stroke(0);
+			s.strokeWeight(2);
+			s.fill(0+(max-health)*2);
+			s.translate(x*size+size/2, y*size+size/2);
+			for(let angle = 0; angle < 360; angle = angle + 120){
+				s.rotate(s.radians(angle));
+				s.triangle(0,size/10,size/8,size/6,-size/8,size/6);
+				s.rotate(-s.radians(angle));
+			}
+			s.translate(-x*size-size/2, -y*size-size/2);
+		}
+
 		function drawMaglev(x,y,player,size,health,max,pColors){
 			//s.fill(pColors[player][0],pColors[player][1],pColors[player][2],pColors[player][3])
 			s.stroke(0+(max-health)*2);
@@ -819,6 +859,22 @@ export default class Display {
 				s.ellipse(refx+size-(a+1)*size/10,refy+size/2,projSize,projSize);
 			}
 		}
+
+		function drawOscillatorProjectile(x,y,player,size,pColors,orient, a){
+			let refx=x*size+size/2;
+			let refy=y*size+size/2;
+			s.stroke(0);
+			s.strokeWeight(.35*s.abs(a-4.5));
+			for(let i = -size/3; i <= size/3; i = i + size/9){
+				s.line(refx+i,refy-.75*(s.abs(i)-size/3),refx+i,refy+.75*(s.abs(i)-size/3));
+			}
+			s.stroke(pColors[player-1][0],pColors[player-1][1],pColors[player-1][2], 255);
+			s.strokeWeight(.2*s.abs(a-4.5));
+			for(let i = -size/3; i <= size/3; i = i + size/9){
+				s.line(refx+i,refy-.75*(s.abs(i)-size/3),refx+i,refy+.75*(s.abs(i)-size/3));
+			}
+		}
+
 		function drawMaglevProjectile(x, y, player, size, pColors, orient, damage, a){
 			let refx=x*size;
 			let refy=y*size;
