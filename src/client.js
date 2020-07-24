@@ -25,6 +25,7 @@ class App {
 		// info from server
 		this.turnNumber = 1;
 		this.currentTurnInitialState = {};
+		this.lastTurnHistory = {};
 		this.clientID = undefined;
 		this.playerNumber = undefined;
 		this.playersOnServer = undefined;
@@ -50,9 +51,8 @@ class App {
 			this.updateDebugInfo();
 		});
 
-		this.socket.on('updateGameHistory', (data) => {
-			debug.log(0, 'got game history from server');
-			this.updateGameHistory(data);
+		this.socket.on('updateLastTurnHistory', (data) => {
+			this.updateLastTurnHistory(data);
 		});
 
 		this.socket.on('updateGameState', (data) => {
@@ -167,13 +167,11 @@ class App {
 		return this.game.rebuildGameSnapshot(gameState);
 	}
 
-	loadSerializedTurnHistory(serializedHistory)  {
-		let historyObj = JSON.parse(serializedHistory);
-		for (const [key, value] of Object.entries(historyObj.turn)) {
-			let tickContainer = historyObj.turn[key].tick;
-			for (const [key2, value2] of Object.entries(tickContainer)) {
-				tickContainer[key2] = this.game.rebuildGameSnapshot(tickContainer[key2]);
-			}
+	loadSerializedLastTurnHistory (serializedLastTurnHisotry) {
+		let historyObj = JSON.parse(serializedLastTurnHisotry);
+		let tickContainer = historyObj.tick;
+		for (const [key, value] of Object.entries(tickContainer)) {
+			tickContainer[key] = this.game.rebuildGameSnapshot(tickContainer[key]);
 		}
 		return historyObj;
 	}
@@ -187,12 +185,10 @@ class App {
 		this.updateDebugInfo();
 	}
 
-	updateGameHistory (data) {
-		debug.log(0, "updateGameHistory", data);
-		let history = this.loadSerializedTurnHistory(data.s_history);
-		this.game.history = history;
-		this.display.simulationDisplayTurn = this.game.history.turn[this.turnNumber-1];
-		debug.log(0, "sent to Display", this.turnNumber-1, this.display.simulationDisplayTurn);
+	updateLastTurnHistory (data) {
+		let lastTurnHistory = this.loadSerializedLastTurnHistory(data.s_lastTurnHistory);
+		this.display.simulationDisplayTurn = lastTurnHistory;
+		debug.log(0, "sent to Display", this.display.simulationDisplayTurn);
 	}
 
 	updateDebugInfo () {

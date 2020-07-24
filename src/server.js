@@ -41,7 +41,7 @@ class GameController {
 		this.game.init();
 
 		this.io.on('connection', (socket) => {
-			debug.log(0, 'a new client connected');
+			// debug.log(0, 'a new client connected');
 
 			// get player spot if available
 			let playerSpot = this.getOpenPlayerSpot();
@@ -54,7 +54,7 @@ class GameController {
 				let newPlayerController = this.newPlayerController(socket, playerSpot);
 
 				this.sendGameStateToClient(socket);
-				this.sendGameHistoryToClient(socket);
+				this.sendLastTurnHistoryToClient(socket);
 			}
 
 			this.sendServerStateToAll();
@@ -70,7 +70,7 @@ class GameController {
 
 		this.setGamePhaseForAll(0);
 		this.sendGameStateToAll();
-		this.sendGameHistoryToAll();
+		this.sendLastTurnHistoryToAll();
 	}
 
 	getOpenPlayerSpot () {
@@ -91,18 +91,21 @@ class GameController {
 		// init new player
 		pc.init();
 
-		debug.log(1, this.playerControllers);
+		console.log('connected', playerSpot, socket.id);
+		// debug.log(1, this.playerControllers);
 		// debug.log(1, this.playersOnline);
 
 		return pc;
 	}
 
 	removePlayerController (playerController) {
+		console.log('disconnected', playerController.playerNumber, playerController.socket.id)
+
 		this.playerControllers[playerController.playerNumber] = null;
 		const idx = this.playersOnline.indexOf(playerController);
 		this.playersOnline.splice(idx, 1);
 
-		debug.log(1, this.playerControllers);
+		// debug.log(1, this.playerControllers);
 	}
 
 	setGamePhaseForAll (phase) {
@@ -111,15 +114,15 @@ class GameController {
 		});
 	}
 
-	sendGameHistoryToAll () {
-		this.io.emit('updateGameHistory', {
-			s_history: JSON.stringify(this.game.history)
+	sendLastTurnHistoryToAll () {
+		this.io.emit('updateLastTurnHistory', {
+			s_lastTurnHistory: JSON.stringify(this.game.getLastTurnHistory())
 		});
 	}
 
-	sendGameHistoryToClient (socket) {
-		socket.emit('updateGameHistory', {
-			s_history: JSON.stringify(this.game.history)
+	sendLastTurnHistoryToClient (socket) {
+		socket.emit('updateLastTurnHistory', {
+			s_lastTurnHistory: JSON.stringify(this.game.getLastTurnHistory())
 		});
 	}
 
@@ -236,7 +239,7 @@ class GameController {
 	runSimulation() {
 		this.game.runSimulation();
 		this.sendGameStateToAll();
-		this.sendGameHistoryToAll();
+		this.sendLastTurnHistoryToAll();
 		this.setGamePhaseForAll(2);
 	}
 
