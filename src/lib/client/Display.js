@@ -328,6 +328,41 @@ export default class Display {
 						}
 						drawUnitMenu(this.playerColors,this.app.playerNumber, buttonScale);
 					}
+					hoverX=s.int(s.mouseX/si);
+					hoverY=s.int(s.mouseY/si);
+					try{
+						let hoverObject = this.simulationDisplayTurn.tick[this.t].gameObjects.get(this.simulationDisplayTurn.tick[this.t].board[hoverY][hoverX][0]);
+						if(hoverObject){
+							s.stroke(0);
+							s.strokeWeight(3);
+							s.fill(255,105);
+							let transX = 0;
+							let transY = 0;
+							if(hoverX >= wi/(si*2) && hoverY < he/(si*2)){
+									transX = 1;
+							}
+							else if(hoverX >= wi/(si*2) && hoverY >= he/(si*2)){
+									transX = 1;
+									transY = 1;
+							}
+							else if(hoverX < wi/(si*2) && hoverY >= he/(si*2)){
+									transY = 1;
+							}
+							s.translate(-si*5*transX, -si*4*transY);
+							s.rect(hoverX*si+si,hoverY*si+si,si*4,si*3);
+							s.fill(this.playerColors[hoverObject.player-1][0], this.playerColors[hoverObject.player-1][1], this.playerColors[hoverObject.player-1][2], this.playerColors[hoverObject.player-1][3]);
+							s.stroke(0);
+
+							s.textFont(standardFont);
+							s.textSize(si/2.5);
+							s.text(hoverObject.fullName, hoverX*si+si*1.2,hoverY*si+si*1.5);
+							s.text("Health: " + hoverObject.health, hoverX*si+si*1.2,hoverY*si+si*2);
+							s.translate(si*5*transX, si*4*transY);
+						}
+					}
+					catch(e){
+
+					}
 					//Buttons Section
 
 
@@ -845,7 +880,7 @@ export default class Display {
 		}
 
 		function drawMaglev(x,y,player,size,health,max,pColors){
-			s.stroke(255);
+			s.stroke(0);
 			//s.fill((max-health)*255/max);
 			s.fill(0);
 			s.strokeWeight(1);
@@ -1141,24 +1176,12 @@ export default class Display {
 			}
 			return false;
 		}
-		function polygon(x, y, radius, npoints) {
-			let angle = Math.PI*2 / npoints;
-			s.beginShape();
-			s.vertex(x + s.cos(0) * radius, y + s.sin(0) * radius);
-			for (let a = 0; a < Math.PI*2; a += angle) {
-				let sx = x + s.cos(a) * radius;
-				let sy = y + s.sin(a) * radius;
-				s.vertex(sx, sy);
-			}
-			s.endShape();
-		}
+
 	}
 
 	this.engine = new p5(sketch);
 
 	//console.log('Initialized Display');
 }
-
-
 
 }

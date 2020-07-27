@@ -11,6 +11,7 @@ export default class Player {
 		this.credits = 5;
 		this.baseCount = 0;
 		this.basePlaced = 0;
+		this.victoryCondition = 0;
 	}
 
 	addBase() {
