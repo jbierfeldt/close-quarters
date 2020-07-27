@@ -50,8 +50,14 @@ export default class Display {
 			let buttonMaker=1; //Variable so buttons only get created once
 			let hoverX;
 			let hoverY;
+
 			let img;
 			let imgTwo;
+			let imgThree;
+
+			let b;
+
+			let hoverObject;
 
 			p5.disableFriendlyErrors = true;
 			//Preload the fonts and other assets below
@@ -60,6 +66,7 @@ export default class Display {
 				standardFont = s.loadFont('static/ISB.ttf');
 				img = s.loadImage('static/CCBolt.png');
 				imgTwo = s.loadImage('static/CBoard3.png');
+				imgThree = s.loadImage('static/wallpaper1.png');
 			}
 
 			//Create the canvas based on the size of the user window
@@ -94,6 +101,7 @@ export default class Display {
 
 					//The below function displays the title sequence
 					// Add bar magnet field lines
+
 					titleSequence(wi,he,this.delay,si/2);
 
 					//Display the game title on top of the title sequence
@@ -175,7 +183,7 @@ export default class Display {
 							counter=0;
 						}
 						else{
-							s.fill(this.playerColors[this.app.playerNumber][0], this.playerColors[this.app.playerNumber][1], this.playerColors[this.app.playerNumber][2], this.playerColors[this.app.playerNumber][3]);
+							s.fill(this.playerColors[this.app.playerNumber-1][0], this.playerColors[this.app.playerNumber-1][1], this.playerColors[this.app.playerNumber-1][2], this.playerColors[this.app.playerNumber-1][3]);
 							s.stroke(0);
 							s.text("Confirm", wi/2.77, he/1.72);
 							counter=counter+1;
@@ -328,41 +336,7 @@ export default class Display {
 						}
 						drawUnitMenu(this.playerColors,this.app.playerNumber, buttonScale);
 					}
-					hoverX=s.int(s.mouseX/si);
-					hoverY=s.int(s.mouseY/si);
-					try{
-						let hoverObject = this.simulationDisplayTurn.tick[this.t].gameObjects.get(this.simulationDisplayTurn.tick[this.t].board[hoverY][hoverX][0]);
-						if(hoverObject){
-							s.stroke(0);
-							s.strokeWeight(3);
-							s.fill(255,105);
-							let transX = 0;
-							let transY = 0;
-							if(hoverX >= wi/(si*2) && hoverY < he/(si*2)){
-									transX = 1;
-							}
-							else if(hoverX >= wi/(si*2) && hoverY >= he/(si*2)){
-									transX = 1;
-									transY = 1;
-							}
-							else if(hoverX < wi/(si*2) && hoverY >= he/(si*2)){
-									transY = 1;
-							}
-							s.translate(-si*5*transX, -si*4*transY);
-							s.rect(hoverX*si+si,hoverY*si+si,si*4,si*3);
-							s.fill(this.playerColors[hoverObject.player-1][0], this.playerColors[hoverObject.player-1][1], this.playerColors[hoverObject.player-1][2], this.playerColors[hoverObject.player-1][3]);
-							s.stroke(0);
 
-							s.textFont(standardFont);
-							s.textSize(si/2.5);
-							s.text(hoverObject.fullName, hoverX*si+si*1.2,hoverY*si+si*1.5);
-							s.text("Health: " + hoverObject.health, hoverX*si+si*1.2,hoverY*si+si*2);
-							s.translate(si*5*transX, si*4*transY);
-						}
-					}
-					catch(e){
-
-					}
 					//Buttons Section
 
 
@@ -381,7 +355,7 @@ export default class Display {
 					this.t=this.t+keyPressed();
 				}*/
 
-				if(animate === 9 && this.t < (Object.keys(this.simulationDisplayTurn.tick).length-1)){
+				if(animate === 10 && this.t < (Object.keys(this.simulationDisplayTurn.tick).length-1)){
 					this.t=this.t+1;
 					animate=0;
 				}
@@ -389,7 +363,7 @@ export default class Display {
 
 				if(this.t<Object.keys(this.simulationDisplayTurn.tick).length && this.t>0){
 					drawGrid(wi, he, si, this.playerColors);
-					let b = this.simulationDisplayTurn.tick[this.t].board;
+					b = this.simulationDisplayTurn.tick[this.t].board;
 					for(var k=0; k<b.length; k=k+1){
 						for(var l=0; l<b[k].length; l=l+1){
 							//drawTile(l, k, si, this.playerColors, wi, he);
@@ -398,15 +372,16 @@ export default class Display {
 									let displayObject = this.simulationDisplayTurn.tick[this.t].gameObjects.get(b[k][l][m]);
 									if(displayObject !== undefined){
 
-										drawDisplayObject(displayObject, l, k,tempConfig.size, this.playerColors, animate);
-										try {
+										drawDisplayObject(displayObject, l, k, tempConfig.size, this.playerColors, animate);
+										if(displayObject.objCategory === "Units" || displayObject.objCategory === "Bases"){
 
+											if(displayObject.collidedWith.length > 0){
 											if(displayObject.collidedWith[0] == true){
+												debug.log(3,displayObject);
 												drawCollision(l,k, tempConfig.size, displayObject.collidedWith[1], animate, this.playerColors);
 											}
-										} catch(e){
-
 										}
+									}
 
 									}
 								}
@@ -415,8 +390,41 @@ export default class Display {
 					}
 					hoverX=s.int(s.mouseX/si);
 					hoverY=s.int(s.mouseY/si);
-					try{
-						let hoverObject = this.simulationDisplayTurn.tick[this.t].gameObjects.get(this.simulationDisplayTurn.tick[this.t].board[hoverY][hoverX][0]);
+					if(hoverX >= 0 && hoverX < 30 && hoverY >= 0 && hoverY < 20) {
+					if(b[hoverY][hoverX].length != 0){
+						hoverObject = this.simulationDisplayTurn.tick[this.t].gameObjects.get(this.simulationDisplayTurn.tick[this.t].board[hoverY][hoverX][0]);
+						if(hoverObject && hoverObject.objCategory != "Projectiles"){
+							s.stroke(0);
+							s.strokeWeight(3);
+							s.fill(255,125);
+							let transX = 0;
+							let transY = 0;
+							if(hoverX >= wi/(si*2) && hoverY < he/(si*2)){
+									transX = 1;
+							}
+							else if(hoverX >= wi/(si*2) && hoverY >= he/(si*2)){
+									transX = 1;
+									transY = 1;
+							}
+							else if(hoverX < wi/(si*2) && hoverY >= he/(si*2)){
+									transY = 1;
+							}
+							s.translate(-si*5*transX, -si*4*transY);
+							s.rect(hoverX*si+si,hoverY*si+si,si*4,si*3);
+							s.fill(this.playerColors[hoverObject.player-1][0], this.playerColors[hoverObject.player-1][1], this.playerColors[hoverObject.player-1][2], this.playerColors[hoverObject.player-1][3]);
+							s.stroke(0);
+
+							s.textFont(standardFont);
+							s.textSize(si/2.3);
+							s.text(hoverObject.fullName, hoverX*si+si*1.2,hoverY*si+si*1.7);
+							s.text("Health: " + hoverObject.health, hoverX*si+si*1.2,hoverY*si+si*2.7);
+							//s.text("Turns Active: " + hoverObject.turnsActive, hoverX*si+si*1.2,hoverY*si+si*2.8);
+							s.translate(si*5*transX, si*4*transY);
+						}
+					}
+				}
+					/*try{
+						hoverObject = this.simulationDisplayTurn.tick[this.t].gameObjects.get(this.simulationDisplayTurn.tick[this.t].board[hoverY][hoverX][0]);
 						if(hoverObject){
 							s.stroke(0);
 							s.strokeWeight(3);
@@ -447,7 +455,7 @@ export default class Display {
 					}
 					catch(e){
 
-					}
+					}*/
 				}
 				animate=animate+.5;
 
@@ -943,7 +951,15 @@ export default class Display {
 		}
 
 		function titleSequence(width,height,delay,scale){
-			s.background(0);
+			//s.background(0);
+			//s.image(imgThree,0,0,height*1.77,height);
+      s.background(0);
+			if(delay>25){
+			//	s.background(0,255-25*2);
+			}
+			else{
+			//	s.background(0,255-delay*2);
+			}
 			s.translate(width/2,height/2);
 			s.noStroke();
 			s.noFill();

@@ -15,6 +15,7 @@ export default class Unit {
 		this.invulnerable=false;
 		this.objCategory = "Units";
 		this.collidedWith = [];
+		//this.turnsActive = turnsActive;
 	}
 
 	static createFromSerialized (serializedObject) {
@@ -24,6 +25,7 @@ export default class Unit {
 	update (tick) {
 		//this.collidedWith = [false, 4];
 		debug.log(0, "    Updating Unit " + this.id + "  for tick #" + tick);
+		//this.turnsActive = this.turnsActive + 1;
 	}
 
 	serialize () {
@@ -35,11 +37,11 @@ export default class Unit {
 			health: this.health,
 			firing: this.firing,
 			collidedWith: this.collidedWith
-		}
+			//turnsActive: this.turnsActive
 	}
 
 }
-
+}
 export class RayTracer extends Unit {
 
 	constructor(player, health = 100, firing = false, id, collidedWith = [false, 4])  {
