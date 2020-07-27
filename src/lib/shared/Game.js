@@ -113,20 +113,16 @@ export default class Game {
 
 	}
 
-	serializeGameState(gameState) {
-		return JSON.stringify(gameState);
+	getHistoryOfTurn (turnNumber) {
+		return this.history.turn[turnNumber]
 	}
 
-	saveSerializedTurn(turn) {
-
-		return JSON.stringify(turn);
-
-	}
-
-	loadSerializedGameState(serializedGameState) {
-
-		return JSON.parse(serializedGameState);
-
+	getLastTurnHistory () {
+		if (this.turnNumber > 0) {
+			return this.getHistoryOfTurn(this.turnNumber - 1);
+		} else {
+			return this.getHistoryOfTurn(this.turnNumber);
+		}
 	}
 
 	placeInitialRandomBases () {
