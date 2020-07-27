@@ -42,6 +42,7 @@ export default class Display {
 			let bBallast;
 			let bCircuitBreaker;
 			let bOscillator;
+			let counter;
 
 			let bSubmit;
 
@@ -124,7 +125,7 @@ export default class Display {
 
 					//Only execute the following block once so the buttons are only created a single time
 					if(buttonMaker===1){
-						bSubmit = new Buttoned(wi/2.95, he/1.85,si*5,si*1.1,"Submit Turn",this.app.sendSubmitTurn);
+						bSubmit = new Buttoned(wi/3.01, he/1.85,si*5,si*1.1,"Submit Turn",this.app.sendSubmitTurn);
 
 						bBase=new Buttoned(wi/2+si-playerShifter,si*buttonScale*2,wi/2-si*2,si*buttonScale*3,"Base",this.app.sendCreateBase);
 						//Unit Buttons Below
@@ -148,6 +149,9 @@ export default class Display {
 				}
 
 				else if(this.app.gamePhase==1){
+
+					s.image(imgTwo,0,0,he*1.6,he);
+					s.background(0,190);
 					this.t=1;
 					animate=0;
 					if(this.app.playerNumber == 2){
@@ -167,23 +171,25 @@ export default class Display {
 						if(bSubmit.confirmed === false){
 					 		s.fill(255);
 					 		s.stroke(0);
-							s.text("Submit Turn", wi/2.89, he/1.72);
+							s.text("Submit Turn", wi/2.95, he/1.72);
+							counter=0;
 						}
 						else{
 							s.fill(this.playerColors[this.app.playerNumber][0], this.playerColors[this.app.playerNumber][1], this.playerColors[this.app.playerNumber][2], this.playerColors[this.app.playerNumber][3]);
 							s.stroke(0);
-							s.text("Confirm", wi/2.81, he/1.72);
+							s.text("Confirm", wi/2.77, he/1.72);
+							counter=counter+1;
 						}
 						if(s.mouseIsPressed){
 							if(bSubmit.isInRange(s.mouseX,s.mouseY)){
 								bSubmit.buttonHasBeenPressed();
-							}
-							if(bSubmit.isPressed === true && bSubmit.confirmed === false){
-								bSubmit.confirmation();
-							}
-							else if(bSubmit.isPressed === true && bSubmit.confirmed === true){
-								bSubmit.confirmed = false;
-								bSubmit.func.call(this.app);
+								if(bSubmit.isPressed === true && bSubmit.confirmed === false){
+									bSubmit.confirmation();
+								}
+								else if(bSubmit.isPressed === true && bSubmit.confirmed === true && counter > 40){
+									bSubmit.isPressed = false;
+									bSubmit.func.call(this.app);
+								}
 							}
 						}
 					}
@@ -192,7 +198,7 @@ export default class Display {
 					s.fill(255);
 					s.stroke(0);
 					s.strokeWeight(1);
-					s.text("Credits: " + this.app.game.players[this.app.playerNumber-1].credits, wi/2.9, he/1.57);
+					s.text("Credits: " + this.app.game.players[this.app.playerNumber-1].credits, wi/2.9, he/1.52);
 					for(let a = 0; a < 4; a = a + 1){
 						s.fill(this.playerColors[a][0], this.playerColors[a][1], this.playerColors[a][2], this.playerColors[a][3]);
 						s.text("Player " + (a+1) + " Score: " + this.app.game.players[a].score, wi/25, he/1.75+a*si);
@@ -269,19 +275,21 @@ export default class Display {
 						gameStart=1;
 						for(let i=0;i<unitButtons.length;i=i+1){
 							unitButtons[i].drawButton();
+						}
+						for(let i=0;i<unitButtons.length;i=i+1){
 							if(unitButtons[i].isPressed == true){
 								showUnitDescription(unitButtons[i].text,this.app.playerNumber, wi, he, si);
 							}
 						}
 
-						drawUnitMenu(this.playerColors,this.app.playerNumber, buttonScale)
+						//drawUnitMenu(this.playerColors,this.app.playerNumber, buttonScale);
 
 						if(s.mouseIsPressed){
 							let newButtonPressed=-1;
 							for(let i=0;i<unitButtons.length;i=i+1){
+
 								if(unitButtons[i].isInRange(s.mouseX,s.mouseY)){
 									unitButtons[i].buttonHasBeenPressed();
-									//unitButtons[i].displayDescription();
 									newButtonPressed=i;
 								}
 							}
@@ -294,7 +302,6 @@ export default class Display {
 							}
 							for(let yy=0;yy<unitButtons.length;yy=yy+1){
 								if(unitButtons[yy].isPressed===true){
-
 									if(this.app.playerNumber == 1 && hoverX <= 14 && hoverY < 10 && hoverX < 30 && hoverY < 20){
 										//this.app.makeRayTracer(this.player,hoverX,hoverY);
 										unitButtons[yy].func.call(this.app,unitButtons[yy].text, this.app.playerNumber, hoverX, hoverY);
@@ -317,7 +324,9 @@ export default class Display {
 									}
 								}
 							}
+
 						}
+						drawUnitMenu(this.playerColors,this.app.playerNumber, buttonScale);
 					}
 					//Buttons Section
 
@@ -327,6 +336,8 @@ export default class Display {
 				}
 				// if phase where grid should be shown, draw grid
 				else if(this.app.gamePhase==2){
+
+					bSubmit.confirmed = false;
 					//s.background(255);
 					//s.filter(GRAY);
 
@@ -422,16 +433,13 @@ export default class Display {
 			}
 			drawButton(){
 				s.stroke(255,255,255,255);
-				s.fill(0,0,0,255);
+				s.noFill();
 				s.rect(this.xx,this.yy,this.xlen,this.ylen);
 				if(this.isPressed==true){
+					s.stroke(255,255,255,255);
 					s.fill(255,255,255,100);
 					s.rect(this.xx,this.yy,this.xlen,this.ylen);
-
 				}
-				s.fill(0);
-				// s.textSize(this.xlen/8);
-				//s.text(this.text,this.xx+this.xlen/10,this.yy+this.ylen/1.25);
 			}
 			buttonHasBeenPressed(){
 				this.isPressed = true;
@@ -534,7 +542,7 @@ export default class Display {
 			if(player == 3 || player == 4){
 				s.translate(-wid/2, 0);
 			}
-			s.fill(225,225,225,45);
+			s.fill(225,225,225,65);
 			s.quad(wid/2+siz,siz,wid/2+siz,hei-siz,wid-siz,hei-siz,wid-siz,siz);
 			s.fill(pColors[player-1][0],pColors[player-1][1],pColors[player-1][2],255);
 			s.line(wid/2+siz*9.5,siz,wid/2+siz*9.5,hei-siz);
@@ -570,16 +578,15 @@ export default class Display {
 			s.vertex(refXX,refYY+siz*propTwo);
 			s.vertex(refXX,refYY);
 			s.endShape();
-			//s.text("L",wid/2+siz*10.25,siz*2.45);
 
-			//s.image(img,wid/2+siz*12.3,siz*2,siz*2,siz*2);
 			//s.text("Cost",wid/2+siz*12.3,siz*2.45);
 			s.textSize(wid/35);
 			//s.textFont(standardFont);
-			//Cost is contained in the value within the sine wave
 
 			//Ray Tracer Button Decoration
 			s.fill(255);
+			s.stroke(0)
+			s.strokeWeight(2);
 			s.text("Ray Tracer",wid/2+siz*3.75,siz*4)
 			s.text("100",wid/2+siz*9.9,siz*4)
 			s.noFill();
@@ -694,34 +701,34 @@ export default class Display {
 		}
 
 		function drawQuarterGrid(grid, pColors, player) {
-			s.stroke(0);
+			s.stroke(0,opacity);
 			s.strokeWeight(2);
-
+			let opacity = 255;
 			for (var i = 0; i < grid.length; i++) {
 				let rectSize = tempConfig.canvasX / grid[i].length;
 				let rectY = i * (tempConfig.canvasY / grid.length);
 				for (var j = 0; j < grid[i].length; j++) {
 					let rectX = j* tempConfig.canvasY/ grid.length;
 					if(i<=grid.length/2-1 && j <= grid[i].length/2-1){
-						s.fill(pColors[0][0],pColors[0][1],pColors[0][2],pColors[0][3])
+						s.fill(pColors[0][0],pColors[0][1],pColors[0][2],opacity)
 						if(player == 1){
 							s.rect(rectX, rectY, rectSize, rectSize);
 						}
 					}
 					else if(i >= grid.length/2-1 && j <= grid[i].length/2-1) {
-						s.fill(pColors[1][0],pColors[1][1],pColors[1][2],pColors[1][3])
+						s.fill(pColors[1][0],pColors[1][1],pColors[1][2],opacity)
 						if(player == 2){
 							s.rect(rectX, rectY, rectSize, rectSize);
 						}
 					}
 					else if(i <= grid.length/2-1 && j >= grid[i].length/2-1) {
-						s.fill(pColors[2][0],pColors[2][1],pColors[2][2],pColors[2][3])
+						s.fill(pColors[2][0],pColors[2][1],pColors[2][2],opacity)
 						if(player == 3){
 							s.rect(rectX, rectY, rectSize, rectSize);
 						}
 					}
 					else if(i >= grid.length/2-1 && j >= grid[i].length/2-1) {
-						s.fill(pColors[3][0],pColors[3][1],pColors[3][2],pColors[3][3])
+						s.fill(pColors[3][0],pColors[3][1],pColors[3][2],opacity)
 						if(player == 4){
 							s.rect(rectX, rectY, rectSize, rectSize);
 						}
@@ -783,13 +790,27 @@ export default class Display {
 			s.fill(0);
 			s.stroke((max-health)*255/max);
 			s.fill(pColors[player-1][0],pColors[player-1][1],pColors[player-1][2],255);
-			s.strokeWeight(3);
-			let offset=size/6;
-
+			s.strokeWeight(2);
+			let offset=size/10;
+			let alpha = 0;
 			for(let row = x*size+offset; row < (x*size+size); row = row + offset*2){
+				let bravo = 0;
 				for(let col = y*size+offset; col < (y*size+size); col = col + offset*2){
-					s.rect(row-offset/2,col-offset/2,offset,offset);
+
+					if(alpha < 2){
+					s.line(row,col,row+offset*2,col);
 				}
+				else if(bravo < 2){
+					s.line(row,col,row,col+offset*2);
+				}
+				else{
+					s.line(row,col,row-offset*2,col-offset*2);
+				}
+				s.ellipse(row,col,offset*1.5,offset*1.5);
+					bravo = bravo + 1;
+				}
+
+				alpha = alpha + 1;
 			}
 		}
 
@@ -824,9 +845,9 @@ export default class Display {
 		}
 
 		function drawMaglev(x,y,player,size,health,max,pColors){
-			//s.fill(pColors[player][0],pColors[player][1],pColors[player][2],pColors[player][3])
 			s.stroke(255);
-			s.fill((max-health)*255/max);
+			//s.fill((max-health)*255/max);
+			s.fill(0);
 			s.strokeWeight(1);
 			for(let i = -6;i < 6;i=i+.5){
 				s.ellipse(x*size+size/2,y*size+size/2+i*size/20,s.abs(i)*size/10,s.abs(i))*size/10;
