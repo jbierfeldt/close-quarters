@@ -423,39 +423,7 @@ export default class Display {
 						}
 					}
 				}
-					/*try{
-						hoverObject = this.simulationDisplayTurn.tick[this.t].gameObjects.get(this.simulationDisplayTurn.tick[this.t].board[hoverY][hoverX][0]);
-						if(hoverObject){
-							s.stroke(0);
-							s.strokeWeight(3);
-							s.fill(255,105);
-							let transX = 0;
-							let transY = 0;
-							if(hoverX >= wi/(si*2) && hoverY < he/(si*2)){
-									transX = 1;
-							}
-							else if(hoverX >= wi/(si*2) && hoverY >= he/(si*2)){
-									transX = 1;
-									transY = 1;
-							}
-							else if(hoverX < wi/(si*2) && hoverY >= he/(si*2)){
-									transY = 1;
-							}
-							s.translate(-si*5*transX, -si*4*transY);
-							s.rect(hoverX*si+si,hoverY*si+si,si*4,si*3);
-							s.fill(this.playerColors[hoverObject.player-1][0], this.playerColors[hoverObject.player-1][1], this.playerColors[hoverObject.player-1][2], this.playerColors[hoverObject.player-1][3]);
-							s.stroke(0);
-
-							s.textFont(standardFont);
-							s.textSize(si/2.5);
-							s.text(hoverObject.fullName, hoverX*si+si*1.2,hoverY*si+si*1.5);
-							s.text("Health: " + hoverObject.health, hoverX*si+si*1.2,hoverY*si+si*2);
-							s.translate(si*5*transX, si*4*transY);
-						}
-					}
-					catch(e){
-
-					}*/
+					
 				}
 				animate=animate+.5;
 
