@@ -43,17 +43,22 @@ export default class Display {
 			let bCircuitBreaker;
 			let bOscillator;
 
+			let bSubmit;
+
 			let unitButtons=[]; //List of the Buttons for unit creation
-			let randX;
-			let randY;
 			let buttonMaker=1; //Variable so buttons only get created once
 			let hoverX;
 			let hoverY;
+			let img;
+			let imgTwo;
 
+			p5.disableFriendlyErrors = true;
 			//Preload the fonts and other assets below
 			s.preload = () =>{
 				titleFont = s.loadFont('static/volt.ttf');
 				standardFont = s.loadFont('static/ISB.ttf');
+				img = s.loadImage('static/CCBolt.png');
+				imgTwo = s.loadImage('static/CBoard3.png');
 			}
 
 			//Create the canvas based on the size of the user window
@@ -119,6 +124,8 @@ export default class Display {
 
 					//Only execute the following block once so the buttons are only created a single time
 					if(buttonMaker===1){
+						bSubmit = new Buttoned(wi/2.95, he/1.85,si*5,si*1.1,"Submit Turn",this.app.sendSubmitTurn);
+
 						bBase=new Buttoned(wi/2+si-playerShifter,si*buttonScale*2,wi/2-si*2,si*buttonScale*3,"Base",this.app.sendCreateBase);
 						//Unit Buttons Below
 						bRayTracer=new Buttoned(wi/2+si-playerShifter,si*buttonScale*2,wi/2-si*2,si*buttonScale,"RayTracer",this.app.sendCreateUnit);
@@ -153,13 +160,42 @@ export default class Display {
 						s.translate(wi/2,-he/2);
 					}
 					s.textSize(wi/40);
+					//Here is where we put the submit turn button and also do a yes/no Check
+					if(gameStart === 1){
+						bSubmit.drawButton();
+
+						if(bSubmit.confirmed === false){
+					 		s.fill(255);
+					 		s.stroke(0);
+							s.text("Submit Turn", wi/2.89, he/1.72);
+						}
+						else{
+							s.fill(this.playerColors[this.app.playerNumber][0], this.playerColors[this.app.playerNumber][1], this.playerColors[this.app.playerNumber][2], this.playerColors[this.app.playerNumber][3]);
+							s.stroke(0);
+							s.text("Confirm", wi/2.81, he/1.72);
+						}
+						if(s.mouseIsPressed){
+							if(bSubmit.isInRange(s.mouseX,s.mouseY)){
+								bSubmit.buttonHasBeenPressed();
+							}
+							if(bSubmit.isPressed === true && bSubmit.confirmed === false){
+								bSubmit.confirmation();
+							}
+							else if(bSubmit.isPressed === true && bSubmit.confirmed === true){
+								bSubmit.confirmed = false;
+								bSubmit.func.call(this.app);
+							}
+						}
+					}
+
+
 					s.fill(255);
 					s.stroke(0);
 					s.strokeWeight(1);
-					s.text("Credits: " + this.app.game.players[this.app.playerNumber-1].credits, wi/2.9, he/1.6);
+					s.text("Credits: " + this.app.game.players[this.app.playerNumber-1].credits, wi/2.9, he/1.57);
 					for(let a = 0; a < 4; a = a + 1){
 						s.fill(this.playerColors[a][0], this.playerColors[a][1], this.playerColors[a][2], this.playerColors[a][3]);
-						s.text("Player " + (a+1) + " Score: " + this.app.game.players[a].score, wi/25, he/1.8+a*si);
+						s.text("Player " + (a+1) + " Score: " + this.app.game.players[a].score, wi/25, he/1.75+a*si);
 					}
 					if(this.app.playerNumber == 2){
 						s.translate(-0,he/2);
@@ -195,12 +231,6 @@ export default class Display {
 					hoverX=s.int(s.mouseX/si);
 					hoverY=s.int(s.mouseY/si);
 
-
-
-					//CHECK IF THE COORDINATES ARE IN RANGE BASED ON THE PLAYER
-
-					//unitButtons[0].drawButton();
-					//add base logic
 					s.fill(255,100);
 					s.noStroke();
 					s.rect(hoverX*tempConfig.size,hoverY*tempConfig.size,tempConfig.size,tempConfig.size);
@@ -241,8 +271,7 @@ export default class Display {
 							unitButtons[i].drawButton();
 							if(unitButtons[i].isPressed == true){
 								showUnitDescription(unitButtons[i].text,this.app.playerNumber, wi, he, si);
-						}
-
+							}
 						}
 
 						drawUnitMenu(this.playerColors,this.app.playerNumber, buttonScale)
@@ -298,6 +327,9 @@ export default class Display {
 				}
 				// if phase where grid should be shown, draw grid
 				else if(this.app.gamePhase==2){
+					//s.background(255);
+					//s.filter(GRAY);
+
 
 					/*if(s.keyIsPressed){
 					this.t=this.t+keyPressed();
@@ -386,6 +418,7 @@ export default class Display {
 				this.xlen=xlen;
 				this.ylen=ylen;
 				this.func=func;
+				this.confirmed = false;
 			}
 			drawButton(){
 				s.stroke(255,255,255,255);
@@ -402,6 +435,10 @@ export default class Display {
 			}
 			buttonHasBeenPressed(){
 				this.isPressed = true;
+			}
+			confirmation(){
+				this.isPressed = false;
+				this.confirmed = true;
 			}
 			isInRange(x, y){
 				if(x < (this.xx+this.xlen) && x > this.xx && y > this.yy && y < (this.yy+this.ylen)){
@@ -428,11 +465,11 @@ export default class Display {
 			}
 			s.translate(wid*tranX/2, hei*tranY/2);
 			s.textFont(standardFont);
-			s.textSize(siz/2.5);
+			s.textSize(siz/2.8);
 			s.fill(255);
 			s.stroke(0);
 			s.strokeWeight(0);
-			s.text(Units[unitType].description, siz, siz*6, siz*12,siz*12);
+			s.text(Units[unitType].description, siz, siz*5, siz*12,siz*12);
 			//s.text("RIGHT HERE", siz*2, siz*7);
 			s.translate(-wid*tranX/2, -hei*tranY/2);
 		}
@@ -505,8 +542,16 @@ export default class Display {
 			s.stroke(0);
 			//s.text("Unit",wid/2+siz*1.5,siz*2.25);
 			s.text("Machine",wid/2+siz*2.5,siz*2.45);
-			let refXX = wid/2+siz*10.4;
-			let refYY = siz*1.45;
+			s.noFill();
+			s.strokeWeight(1);
+			s.ellipse(wid/2+siz*10.5,siz*1.99,siz*1.45,siz*1.45);
+			s.strokeWeight(2);
+			s.stroke(pColors[player-1][0],pColors[player-1][1],pColors[player-1][2],255);
+			s.ellipse(wid/2+siz*10.5,siz*1.99,siz*1.35,siz*1.35);
+			s.stroke(0);
+			s.fill(pColors[player-1][0],pColors[player-1][1],pColors[player-1][2],255);
+			let refXX = wid/2+siz*10.42;
+			let refYY = siz*1.46;
 			let propOne = .15;
 			let propTwo = .45;
 			s.strokeWeight(1);
@@ -526,7 +571,9 @@ export default class Display {
 			s.vertex(refXX,refYY);
 			s.endShape();
 			//s.text("L",wid/2+siz*10.25,siz*2.45);
-			s.text("C",wid/2+siz*12.3,siz*2.45);
+
+			//s.image(img,wid/2+siz*12.3,siz*2,siz*2,siz*2);
+			//s.text("Cost",wid/2+siz*12.3,siz*2.45);
 			s.textSize(wid/35);
 			//s.textFont(standardFont);
 			//Cost is contained in the value within the sine wave
@@ -702,16 +749,24 @@ export default class Display {
 		}
 
 		function drawGrid(wi, he, si, pColors) {
+
+			s.image(imgTwo,0,0,he*1.6,he);
+
 			s.noStroke();
-			s.fill(pColors[0][0],pColors[0][1],pColors[0][2],pColors[0][3]);
+			let opacity = 230;
+			//s.fill(pColors[0][0],pColors[0][1],pColors[0][2],pColors[0][3]);
+			s.fill(pColors[0][0],pColors[0][1],pColors[0][2],opacity);
 			s.rect(0,0,wi/2,he/2);
-			s.fill(pColors[1][0],pColors[1][1],pColors[1][2],pColors[1][3]);
+			//s.fill(pColors[1][0],pColors[1][1],pColors[1][2],pColors[1][3]);
+			s.fill(pColors[1][0],pColors[1][1],pColors[1][2],opacity);
 			s.rect(0,he/2,wi/2,he/2);
-			s.fill(pColors[2][0],pColors[2][1],pColors[2][2],pColors[2][3]);
+			//s.fill(pColors[2][0],pColors[2][1],pColors[2][2],pColors[2][3]);
+			s.fill(pColors[2][0],pColors[2][1],pColors[2][2],opacity);
 			s.rect(wi/2,0,wi/2,he/2);
-			s.fill(pColors[3][0],pColors[3][1],pColors[3][2],pColors[3][3]);
+			//s.fill(pColors[3][0],pColors[3][1],pColors[3][2],pColors[3][3]);
+			s.fill(pColors[3][0],pColors[3][1],pColors[3][2],opacity);
 			s.rect(wi/2,he/2,wi/2,he/2);
-			s.stroke(0);
+			s.stroke(0,opacity);
 			s.strokeWeight(2);
 			for(let i = 0; i < (wi/si); i = i + 1){
 				s.line(si*i, 0, si*i, he);
@@ -729,7 +784,7 @@ export default class Display {
 			s.stroke((max-health)*255/max);
 			s.fill(pColors[player-1][0],pColors[player-1][1],pColors[player-1][2],255);
 			s.strokeWeight(3);
-			let offset=size/8;
+			let offset=size/6;
 
 			for(let row = x*size+offset; row < (x*size+size); row = row + offset*2){
 				for(let col = y*size+offset; col < (y*size+size); col = col + offset*2){
@@ -758,7 +813,7 @@ export default class Display {
 		function drawOscillator(x,y,player,size,health,max,pColors){
 			s.stroke(0);
 			s.strokeWeight(2);
-			s.fill(0+(max-health)*2);
+			s.fill((max-health)*255/max);
 			s.translate(x*size+size/2, y*size+size/2);
 			for(let angle = 0; angle < 360; angle = angle + 120){
 				s.rotate(s.radians(angle));
@@ -770,10 +825,10 @@ export default class Display {
 
 		function drawMaglev(x,y,player,size,health,max,pColors){
 			//s.fill(pColors[player][0],pColors[player][1],pColors[player][2],pColors[player][3])
-			s.stroke(0+(max-health)*2);
-			s.fill(0+(max-health)*2);
+			s.stroke(255);
+			s.fill((max-health)*255/max);
 			s.strokeWeight(1);
-			for(let i = -6;i < 6;i=i+.2){
+			for(let i = -6;i < 6;i=i+.5){
 				s.ellipse(x*size+size/2,y*size+size/2+i*size/20,s.abs(i)*size/10,s.abs(i))*size/10;
 			}
 		}
@@ -1033,8 +1088,8 @@ export default class Display {
 			let rad = 360;
 			let radius=size/25;
 			s.translate(refx,refy);
-			for (let i = 0; i < rad; i = i + 30){
-				s.stroke(pColors[player-1][0],pColors[player-1][1],pColors[player-1][2], 10-a);
+			for (let i = 0; i < rad; i = i + 20){
+				s.stroke(pColors[player-1][0],pColors[player-1][1],pColors[player-1][2], 30-a);
 				theta = i*(360/rad);
 				phase=((Math.PI)/rad);
 				meh = (radius*1.5+11.5)*s.sin(wave*theta+phase)*s.cos(phase);
