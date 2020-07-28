@@ -54,6 +54,7 @@ export default class Display {
 			let img;
 			let imgTwo;
 			let imgThree;
+			let imgFour;
 
 			let b;
 
@@ -67,6 +68,7 @@ export default class Display {
 				img = s.loadImage('static/CCBolt.png');
 				imgTwo = s.loadImage('static/CBoard3.png');
 				imgThree = s.loadImage('static/wallpaper1.png');
+				imgFour = s.loadImage('static/glassCopy.jpg');
 			}
 
 			//Create the canvas based on the size of the user window
@@ -247,7 +249,10 @@ export default class Display {
 
 					s.fill(255,100);
 					s.noStroke();
+					if(this.app.playerNumber == 1 && hoverX <= 14 && hoverY < 10 && hoverX < 30 && hoverY < 20){
+
 					s.rect(hoverX*tempConfig.size,hoverY*tempConfig.size,tempConfig.size,tempConfig.size);
+				}
 
 					if(this.app.game.players[this.app.playerNumber-1].baseCount < 2 && gameStart == 0){
 						bBase.drawButton();
@@ -295,7 +300,6 @@ export default class Display {
 						if(s.mouseIsPressed){
 							let newButtonPressed=-1;
 							for(let i=0;i<unitButtons.length;i=i+1){
-
 								if(unitButtons[i].isInRange(s.mouseX,s.mouseY)){
 									unitButtons[i].buttonHasBeenPressed();
 									newButtonPressed=i;
@@ -423,7 +427,7 @@ export default class Display {
 						}
 					}
 				}
-					
+
 				}
 				animate=animate+.5;
 
@@ -920,8 +924,8 @@ export default class Display {
 
 		function titleSequence(width,height,delay,scale){
 			//s.background(0);
-			//s.image(imgThree,0,0,height*1.77,height);
-      s.background(0);
+			//s.image(imgTwo,0,0,height*1.77,height);
+      //s.background(0);
 			if(delay>25){
 			//	s.background(0,255-25*2);
 			}
@@ -932,7 +936,7 @@ export default class Display {
 			s.noStroke();
 			s.noFill();
 			s.stroke(176,196,243,255);
-			s.strokeWeight(1);
+			s.strokeWeight(2);
 			if(delay<200){
 				for(var i=0; i<delay; i=i+1){
 					s.quad(-width/2+i*scale,-height/2+i*scale,-width/2+i*scale,height/2-i*scale,width/2-i*scale,height/2-i*scale,width/2-i*scale,-height/2+i*scale);
