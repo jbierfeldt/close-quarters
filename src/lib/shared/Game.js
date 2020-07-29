@@ -21,6 +21,8 @@ export default class Game {
 		this.board = board;
 		this.gameObjects = new Map();
 		this.turnNumber =  turnNumber;
+		this.numberOfProjectiles = 0;
+		this.tempNumberOfProjectiles = 0;
 		this.history = {
 			'turn': {}
 		};
@@ -347,6 +349,7 @@ export default class Game {
 		// updates game state based on ticks. Sweeps board and updates
 		// any game object on the board
 		// note: j is x and i is y
+
 		for(let i = 0; i < 4; i = i + 1){
 			this.players[i].score = 0;
 		}
@@ -356,7 +359,9 @@ export default class Game {
 		};
 
 		for (let tick = 1; tick <= ticksPerTurn; tick++) {
-
+			this.numberOfProjectiles = this.tempNumberOfProjectiles;
+			console.log(this.numberOfProjectiles);
+			this.tempNumberOfProjectiles = 0;
 			debug.log(0, "Processing tick #" + tick);
 
 			// enable movement at beginning of tick
@@ -379,6 +384,9 @@ export default class Game {
 							if (gameObj.updatedThisTick === false) {
 
 								gameObj.update(tick);
+								if(gameObj.objCategory == "Projectiles"){
+									this.tempNumberOfProjectiles = this.tempNumberOfProjectiles + 1;
+								}
 								if(tick == ticksPerTurn){
 									if(gameObj.objCategory == "Units"){
 										this.players[gameObj.player-1].score = this.players[gameObj.player-1].score + Math.floor(50*gameObj.value*(gameObj.health/gameObj.maxHealth));

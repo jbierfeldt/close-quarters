@@ -204,11 +204,35 @@ export class CirBullet extends Projectile {
 		}
 		if(this.distance == 0){
 			this.dump = true;
-			if(this.speed == 0){
-				console.log(this.id, this.dump, this.updatedThisTick);
-			}
 		}
 		this.distance = this.distance - 1;
+	}
+
+	serialize () {
+		return super.serialize.call(this);
+	}
+}
+
+export class IntBullet extends Projectile {
+	constructor(player, initialOrientation = [0, 0], initialSpeed = 0, projCount, distance = 0, id)  {
+		super(player, initialOrientation, initialSpeed, id);
+		this.identifier = "IntProj";
+		this.damage = projCount;
+		this.ableToBeDestroyed = false;
+		this.dump = false;
+		this.distance = distance;
+		this.projArr = [];
+		this.player =player;
+		this.speed = initialSpeed;
+		this.orientation = initialOrientation;
+	}
+
+	static createFromSerialized (props) {
+		return new IntBullet(props.player, props.orientation, props.speed, props.projCount, props.distance, props.id);
+	}
+
+	update(tick) {
+		super.update(tick);
 	}
 
 	serialize () {

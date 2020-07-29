@@ -42,9 +42,11 @@ export default class Display {
 			let bBallast;
 			let bCircuitBreaker;
 			let bOscillator;
-			let counter;
+			let bIntegrator;
 
 			let bSubmit;
+
+			let counter;
 
 			let unitButtons=[]; //List of the Buttons for unit creation
 			let buttonMaker=1; //Variable so buttons only get created once
@@ -135,7 +137,7 @@ export default class Display {
 
 					//Only execute the following block once so the buttons are only created a single time
 					if(buttonMaker===1){
-						bSubmit = new Buttoned(wi/3.01, he/1.85,si*5,si*1.1,"Submit Turn",this.app.sendSubmitTurn);
+						bSubmit = new Buttoned(wi/3.03, he/1.85,si*5,si*1.1,"Submit Turn",this.app.sendSubmitTurn);
 
 						bBase=new Buttoned(wi/2+si-playerShifter,si*buttonScale*2,wi/2-si*2,si*buttonScale*3,"Base",this.app.sendCreateBase);
 						//Unit Buttons Below
@@ -149,8 +151,11 @@ export default class Display {
 						unitButtons.push(bMaglev);
 						bCircuitBreaker=new Buttoned(wi/2+si-playerShifter,si*buttonScale*7,wi/2-si*2,si*buttonScale,"CircuitBreaker",this.app.sendCreateUnit);
 						unitButtons.push(bCircuitBreaker);
+						bIntegrator=new Buttoned(wi/2+si-playerShifter,si*buttonScale*8,wi/2-si*2,si*buttonScale,"Integrator",this.app.sendCreateUnit);
+						unitButtons.push(bIntegrator);
 						bOscillator=new Buttoned(wi/2+si-playerShifter,si*buttonScale*3,wi/2-si*2,si*buttonScale,"Oscillator",this.app.sendCreateUnit);
 						unitButtons.push(bOscillator);
+
 					}
 					buttonMaker=0;
 
@@ -181,13 +186,13 @@ export default class Display {
 						if(bSubmit.confirmed === false){
 					 		s.fill(255);
 					 		s.stroke(0);
-							s.text("Submit Turn", wi/2.95, he/1.72);
+							s.text("Submit Turn", wi/2.97, he/1.72);
 							counter=0;
 						}
 						else{
 							s.fill(this.playerColors[this.app.playerNumber-1][0], this.playerColors[this.app.playerNumber-1][1], this.playerColors[this.app.playerNumber-1][2], this.playerColors[this.app.playerNumber-1][3]);
 							s.stroke(0);
-							s.text("Confirm", wi/2.77, he/1.72);
+							s.text("Confirm", wi/2.78, he/1.72);
 							counter=counter+1;
 						}
 						if(s.mouseIsPressed){
@@ -250,9 +255,17 @@ export default class Display {
 					s.fill(255,100);
 					s.noStroke();
 					if(this.app.playerNumber == 1 && hoverX <= 14 && hoverY < 10 && hoverX < 30 && hoverY < 20){
-
-					s.rect(hoverX*tempConfig.size,hoverY*tempConfig.size,tempConfig.size,tempConfig.size);
-				}
+						s.rect(hoverX*tempConfig.size,hoverY*tempConfig.size,tempConfig.size,tempConfig.size);
+					}
+					else if(this.app.playerNumber == 2 && hoverX<=14 && hoverY >= 10 && hoverX < 30 && hoverY < 20){
+						s.rect(hoverX*tempConfig.size,hoverY*tempConfig.size,tempConfig.size,tempConfig.size);
+					}
+					else if(this.app.playerNumber == 3 && hoverX>14 && hoverY < 10 && hoverX < 30 && hoverY < 20){
+						s.rect(hoverX*tempConfig.size,hoverY*tempConfig.size,tempConfig.size,tempConfig.size);
+					}
+					else if(this.app.playerNumber == 4 && hoverX>14 && hoverY >= 10 && hoverX < 30 && hoverY < 20){
+						s.rect(hoverX*tempConfig.size,hoverY*tempConfig.size,tempConfig.size,tempConfig.size);
+					}
 
 					if(this.app.game.players[this.app.playerNumber-1].baseCount < 2 && gameStart == 0){
 						bBase.drawButton();
@@ -417,11 +430,10 @@ export default class Display {
 							s.rect(hoverX*si+si,hoverY*si+si,si*4,si*3);
 							s.fill(this.playerColors[hoverObject.player-1][0], this.playerColors[hoverObject.player-1][1], this.playerColors[hoverObject.player-1][2], this.playerColors[hoverObject.player-1][3]);
 							s.stroke(0);
-
 							s.textFont(standardFont);
 							s.textSize(si/2.3);
 							s.text(hoverObject.fullName, hoverX*si+si*1.2,hoverY*si+si*1.7);
-							s.text("Health: " + hoverObject.health, hoverX*si+si*1.2,hoverY*si+si*2.7);
+							s.text("Health: " + hoverObject.health, hoverX*si+si*1.2,hoverY*si+si*2.65);
 							//s.text("Turns Active: " + hoverObject.turnsActive, hoverX*si+si*1.2,hoverY*si+si*2.8);
 							s.translate(si*5*transX, si*4*transY);
 						}
@@ -449,6 +461,7 @@ export default class Display {
 			drawButton(){
 				s.stroke(255,255,255,255);
 				s.noFill();
+				s.strokeWeight(3);
 				s.rect(this.xx,this.yy,this.xlen,this.ylen);
 				if(this.isPressed==true){
 					s.stroke(255,255,255,255);
@@ -520,6 +533,9 @@ export default class Display {
 			if(displayObject.identifier == "Cir"){
 				drawCircuitBreaker(x,y,displayObject.player,size,displayObject.health,displayObject.maxHealth,colors);
 			}
+			if(displayObject.identifier == "Int"){
+				drawIntegrator(x,y,displayObject.player,size,displayObject.health,displayObject.maxHealth,colors);
+			}
 			if(displayObject.identifier == "JugProj"){
 				drawJuggernodeProjectile(x,y,displayObject.player,size,colors,displayObject.orientation, displayObject.damage, a);
 			}
@@ -537,6 +553,9 @@ export default class Display {
 			}
 			if(displayObject.identifier == "CirProj"){
 				drawCircuitBreakerProjectile(x,y,displayObject.player,size,colors,displayObject.damage, a);
+			}
+			if(displayObject.identifier == "IntProj"){
+				drawIntegratorProjectile(x,y,displayObject.player,size,colors,displayObject.damage, a);
 			}
 		}
 
@@ -884,6 +903,22 @@ export default class Display {
 			s.translate(-(size*x+size/2),-(size*y+size/2));
 
 		}
+		function drawIntegrator(x,y,player,size,health,max,pColors){
+			s.fill((max-health)*255/max);
+			s.stroke(0);
+			s.strokeWeight(2);
+			s.translate(size*x+size/2,size*y+size/2);
+			for(let i = 0; i < 360; i = i + 15){
+				s.rotate(s.radians(i));
+				s.line(0,0,size/2.5,0);
+				s.rotate(-s.radians(i));
+			}
+			s.stroke(pColors[player-1][0],pColors[player-1][1],pColors[player-1][2],255);
+			s.strokeWeight(.5);
+			s.ellipse(0,0,size/3,size/3);
+			s.translate(-(size*x+size/2),-(size*y+size/2));
+
+		}
 
 		function drawJuggernode(x,y,player,size,health,max,pColors){
 			s.fill(0);
@@ -1083,6 +1118,38 @@ export default class Display {
 		}
 
 		function drawCircuitBreakerProjectile(x, y, player, size, pColors, damage, a){
+			s.strokeWeight(1);
+			s.fill(pColors[player-1][0],pColors[player-1][1],pColors[player-1][2],105);
+			let crossHairOffset = size/5;
+			if(damage == 0){
+				s.strokeWeight(2)
+				s.stroke(255,185);
+				s.ellipse(x*size+size/2, y*size+size/2,size/20,size/20);
+				s.line(x*size+size/2, y*size+size/2-size/20,x*size+size/2, y*size+size/2-crossHairOffset);
+				s.line(x*size+size/2-size/20, y*size+size/2,x*size+size/2-crossHairOffset, y*size+size/2);
+				s.line(x*size+size/2, y*size+size/2+size/20,x*size+size/2, y*size+size/2+crossHairOffset);
+				s.line(x*size+size/2+size/20, y*size+size/2,x*size+size/2+crossHairOffset, y*size+size/2);
+				s.strokeWeight(1)
+				s.stroke(pColors[player-1][0],pColors[player-1][1],pColors[player-1][2],185);
+				s.ellipse(x*size+size/2, y*size+size/2,size/20,size/20);
+				s.line(x*size+size/2, y*size+size/2-size/20,x*size+size/2, y*size+size/2-crossHairOffset);
+				s.line(x*size+size/2-size/20, y*size+size/2,x*size+size/2-crossHairOffset, y*size+size/2);
+				s.line(x*size+size/2, y*size+size/2+size/20,x*size+size/2, y*size+size/2+crossHairOffset);
+				s.line(x*size+size/2+size/20, y*size+size/2,x*size+size/2+crossHairOffset, y*size+size/2);
+			}
+			else{
+				s.noStroke();
+				if(a%2 == 0){
+					s.noFill();
+				}
+				else{
+					s.fill(pColors[player-1][0],pColors[player-1][1],pColors[player-1][2],105);
+				}
+				s.rect(x*size,y*size,size,size);
+			}
+		}
+
+		function drawIntegratorProjectile(x, y, player, size, pColors, damage, a){
 			s.strokeWeight(1);
 			s.fill(pColors[player-1][0],pColors[player-1][1],pColors[player-1][2],105);
 			let crossHairOffset = size/5;

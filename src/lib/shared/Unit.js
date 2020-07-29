@@ -1,6 +1,7 @@
 import {createID} from './utilities.js';
 import * as Projectiles from './Projectile.js';
 import {DEBUG} from './utilities.js';
+import Game from './Game.js';
 
 const debug = new DEBUG(true, 5);
 
@@ -410,11 +411,52 @@ export class CircuitBreaker extends Unit {
 	}
 }
 
+export class Integrator extends Unit {
+
+	constructor(player, health = 175, firing = false, id, collidedWith = [false, 4])  {
+		super(id);
+		//add a lifespan category and also pass in the number of projectiles present at the time
+		this.player = player;
+		this.health = health;
+		this.firing = firing;
+		this.maxHealth = 175;
+		this.identifier="Int";
+		this.projArr = [];
+		this.collidedWith = collidedWith;
+		this.value = 3;
+		this.fullName = "Integrator";
+	}
+
+	static createFromSerialized (props) {
+		return new Integrator(props.player, props.health, props.firing, props.id, props.collidedWith);
+	}
+
+	startAttack (orientation){
+		this.firing = true;
+		this.projArr[0]  = new Projectiles.IntBullet(this.player, orientation, 1, Game.numberOfProjectiles);
+	}
+
+	update (tick) {
+		super.update(tick);
+		this.collidedWith = [false, 4];
+		this.firing=false;
+		if(tick % 15 === 0){
+			let rando = Math.random()*3;
+					this.startAttack([2,1]);
+		  }
+	}
+
+	serialize () {
+		return super.serialize.call(this);
+	}
+}
+
 
 
 
 
 //Unit Pricing
+Integrator.cost = 3;
 CircuitBreaker.cost = 3;
 Maglev.cost = 3;
 RayTracer.cost = 1;
@@ -422,6 +464,7 @@ Oscillator.cost = 1;
 Juggernode.cost = 2;
 Ballast.cost = 2;
 
+Integrator.description = "The Integrator is..";
 Maglev.description = "The Maglev is a lightweight offensive powerhouse that emits indestructible magnetic pulses. It will randomly strike either in every diagonal direction or orthogonal direction. The pulses begin with a base damage of 80 and fade off exponentially as they travel, with no possibility of being stopped or destroyed.";
 CircuitBreaker.description = "The Resonator is a resiliant catapult-style machine that delivers damage in a cross shape encompassing a five-tile area. The center of its strike deals 150 damage and fades to half that amount in the adjacent tiles. The sheer power of its attack causes erratic projectile fire that falls between a distance of 4 - 9 spaces away. It will randomly strike vertically, horizontally or diagonally and does not do damage prior to reaching its destination.";
 Ballast.description = "The Ballast is an advanced, bulky machine that can be used to block key channels while hitting a limited set of targets with significant force. It strikes for five consecutive seconds, delivering 60 total damage. The attacks rotate between 6 possible target locations that are a distance of 6 or 3 tiles away horizontally and the opposite number vertically.";
