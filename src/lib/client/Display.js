@@ -725,6 +725,24 @@ export default class Display {
 			s.endShape();
 			s.translate(0,-scale*siz*5);
 
+			s.translate(0,scale*siz*6);
+			s.stroke(0);
+			s.fill(255);
+			s.text("Integrator",wid/2+siz*3.75,siz*4)
+			s.text("175",wid/2+siz*9.9,siz*4)
+			s.noFill();
+			s.stroke(255);
+			s.strokeWeight(2);
+			s.beginShape();
+			s.curveVertex(wid/2+siz*12,siz*4.25);
+			for(let i = 0; i <= siz*1.5; i = i + 1){
+				s.curveVertex(wid/2+siz*12+i,siz*4.25-25*s.abs(s.sin(1.5*s.radians(i*360/(siz*1.5)))));
+			}
+			s.curveVertex(wid/2+siz*12+siz*1.5,siz*4.25);
+			s.curveVertex(wid/2+siz*12+siz*1.5,siz*4.25);
+			s.endShape();
+			s.translate(0,-scale*siz*6);
+
 			if(player == 3 || player == 4){
 				s.translate(wid/2, 0);
 			}
@@ -906,16 +924,24 @@ export default class Display {
 		function drawIntegrator(x,y,player,size,health,max,pColors){
 			s.fill((max-health)*255/max);
 			s.stroke(0);
-			s.strokeWeight(2);
+			s.strokeWeight(1);
 			s.translate(size*x+size/2,size*y+size/2);
-			for(let i = 0; i < 360; i = i + 15){
-				s.rotate(s.radians(i));
-				s.line(0,0,size/2.5,0);
-				s.rotate(-s.radians(i));
-			}
-			s.stroke(pColors[player-1][0],pColors[player-1][1],pColors[player-1][2],255);
-			s.strokeWeight(.5);
-			s.ellipse(0,0,size/3,size/3);
+			s.beginShape();
+			s.vertex(-size/6,size/2.4);
+			s.vertex(-size/6,size/2.45);
+			s.vertex(-size/7,size/2.6);
+			s.vertex(size/7,size/2.6);
+			s.vertex(size/6,size/2.45);
+			s.vertex(size/6,size/2.4);
+			s.vertex(-size/6,size/2.4);
+			s.endShape();
+			s.rect(-size/50,-size/8,size/25,size/2);
+			s.ellipse(0,size/4.5,size/2,size/500);
+			s.ellipse(0,size/9,size/3,size/500);
+			s.ellipse(0,size/10-s.abs(size/9-size/4.5),size/4,size/500);
+			s.fill(255);
+			s.strokeWeight(2);
+			s.ellipse(0,-size/4,size/3.4,size/3.4);
 			s.translate(-(size*x+size/2),-(size*y+size/2));
 
 		}
