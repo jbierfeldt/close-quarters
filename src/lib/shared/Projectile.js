@@ -58,7 +58,7 @@ export class OscBullet extends Projectile {
 	constructor(player, initialOrientation = [0, 0], initialSpeed = 0, created = 0, id)  {
 		super(player, initialOrientation, initialSpeed, id);
 		this.identifier = "OscProj";
-		this.damage = 100;
+		this.damage = 60;
 		this.orientation = initialOrientation;
 		this.created = created;
 	}
@@ -91,7 +91,7 @@ export class MagBullet extends Projectile {
 		super(player, initialOrientation, initialSpeed, id);
 		this.identifier = "MagProj";
 		this.damage = damage;
-		this.maxDamage = 80;
+		this.maxDamage = 50;
 		this.ableToBeDestroyed = false;
 		this.distance = distance;
 	}
@@ -102,7 +102,7 @@ export class MagBullet extends Projectile {
 
 	update(tick) {
 		super.update(tick);
-		this.damage = this.maxDamage - Math.round(this.distance*this.distance*.5);
+		this.damage = this.maxDamage - Math.round(this.distance*this.distance*.25);
 		if(this.damage <= 0){
 			this.damage = 5;
 		}

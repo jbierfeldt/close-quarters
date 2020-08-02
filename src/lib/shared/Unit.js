@@ -105,12 +105,12 @@ export class RayTracer extends Unit {
 
 export class Oscillator extends Unit {
 
-	constructor(player, health = 275, firing = false, id, collidedWith = [false, 4])  {
+	constructor(player, health = 250, firing = false, id, collidedWith = [false, 4])  {
 		super(id);
 		this.player = player;
 		this.health = health;
 		this.firing = firing;
-		this.maxHealth = 275;
+		this.maxHealth = 250;
 		this.identifier = "Osc";
 		this.projArr = [];
 		this.collidedWith = collidedWith;
@@ -139,12 +139,17 @@ export class Oscillator extends Unit {
 		this.firing = false;
 		// Ray Tracer fires every 4 ticks
 		if (tick === 1) {
-			if(this.player==1 || this.player==2){
-				this.startAttack([1,0]);
-
+			if(this.player == 1){
+				this.startAttack([1,1]);
 			}
-			else if(this.player==3 || this.player==4){
-				this.startAttack([-1,0]);
+			else if(this.player == 2){
+				this.startAttack([1,-1]);
+			}
+			else if(this.player == 3){
+				this.startAttack([-1,1]);
+			}
+			else if(this.player == 4){
+				this.startAttack([-1,-1]);
 			}
 		}
 	}
@@ -256,7 +261,7 @@ export class Maglev extends Unit {
 		this.firing = false;
 
 		// Ray Tracer fires every 4 ticks
-		if (tick % 12 === 0) {
+		if (tick % 13 === 0) {
 			this.startAttack();
 		}
 	}
@@ -371,7 +376,7 @@ export class CircuitBreaker extends Unit {
 		super.update(tick);
 		this.collidedWith = [false, 4];
 		this.firing=false;
-		if(tick % 10 === 0){
+		if(tick % 12 === 0){
 			let rando = Math.random()*3;
 			if(rando < 1){
 				if(this.player == 1 || this.player == 2){
@@ -413,14 +418,14 @@ export class CircuitBreaker extends Unit {
 
 export class Integrator extends Unit {
 
-	constructor(player, health = 175, firing = false, id, collidedWith = [false, 4], lifeSpan = 0)  {
+	constructor(player, health = 200, firing = false, id, collidedWith = [false, 4], lifeSpan = 0)  {
 		super(id);
 		//add a lifespan category and also pass in the number of projectiles present at the time
 		this.lifeSpan = lifeSpan;
 		this.player = player;
 		this.health = health;
 		this.firing = firing;
-		this.maxHealth = 175;
+		this.maxHealth = 200;
 		this.identifier="Int";
 		this.projArr = [];
 		this.collidedWith = collidedWith;
@@ -504,7 +509,7 @@ export class Integrator extends Unit {
 		super.update(tick);
 		this.collidedWith = [false, 4];
 		this.firing=false;
-		if(tick % 20 === 0){
+		if(tick % 18 === 0){
 			this.startAttack(projCount);
 			//let rando = Math.random()*3;
 		  }
@@ -528,10 +533,10 @@ Oscillator.cost = 1;
 Juggernode.cost = 2;
 Ballast.cost = 2;
 
-Integrator.description = "The Integrator is..";
-Maglev.description = "The Maglev is a lightweight offensive powerhouse that emits indestructible magnetic pulses. It will randomly strike either in every diagonal direction or orthogonal direction. The pulses begin with a base damage of 80 and fade off exponentially as they travel, with no possibility of being stopped or destroyed.";
-CircuitBreaker.description = "The Resonator is a resiliant catapult-style machine that delivers damage in a cross shape encompassing a five-tile area. The center of its strike deals 150 damage and fades to half that amount in the adjacent tiles. The sheer power of its attack causes erratic projectile fire that falls between a distance of 4 - 9 spaces away. It will randomly strike vertically, horizontally or diagonally and does not do damage prior to reaching its destination.";
+Integrator.description = "The Integrator is a high-potential machine that gains strength with each turn it remains alive. Its damage equation is the product of the number of projectiles on the board and the number of turns since its creation. It fires less frequently than other units, but covers four paths that are a ratio of 2:1 or 1:2 from its origin, with projectiles glowing in the exact tiles where they can deal damage.";
+Maglev.description = "The Maglev is a lightweight offensive powerhouse that emits indestructible magnetic pulses. It will randomly strike either in every diagonal direction or orthogonal direction. The pulses begin with a base damage of 50 and fade off exponentially as they travel, with no possibility of being stopped or destroyed.";
+CircuitBreaker.description = "The Resonator is a resiliant, catapult-style machine that delivers damage in a cross shape encompassing a five-tile area. The center of its strike deals 150 damage and fades to half that amount in the adjacent tiles. The sheer power of its attack causes erratic projectile fire that falls between a distance of 4 - 9 spaces away. It will randomly strike vertically, horizontally or diagonally and does not do damage prior to reaching its destination.";
 Ballast.description = "The Ballast is an advanced, bulky machine that can be used to block key channels while hitting a limited set of targets with significant force. It strikes for five consecutive seconds, delivering 60 total damage. The attacks rotate between 6 possible target locations that are a distance of 6 or 3 tiles away horizontally and the opposite number vertically.";
 Juggernode.description = "The Juggernode is a standard defensive unit that also delivers diagonal strikes. Its photon beam fires toward the opposite corner of its location, dealing 7 damage.";
 RayTracer.description = "The Ray Tracer is a precise offensive machine used for reliable multifrontal attacks. It alternates firing horizontally and vertically, dealing 10 damage with each blast.";
-Oscillator.description = "The Oscillator is...";
+Oscillator.description = "The Oscillator is an inexpensive defensive unit that generates a single, powerful projectile at the start of each round. The beam begins diagonally and then acts as a random mover until hitting a target, where it deals 60 damage.";

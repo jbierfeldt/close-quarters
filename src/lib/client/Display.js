@@ -372,7 +372,7 @@ export default class Display {
 					this.t=this.t+keyPressed();
 				}*/
 
-				if(animate === 10 && this.t < (Object.keys(this.simulationDisplayTurn.tick).length-1)){
+				if(animate >= 10 && this.t < (Object.keys(this.simulationDisplayTurn.tick).length-1)){
 					this.t=this.t+1;
 					animate=0;
 				}
@@ -441,7 +441,8 @@ export default class Display {
 				}
 
 				}
-				animate=animate+.5;
+				//IMPORTANT - ANIMATION SPEED
+				animate=animate+.65;
 
 			}
 		}
@@ -951,7 +952,6 @@ export default class Display {
 		}
 
 		function drawJuggernode(x,y,player,size,health,max,pColors){
-			s.fill(0);
 			s.stroke(0);
 			s.strokeWeight(2);
 			s.translate(x*size+size/2, y*size+size/2);
@@ -959,6 +959,7 @@ export default class Display {
 			for(let angle = 0; angle < 360; angle = angle + 60){
 				s.rotate(s.radians(angle));
 				s.fill(pColors[player-1][0],pColors[player-1][1],pColors[player-1][2],255);
+				s.noFill();
 				s.triangle(0,0,size/2.5,0,size*.5/2.5,size*.5/2.5*s.sqrt(3));
 				s.fill(0);
 				s.ellipse(size/2.5,0,size/10,size/10);
@@ -966,7 +967,7 @@ export default class Display {
 				s.rotate(-s.radians(angle));
 			}
 			s.fill(0,255*(health/max))
-			s.ellipse(0,0,size/6,size/6);
+			s.ellipse(0,0,size/5,size/5);
 			s.translate(-x*size-size/2, -y*size-size/2);
 
 		}
@@ -1047,13 +1048,13 @@ export default class Display {
 		function drawOscillatorProjectile(x,y,player,size,pColors,orient, a){
 			let refx=x*size+size/2;
 			let refy=y*size+size/2;
-			s.stroke(0);
-			s.strokeWeight(.35*s.abs(a-4.5));
+			s.stroke(0,255);
+			s.strokeWeight(1.5);
 			for(let i = -size/3; i <= size/3; i = i + size/9){
 				s.line(refx+i,refy-.75*(s.abs(i)-size/3),refx+i,refy+.75*(s.abs(i)-size/3));
 			}
 			s.stroke(pColors[player-1][0],pColors[player-1][1],pColors[player-1][2], 255);
-			s.strokeWeight(.2*s.abs(a-4.5));
+			s.strokeWeight(1.25-s.abs((a-4.5))/9);
 			for(let i = -size/3; i <= size/3; i = i + size/9){
 				s.line(refx+i,refy-.75*(s.abs(i)-size/3),refx+i,refy+.75*(s.abs(i)-size/3));
 			}
@@ -1189,8 +1190,8 @@ export default class Display {
 			s.fill(pColors[player-1][0],pColors[player-1][1],pColors[player-1][2],255);
 			if(s.abs(orient[0]) == 2){
 				if(a > 4 && a <10){
-					s.strokeWeight(2);
-					s.stroke(pColors[player-1][0],pColors[player-1][1],pColors[player-1][2],155);
+					s.strokeWeight(3);
+					s.stroke(pColors[player-1][0],pColors[player-1][1],pColors[player-1][2],100);
 					s.line(refx+(orient[0]/2)*(a)*size/10-size/2,refy-orient[1]*size/4+orient[1]*(a)*size/20,refx+(orient[0]/2)*(a+length)*size/10-size/2,refy-orient[1]*size/4+orient[1]*(a+length)*size/20);
 				}
 				s.strokeWeight(1);
