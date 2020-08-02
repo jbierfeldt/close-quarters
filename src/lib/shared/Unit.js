@@ -413,9 +413,10 @@ export class CircuitBreaker extends Unit {
 
 export class Integrator extends Unit {
 
-	constructor(player, health = 175, firing = false, id, collidedWith = [false, 4])  {
+	constructor(player, health = 175, firing = false, id, collidedWith = [false, 4], lifeSpan = 0)  {
 		super(id);
 		//add a lifespan category and also pass in the number of projectiles present at the time
+		this.lifeSpan = lifeSpan;
 		this.player = player;
 		this.health = health;
 		this.firing = firing;
@@ -428,21 +429,84 @@ export class Integrator extends Unit {
 	}
 
 	static createFromSerialized (props) {
-		return new Integrator(props.player, props.health, props.firing, props.id, props.collidedWith);
+		return new Integrator(props.player, props.health, props.firing, props.id, props.collidedWith, props.lifeSpan);
 	}
 
-	startAttack (orientation){
+	startAttack (pC){
 		this.firing = true;
-		this.projArr[0]  = new Projectiles.IntBullet(this.player, orientation, 1, Game.numberOfProjectiles);
+		let orient;
+		for(let i = 0; i < 4; i = i + 1){
+			if(this.player == 1){
+				if(i == 0){
+					orient = [2,1];
+				}
+				else if(i == 1){
+					orient = [1,2];
+				}
+				else if(i == 2){
+					orient = [-1,2];
+				}
+				else if(i == 3){
+					orient = [2,-1];
+				}
+			}
+			if(this.player == 2){
+				if(i == 0){
+					orient = [2,-1];
+				}
+				else if(i == 1){
+					orient = [1,-2];
+				}
+				else if(i == 2){
+					orient = [-1,-2];
+				}
+				else if(i == 3){
+					orient = [2,1];
+				}
+			}
+			if(this.player == 3){
+				if(i == 0){
+					orient = [-2,-1];
+				}
+				else if(i == 1){
+					orient = [1,2];
+				}
+				else if(i == 2){
+					orient = [-1,2];
+				}
+				else if(i == 3){
+					orient = [-2,1];
+				}
+						}
+				if(this.player == 4){
+						if(i == 0){
+							orient = [-2,-1];
+						}
+						else if(i == 1){
+							orient = [1,-2];
+						}
+						else if(i == 2){
+							orient = [-1,-2];
+						}
+						else if(i == 3){
+							orient = [-2,1];
+						}
+					}
+		this.projArr[i]  = new Projectiles.IntBullet(this.player, orient, 1, pC, this.lifeSpan);
+		//console.log(pC);
+	 }
 	}
 
-	update (tick) {
+	update (tick, projCount) {
+		if(tick == 1){
+			this.lifeSpan = this.lifeSpan + 1;
+		}
 		super.update(tick);
 		this.collidedWith = [false, 4];
 		this.firing=false;
-		if(tick % 15 === 0){
-			let rando = Math.random()*3;
-					this.startAttack([2,1]);
+		if(tick % 20 === 0){
+			this.startAttack(projCount);
+			//let rando = Math.random()*3;
 		  }
 	}
 

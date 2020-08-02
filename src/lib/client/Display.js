@@ -540,7 +540,7 @@ export default class Display {
 				drawJuggernodeProjectile(x,y,displayObject.player,size,colors,displayObject.orientation, displayObject.damage, a);
 			}
 			if(displayObject.identifier == "RayProj"){
-				drawRayTracerProjectile(x,y,displayObject.player,size,colors,displayObject.orientation, a);
+				drawRayTracerProjectile(x, y, displayObject.player, size, colors, displayObject.orientation, a);
 			}
 			if(displayObject.identifier == "OscProj"){
 				drawOscillatorProjectile(x,y,displayObject.player,size,colors,displayObject.orientation, a);
@@ -555,7 +555,7 @@ export default class Display {
 				drawCircuitBreakerProjectile(x,y,displayObject.player,size,colors,displayObject.damage, a);
 			}
 			if(displayObject.identifier == "IntProj"){
-				drawIntegratorProjectile(x,y,displayObject.player,size,colors,displayObject.damage, a);
+				drawIntegratorProjectile(x,y,displayObject.player,size,colors,displayObject.orientation,displayObject.damage, a);
 			}
 		}
 
@@ -935,13 +935,17 @@ export default class Display {
 			s.vertex(size/6,size/2.4);
 			s.vertex(-size/6,size/2.4);
 			s.endShape();
-			s.rect(-size/50,-size/8,size/25,size/2);
-			s.ellipse(0,size/4.5,size/2,size/500);
-			s.ellipse(0,size/9,size/3,size/500);
-			s.ellipse(0,size/10-s.abs(size/9-size/4.5),size/4,size/500);
-			s.fill(255);
+			//s.rect(-size/50,-size/8,size/25,size/2);
 			s.strokeWeight(2);
-			s.ellipse(0,-size/4,size/3.4,size/3.4);
+			for(let l = 2*size/12.5; l < size/1.6; l = l + size/12.5){
+				s.line(-size/12,-size/6+l,size/12,-size/5+l);
+			}
+			//s.ellipse(0,size/4.5,size/2,size/500);
+			//s.ellipse(0,size/9,size/3,size/500);
+			//s.ellipse(0,size/10-s.abs(size/9-size/4.5),size/4,size/500);
+			s.fill(255);
+
+			s.ellipse(0,-size/4,size/2.9,size/2.9);
 			s.translate(-(size*x+size/2),-(size*y+size/2));
 
 		}
@@ -1025,7 +1029,7 @@ export default class Display {
 			s.stroke(0)
 			s.strokeWeight(2);
 			let projSize = size/5;
-			s.fill(pColors[player-1][0],pColors[player-1][1],pColors[player-1][2], 255);
+			s.fill(pColors[player-1][0], pColors[player-1][1], pColors[player-1][2], 255);
 			if(orient[0] == 0 && orient[1] == 1){
 				s.ellipse(refx+size/2,refy+(a+1)*size/10,projSize,projSize);
 			}
@@ -1175,36 +1179,37 @@ export default class Display {
 			}
 		}
 
-		function drawIntegratorProjectile(x, y, player, size, pColors, damage, a){
+		function drawIntegratorProjectile(x, y, player, size, pColors, orient, damage, a){
 			s.strokeWeight(1);
-			s.fill(pColors[player-1][0],pColors[player-1][1],pColors[player-1][2],105);
-			let crossHairOffset = size/5;
-			if(damage == 0){
-				s.strokeWeight(2)
-				s.stroke(255,185);
-				s.ellipse(x*size+size/2, y*size+size/2,size/20,size/20);
-				s.line(x*size+size/2, y*size+size/2-size/20,x*size+size/2, y*size+size/2-crossHairOffset);
-				s.line(x*size+size/2-size/20, y*size+size/2,x*size+size/2-crossHairOffset, y*size+size/2);
-				s.line(x*size+size/2, y*size+size/2+size/20,x*size+size/2, y*size+size/2+crossHairOffset);
-				s.line(x*size+size/2+size/20, y*size+size/2,x*size+size/2+crossHairOffset, y*size+size/2);
-				s.strokeWeight(1)
-				s.stroke(pColors[player-1][0],pColors[player-1][1],pColors[player-1][2],185);
-				s.ellipse(x*size+size/2, y*size+size/2,size/20,size/20);
-				s.line(x*size+size/2, y*size+size/2-size/20,x*size+size/2, y*size+size/2-crossHairOffset);
-				s.line(x*size+size/2-size/20, y*size+size/2,x*size+size/2-crossHairOffset, y*size+size/2);
-				s.line(x*size+size/2, y*size+size/2+size/20,x*size+size/2, y*size+size/2+crossHairOffset);
-				s.line(x*size+size/2+size/20, y*size+size/2,x*size+size/2+crossHairOffset, y*size+size/2);
+			let refx=x*size+size/2;
+			let refy=y*size+size/2;
+			let projSize=size/6;
+			let length = 4;
+			a=a*2-9
+			s.fill(pColors[player-1][0],pColors[player-1][1],pColors[player-1][2],255);
+			if(s.abs(orient[0]) == 2){
+				if(a > 4 && a <10){
+					s.strokeWeight(2);
+					s.stroke(pColors[player-1][0],pColors[player-1][1],pColors[player-1][2],155);
+					s.line(refx+(orient[0]/2)*(a)*size/10-size/2,refy-orient[1]*size/4+orient[1]*(a)*size/20,refx+(orient[0]/2)*(a+length)*size/10-size/2,refy-orient[1]*size/4+orient[1]*(a+length)*size/20);
+				}
+				s.strokeWeight(1);
+				s.stroke(0);
+				s.line(refx+(orient[0]/2)*(a)*size/10-size/2,refy-orient[1]*size/4+orient[1]*(a)*size/20,refx+(orient[0]/2)*(a+length)*size/10-size/2,refy-orient[1]*size/4+orient[1]*(a+length)*size/20);
+				//s.ellipse(refx+(orient[0]/2)*(a)*size/10-size/2,refy-orient[1]*size/4+orient[1]*(a)*size/20,projSize,projSize);
 			}
 			else{
-				s.noStroke();
-				if(a%2 == 0){
-					s.noFill();
+				if(a > 4 && a <10){
+					s.strokeWeight(2);
+					s.stroke(pColors[player-1][0],pColors[player-1][1],pColors[player-1][2],155);
+					s.line(refx-(orient[0])*size/4+orient[0]*(a)*size/20,refy+(orient[1]/2)*(a)*size/10-size/2,refx-(orient[0])*size/4+orient[0]*(a+length)*size/20,refy+(orient[1]/2)*(a+length)*size/10-size/2);
 				}
-				else{
-					s.fill(pColors[player-1][0],pColors[player-1][1],pColors[player-1][2],105);
-				}
-				s.rect(x*size,y*size,size,size);
+				s.strokeWeight(1);
+				s.stroke(0);
+				s.line(refx-(orient[0])*size/4+orient[0]*(a)*size/20,refy+(orient[1]/2)*(a)*size/10-size/2,refx-(orient[0])*size/4+orient[0]*(a+length)*size/20,refy+(orient[1]/2)*(a+length)*size/10-size/2);
+				//s.ellipse(refx-(orient[0])*size/4+orient[0]*(a)*size/20,refy+(orient[1]/2)*(a)*size/10-size/2,projSize,projSize);
 			}
+
 		}
 
 

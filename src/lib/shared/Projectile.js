@@ -214,11 +214,11 @@ export class CirBullet extends Projectile {
 }
 
 export class IntBullet extends Projectile {
-	constructor(player, initialOrientation = [0, 0], initialSpeed = 0, projCount, distance = 0, id)  {
+	constructor(player, initialOrientation = [0, 0], initialSpeed = 0, projCount, lifeSpan, distance = 0, id)  {
 		super(player, initialOrientation, initialSpeed, id);
 		this.identifier = "IntProj";
-		this.damage = projCount;
-		this.ableToBeDestroyed = false;
+		this.damage = projCount*lifeSpan;
+		this.ableToBeDestroyed = true;
 		this.dump = false;
 		this.distance = distance;
 		this.projArr = [];
@@ -228,7 +228,7 @@ export class IntBullet extends Projectile {
 	}
 
 	static createFromSerialized (props) {
-		return new IntBullet(props.player, props.orientation, props.speed, props.projCount, props.distance, props.id);
+		return new IntBullet(props.player, props.orientation, props.speed, props.damage, props.lifeSpan, props.distance, props.id);
 	}
 
 	update(tick) {

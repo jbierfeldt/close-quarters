@@ -360,7 +360,6 @@ export default class Game {
 
 		for (let tick = 1; tick <= ticksPerTurn; tick++) {
 			this.numberOfProjectiles = this.tempNumberOfProjectiles;
-			console.log(this.numberOfProjectiles);
 			this.tempNumberOfProjectiles = 0;
 			debug.log(0, "Processing tick #" + tick);
 
@@ -382,8 +381,13 @@ export default class Game {
 						for (let k = 0; k < objsToUpdate.length; k++) {
 							let gameObj = this.gameObjects.get(objsToUpdate[k]); // game obj to be updated
 							if (gameObj.updatedThisTick === false) {
-
+								if(gameObj.identifier == "Int"){
+								gameObj.update(tick, this.numberOfProjectiles);
+							}
+							else{
 								gameObj.update(tick);
+							}
+
 								if(gameObj.objCategory == "Projectiles"){
 									this.tempNumberOfProjectiles = this.tempNumberOfProjectiles + 1;
 								}
