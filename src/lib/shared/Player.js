@@ -12,6 +12,7 @@ export default class Player {
 		this.baseCount = 0;
 		this.basePlaced = 0;
 		this.victoryCondition = 0;
+		this.damageDealtToBases = 0;
 	}
 
 }
