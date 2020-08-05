@@ -15,20 +15,4 @@ export default class Player {
 		this.damageDealtToBases = 0;
 	}
 
-	addBase() {
-		//
-	}
-
-	removeBase() {
-		//
-	}
-
-	addUnit() {
-		//
-	}
-
-	removeUnit() {
-		//
-	}
-
 }
