@@ -14,8 +14,8 @@ const debugData = {
 class App {
 
 	constructor(game = new Game(), display = new Display(this)) {
-		this.game = game;
-		this.display = display;
+		this.game = null;
+		this.display = null;
 		this.gameState = undefined;
 		this.socket = undefined;
 
@@ -32,8 +32,9 @@ class App {
 	}
 
 	init() {
+		this.game = new Game();
 		this.game.init();
-		this.display.init();
+
 		this.socket = io();
 
 		this.setGamePhase(0);
@@ -72,6 +73,9 @@ class App {
 			this.playerNumber = data.playerNumber;
 			debug.log(1, 'updating PlayerState');
 		});
+
+		this.display = new Display(this);
+		this.display.init();
 	}
 
 	debugInit () {
