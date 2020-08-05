@@ -738,6 +738,7 @@ export default class Display {
 			s.vertex(refXX,refYY);
 			s.endShape();
 
+			drawCreditsSymbol(refXX+siz*2.32, refYY+siz/2, siz, player, 10, pColors);
 			//s.text("Cost",wid/2+siz*12.3,siz*2.45);
 			s.textSize(wid/37);
 			//s.textFont(standardFont);
@@ -1326,7 +1327,34 @@ export default class Display {
 		}
 
 
-
+function drawCreditsSymbol(x, y, size, player, a, pColors){
+	s.stroke(0);
+	s.strokeWeight(2);
+	s.fill(pColors[player-1][0],pColors[player-1][1],pColors[player-1][2],255);
+	s.translate(x,y);
+	for(let angle = 45; angle < 360; angle = angle + 90){
+		s.rotate(s.radians(angle));
+		s.rect(size/2,-size/10,size/3.5,size/5);
+		s.rotate(-s.radians(angle));
+	}
+	s.translate(-x,-y);
+	s.noFill();
+	s.stroke(0);
+	s.ellipse(x,y,size,size);
+	s.stroke(pColors[player-1][0],pColors[player-1][1],pColors[player-1][2],255);
+	s.ellipse(x,y,size*.875,size*.875);
+	s.stroke(0);
+	s.ellipse(x,y,size*.75,size*.75);
+	s.noStroke();
+	s.fill(pColors[player-1][0],pColors[player-1][1],pColors[player-1][2],255);
+	s.translate(x,y);
+	for(let angle = 45; angle < 360; angle = angle + 90){
+		s.rotate(s.radians(angle));
+		s.rect(size/2.3,-size/10.6,size/3.5,size/5.3);
+		s.rotate(-s.radians(angle));
+	}
+	s.translate(-x,-y);
+}
 
 		function drawCollision(x, y, size, player, a, pColors){
 			let refx=x*size+size/2;
