@@ -443,7 +443,7 @@ export class Integrator extends Unit {
 		this.player = player;
 		this.health = health;
 		this.firing = firing;
-		this.maxHealth = 200;
+		//this.maxHealth = 200;
 		this.identifier="Int";
 		this.projArr = [];
 		this.collidedWith = collidedWith;
