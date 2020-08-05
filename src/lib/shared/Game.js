@@ -249,7 +249,7 @@ export default class Game {
 					this.players[obj.player-1].baseCount = this.players[obj.player-1].baseCount - 1;
 				}
 			}
-			
+
 			if (proj.ableToBeDestroyed) {
 				this.deleteObjectAtCoord(proj, x, y);
 			}
