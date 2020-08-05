@@ -944,8 +944,8 @@ export default class Display {
 		function drawBase(x,y,player,size,health,max,pColors){
 			//s.fill(pColors[player][0],pColors[player][1],pColors[player][2],pColors[player][3])
 			//x,y,radius,npoints
-			s.fill(0);
-			s.stroke((max-health)*255/max);
+			//s.stroke((max-health)*255/max);
+			s.stroke(0);
 			s.fill(pColors[player-1][0],pColors[player-1][1],pColors[player-1][2],255);
 			s.strokeWeight(2);
 			let offset=size/10;
@@ -969,6 +969,9 @@ export default class Display {
 
 				alpha = alpha + 1;
 			}
+			s.fill(255,(max-health)*155/max);
+			s.noStroke();
+			s.rect(x*size, y*size, size, size);
 		}
 
 		function drawRayTracer(x,y,player,size,health,max,pColors){
