@@ -14,20 +14,4 @@ export default class Player {
 		this.victoryCondition = 0;
 	}
 
-	addBase() {
-		//
-	}
-
-	removeBase() {
-		//
-	}
-
-	addUnit() {
-		//
-	}
-
-	removeUnit() {
-		//
-	}
-
 }

@@ -61,7 +61,6 @@ export class RayTracer extends Unit {
 	static cost = 1;
 	static description = "The Ray Tracer is a precise offensive machine used for reliable multifrontal attacks. It alternates firing horizontally and vertically, dealing 10 damage with each blast.";
 
-
 	static createFromSerialized (props) {
 		return new RayTracer(props.player, props.health, props.firing, props.id, props.collidedWith)
 	}
@@ -125,7 +124,6 @@ export class Oscillator extends Unit {
 	static cost = 1;
 	static description = "The Oscillator is an inexpensive defensive unit that generates a single, powerful projectile at the start of each round. The beam begins diagonally and then acts as a random mover until hitting a target, where it deals 60 damage.";
 
-
 	static createFromSerialized (props) {
 		return new Oscillator(props.player, props.health, props.firing, props.id, props.collidedWith)
 	}
@@ -186,7 +184,6 @@ export class Juggernode extends Unit {
 	static cost = 2;
 	static description = "The Juggernode is a standard defensive unit that also delivers diagonal strikes. Its photon beam fires toward the opposite corner of the player, dealing 7 damage to everything within the path.";
 
-
 	static createFromSerialized (props) {
 		return new Juggernode(props.player, props.health, props.firing, props.id, props.collidedWith)
 	}
@@ -238,7 +235,6 @@ export class Maglev extends Unit {
 
 	static cost = 3;
 	static description = "The Maglev is a lightweight offensive powerhouse that emits indestructible magnetic pulses. It will randomly strike either in every diagonal direction or orthogonal direction. The pulses begin with a base damage of 50 and fade off exponentially as they travel.";
-
 
 	static createFromSerialized (props) {
 		return new Maglev(props.player, props.health, props.firing, props.id, props.collidedWith)
@@ -305,7 +301,6 @@ export class Ballast extends Unit {
 
 	static cost = 2;
 	static description = "The Ballast is an advanced, bulky machine that can be used to block key channels while hitting a limited set of targets with significant force. It strikes for five consecutive seconds, delivering 60 total damage. The attacks rotate between 6 possible target locations that are a distance of 6 or 3 tiles away horizontally and the opposite number vertically.";
-
 
 	static createFromSerialized (props) {
 		return new Ballast(props.player, props.health, props.firing, props.id, props.collidedWith)
@@ -386,7 +381,6 @@ export class Resonator extends Unit {
 	static cost = 3;
 	static description = "The Resonator is a resiliant, catapult-style machine that delivers damage in a cross shape encompassing a five-tile area. The center of its strike deals 150 damage and fades to half that amount in the adjacent tiles. The sheer power of its attack causes erratic projectile fire that falls between a distance of 4 - 9 spaces away. It will randomly strike vertically, horizontally or diagonally and does not do damage prior to reaching its destination.";
 
-
 	static createFromSerialized (props) {
 		return new Resonator(props.player, props.health, props.firing, props.id, props.collidedWith)
 	}
@@ -459,7 +453,6 @@ export class Integrator extends Unit {
 
 	static cost = 3;
 	static description = "The Integrator is a high-potential machine that gains strength with each turn it remains alive. Its damage equation is the product of the number of projectiles on the board and the number of turns since its creation. It fires less frequently than other units, but covers four paths that are a ratio of 2:1 or 1:2 from its origin, with projectiles glowing in the exact tiles where they can deal damage.";
-
 
 	static createFromSerialized (props) {
 		return new Integrator(props.player, props.health, props.firing, props.id, props.collidedWith, props.lifeSpan);
