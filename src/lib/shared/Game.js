@@ -242,7 +242,14 @@ export default class Game {
 			console.log(proj.id, "( player", proj.player, ") hit ", obj.id, " ( player", obj.player, ")", obj.health);
 			if (proj.player !== obj.player) {
 				obj.collidedWith = [true, proj.player];
+				let tempHealth = obj.health  ;
 				obj.health = obj.health - proj.damage;
+				if(obj.health > 0){
+				this.players[proj.player-1].damageDealtToBases = this.players[proj.player-1].damageDealtToBases + (tempHealth - obj.health);
+				}
+				else{
+					this.players[proj.player-1].damageDealtToBases = this.players[proj.player-1].damageDealtToBases + (tempHealth - 0);
+				}
 				if (this.isObjectAlive(obj) === false) {
 					this.cleanUpArray.push(obj.id);
 					this.deleteObjectAtCoord(obj, x, y);
