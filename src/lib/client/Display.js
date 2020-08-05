@@ -84,7 +84,14 @@ export default class Display {
 			//The draw function loops continuously while the sketch is active
 			//Different screens of the game are portioned off using trigger variables and user input to move between them
 			s.draw = () => {
+				if(this.app.game.players[this.app.playerNumber-1].victoryCondition == - 1){
+					this.app.spectatorMode = true;
+				}
+
 				s.cursor(s.CROSS);
+				/*if(this.app.spectatorMode = true){
+
+				}*/
 				//The below variables to be filled in by the size of the players current window
 				let wi=tempConfig.canvasX; //The width of the canvas
 				let he=tempConfig.canvasY; //The height of the canvas
@@ -102,7 +109,7 @@ export default class Display {
 
 				//Phase begins at 0 via the constructor of Display(see above)
 				//Phase 0 is the Title Sccreen, Phase 1 is Unit Placement, and Phase 2 is the Battle Phase
-				if(this.app.gamePhase==0){
+				if(this.app.gamePhase == 0){
 					gameStart=0;
 					s.background(0);
 
@@ -181,7 +188,7 @@ export default class Display {
 
 				}
 
-				else if(this.app.gamePhase==1){
+				else if(this.app.gamePhase==1 && this.app.spectatorMode == false){
 
 					s.image(imgTwo,0,0,he*1.6,he);
 					if(this.app.playerNumber == 1){
@@ -455,7 +462,7 @@ export default class Display {
 					//Buttons Section
 				}
 				// if phase where grid should be shown, draw grid
-				else if(this.app.gamePhase==2){
+				else if(this.app.gamePhase==2 || this.app.spectatorMode == true){
 					bSubmit.submitted = false;
 					bSubmit.confirmed = false;
 					//s.background(255);
@@ -541,6 +548,14 @@ export default class Display {
 				animate=animate+.75;
 
 			}
+			if(this.app.spectatorMode == true){
+				s.stroke(0,100);
+				s.fill(255,100);
+				s.strokeWeight(2);
+				s.textSize(wi/15);
+				s.textFont(titleFont);
+				s.text("SPECTATOR MODE",wi/4.6,he/1.87);
+			}
 		}
 
 		//FUNCTIONS BELOW THIS LINE
@@ -620,25 +635,25 @@ export default class Display {
 				drawBase(x,y,displayObject.player,size,displayObject.health,displayObject.maxHealth,colors);
 			}
 			if(displayObject.identifier == "Ray"){
-				drawRayTracer(x,y,displayObject.player,size,displayObject.health,displayObject.maxHealth,colors);
+				drawRayTracer(x,y,displayObject.player,size,displayObject.health,Units["RayTracer"].maxHealth,colors);
 			}
 			if(displayObject.identifier == "Osc"){
-				drawOscillator(x,y,displayObject.player,size,displayObject.health,displayObject.maxHealth,colors);
+				drawOscillator(x,y,displayObject.player,size,displayObject.health,Units["Oscillator"].maxHealth,colors);
 			}
 			if(displayObject.identifier == "Mag"){
-				drawMaglev(x,y,displayObject.player,size,displayObject.health,displayObject.maxHealth,colors);
+				drawMaglev(x,y,displayObject.player,size,displayObject.health,Units["Maglev"].maxHealth,colors);
 			}
 			if(displayObject.identifier == "Jug"){
-				drawJuggernode(x,y,displayObject.player,size,displayObject.health,displayObject.maxHealth,colors);
+				drawJuggernode(x,y,displayObject.player,size,displayObject.health,Units["Juggernode"].maxHealth,colors);
 			}
 			if(displayObject.identifier == "Bal"){
-				drawBallast(x,y,displayObject.player,size,displayObject.health,displayObject.maxHealth,colors);
+				drawBallast(x,y,displayObject.player,size,displayObject.health,Units["Ballast"].maxHealth,colors);
 			}
 			if(displayObject.identifier == "Cir"){
-				drawResonator(x,y,displayObject.player,size,displayObject.health,displayObject.maxHealth,colors);
+				drawResonator(x,y,displayObject.player,size,displayObject.health,Units["Resonator"].maxHealth,colors);
 			}
 			if(displayObject.identifier == "Int"){
-				drawIntegrator(x,y,displayObject.player,size,displayObject.health,displayObject.maxHealth,colors);
+				drawIntegrator(x,y,displayObject.player,size,displayObject.health,Units["Integrator"].maxHealth,colors);
 			}
 			if(displayObject.identifier == "JugProj"){
 				drawJuggernodeProjectile(x,y,displayObject.player,size,colors,displayObject.orientation, displayObject.damage, a);
@@ -968,7 +983,7 @@ export default class Display {
 				s.rotate(-s.radians(angle));
 			}
 			s.translate(-x*size-size/2, -y*size-size/2);
-			s.fill(0+(max-health)*2);
+			s.fill((max-health)*255/max);
 			s.ellipse(x*size+size/2,y*size+size/2,size/5,size/5);
 
 		}
@@ -996,7 +1011,7 @@ export default class Display {
 			}
 		}
 		function drawResonator(x,y,player,size,health,max,pColors){
-			s.fill((max-health)*255/max);
+
 			s.stroke(0);
 			s.strokeWeight(2);
 			s.translate(size*x+size/2,size*y+size/2);
@@ -1007,6 +1022,7 @@ export default class Display {
 			}
 			s.stroke(pColors[player-1][0],pColors[player-1][1],pColors[player-1][2],255);
 			s.strokeWeight(.5);
+			s.fill((max-health)*255/max);
 			s.ellipse(0,0,size/3,size/3);
 			s.translate(-(size*x+size/2),-(size*y+size/2));
 

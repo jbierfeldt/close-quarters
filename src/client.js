@@ -29,6 +29,7 @@ class App {
 		this.clientID = undefined;
 		this.playerNumber = undefined;
 		this.playersOnServer = undefined;
+		this.spectatorMode = false;
 	}
 
 	init() {

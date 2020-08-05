@@ -164,7 +164,7 @@ export class BalBullet extends Projectile {
 }
 
 export class CirBullet extends Projectile {
-	constructor(player, initialOrientation = [0, 0], initialSpeed = 0, damage = 0, distance = 4+Math.floor(Math.random()*5), id)  {
+	constructor(player, initialOrientation = [0, 0], initialSpeed = 0, damage = 0, distance = 4 + Math.floor(Math.random()*5), id)  {
 		super(player, initialOrientation, initialSpeed, id);
 		this.identifier = "CirProj";
 		this.damage = damage;
@@ -205,6 +205,7 @@ export class CirBullet extends Projectile {
 		}
 		if(this.distance == 0){
 			this.dump = true;
+			this.speed=0;
 		}
 		this.distance = this.distance - 1;
 	}

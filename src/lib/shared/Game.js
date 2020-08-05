@@ -225,7 +225,10 @@ export default class Game {
 			case "Units":
 			console.log(proj.id, "( player", proj.player, ") hit ", obj.id, " ( player", obj.player, ")", obj.health);
 			if (proj.player !== obj.player) {
+				if(proj.damage > 0){
 				obj.collidedWith = [true, proj.player];
+			}
+
 				obj.health = obj.health - proj.damage;
 				if (this.isObjectAlive(obj) === false) {
 					this.deleteObjectAtCoord(obj, x, y);
@@ -241,7 +244,9 @@ export default class Game {
 			case "Bases":
 			console.log(proj.id, "( player", proj.player, ") hit ", obj.id, " ( player", obj.player, ")", obj.health);
 			if (proj.player !== obj.player) {
+			if(proj.damage > 0){
 				obj.collidedWith = [true, proj.player];
+			}
 				let tempHealth = obj.health  ;
 				obj.health = obj.health - proj.damage;
 				if(obj.health > 0){
@@ -489,6 +494,9 @@ export default class Game {
 			this.players[p].damageDealtToBases = 0;
 			if(this.players[p].baseCount == 0){
 				this.players[p].victoryCondition = - 1;
+			}
+			if(this.players[p].victoryCondition == - 1){
+				//clearPlayer'sUnits();
 			}
 		}
 		this.turnNumber++;

@@ -381,7 +381,7 @@ export class Resonator extends Unit {
 
 	static maxHealth = 300;
 	static cost = 3;
-	static description = "The Resonator is a resiliant, catapult-style machine that delivers damage in a cross shape encompassing a five-tile area. The center of its strike deals 150 damage and fades to half that amount in the adjacent tiles. The sheer power of its attack causes erratic projectile fire that falls between a distance of 4 - 9 spaces away. It will randomly strike vertically, horizontally or diagonally and does not do damage prior to reaching its destination.";
+	static description = "The Resonator is a resiliant, catapult-style machine that delivers damage in a cross shape encompassing a five-tile area. The center of its strike deals 150 damage and fades to half that amount in the adjacent tiles. The sheer power of its attack causes erratic projectile fire that falls between a distance of 9 - 17 spaces away. It will randomly strike vertically, horizontally or diagonally and does not do damage prior to reaching its destination.";
 
 	static createFromSerialized (props) {
 		return new Resonator(props.player, props.health, props.firing, props.id, props.collidedWith)
