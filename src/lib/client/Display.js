@@ -224,7 +224,7 @@ export default class Display {
 						s.fill(255);
 						s.stroke(0);
 						s.textSize(wi/26.5);
-						s.text("Place Second Base", wi/2+si*2-playerShifter,si*buttonScale*3.7);
+						s.text("Place Second Core", wi/2+si*2-playerShifter,si*buttonScale*3.7);
 						if(s.mouseIsPressed){
 							if(bBase.isInRange(s.mouseX,s.mouseY)){
 								bBase.buttonHasBeenPressed();
@@ -357,6 +357,10 @@ export default class Display {
 					s.stroke(0);
 					s.strokeWeight(1);
 					s.text("Credits: " + this.app.game.players[this.app.playerNumber-1].credits, wi/3.02, he/1.52);
+					s.textSize(wi/80);
+					s.text("Deal Damage To Opposing", wi/3.2, he/1.45);
+          s.text("Cores To Earn Credits", wi/3.1, he/1.4);
+					s.textSize(wi/40);
 					for(let a = 0; a < 4; a = a + 1){
 						s.fill(this.playerColors[a][0], this.playerColors[a][1], this.playerColors[a][2], this.playerColors[a][3]);
 						s.text("Player " + (a+1) + " Score: " + this.app.game.players[a].score, wi/35, he/1.75+a*si);

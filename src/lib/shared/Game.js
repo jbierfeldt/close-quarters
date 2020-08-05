@@ -490,7 +490,7 @@ export default class Game {
 
 
 		for(let p = 0; p < 4; p = p + 1){
-			this.players[p].credits = this.players[p].credits + 3 + Math.floor(this.players[p].damageDealtToBases/100);
+			this.players[p].credits = this.players[p].credits + 3 + Math.floor(this.players[p].damageDealtToBases/200);
 			this.players[p].damageDealtToBases = 0;
 			if(this.players[p].baseCount == 0){
 				this.players[p].victoryCondition = - 1;
