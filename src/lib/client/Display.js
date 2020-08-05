@@ -157,6 +157,7 @@ export default class Display {
 						bSubmit = new Buttoned(wi/3.2 + submitShifterX, he/1.85 - submitShifterY,si*5,si*1.1,"Submit Turn",this.app.sendSubmitTurn);
 
 						bBase=new Buttoned(wi/2+si-playerShifter,si*buttonScale*2,wi/2-si*2,si*buttonScale*3,"Base",this.app.sendCreateBase);
+
 						//Unit Buttons Below
 						bRayTracer=new Buttoned(wi/2+si-playerShifter,si*buttonScale*2,wi/2-si*2,si*buttonScale,"RayTracer",this.app.sendCreateUnit);
 						unitButtons.push(bRayTracer);
@@ -385,9 +386,24 @@ export default class Display {
 					//Calculate which cell the mouse is currently hovering over and highlight it
 					hoverX=s.int(s.mouseX/si);
 					hoverY=s.int(s.mouseY/si);
+
+
 					if(hoverX >= 0 && hoverX < 30 && hoverY >= 0 && hoverY < 20) {
 					if(board[hoverY][hoverX].length != 0){
-						hoverObject = this.app.game.gameObjects.get(board[hoverY][hoverX][0])
+						hoverObject = false;
+						if(this.app.playerNumber == 1 && hoverX <= 14 && hoverY < 10 && hoverX < 30 && hoverY < 20){
+							hoverObject = this.app.game.gameObjects.get(board[hoverY][hoverX][0]);
+						}
+						else if(this.app.playerNumber == 2 && hoverX<=14 && hoverY >= 10 && hoverX < 30 && hoverY < 20){
+							hoverObject = this.app.game.gameObjects.get(board[hoverY][hoverX][0]);
+						}
+						else if(this.app.playerNumber == 3 && hoverX>14 && hoverY < 10 && hoverX < 30 && hoverY < 20){
+							hoverObject = this.app.game.gameObjects.get(board[hoverY][hoverX][0]);
+						}
+						else if(this.app.playerNumber == 4 && hoverX>14 && hoverY >= 10 && hoverX < 30 && hoverY < 20){
+							hoverObject = this.app.game.gameObjects.get(board[hoverY][hoverX][0]);
+						}
+
 					//	this.simulationDisplayTurn.tick[this.t].gameObjects.get(this.simulationDisplayTurn.tick[this.t].board[hoverY][hoverX][0]);
 						if(hoverObject && hoverObject.objCategory != "Projectiles"){
 							s.stroke(0);
@@ -522,7 +538,7 @@ export default class Display {
 
 				}
 				//IMPORTANT - ANIMATION SPEED
-				animate=animate+.65;
+				animate=animate+.75;
 
 			}
 		}
