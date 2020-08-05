@@ -203,7 +203,9 @@ export default class Display {
 								}
 								else if(bSubmit.isPressed === true && bSubmit.confirmed === true && counter > 40){
 									bSubmit.isPressed = false;
+									bSubmit.confirmed = false;
 									bSubmit.func.call(this.app);
+									//bSubmit.submitted();
 								}
 							}
 						}
@@ -349,7 +351,6 @@ export default class Display {
 									}
 								}
 							}
-
 						}
 						drawUnitMenu(this.playerColors,this.app.playerNumber, buttonScale);
 					}
@@ -468,6 +469,7 @@ export default class Display {
 					s.stroke(255,255,255,255);
 					s.fill(255,255,255,100);
 					s.rect(this.xx,this.yy,this.xlen,this.ylen);
+
 				}
 			}
 			buttonHasBeenPressed(){

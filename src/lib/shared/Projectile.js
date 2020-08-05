@@ -92,7 +92,7 @@ export class MagBullet extends Projectile {
 		this.identifier = "MagProj";
 		this.damage = damage;
 		this.maxDamage = 50;
-		this.ableToBeDestroyed = false;
+		this.ableToBeDestroyed = true;
 		this.distance = distance;
 	}
 
@@ -119,6 +119,7 @@ export class JugBullet extends Projectile {
 		super(player, initialOrientation, initialSpeed, id);
 		this.identifier = "JugProj";
 		this.damage = 7;
+		this.ableToBeDestroyed = false;
 
 	}
 
