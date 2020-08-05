@@ -425,13 +425,15 @@ export class Integrator extends Unit {
 		this.player = player;
 		this.health = health;
 		this.firing = firing;
-		this.maxHealth = 200;
+		//this.maxHealth = 200;
 		this.identifier="Int";
 		this.projArr = [];
 		this.collidedWith = collidedWith;
 		this.value = 3;
 		this.fullName = "Integrator";
 	}
+
+	//static maxHealth = 200;
 
 	static createFromSerialized (props) {
 		return new Integrator(props.player, props.health, props.firing, props.id, props.collidedWith, props.lifeSpan);
@@ -532,6 +534,10 @@ RayTracer.cost = 1;
 Oscillator.cost = 1;
 Juggernode.cost = 2;
 Ballast.cost = 2;
+
+
+
+
 
 Integrator.description = "The Integrator is a high-potential machine that gains strength with each turn it remains alive. Its damage equation is the product of the number of projectiles on the board and the number of turns since its creation. It fires less frequently than other units, but covers four paths that are a ratio of 2:1 or 1:2 from its origin, with projectiles glowing in the exact tiles where they can deal damage.";
 Maglev.description = "The Maglev is a lightweight offensive powerhouse that emits indestructible magnetic pulses. It will randomly strike either in every diagonal direction or orthogonal direction. The pulses begin with a base damage of 50 and fade off exponentially as they travel.";

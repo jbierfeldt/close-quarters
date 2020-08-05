@@ -32,6 +32,8 @@ export default class Display {
 			let animate = 0; //use to decide when a new tick value occurs
 			let buttonScale;
 			let playerShifter;
+			let submitShifterX;
+			let submitShifterY;
 			let gameStart;
 
 			//Button Declarations
@@ -130,14 +132,28 @@ export default class Display {
 					buttonScale=1.5;
 
 					//playerShifter shifts the Button Menu if the player is on the right side of the screen
-					playerShifter=0;
+					playerShifter = 0;
+					submitShifterX = 0;
+					submitShifterY = 0;
 					if(this.app.playerNumber>2){
 						playerShifter=wi/2;
 					}
 
 					//Only execute the following block once so the buttons are only created a single time
 					if(buttonMaker===1){
-						bSubmit = new Buttoned(wi/3.03, he/1.85,si*5,si*1.1,"Submit Turn",this.app.sendSubmitTurn);
+						if(this.app.playerNumber == 2){
+							submitShifterX = 0;
+							submitShifterY = he/2;;
+						}
+						else if(this.app.playerNumber == 3){
+							submitShifterX = wi/2;
+							submitShifterY = 0;
+						}
+						else if(this.app.playerNumber == 4){
+							submitShifterX = wi/2;
+							submitShifterY = he/2;
+						}
+						bSubmit = new Buttoned(wi/3.03 + submitShifterX, he/1.85 - submitShifterY,si*5,si*1.1,"Submit Turn",this.app.sendSubmitTurn);
 
 						bBase=new Buttoned(wi/2+si-playerShifter,si*buttonScale*2,wi/2-si*2,si*buttonScale*3,"Base",this.app.sendCreateBase);
 						//Unit Buttons Below
@@ -179,43 +195,10 @@ export default class Display {
 						s.translate(wi/2,-he/2);
 					}
 					s.textSize(wi/40);
-					//Here is where we put the submit turn button and also do a yes/no Check
-					if(gameStart === 1){
-						bSubmit.drawButton();
-
-						if(bSubmit.confirmed === false){
-					 		s.fill(255);
-					 		s.stroke(0);
-							s.text("Submit Turn", wi/2.97, he/1.72);
-							counter=0;
-						}
-						else{
-							s.fill(this.playerColors[this.app.playerNumber-1][0], this.playerColors[this.app.playerNumber-1][1], this.playerColors[this.app.playerNumber-1][2], this.playerColors[this.app.playerNumber-1][3]);
-							s.stroke(0);
-							s.text("Confirm", wi/2.78, he/1.72);
-							counter=counter+1;
-						}
-						if(s.mouseIsPressed){
-							if(bSubmit.isInRange(s.mouseX,s.mouseY)){
-								bSubmit.buttonHasBeenPressed();
-								if(bSubmit.isPressed === true && bSubmit.confirmed === false){
-									bSubmit.confirmation();
-								}
-								else if(bSubmit.isPressed === true && bSubmit.confirmed === true && counter > 40){
-									bSubmit.isPressed = false;
-									bSubmit.confirmed = false;
-									bSubmit.func.call(this.app);
-									//bSubmit.submitted();
-								}
-							}
-						}
-					}
-
-
 					s.fill(255);
 					s.stroke(0);
 					s.strokeWeight(1);
-					s.text("Credits: " + this.app.game.players[this.app.playerNumber-1].credits, wi/2.9, he/1.52);
+					s.text("Credits: " + this.app.game.players[this.app.playerNumber-1].credits, wi/2.88, he/1.52);
 					for(let a = 0; a < 4; a = a + 1){
 						s.fill(this.playerColors[a][0], this.playerColors[a][1], this.playerColors[a][2], this.playerColors[a][3]);
 						s.text("Player " + (a+1) + " Score: " + this.app.game.players[a].score, wi/25, he/1.75+a*si);
@@ -301,6 +284,28 @@ export default class Display {
 					}
 					else{
 						gameStart=1;
+						if(bSubmit.submitted === false){
+						bSubmit.drawButton();
+					}
+						if(bSubmit.confirmed === false){
+					 		s.fill(255);
+					 		s.stroke(0);
+							s.text("Submit Turn", bSubmit.xx+si/5, bSubmit.yy+si/1.25);
+							counter=0;
+						}
+						else if(bSubmit.submitted === true){
+							s.fill(this.playerColors[this.app.playerNumber-1][0], this.playerColors[this.app.playerNumber-1][1], this.playerColors[this.app.playerNumber-1][2], this.playerColors[this.app.playerNumber-1][3]);
+					 		s.stroke(0);
+							s.text("Submitted", bSubmit.xx+si/2, bSubmit.yy+si/1.25);
+						}
+						else{
+							s.fill(this.playerColors[this.app.playerNumber-1][0], this.playerColors[this.app.playerNumber-1][1], this.playerColors[this.app.playerNumber-1][2], this.playerColors[this.app.playerNumber-1][3]);
+							s.stroke(0);
+							s.text("Confirm", bSubmit.xx+si*.9, bSubmit.yy+si/1.25);
+							counter=counter+1;
+						}
+
+
 						for(let i=0;i<unitButtons.length;i=i+1){
 							unitButtons[i].drawButton();
 						}
@@ -313,6 +318,21 @@ export default class Display {
 						//drawUnitMenu(this.playerColors,this.app.playerNumber, buttonScale);
 
 						if(s.mouseIsPressed){
+
+							if(bSubmit.isInRange(s.mouseX,s.mouseY)){
+								bSubmit.buttonHasBeenPressed();
+								if(bSubmit.isPressed === true && bSubmit.confirmed === false){
+									bSubmit.confirmation();
+								}
+								else if(bSubmit.isPressed === true && bSubmit.confirmed === true && counter > 40){
+									bSubmit.isPressed = false;
+									//bSubmit.confirmed = false;
+									bSubmit.submission();
+									bSubmit.func.call(this.app);
+
+								}
+							}
+
 							let newButtonPressed=-1;
 							for(let i=0;i<unitButtons.length;i=i+1){
 								if(unitButtons[i].isInRange(s.mouseX,s.mouseY)){
@@ -356,14 +376,10 @@ export default class Display {
 					}
 
 					//Buttons Section
-
-
-					// this.app.appRunSimulation()
-
 				}
 				// if phase where grid should be shown, draw grid
 				else if(this.app.gamePhase==2){
-
+					bSubmit.submitted = false;
 					bSubmit.confirmed = false;
 					//s.background(255);
 					//s.filter(GRAY);
@@ -372,6 +388,7 @@ export default class Display {
 					/*if(s.keyIsPressed){
 					this.t=this.t+keyPressed();
 				}*/
+
 
 				if(animate >= 10 && this.t < (Object.keys(this.simulationDisplayTurn.tick).length-1)){
 					this.t=this.t+1;
@@ -459,6 +476,7 @@ export default class Display {
 				this.ylen=ylen;
 				this.func=func;
 				this.confirmed = false;
+				this.submitted = false;
 			}
 			drawButton(){
 				s.stroke(255,255,255,255);
@@ -473,7 +491,12 @@ export default class Display {
 				}
 			}
 			buttonHasBeenPressed(){
+				if(this.submitted === false){
 				this.isPressed = true;
+			 }
+			}
+		  submission(){
+				this.submitted = true;
 			}
 			confirmation(){
 				this.isPressed = false;
@@ -642,7 +665,7 @@ export default class Display {
 			s.stroke(0);
 			s.fill(255);
 			s.text("Oscillator",wid/2+siz*3.75,siz*4)
-			s.text("275",wid/2+siz*9.9,siz*4)
+			s.text("0",wid/2+siz*9.9,siz*4)
 			s.noFill();
 			s.stroke(255);
 			s.strokeWeight(2);
@@ -732,7 +755,7 @@ export default class Display {
 			s.stroke(0);
 			s.fill(255);
 			s.text("Integrator",wid/2+siz*3.75,siz*4)
-			s.text("175",wid/2+siz*9.9,siz*4)
+			s.text("0",wid/2+siz*9.9,siz*4)
 			s.noFill();
 			s.stroke(255);
 			s.strokeWeight(2);
