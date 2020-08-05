@@ -94,7 +94,7 @@ export default class Display {
 				this.delay=this.delay+.19;
 
 				//Sets the background to black each time around the loop in order to prevent sketch objects from stacking on each other
-				s.background(0);
+				//s.background(0);
 
 				//Sets the default text font and its size
 				s.textFont(titleFont);
@@ -104,6 +104,7 @@ export default class Display {
 				//Phase 0 is the Title Sccreen, Phase 1 is Unit Placement, and Phase 2 is the Battle Phase
 				if(this.app.gamePhase==0){
 					gameStart=0;
+					s.background(0);
 
 					//The below function displays the title sequence
 					// Add bar magnet field lines
@@ -153,7 +154,7 @@ export default class Display {
 							submitShifterX = wi/2;
 							submitShifterY = he/2;
 						}
-						bSubmit = new Buttoned(wi/3.03 + submitShifterX, he/1.85 - submitShifterY,si*5,si*1.1,"Submit Turn",this.app.sendSubmitTurn);
+						bSubmit = new Buttoned(wi/3.2 + submitShifterX, he/1.85 - submitShifterY,si*5,si*1.1,"Submit Turn",this.app.sendSubmitTurn);
 
 						bBase=new Buttoned(wi/2+si-playerShifter,si*buttonScale*2,wi/2-si*2,si*buttonScale*3,"Base",this.app.sendCreateBase);
 						//Unit Buttons Below
@@ -182,75 +183,33 @@ export default class Display {
 				else if(this.app.gamePhase==1){
 
 					s.image(imgTwo,0,0,he*1.6,he);
-					s.background(0,190);
+					if(this.app.playerNumber == 1){
+						s.fill(0,190);
+						s.noStroke();
+						s.rect(wi/2,0,wi/2,he);
+						s.rect(0,he/2,wi/2,he/2);
+					}
+					else if(this.app.playerNumber == 2){
+						s.fill(0,190);
+						s.noStroke();
+						s.rect(0,0,wi,he/2);
+						s.rect(wi/2,he/2,wi/2,he/2);
+					}
+					else if(this.app.playerNumber == 3){
+						s.fill(0,190);
+						s.noStroke();
+						s.rect(0,0,wi/2,he);
+						s.rect(wi/2,he/2,wi/2,he/2);
+					}
+					else if(this.app.playerNumber == 4){
+						s.fill(0,190);
+						s.noStroke();
+						s.rect(0,0,wi,he/2);
+						s.rect(0,he/2,wi/2,he/2);
+					}
+					//s.background(0,190);
 					this.t=1;
 					animate=0;
-					if(this.app.playerNumber == 2){
-						s.translate(0,-he/2);
-					}
-					else if(this.app.playerNumber == 3){
-						s.translate(wi/2,0);
-					}
-					else if(this.app.playerNumber == 4){
-						s.translate(wi/2,-he/2);
-					}
-					s.textSize(wi/40);
-					s.fill(255);
-					s.stroke(0);
-					s.strokeWeight(1);
-					s.text("Credits: " + this.app.game.players[this.app.playerNumber-1].credits, wi/2.88, he/1.52);
-					for(let a = 0; a < 4; a = a + 1){
-						s.fill(this.playerColors[a][0], this.playerColors[a][1], this.playerColors[a][2], this.playerColors[a][3]);
-						s.text("Player " + (a+1) + " Score: " + this.app.game.players[a].score, wi/25, he/1.75+a*si);
-					}
-					if(this.app.playerNumber == 2){
-						s.translate(-0,he/2);
-					}
-					else if(this.app.playerNumber == 3){
-						s.translate(-wi/2,0);
-					}
-					else if(this.app.playerNumber == 4){
-						s.translate(-wi/2,he/2);
-					}
-					//Run the functions for drawing the players quadrant and the unit menu
-					drawQuarterGrid(this.stage.grid,this.playerColors,this.app.playerNumber);
-					//drawGrid(wi, he, si, this.playerColors);
-					let board = this.app.game.board;
-					for(var k=0; k<board.length; k=k+1){
-						for(var l=0; l<board[k].length; l=l+1){
-							//drawTile(l, k, si, this.playerColors, wi, he);
-							if(board[k][l].length != 0){
-								for(var m=0; m<board[k][l].length;m=m+1){
-									let displayObject = this.app.game.gameObjects.get(board[k][l][m]);
-									if(displayObject !== undefined){
-										if(displayObject.player == this.app.playerNumber){
-											drawDisplayObject(displayObject, l, k,tempConfig.size, this.playerColors, animate);
-										}
-									}
-								}
-							}
-						}
-					}
-
-
-					//Calculate which cell the mouse is currently hovering over and highlight it
-					hoverX=s.int(s.mouseX/si);
-					hoverY=s.int(s.mouseY/si);
-
-					s.fill(255,100);
-					s.noStroke();
-					if(this.app.playerNumber == 1 && hoverX <= 14 && hoverY < 10 && hoverX < 30 && hoverY < 20){
-						s.rect(hoverX*tempConfig.size,hoverY*tempConfig.size,tempConfig.size,tempConfig.size);
-					}
-					else if(this.app.playerNumber == 2 && hoverX<=14 && hoverY >= 10 && hoverX < 30 && hoverY < 20){
-						s.rect(hoverX*tempConfig.size,hoverY*tempConfig.size,tempConfig.size,tempConfig.size);
-					}
-					else if(this.app.playerNumber == 3 && hoverX>14 && hoverY < 10 && hoverX < 30 && hoverY < 20){
-						s.rect(hoverX*tempConfig.size,hoverY*tempConfig.size,tempConfig.size,tempConfig.size);
-					}
-					else if(this.app.playerNumber == 4 && hoverX>14 && hoverY >= 10 && hoverX < 30 && hoverY < 20){
-						s.rect(hoverX*tempConfig.size,hoverY*tempConfig.size,tempConfig.size,tempConfig.size);
-					}
 
 					if(this.app.game.players[this.app.playerNumber-1].baseCount < 2 && gameStart == 0){
 						bBase.drawButton();
@@ -283,6 +242,7 @@ export default class Display {
 						}
 					}
 					else{
+						s.textSize(wi/40);
 						gameStart=1;
 						if(bSubmit.submitted === false){
 						bSubmit.drawButton();
@@ -375,6 +335,107 @@ export default class Display {
 						drawUnitMenu(this.playerColors,this.app.playerNumber, buttonScale);
 					}
 
+					if(this.app.playerNumber == 2){
+						s.translate(0,-he/2);
+					}
+					else if(this.app.playerNumber == 3){
+						s.translate(wi/2,0);
+					}
+					else if(this.app.playerNumber == 4){
+						s.translate(wi/2,-he/2);
+					}
+					s.textSize(wi/40);
+					s.fill(255);
+					s.stroke(0);
+					s.strokeWeight(1);
+					s.text("Credits: " + this.app.game.players[this.app.playerNumber-1].credits, wi/3.02, he/1.52);
+					for(let a = 0; a < 4; a = a + 1){
+						s.fill(this.playerColors[a][0], this.playerColors[a][1], this.playerColors[a][2], this.playerColors[a][3]);
+						s.text("Player " + (a+1) + " Score: " + this.app.game.players[a].score, wi/35, he/1.75+a*si);
+					}
+					if(this.app.playerNumber == 2){
+						s.translate(-0,he/2);
+					}
+					else if(this.app.playerNumber == 3){
+						s.translate(-wi/2,0);
+					}
+					else if(this.app.playerNumber == 4){
+						s.translate(-wi/2,he/2);
+					}
+					//Run the functions for drawing the players quadrant and the unit menu
+					drawQuarterGrid(this.stage.grid,this.playerColors,this.app.playerNumber);
+					//drawGrid(wi, he, si, this.playerColors);
+					let board = this.app.game.board;
+					for(var k=0; k<board.length; k=k+1){
+						for(var l=0; l<board[k].length; l=l+1){
+							if(board[k][l].length != 0){
+								for(var m=0; m<board[k][l].length;m=m+1){
+									let displayObject = this.app.game.gameObjects.get(board[k][l][m]);
+									if(displayObject !== undefined){
+										if(displayObject.player == this.app.playerNumber){
+											drawDisplayObject(displayObject, l, k,tempConfig.size, this.playerColors, animate);
+										}
+									}
+								}
+							}
+						}
+					}
+
+
+					//Calculate which cell the mouse is currently hovering over and highlight it
+					hoverX=s.int(s.mouseX/si);
+					hoverY=s.int(s.mouseY/si);
+					if(hoverX >= 0 && hoverX < 30 && hoverY >= 0 && hoverY < 20) {
+					if(board[hoverY][hoverX].length != 0){
+						hoverObject = this.app.game.gameObjects.get(board[hoverY][hoverX][0])
+					//	this.simulationDisplayTurn.tick[this.t].gameObjects.get(this.simulationDisplayTurn.tick[this.t].board[hoverY][hoverX][0]);
+						if(hoverObject && hoverObject.objCategory != "Projectiles"){
+							s.stroke(0);
+							s.strokeWeight(3);
+							s.fill(255,125);
+							let transX = 0;
+							let transY = 0;
+							if(hoverX >= wi/(si*2) && hoverY < he/(si*2)){
+									transX = 1;
+							}
+							else if(hoverX >= wi/(si*2) && hoverY >= he/(si*2)){
+									transX = 1;
+									transY = 1;
+							}
+							else if(hoverX < wi/(si*2) && hoverY >= he/(si*2)){
+									transY = 1;
+							}
+							s.translate(-si*5*transX, -si*4*transY);
+							s.rect(hoverX*si+si,hoverY*si+si,si*4,si*3);
+							s.fill(this.playerColors[hoverObject.player-1][0], this.playerColors[hoverObject.player-1][1], this.playerColors[hoverObject.player-1][2], this.playerColors[hoverObject.player-1][3]);
+							s.stroke(0);
+							s.textFont(standardFont);
+							s.textSize(si/2.3);
+							s.text(hoverObject.fullName, hoverX*si+si*1.2,hoverY*si+si*1.7);
+							s.text("Health: " + hoverObject.health, hoverX*si+si*1.2,hoverY*si+si*2.65);
+							//s.text("Turns Active: " + hoverObject.turnsActive, hoverX*si+si*1.2,hoverY*si+si*2.8);
+							s.translate(si*5*transX, si*4*transY);
+							}
+						}
+					}
+
+					s.fill(255,100);
+					s.noStroke();
+					if(this.app.playerNumber == 1 && hoverX <= 14 && hoverY < 10 && hoverX < 30 && hoverY < 20){
+						s.rect(hoverX*tempConfig.size,hoverY*tempConfig.size,tempConfig.size,tempConfig.size);
+					}
+					else if(this.app.playerNumber == 2 && hoverX<=14 && hoverY >= 10 && hoverX < 30 && hoverY < 20){
+						s.rect(hoverX*tempConfig.size,hoverY*tempConfig.size,tempConfig.size,tempConfig.size);
+					}
+					else if(this.app.playerNumber == 3 && hoverX>14 && hoverY < 10 && hoverX < 30 && hoverY < 20){
+						s.rect(hoverX*tempConfig.size,hoverY*tempConfig.size,tempConfig.size,tempConfig.size);
+					}
+					else if(this.app.playerNumber == 4 && hoverX>14 && hoverY >= 10 && hoverX < 30 && hoverY < 20){
+						s.rect(hoverX*tempConfig.size,hoverY*tempConfig.size,tempConfig.size,tempConfig.size);
+					}
+
+
+
 					//Buttons Section
 				}
 				// if phase where grid should be shown, draw grid
@@ -401,7 +462,7 @@ export default class Display {
 					b = this.simulationDisplayTurn.tick[this.t].board;
 					for(var k=0; k<b.length; k=k+1){
 						for(var l=0; l<b[k].length; l=l+1){
-							//drawTile(l, k, si, this.playerColors, wi, he);
+
 							if(b[k][l].length != 0){
 								for(var m=0; m<b[k][l].length;m=m+1){
 									let displayObject = this.simulationDisplayTurn.tick[this.t].gameObjects.get(b[k][l][m]);
@@ -423,6 +484,7 @@ export default class Display {
 							}
 						}
 					}
+					//Tooltip Section
 					hoverX=s.int(s.mouseX/si);
 					hoverY=s.int(s.mouseY/si);
 					if(hoverX >= 0 && hoverX < 30 && hoverY >= 0 && hoverY < 20) {
@@ -454,9 +516,9 @@ export default class Display {
 							s.text("Health: " + hoverObject.health, hoverX*si+si*1.2,hoverY*si+si*2.65);
 							//s.text("Turns Active: " + hoverObject.turnsActive, hoverX*si+si*1.2,hoverY*si+si*2.8);
 							s.translate(si*5*transX, si*4*transY);
+							}
 						}
 					}
-				}
 
 				}
 				//IMPORTANT - ANIMATION SPEED
@@ -611,18 +673,20 @@ export default class Display {
 			//s.text("Unit",wid/2+siz*1.5,siz*2.25);
 			s.text("Machine",wid/2+siz*2.5,siz*2.45);
 			s.noFill();
-			s.strokeWeight(1);
+			s.strokeWeight(1.5);
 			s.ellipse(wid/2+siz*10.5,siz*1.99,siz*1.45,siz*1.45);
-			s.strokeWeight(2);
+			s.strokeWeight(3);
 			s.stroke(pColors[player-1][0],pColors[player-1][1],pColors[player-1][2],255);
-			s.ellipse(wid/2+siz*10.5,siz*1.99,siz*1.35,siz*1.35);
+			s.ellipse(wid/2+siz*10.5,siz*1.99,siz*1.32,siz*1.32);
 			s.stroke(0);
+			s.strokeWeight(1.5);
+			s.ellipse(wid/2+siz*10.5,siz*1.99,siz*1.2,siz*1.2);
 			s.fill(pColors[player-1][0],pColors[player-1][1],pColors[player-1][2],255);
 			let refXX = wid/2+siz*10.42;
 			let refYY = siz*1.46;
 			let propOne = .15;
 			let propTwo = .45;
-			s.strokeWeight(1);
+			s.strokeWeight(1.5);
 			s.beginShape();
 			s.vertex(refXX, refYY);
 			s.vertex(refXX+siz*propOne,refYY);
@@ -640,7 +704,7 @@ export default class Display {
 			s.endShape();
 
 			//s.text("Cost",wid/2+siz*12.3,siz*2.45);
-			s.textSize(wid/35);
+			s.textSize(wid/37);
 			//s.textFont(standardFont);
 
 			//Ray Tracer Button Decoration
@@ -648,7 +712,7 @@ export default class Display {
 			s.stroke(0)
 			s.strokeWeight(2);
 			s.text("Ray Tracer",wid/2+siz*3.75,siz*4)
-			s.text("100",wid/2+siz*9.9,siz*4)
+			s.text(Units["RayTracer"].maxHealth,wid/2+siz*9.9,siz*4)
 			s.noFill();
 			s.stroke(255);
 			s.strokeWeight(2);
@@ -665,7 +729,7 @@ export default class Display {
 			s.stroke(0);
 			s.fill(255);
 			s.text("Oscillator",wid/2+siz*3.75,siz*4)
-			s.text("0",wid/2+siz*9.9,siz*4)
+			s.text(Units["Oscillator"].maxHealth,wid/2+siz*9.9,siz*4)
 			s.noFill();
 			s.stroke(255);
 			s.strokeWeight(2);
@@ -683,7 +747,7 @@ export default class Display {
 			s.stroke(0);
 			s.fill(255);
 			s.text("Ballast",wid/2+siz*3.75,siz*4)
-			s.text("300",wid/2+siz*9.9,siz*4)
+			s.text(Units["Ballast"].maxHealth,wid/2+siz*9.9,siz*4)
 			s.noFill();
 			s.stroke(255);
 			s.strokeWeight(2);
@@ -701,7 +765,7 @@ export default class Display {
 			s.stroke(0);
 			s.fill(255);
 			s.text("Juggernode",wid/2+siz*3.75,siz*4)
-			s.text("500",wid/2+siz*9.9,siz*4)
+			s.text(Units["Juggernode"].maxHealth,wid/2+siz*9.9,siz*4)
 			s.noFill();
 			s.stroke(255);
 			s.strokeWeight(2);
@@ -719,7 +783,7 @@ export default class Display {
 			s.stroke(0);
 			s.fill(255);
 			s.text("Maglev",wid/2+siz*3.75,siz*4)
-			s.text("250",wid/2+siz*9.9,siz*4)
+			s.text(Units["Maglev"].maxHealth,wid/2+siz*9.9,siz*4)
 			s.noFill();
 			s.stroke(255);
 			s.strokeWeight(2);
@@ -737,7 +801,7 @@ export default class Display {
 			s.stroke(0);
 			s.fill(255);
 			s.text("Resonator",wid/2+siz*3.75,siz*4)
-			s.text("400",wid/2+siz*9.9,siz*4)
+			s.text(Units["Resonator"].maxHealth,wid/2+siz*9.9,siz*4)
 			s.noFill();
 			s.stroke(255);
 			s.strokeWeight(2);
@@ -754,7 +818,7 @@ export default class Display {
 			s.translate(0,scale*siz*6);
 			s.stroke(0);
 			s.fill(255);
-			s.text("Integrator",wid/2+siz*3.75,siz*4)
+			s.text(Units["Resonator"].maxHealth,wid/2+siz*3.75,siz*4)
 			s.text("0",wid/2+siz*9.9,siz*4)
 			s.noFill();
 			s.stroke(255);
@@ -781,7 +845,7 @@ export default class Display {
 		function drawQuarterGrid(grid, pColors, player) {
 			s.stroke(0,opacity);
 			s.strokeWeight(2);
-			let opacity = 255;
+			let opacity = 227;
 			for (var i = 0; i < grid.length; i++) {
 				let rectSize = tempConfig.canvasX / grid[i].length;
 				let rectY = i * (tempConfig.canvasY / grid.length);
@@ -815,30 +879,14 @@ export default class Display {
 			}
 		}
 
-		function drawTile(x, y, size, pColors, width, height){
-			s.strokeWeight(2);
-			s.stroke(0);
-			if(x < width/2 && y < height/2){
-				s.fill(pColors[0]);
-			}
-			else if(x < width/2 && y >= height/2){
-				s.fill(pColors[1]);
-			}
-			else if(x >= width/2 && y < height/2){
-				s.fill(pColors[2]);
-			}
-			else{
-				s.fill(pColors[3]);
-			}
-			s.rect(x*size, y*size, size, size);
-		}
+
 
 		function drawGrid(wi, he, si, pColors) {
 
 			s.image(imgTwo,0,0,he*1.6,he);
 
 			s.noStroke();
-			let opacity = 230;
+			let opacity = 227;
 			//s.fill(pColors[0][0],pColors[0][1],pColors[0][2],pColors[0][3]);
 			s.fill(pColors[0][0],pColors[0][1],pColors[0][2],opacity);
 			s.rect(0,0,wi/2,he/2);
