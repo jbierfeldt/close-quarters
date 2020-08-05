@@ -42,7 +42,7 @@ export default class Display {
 			let bMaglev;
 			let bJuggernode;
 			let bBallast;
-			let bCircuitBreaker;
+			let bResonator;
 			let bOscillator;
 			let bIntegrator;
 
@@ -165,8 +165,8 @@ export default class Display {
 						unitButtons.push(bJuggernode);
 						bMaglev=new Buttoned(wi/2+si-playerShifter,si*buttonScale*6,wi/2-si*2,si*buttonScale,"Maglev",this.app.sendCreateUnit);
 						unitButtons.push(bMaglev);
-						bCircuitBreaker=new Buttoned(wi/2+si-playerShifter,si*buttonScale*7,wi/2-si*2,si*buttonScale,"CircuitBreaker",this.app.sendCreateUnit);
-						unitButtons.push(bCircuitBreaker);
+						bResonator=new Buttoned(wi/2+si-playerShifter,si*buttonScale*7,wi/2-si*2,si*buttonScale,"Resonator",this.app.sendCreateUnit);
+						unitButtons.push(bResonator);
 						bIntegrator=new Buttoned(wi/2+si-playerShifter,si*buttonScale*8,wi/2-si*2,si*buttonScale,"Integrator",this.app.sendCreateUnit);
 						unitButtons.push(bIntegrator);
 						bOscillator=new Buttoned(wi/2+si-playerShifter,si*buttonScale*3,wi/2-si*2,si*buttonScale,"Oscillator",this.app.sendCreateUnit);
@@ -557,7 +557,7 @@ export default class Display {
 				drawBallast(x,y,displayObject.player,size,displayObject.health,displayObject.maxHealth,colors);
 			}
 			if(displayObject.identifier == "Cir"){
-				drawCircuitBreaker(x,y,displayObject.player,size,displayObject.health,displayObject.maxHealth,colors);
+				drawResonator(x,y,displayObject.player,size,displayObject.health,displayObject.maxHealth,colors);
 			}
 			if(displayObject.identifier == "Int"){
 				drawIntegrator(x,y,displayObject.player,size,displayObject.health,displayObject.maxHealth,colors);
@@ -578,7 +578,7 @@ export default class Display {
 				drawBallastProjectile(x,y,displayObject.player,size,colors,displayObject.damage, a);
 			}
 			if(displayObject.identifier == "CirProj"){
-				drawCircuitBreakerProjectile(x,y,displayObject.player,size,colors,displayObject.damage, a);
+				drawResonatorProjectile(x,y,displayObject.player,size,colors,displayObject.damage, a);
 			}
 			if(displayObject.identifier == "IntProj"){
 				drawIntegratorProjectile(x,y,displayObject.player,size,colors,displayObject.orientation,displayObject.damage, a);
@@ -931,7 +931,7 @@ export default class Display {
 				s.ellipse(x*size+size/2,y*size+size/2+i*size/20,s.abs(i)*size/10,s.abs(i))*size/10;
 			}
 		}
-		function drawCircuitBreaker(x,y,player,size,health,max,pColors){
+		function drawResonator(x,y,player,size,health,max,pColors){
 			s.fill((max-health)*255/max);
 			s.stroke(0);
 			s.strokeWeight(2);
@@ -1173,7 +1173,7 @@ export default class Display {
 
 		}
 
-		function drawCircuitBreakerProjectile(x, y, player, size, pColors, damage, a){
+		function drawResonatorProjectile(x, y, player, size, pColors, damage, a){
 			s.strokeWeight(1);
 			s.fill(pColors[player-1][0],pColors[player-1][1],pColors[player-1][2],105);
 			let crossHairOffset = size/5;

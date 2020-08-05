@@ -217,8 +217,11 @@ export default class Game {
 	}
 
 	collideProjWithObject(proj, obj, x, y) {
-		//obj.collidedWith = [true, proj.player];
+
+		// separate logic for colliding with a base / unit
 		switch (obj.objCategory) {
+
+			// COLLIDE WITH UNIT
 			case "Units":
 			console.log(proj.id, "( player", proj.player, ") hit ", obj.id, " ( player", obj.player, ")", obj.health);
 			if (proj.player !== obj.player) {
@@ -233,6 +236,8 @@ export default class Game {
 				this.deleteObjectAtCoord(proj, x, y);
 			}
 			break
+
+			// COLLIDE WITH BASE
 			case "Bases":
 			console.log(proj.id, "( player", proj.player, ") hit ", obj.id, " ( player", obj.player, ")", obj.health);
 			if (proj.player !== obj.player) {
@@ -244,7 +249,10 @@ export default class Game {
 					this.players[obj.player-1].baseCount = this.players[obj.player-1].baseCount - 1;
 				}
 			}
-			this.deleteObjectAtCoord(proj, x, y);
+
+			if (proj.ableToBeDestroyed) {
+				this.deleteObjectAtCoord(proj, x, y);
+			}
 			break
 		}
 	}
