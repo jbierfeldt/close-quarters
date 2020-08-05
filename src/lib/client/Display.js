@@ -69,10 +69,10 @@ export default class Display {
 			s.preload = () =>{
 				titleFont = s.loadFont('static/volt.ttf');
 				standardFont = s.loadFont('static/ISB.ttf');
-				img = s.loadImage('static/CCBolt.png');
+				//img = s.loadImage('static/CCBolt.png');
 				imgTwo = s.loadImage('static/CBoard3.png');
-				imgThree = s.loadImage('static/wallpaper1.png');
-				imgFour = s.loadImage('static/glassCopy.jpg');
+				//imgThree = s.loadImage('static/wallpaper1.png');
+				//imgFour = s.loadImage('static/glassCopy.jpg');
 			}
 
 			//Create the canvas based on the size of the user window
@@ -834,8 +834,8 @@ export default class Display {
 			s.translate(0,scale*siz*6);
 			s.stroke(0);
 			s.fill(255);
-			s.text(Units["Resonator"].maxHealth,wid/2+siz*3.75,siz*4)
-			s.text("0",wid/2+siz*9.9,siz*4)
+			s.text("Integrator",wid/2+siz*3.75,siz*4)
+			s.text(Units["Integrator"].maxHealth,wid/2+siz*9.9,siz*4)
 			s.noFill();
 			s.stroke(255);
 			s.strokeWeight(2);
