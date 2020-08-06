@@ -34,9 +34,10 @@ class App {
 
 	init() {
 		this.game = new Game();
-		this.game.init();
-
+		this.display = new Display(this);
 		this.socket = io();
+
+		this.game.init();
 
 		this.setGamePhase(0);
 
@@ -67,16 +68,14 @@ class App {
 			this.setGamePhase(data.newPhase);
 		})
 
-
-
 		this.socket.on('updatePlayerState', (data) => {
 			this.clientID = data.clientID;
 			this.playerNumber = data.playerNumber;
 			debug.log(1, 'updating PlayerState');
-		});
 
-		this.display = new Display(this);
-		this.display.init();
+			// after loaded, start display
+			this.display.init();
+		});
 	}
 
 	debugInit () {
