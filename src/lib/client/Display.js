@@ -183,9 +183,10 @@ export default class Display {
 
 					}
 					buttonMaker=0;
-
+					if(s.mouseIsPressed){
+						this.app.gamePhase = 1;
+					}
 					//Exit this phase and move to the Battle Phase if the mouse is pressed(button trigger to be added)
-
 				}
 
 				else if(this.app.gamePhase==1 && this.app.spectatorMode == false){
@@ -462,10 +463,8 @@ export default class Display {
 					else if(this.app.playerNumber == 4 && hoverX>14 && hoverY >= 10 && hoverX < 30 && hoverY < 20){
 						s.rect(hoverX*tempConfig.size,hoverY*tempConfig.size,tempConfig.size,tempConfig.size);
 					}
-
-
-
 					//Buttons Section
+
 				}
 				// if phase where grid should be shown, draw grid
 				else if(this.app.gamePhase==2 || this.app.spectatorMode == true){
@@ -769,7 +768,7 @@ export default class Display {
 			s.text("Oscillator",wid/2+siz*3.75,siz*4);
 			s.text(Units["Oscillator"].maxHealth,wid/2+siz*9.9,siz*4);
 			s.text(Units["Oscillator"].cost,wid/2+siz*12.6,siz*4);
-			
+
 
 			s.translate(0,-scale*siz*1);
 			//Ballast Button Decoration
