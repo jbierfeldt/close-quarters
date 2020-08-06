@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "build": "rimraf dist/ && babel ./src --out-dir dist/ --copy-files",
+    "production-build": "npm run build && browserify -p tinyify src/client.js -o dist/static/bundle.js -v",
     "start-dev": "npm run build && node dist/server.js & watchify src/client.js -o dist/static/bundle.js -v",
     "start": "npm run build && node dist/server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -38,6 +39,7 @@
     "babelify": "^10.0.0",
     "browserify": "^16.5.1",
     "rimraf": "^3.0.2",
+    "tinyify": "^3.0.0",
     "watchify": "^3.11.1"
   }
 }
