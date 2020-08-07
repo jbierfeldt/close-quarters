@@ -63,7 +63,7 @@ export default class Display {
 			let b;
 
 			let hoverObject;
-
+			let flag = [1,1,1,1];
 			p5.disableFriendlyErrors = true;
 			//Preload the fonts and other assets below
 			s.preload = () =>{
@@ -84,7 +84,7 @@ export default class Display {
 			//The draw function loops continuously while the sketch is active
 			//Different screens of the game are portioned off using trigger variables and user input to move between them
 			s.draw = () => {
-				if(this.app.game.players[this.app.playerNumber-1].victoryCondition == - 1){
+				if(this.app.game.players[this.app.playerNumber-1].victoryCondition[0] == - 1 && flag[this.app.playerNumber-1] == 0){
 					this.app.spectatorMode = true;
 				}
 
@@ -92,6 +92,7 @@ export default class Display {
 				/*if(this.app.spectatorMode = true){
 
 				}*/
+				let transitioning = 0;
 				//The below variables to be filled in by the size of the players current window
 				let wi=tempConfig.canvasX; //The width of the canvas
 				let he=tempConfig.canvasY; //The height of the canvas
@@ -298,7 +299,6 @@ export default class Display {
 									//bSubmit.confirmed = false;
 									bSubmit.submission();
 									bSubmit.func.call(this.app);
-
 								}
 							}
 
@@ -464,7 +464,13 @@ export default class Display {
 						s.rect(hoverX*tempConfig.size,hoverY*tempConfig.size,tempConfig.size,tempConfig.size);
 					}
 					//Buttons Section
+				/*	if(transitioning == 0){
+						transitionCounter = 0;
+						transitioning = - 1;
+					}
+					if(transitioning == -1){
 
+					}*/
 				}
 				// if phase where grid should be shown, draw grid
 				else if(this.app.gamePhase==2 || this.app.spectatorMode == true){
@@ -484,9 +490,37 @@ export default class Display {
 					animate=0;
 				}
 
-
 				if(this.t<Object.keys(this.simulationDisplayTurn.tick).length && this.t>0){
 					drawGrid(wi, he, si, this.playerColors);
+					for(let p = 0; p < 4; p = p + 1){
+						if(flag[p] == 0){
+							if(p == 1){
+								s.translate(0,he/2);
+							}
+							else if(p == 2){
+								s.translate(wi/2,0);
+							}
+							else if(p == 3){
+								s.translate(wi/2,he/2);
+							}
+								s.fill(0);
+								s.noStroke();
+								s.rect(0,0,wi/2,he/2);
+								s.textSize(si*1.6);
+								s.fill(this.playerColors[p][0], this.playerColors[p][1], this.playerColors[p][2], 255);
+								s.stroke(0);
+								s.text("Defeated",wi/8,he/4);
+								if(p == 1){
+									s.translate(0,-he/2);
+								}
+								else if(p == 2){
+									s.translate(-wi/2,0);
+								}
+								else if(p == 3){
+									s.translate(-wi/2,-he/2);
+								}
+						}
+					}
 					b = this.simulationDisplayTurn.tick[this.t].board;
 					for(var k=0; k<b.length; k=k+1){
 						for(var l=0; l<b[k].length; l=l+1){
@@ -547,13 +581,24 @@ export default class Display {
 							}
 						}
 					}
+					for(let p = 0; p < 4; p = p + 1){
+						if(this.app.game.players[p].victoryCondition[0] == - 1 && this.t == this.app.game.players[p].victoryCondition[1]){
+								flag[p] = 0;
+
+								/*s.fill(0);
+								s.noStroke();
+								s.rect(0,0,wi/2,he/2);*/
+						}
+					}
 
 				}
 				//IMPORTANT - ANIMATION SPEED
-				animate=animate+.75;
+				animate=animate+.8;
+
 
 			}
 			if(this.app.spectatorMode == true){
+			  this.app.sendSubmitTurn();
 				s.stroke(0,100);
 				s.fill(255,100);
 				s.strokeWeight(2);
@@ -561,7 +606,14 @@ export default class Display {
 				s.textFont(titleFont);
 				s.text("SPECTATOR MODE",wi/4.6,he/1.87);
 			}
+
 		}
+
+
+
+
+
+
 
 		//FUNCTIONS BELOW THIS LINE
 		class Buttoned {
@@ -1342,20 +1394,20 @@ function drawCreditsSymbol(x, y, size, player, a, pColors){
 			let rad = 360;
 			let radius=size/25;
 			s.translate(refx,refy);
-			for (let i = 0; i < rad; i = i + 20){
-				s.stroke(pColors[player-1][0],pColors[player-1][1],pColors[player-1][2], 30-a);
+			for (let i = 0; i < rad; i = i + 30){
+				s.stroke(pColors[player-1][0],pColors[player-1][1],pColors[player-1][2], 40-a);
 				theta = i*(360/rad);
 				phase=((Math.PI)/rad);
 				meh = (radius*1.5+11.5)*s.sin(wave*theta+phase)*s.cos(phase);
 				osx=(size/25+meh)*s.cos(theta);
 				osy=(size/25+meh)*s.sin(theta);
-				s.strokeWeight(9);
+				s.strokeWeight(8);
 				s.point(osx,osy);
 				s.strokeWeight(6);
 				s.point(osx,osy);
 				s.strokeWeight(3);
 				s.point(osx,osy);
-				s.stroke(255,25-a*2);
+				s.stroke(255,35-a*2);
 				s.strokeWeight(1.5);
 				s.point(osx,osy);
 			}

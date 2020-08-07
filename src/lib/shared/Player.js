@@ -11,7 +11,8 @@ export default class Player {
 		this.credits = 5;
 		this.baseCount = 0;
 		this.basePlaced = 0;
-		this.victoryCondition = 0;
+		//The second number keeps track of when in the simulation it happens.
+		this.victoryCondition = [0, 0];
 		this.damageDealtToBases = 0;
 	}
 
