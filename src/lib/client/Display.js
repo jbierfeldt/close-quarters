@@ -366,7 +366,12 @@ export default class Display {
 					s.textSize(wi/40);
 					for(let a = 0; a < 4; a = a + 1){
 						s.fill(this.playerColors[a][0], this.playerColors[a][1], this.playerColors[a][2], this.playerColors[a][3]);
+						if(this.app.game.players[a].victoryCondition[0] == - 1){
+							s.text("Player " + (a+1) + " Defeated" , wi/35, he/1.75+a*si);
+						}
+						else{
 						s.text("Player " + (a+1) + " Score: " + this.app.game.players[a].score, wi/35, he/1.75+a*si);
+						}
 					}
 					if(this.app.playerNumber == 2){
 						s.translate(-0,he/2);
