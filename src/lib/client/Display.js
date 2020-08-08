@@ -65,7 +65,8 @@ export default class Display {
 			let b;
 
 			let hoverObject;
-			let flag = [1,0,0,0];
+			let flag = [0,0,0,0];
+
 			p5.disableFriendlyErrors = true;
 			//Preload the fonts and other assets below
 			s.preload = () =>{
@@ -189,7 +190,7 @@ export default class Display {
 					}
 					buttonMaker=0;
 					if(s.mouseIsPressed){
-						this.app.gamePhase = 1;
+						this.app.setGamePhase(1);
 					}
 					//Exit this phase and move to the Battle Phase if the mouse is pressed(button trigger to be added)
 				}
@@ -515,13 +516,20 @@ export default class Display {
 								s.fill(0);
 								s.noStroke();
 								s.rect(0,0,wi/2,he/2);
-
+								if(p == 1){
+									s.translate(0,-he/2);
+								}
+								else if(p == 2){
+									s.translate(-wi/2,0);
+								}
+								else if(p == 3){
+									s.translate(-wi/2,-he/2);
+								}
 						}
 					}
 					b = this.simulationDisplayTurn.tick[this.t].board;
 					for(var k=0; k<b.length; k=k+1){
 						for(var l=0; l<b[k].length; l=l+1){
-
 							if(b[k][l].length != 0){
 								for(var m=0; m<b[k][l].length;m=m+1){
 									let displayObject = this.simulationDisplayTurn.tick[this.t].gameObjects.get(b[k][l][m]);
@@ -537,7 +545,6 @@ export default class Display {
 											}
 										}
 									 }
-
 									}
 								}
 							}
@@ -599,14 +606,25 @@ export default class Display {
 							else if(p == 3){
 								s.translate(wi/2,he/2);
 							}
-
 							s.textSize(si*1.6);
 							s.fill(this.playerColors[p][0], this.playerColors[p][1], this.playerColors[p][2], 255);
 							s.stroke(0);
 							s.text("Defeated",wi/8,he/4);
+							if(flag[p] == -1){
+								s.textFont(titleFont);
+								if(p == 1){
+									s.translate(0,-he/2);
+								}
+								else if(p == 2){
+									s.translate(-wi/2,0);
+								}
+								else if(p == 3){
+									s.translate(-wi/2,-he/2);
+								}
+							}
 						}
 							else if(flag[p] == 1){
-								//Victory Sequence, fix it. 
+								//Victory Sequence, fix it.
 								let row = 0;
 								for(let r = 0; r < wi; r = r + si*2){
 									if(row % 2 == 0){
@@ -634,7 +652,9 @@ export default class Display {
 				}
 				//IMPORTANT - ANIMATION SPEED
 				animate=animate+.8;
-
+				if(this.t === Object.keys(this.simulationDisplayTurn.tick).length - 1){
+					this.app.setGamePhase(1);
+				}
 
 			}
 			if(this.app.spectatorMode == true){
