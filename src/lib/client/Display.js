@@ -87,6 +87,8 @@ export default class Display {
 			//The draw function loops continuously while the sketch is active
 			//Different screens of the game are portioned off using trigger variables and user input to move between them
 			s.draw = () => {
+				//
+				//DEBUG this.app.setGamePhase(3);
 				if(this.app.game.players[this.app.playerNumber-1].victoryCondition[0] == - 1 && flag[this.app.playerNumber-1] == -1){
 					this.app.spectatorMode = true;
 				}
@@ -398,7 +400,7 @@ export default class Display {
 									let displayObject = this.app.game.gameObjects.get(board[k][l][m]);
 									if(displayObject !== undefined){
 										if(displayObject.player == this.app.playerNumber){
-											drawDisplayObject(displayObject, l, k,tempConfig.size, this.playerColors, animate);
+											drawDisplayObject(displayObject, l, k, si, this.playerColors, animate);
 										}
 									}
 								}
@@ -462,16 +464,16 @@ export default class Display {
 					s.fill(255,100);
 					s.noStroke();
 					if(this.app.playerNumber == 1 && hoverX <= 14 && hoverY < 10 && hoverX < 30 && hoverY < 20){
-						s.rect(hoverX*tempConfig.size,hoverY*tempConfig.size,tempConfig.size,tempConfig.size);
+						s.rect(hoverX*si,hoverY*si,si,si);
 					}
 					else if(this.app.playerNumber == 2 && hoverX<=14 && hoverY >= 10 && hoverX < 30 && hoverY < 20){
-						s.rect(hoverX*tempConfig.size,hoverY*tempConfig.size,tempConfig.size,tempConfig.size);
+						s.rect(hoverX*si,hoverY*si,si,si);
 					}
 					else if(this.app.playerNumber == 3 && hoverX>14 && hoverY < 10 && hoverX < 30 && hoverY < 20){
-						s.rect(hoverX*tempConfig.size,hoverY*tempConfig.size,tempConfig.size,tempConfig.size);
+						s.rect(hoverX*si,hoverY*si,si,si);
 					}
 					else if(this.app.playerNumber == 4 && hoverX>14 && hoverY >= 10 && hoverX < 30 && hoverY < 20){
-						s.rect(hoverX*tempConfig.size,hoverY*tempConfig.size,tempConfig.size,tempConfig.size);
+						s.rect(hoverX*si,hoverY*si,si,si);
 					}
 					//Buttons Section
 				/*	if(transitioning == 0){
@@ -535,13 +537,13 @@ export default class Display {
 									let displayObject = this.simulationDisplayTurn.tick[this.t].gameObjects.get(b[k][l][m]);
 									if(displayObject !== undefined){
 
-										drawDisplayObject(displayObject, l, k, tempConfig.size, this.playerColors, animate);
+										drawDisplayObject(displayObject, l, k, si, this.playerColors, animate);
 										if(displayObject.objCategory === "Units" || displayObject.objCategory === "Bases"){
 
 											if(displayObject.collidedWith.length > 0){
 											if(displayObject.collidedWith[0] == true){
 												debug.log(3,displayObject);
-												drawCollision(l,k, tempConfig.size, displayObject.collidedWith[1], animate, this.playerColors);
+												drawCollision(l,k, si, displayObject.collidedWith[1], animate, this.playerColors);
 											}
 										}
 									 }
@@ -653,9 +655,149 @@ export default class Display {
 				//IMPORTANT - ANIMATION SPEED
 				animate=animate+.8;
 				if(this.t === Object.keys(this.simulationDisplayTurn.tick).length - 1){
-					this.app.setGamePhase(1);
+					this.app.setGamePhase(3);
+
 				}
 
+			}
+			else if(this.app.gamePhase ==  3){
+				wi = tempConfig.canvasX * .8;
+				si = wi/30;
+				he = si*20;
+				//
+				this.t = Object.keys(this.simulationDisplayTurn.tick).length;
+					drawGrid(wi, he, si, this.playerColors);
+					for(let p = 0; p < 4; p = p + 1){
+						if(flag[p] == -1){
+							if(p == 1){
+								s.translate(0,he/2);
+							}
+							else if(p == 2){
+								s.translate(wi/2,0);
+							}
+							else if(p == 3){
+								s.translate(wi/2,he/2);
+							}
+								s.fill(0);
+								s.noStroke();
+								s.rect(0,0,wi/2,he/2);
+								if(p == 1){
+									s.translate(0,-he/2);
+								}
+								else if(p == 2){
+									s.translate(-wi/2,0);
+								}
+								else if(p == 3){
+									s.translate(-wi/2,-he/2);
+								}
+						}
+					}
+					b = this.simulationDisplayTurn.tick[this.t].board;
+					for(var k=0; k<b.length; k=k+1){
+						for(var l=0; l<b[k].length; l=l+1){
+							if(b[k][l].length != 0){
+								for(var m=0; m<b[k][l].length;m=m+1){
+									let displayObject = this.simulationDisplayTurn.tick[this.t].gameObjects.get(b[k][l][m]);
+									if(displayObject !== undefined){
+										if(displayObject.objCategory !=  "Projectiles"){
+										drawDisplayObject(displayObject, l, k, si, this.playerColors, animate);
+									}
+										if(displayObject.objCategory === "Units" || displayObject.objCategory === "Bases"){
+											if(displayObject.collidedWith.length > 0){
+											if(displayObject.collidedWith[0] == true){
+												debug.log(3,displayObject);
+												drawCollision(l,k, si, displayObject.collidedWith[1], animate, this.playerColors);
+											}
+										}
+									 }
+									}
+								}
+							}
+						}
+					}
+					//Tooltip Section
+					hoverX=s.int(s.mouseX/si);
+					hoverY=s.int(s.mouseY/si);
+					if(hoverX >= 0 && hoverX < 30 && hoverY >= 0 && hoverY < 20) {
+						if(b[hoverY][hoverX].length != 0){
+						hoverObject = this.simulationDisplayTurn.tick[this.t].gameObjects.get(this.simulationDisplayTurn.tick[this.t].board[hoverY][hoverX][0]);
+						if(hoverObject && hoverObject.objCategory != "Projectiles"){
+							s.stroke(0);
+							s.strokeWeight(3);
+							s.fill(255,125);
+							let transX = 0;
+							let transY = 0;
+							if(hoverX >= wi/(si*2) && hoverY < he/(si*2)){
+									transX = 1;
+							}
+							else if(hoverX >= wi/(si*2) && hoverY >= he/(si*2)){
+									transX = 1;
+									transY = 1;
+							}
+							else if(hoverX < wi/(si*2) && hoverY >= he/(si*2)){
+									transY = 1;
+							}
+							s.translate(-si*5*transX, -si*4*transY);
+							s.rect(hoverX*si+si,hoverY*si+si,si*4,si*3);
+							s.fill(this.playerColors[hoverObject.player-1][0], this.playerColors[hoverObject.player-1][1], this.playerColors[hoverObject.player-1][2], this.playerColors[hoverObject.player-1][3]);
+							s.stroke(0);
+							s.textFont(standardFont);
+							s.textSize(si/2.3);
+							s.text(hoverObject.fullName, hoverX*si+si*1.2,hoverY*si+si*1.7);
+							s.text("Health: " + hoverObject.health, hoverX*si+si*1.2,hoverY*si+si*2.65);
+							//s.text("Turns Active: " + hoverObject.turnsActive, hoverX*si+si*1.2,hoverY*si+si*2.8);
+							s.translate(si*5*transX, si*4*transY);
+							}
+						}
+					}
+					for(let p = 0; p < 4; p = p + 1){
+						if(this.app.game.players[p].victoryCondition[0] == - 1 && this.t == this.app.game.players[p].victoryCondition[1]){
+								flag[p] = -1;
+						}
+						if(this.app.game.players[p].victoryCondition[0] == 1 && this.t == this.app.game.players[p].victoryCondition[1]){
+								flag[p] = 1;
+						}
+					}
+
+					for(let p = 0; p < 4; p = p + 1){
+						if(flag[p] == -1){
+							s.textFont(titleFont);
+							if(p == 1){
+								s.translate(0,he/2);
+							}
+							else if(p == 2){
+								s.translate(wi/2,0);
+							}
+							else if(p == 3){
+								s.translate(wi/2,he/2);
+							}
+							s.textSize(si*1.6);
+							s.fill(this.playerColors[p][0], this.playerColors[p][1], this.playerColors[p][2], 255);
+							s.stroke(0);
+							s.text("Defeated",wi/8,he/4);
+							if(flag[p] == -1){
+								s.textFont(titleFont);
+								if(p == 1){
+									s.translate(0,-he/2);
+								}
+								else if(p == 2){
+									s.translate(-wi/2,0);
+								}
+								else if(p == 3){
+									s.translate(-wi/2,-he/2);
+								}
+							}
+						}
+					}
+					s.fill(0,150);
+					s.noStroke();
+					s.rect(wi,0,tempConfig.canvasX - wi,he);
+					s.rect(0,he,tempConfig.canvasX,tempConfig.canvasX-he);
+					s.textSize(si*1.05);
+					s.fill(this.playerColors[this.app.playerNumber-1][0], this.playerColors[this.app.playerNumber-1][1], this.playerColors[this.app.playerNumber-1][2], 255);
+					s.text("Review Mode", wi+si/3, si*1.5);
+					s.stroke(255);
+					s.line(wi+si/4,si*2,tempConfig.canvasX-si/4,si*2);
 			}
 			if(this.app.spectatorMode == true){
 			  this.app.sendSubmitTurn();
@@ -666,7 +808,6 @@ export default class Display {
 				s.textFont(titleFont);
 				s.text("SPECTATOR MODE",wi/4.6,he/1.87);
 			}
-
 		}
 
 
@@ -997,7 +1138,7 @@ export default class Display {
 
 		function drawGrid(wi, he, si, pColors) {
 
-			s.image(imgTwo,0,0,he*1.6,he);
+			s.image(imgTwo, 0, 0, tempConfig.canvasY*1.6, tempConfig.canvasY);
 
 			s.noStroke();
 			let opacity = 227;
@@ -1015,10 +1156,10 @@ export default class Display {
 			s.rect(wi/2,he/2,wi/2,he/2);
 			s.stroke(0,opacity);
 			s.strokeWeight(2);
-			for(let i = 0; i < (wi/si); i = i + 1){
+			for(let i = 0; i < 30; i = i + 1){
 				s.line(si*i, 0, si*i, he);
 			}
-			for(let j = 0; j < (he/si); j = j + 1){
+			for(let j = 0; j < 20; j = j + 1){
 				s.line(0, j*si, wi, j*si);
 			}
 		}

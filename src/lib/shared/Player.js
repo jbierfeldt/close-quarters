@@ -8,7 +8,7 @@ export default class Player {
 		this.id = id;
 		this.gold = 0;
 		this.score = 0;
-		this.credits = 5;
+		this.credits = 7;
 		this.baseCount = 0;
 		this.basePlaced = 0;
 		//The second number keeps track of when in the simulation it happens.
