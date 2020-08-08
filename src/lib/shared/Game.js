@@ -231,14 +231,14 @@ export default class Game {
 
 				obj.health = obj.health - proj.damage;
 				if (this.isObjectAlive(obj) === false) {
-					this.cleanUpArray.push(obj.id);
-					//this.deleteObjectAtCoord(obj, x, y);
+					//this.cleanUpArray.push(obj.id);
+					this.deleteObjectAtCoord(obj, x, y);
 				}
 			}
 
 			if (proj.ableToBeDestroyed) {
-				this.cleanUpArray.push(proj.id);
-				//this.deleteObjectAtCoord(proj, x, y);
+				//this.cleanUpArray.push(proj.id);
+				this.deleteObjectAtCoord(proj, x, y);
 			}
 			break
 
@@ -258,16 +258,16 @@ export default class Game {
 					this.players[proj.player-1].damageDealtToBases = this.players[proj.player-1].damageDealtToBases + (tempHealth - 0);
 				}
 				if (this.isObjectAlive(obj) === false) {
-					this.cleanUpArray.push(obj.id);
-					//this.deleteObjectAtCoord(obj, x, y);
+					//this.cleanUpArray.push(obj.id);
+					this.deleteObjectAtCoord(obj, x, y);
 					//WE DO NEED TO DELETE THE OBJECT
 					this.players[obj.player-1].baseCount = this.players[obj.player-1].baseCount - 1;
 				}
 			}
 
 			if (proj.ableToBeDestroyed) {
-				this.cleanUpArray.push(obj.id);
-				//this.deleteObjectAtCoord(proj, x, y);
+			//	this.cleanUpArray.push(obj.id);
+				this.deleteObjectAtCoord(proj, x, y);
 			}
 			break
 		}
@@ -368,6 +368,29 @@ export default class Game {
 			}
 		}
 	}
+	checkVictoryConditions(tick) {
+		let defeatedCount = 0;
+		for(let p = 0; p < 4; p = p + 1){
+
+		if(this.players[p].baseCount == 0 && this.players[p].victoryCondition[0] == 0){
+				this.players[p].victoryCondition = [-1, tick];
+				console.log("Player " + p + " Defeated at tick "+ tick);
+			}
+			if(this.players[p].victoryCondition[0] == - 1){
+				defeatedCount = defeatedCount + 1;
+				//clearPlayer'sUnits();
+			}
+		}
+		if(defeatedCount > 2){
+			for(let p = 0; p < 4; p = p + 1){
+				if(this.players[p].victoryCondition[0] == 0){
+					this.players[p].victoryCondition = [1, tick];
+					//Clear Projectiles
+					//End the Game
+				}
+			}
+		}
+	}
 
 	runSimulation(ticksPerTurn = tempConfig.ticksPerTurn) {
 		// updates game state based on ticks. Sweeps board and updates
@@ -464,9 +487,9 @@ export default class Game {
 							if (obj.objCategory === "Projectiles") {
 								for (let m = 0; m < collisionStack.length; m++) {
 									let collisionObj = this.gameObjects.get(collisionStack[m]);
-									if(this.isObjectAlive(collisionObj)){
-									this.collideProjWithObject(obj, collisionObj, j, i);
-								 }
+									//	if(this.isObjectAlive(collisionObj)){
+											this.collideProjWithObject(obj, collisionObj, j, i);
+								 	//}
 									//console.log(collisionObj.collidedWith);
 								}
 							}
@@ -487,16 +510,9 @@ export default class Game {
 			// update
 			// validate
 			// saveState
-			for(let p = 0; p < 4; p = p + 1){
-			if(this.players[p].baseCount == 0 && this.players[p].victoryCondition[0] == 0){
-				console.log(this.players[p].baseCount);
-					this.players[p].victoryCondition = [-1, tick];
-					console.log("Player " + p + " Defeated at tick "+ tick);
-				}
-				if(this.players[p].victoryCondition[0] == - 1){
-					//clearPlayer'sUnits();
-				}
-			}
+			//Victory and Defeat Logic & Conditions
+			this.checkVictoryConditions(tick);
+			//End Victory and Defeat Logic & Conditions
 			this.history.turn[this.turnNumber].tick[tick] = this.createGameSnapshot();
 		}
 
