@@ -29,7 +29,9 @@ export default class Projectile {
 			orientation: this.orientation,
 			speed: this.speed,
 			damage: this.damage,
-			distance: this.distance
+			distance: this.distance,
+			created: this.created,
+			projCount: this.projCount
 		}
 	}
 }
@@ -223,18 +225,48 @@ export class IntBullet extends Projectile {
 		this.ableToBeDestroyed = true;
 		this.dump = false;
 		this.distance = distance;
-		this.projArr = [];
 		this.player =player;
 		this.speed = initialSpeed;
 		this.orientation = initialOrientation;
 	}
 
 	static createFromSerialized (props) {
-		return new IntBullet(props.player, props.orientation, props.speed, props.damage, props.lifeSpan, props.distance, props.id);
+		return new IntBullet(props.player, props.orientation, props.speed, props.projCount, props.lifeSpan, props.distance, props.id);
 	}
 
 	update(tick) {
 		super.update(tick);
+	}
+
+	serialize () {
+		return super.serialize.call(this);
+	}
+}
+
+export class TriBullet extends Projectile {
+	constructor(player, initialOrientation = [0, 0], initialSpeed = 0, damage = 0, distance = 3, id)  {
+		super(player, initialOrientation, initialSpeed, id);
+		this.identifier = "TriProj";
+		this.damage = damage;
+		this.ableToBeDestroyed = false;
+		this.dump = false;
+		this.distance = distance;
+		this.player = player;
+		this.speed = initialSpeed;
+		this.orientation = initialOrientation;
+	}
+
+	static createFromSerialized (props) {
+		return new TriBullet(props.player, props.orientation, props.speed, props.damage, props.distance, props.id);
+	}
+
+	update(tick) {
+		super.update(tick);
+		if(this.distance == 0){
+			this.dump = true;
+			this.speed = 0;
+		}
+		this.distance = this.distance - 1;
 	}
 
 	serialize () {

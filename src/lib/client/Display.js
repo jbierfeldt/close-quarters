@@ -42,9 +42,11 @@ export default class Display {
 			let bMaglev;
 			let bJuggernode;
 			let bBallast;
+			let bTripwire;
 			let bResonator;
 			let bOscillator;
 			let bIntegrator;
+
 
 			let bSubmit;
 
@@ -63,7 +65,7 @@ export default class Display {
 			let b;
 
 			let hoverObject;
-			let flag = [1,1,1,1];
+			let flag = [1,0,0,0];
 			p5.disableFriendlyErrors = true;
 			//Preload the fonts and other assets below
 			s.preload = () =>{
@@ -84,7 +86,7 @@ export default class Display {
 			//The draw function loops continuously while the sketch is active
 			//Different screens of the game are portioned off using trigger variables and user input to move between them
 			s.draw = () => {
-				if(this.app.game.players[this.app.playerNumber-1].victoryCondition[0] == - 1 && flag[this.app.playerNumber-1] == 0){
+				if(this.app.game.players[this.app.playerNumber-1].victoryCondition[0] == - 1 && flag[this.app.playerNumber-1] == -1){
 					this.app.spectatorMode = true;
 				}
 
@@ -173,11 +175,13 @@ export default class Display {
 						unitButtons.push(bBallast);
 						bJuggernode=new Buttoned(wi/2+si-playerShifter,si*buttonScale*5,wi/2-si*2,si*buttonScale,"Juggernode",this.app.sendCreateUnit);
 						unitButtons.push(bJuggernode);
-						bMaglev=new Buttoned(wi/2+si-playerShifter,si*buttonScale*6,wi/2-si*2,si*buttonScale,"Maglev",this.app.sendCreateUnit);
+						bTripwire=new Buttoned(wi/2+si-playerShifter,si*buttonScale*6,wi/2-si*2,si*buttonScale,"Tripwire",this.app.sendCreateUnit);
+						unitButtons.push(bTripwire);
+						bMaglev=new Buttoned(wi/2+si-playerShifter,si*buttonScale*7,wi/2-si*2,si*buttonScale,"Maglev",this.app.sendCreateUnit);
 						unitButtons.push(bMaglev);
-						bResonator=new Buttoned(wi/2+si-playerShifter,si*buttonScale*7,wi/2-si*2,si*buttonScale,"Resonator",this.app.sendCreateUnit);
+						bResonator=new Buttoned(wi/2+si-playerShifter,si*buttonScale*8,wi/2-si*2,si*buttonScale,"Resonator",this.app.sendCreateUnit);
 						unitButtons.push(bResonator);
-						bIntegrator=new Buttoned(wi/2+si-playerShifter,si*buttonScale*8,wi/2-si*2,si*buttonScale,"Integrator",this.app.sendCreateUnit);
+						bIntegrator=new Buttoned(wi/2+si-playerShifter,si*buttonScale*9,wi/2-si*2,si*buttonScale,"Integrator",this.app.sendCreateUnit);
 						unitButtons.push(bIntegrator);
 						bOscillator=new Buttoned(wi/2+si-playerShifter,si*buttonScale*3,wi/2-si*2,si*buttonScale,"Oscillator",this.app.sendCreateUnit);
 						unitButtons.push(bOscillator);
@@ -498,7 +502,7 @@ export default class Display {
 				if(this.t<Object.keys(this.simulationDisplayTurn.tick).length && this.t>0){
 					drawGrid(wi, he, si, this.playerColors);
 					for(let p = 0; p < 4; p = p + 1){
-						if(flag[p] == 0){
+						if(flag[p] == -1){
 							if(p == 1){
 								s.translate(0,he/2);
 							}
@@ -511,19 +515,7 @@ export default class Display {
 								s.fill(0);
 								s.noStroke();
 								s.rect(0,0,wi/2,he/2);
-								s.textSize(si*1.6);
-								s.fill(this.playerColors[p][0], this.playerColors[p][1], this.playerColors[p][2], 255);
-								s.stroke(0);
-								s.text("Defeated",wi/8,he/4);
-								if(p == 1){
-									s.translate(0,-he/2);
-								}
-								else if(p == 2){
-									s.translate(-wi/2,0);
-								}
-								else if(p == 3){
-									s.translate(-wi/2,-he/2);
-								}
+
 						}
 					}
 					b = this.simulationDisplayTurn.tick[this.t].board;
@@ -544,7 +536,7 @@ export default class Display {
 												drawCollision(l,k, tempConfig.size, displayObject.collidedWith[1], animate, this.playerColors);
 											}
 										}
-									}
+									 }
 
 									}
 								}
@@ -588,13 +580,56 @@ export default class Display {
 					}
 					for(let p = 0; p < 4; p = p + 1){
 						if(this.app.game.players[p].victoryCondition[0] == - 1 && this.t == this.app.game.players[p].victoryCondition[1]){
-								flag[p] = 0;
-
-								/*s.fill(0);
-								s.noStroke();
-								s.rect(0,0,wi/2,he/2);*/
+								flag[p] = -1;
+						}
+						if(this.app.game.players[p].victoryCondition[0] == 1 && this.t == this.app.game.players[p].victoryCondition[1]){
+								flag[p] = 1;
 						}
 					}
+
+					for(let p = 0; p < 4; p = p + 1){
+						if(flag[p] == -1){
+							s.textFont(titleFont);
+							if(p == 1){
+								s.translate(0,he/2);
+							}
+							else if(p == 2){
+								s.translate(wi/2,0);
+							}
+							else if(p == 3){
+								s.translate(wi/2,he/2);
+							}
+
+							s.textSize(si*1.6);
+							s.fill(this.playerColors[p][0], this.playerColors[p][1], this.playerColors[p][2], 255);
+							s.stroke(0);
+							s.text("Defeated",wi/8,he/4);
+						}
+							else if(flag[p] == 1){
+								//Victory Sequence, fix it. 
+								let row = 0;
+								for(let r = 0; r < wi; r = r + si*2){
+									if(row % 2 == 0){
+									for(let c = s.sin(s.radians(this.delay*2))*he; c < s.sin(s.radians(this.delay*2))*he+si*4; c = c + si/8){
+										s.stroke(255);
+										s.ellipse(r,c,si,si);
+									}
+								}else{
+									for(let c = (he-s.sin(s.radians(this.delay*2))*he); c < (he-s.sin(s.radians(this.delay*2))*he+si*4); c = c + si/8){
+										s.stroke(255);
+										s.ellipse(r,c,si,si);
+									}
+								}
+									row = row + 1;
+								}
+								s.textFont(titleFont);
+								s.textSize(si*3.6);
+								s.fill(255, 255);
+								s.stroke(0);
+								s.text("Player "+ (p+1),wi/4,he/2.2);
+								s.text("Is Victorious",wi/13,he/1.5);
+							}
+						}
 
 				}
 				//IMPORTANT - ANIMATION SPEED
@@ -711,6 +746,9 @@ export default class Display {
 			if(displayObject.identifier == "Bal"){
 				drawBallast(x,y,displayObject.player,size,displayObject.health,Units["Ballast"].maxHealth,colors);
 			}
+			if(displayObject.identifier == "Tri"){
+				drawTripwire(x,y,displayObject.player,size,displayObject.health,Units["Tripwire"].maxHealth,colors,displayObject.tripped);
+			}
 			if(displayObject.identifier == "Cir"){
 				drawResonator(x,y,displayObject.player,size,displayObject.health,Units["Resonator"].maxHealth,colors);
 			}
@@ -731,6 +769,9 @@ export default class Display {
 			}
 			if(displayObject.identifier == "BalProj"){
 				drawBallastProjectile(x,y,displayObject.player,size,colors,displayObject.damage, a);
+			}
+			if(displayObject.identifier == "TriProj"){
+				drawTripwireProjectile(x,y,displayObject.player,size,colors,displayObject.orientation,displayObject.damage, a);
 			}
 			if(displayObject.identifier == "CirProj"){
 				drawResonatorProjectile(x,y,displayObject.player,size,colors,displayObject.damage, a);
@@ -846,17 +887,26 @@ export default class Display {
 			s.text(Units["Juggernode"].cost,wid/2+siz*12.6,siz*4);
 
 			s.translate(0,-scale*siz*3);
-			//Maglev Button Decoration
+
 			s.translate(0,scale*siz*4);
+			s.stroke(0);
+			s.fill(255);
+			s.text("Tripwire",wid/2+siz*3.75,siz*4)
+			s.text(Units["Tripwire"].maxHealth,wid/2+siz*9.9,siz*4)
+			s.text(Units["Tripwire"].cost,wid/2+siz*12.6,siz*4);
+
+			s.translate(0,-scale*siz*4);
+			//Maglev Button Decoration
+			s.translate(0,scale*siz*5);
 			s.stroke(0);
 			s.fill(255);
 			s.text("Maglev",wid/2+siz*3.75,siz*4)
 			s.text(Units["Maglev"].maxHealth,wid/2+siz*9.9,siz*4);
 			s.text(Units["Maglev"].cost,wid/2+siz*12.6,siz*4);
 			s.noFill();
-			s.translate(0,-scale*siz*4);
+			s.translate(0,-scale*siz*5);
 			//Circuit Breaker Button Decoration
-			s.translate(0,scale*siz*5);
+			s.translate(0,scale*siz*6);
 			s.stroke(0);
 			s.fill(255);
 			s.text("Resonator",wid/2+siz*3.75,siz*4);
@@ -864,9 +914,9 @@ export default class Display {
 			s.text(Units["Resonator"].cost,wid/2+siz*12.6,siz*4);
 			s.noFill();
 			s.stroke(255);
-			s.translate(0,-scale*siz*5);
+			s.translate(0,-scale*siz*6);
 
-			s.translate(0,scale*siz*6);
+			s.translate(0,scale*siz*7);
 			s.stroke(0);
 			s.fill(255);
 			s.text("Integrator",wid/2+siz*3.75,siz*4)
@@ -875,7 +925,7 @@ export default class Display {
 			s.noFill();
 			s.stroke(255);
 
-			s.translate(0,-scale*siz*6);
+			s.translate(0,-scale*siz*7);
 
 			if(player == 3 || player == 4){
 				s.translate(wid/2, 0);
@@ -1072,6 +1122,41 @@ export default class Display {
 
 		}
 
+		function drawTripwire(x, y, player, size, health, max, pColors, tripped){
+			let iconSize=size/3;
+			 s.stroke(0);
+			 s.strokeWeight(1);
+			 s.fill(0);
+			 s.translate(x*size+size/2, y*size+size/2);
+		   s.translate(0,iconSize/2);
+		   s.triangle(0,-iconSize*1.6,iconSize*.7,0,-iconSize*.7,0);
+		   s.ellipse(0,0,iconSize*2.2,10);
+		   s.triangle(-iconSize/1.65,-iconSize/1,-iconSize,0,-(s.abs(iconSize-s.abs(iconSize/1.2))),0);
+		   s.triangle(iconSize/1.65,-iconSize/1,+iconSize,0,(s.abs(iconSize-s.abs(iconSize/1.2))),0);
+		   s.noStroke();
+		   s.stroke(0);
+		   s.fill(0);
+		   s.line(-iconSize+1,0,iconSize-1,0);
+		   s.noStroke();
+		   s.ellipse(0,-iconSize/4.5,11,8);
+		   s.ellipse(0,-iconSize/7,12,9);
+		   s.stroke(0);
+		   s.ellipse(0,-iconSize/4.5,11,8);
+		   s.noStroke();
+		   s.ellipse(0,-iconSize/3.2,12,6);
+			 debug.log(3,tripped);
+			 if(tripped){
+				s.fill(pColors[player-1][0],pColors[player-1][1],pColors[player-1][2],255);
+ 			}
+			else{
+				s.fill(255);
+			}
+			 //s.fill(255);
+		   s.ellipse(0,-iconSize/2.3,iconSize/2,iconSize/2);
+		   s.translate(0,-iconSize/2);
+			 s.translate(-(x*size+size/2), -(y*size+size/2));
+		}
+
 		function drawJuggernode(x,y,player,size,health,max,pColors){
 			s.stroke(0);
 			s.strokeWeight(2);
@@ -1196,6 +1281,40 @@ export default class Display {
 			}
 			s.endShape();
 		}
+
+		function drawTripwireProjectile(x, y, player, size, pColors, orient, damage, a){
+			s.fill(pColors[player-1][0],pColors[player-1][1],pColors[player-1][2], 155);
+			s.stroke(0,255);
+			let refx = x*size + size/2 + orient[0]*(a-5)*size/10;
+			let refy = y*size + size/2 + orient[1]*(a-5)*size/10;
+
+			s.translate(refx,refy);
+			for(let angle = 0; angle < 360; angle = angle + 60){
+				s.rotate(s.radians(angle));
+				let endX;
+				let endY;
+				let xx = 0
+				let yy = 0;
+				while(yy < size/10){//to bottom of screen
+	       endX = xx + s.random(-size/10,size/10); //x-value varies
+	       endY = yy + size/40;    //y just goes up
+	     	 s.strokeWeight(1);//bolt is a little thicker than a line
+	     	 s.stroke(255); //white line
+	       s.line(xx,yy,endX,endY);//draw a tiny segment
+	       xx = endX;  //then x and y are moved to the
+	       yy = endY;  //end of the segment and so on
+	     }
+			 s.rotate(-s.radians(angle));
+	 	}
+	//translate(refx,refy);
+			s.stroke(0,255);
+			s.ellipse(0, 0, size/4,size/4);
+			s.translate(-refx,-refy);
+
+
+		}
+
+
 		function drawJuggernodeProjectile(x,y,player,size,pColors, orient, damage, a){
 			let refx=x*size;
 			let refy=y*size;
@@ -1388,19 +1507,18 @@ function drawCreditsSymbol(x, y, size, player, a, pColors){
 			let refx=x*size+size/2;
 			let refy=y*size+size/2;
 			let scalar = size/4;
-
 			s.noFill();
 			let theta=0;
 			let phase=0;
 			let meh=0;
 			let osx=0;
 			let osy=0;
-			let wave = 4+(x*y)%14;
+			let wave = 4+(x*y)%15;
 			let rad = 360;
 			let radius=size/25;
 			s.translate(refx,refy);
 			for (let i = 0; i < rad; i = i + 30){
-				s.stroke(pColors[player-1][0],pColors[player-1][1],pColors[player-1][2], 40-a);
+				s.stroke(pColors[player-1][0],pColors[player-1][1],pColors[player-1][2], 50-a);
 				theta = i*(360/rad);
 				phase=((Math.PI)/rad);
 				meh = (radius*1.5+11.5)*s.sin(wave*theta+phase)*s.cos(phase);
@@ -1412,7 +1530,7 @@ function drawCreditsSymbol(x, y, size, player, a, pColors){
 				s.point(osx,osy);
 				s.strokeWeight(3);
 				s.point(osx,osy);
-				s.stroke(255,35-a*2);
+				s.stroke(255,45-a*3);
 				s.strokeWeight(1.5);
 				s.point(osx,osy);
 			}

@@ -231,14 +231,14 @@ export default class Game {
 
 				obj.health = obj.health - proj.damage;
 				if (this.isObjectAlive(obj) === false) {
-					//this.cleanUpArray.push(obj.id);
-					this.deleteObjectAtCoord(obj, x, y);
+					this.cleanUpArray.push(obj.id);
+					//this.deleteObjectAtCoord(obj, x, y);
 				}
 			}
 
 			if (proj.ableToBeDestroyed) {
-				//this.cleanUpArray.push(proj.id);
-				this.deleteObjectAtCoord(proj, x, y);
+				this.cleanUpArray.push(proj.id);
+				//this.deleteObjectAtCoord(proj, x, y);
 			}
 			break
 
@@ -249,7 +249,7 @@ export default class Game {
 			if(proj.damage > 0){
 				obj.collidedWith = [true, proj.player];
 			}
-				let tempHealth = obj.health  ;
+				let tempHealth = obj.health;
 				obj.health = obj.health - proj.damage;
 				if(obj.health > 0){
 				this.players[proj.player-1].damageDealtToBases = this.players[proj.player-1].damageDealtToBases + (tempHealth - obj.health);
@@ -258,16 +258,16 @@ export default class Game {
 					this.players[proj.player-1].damageDealtToBases = this.players[proj.player-1].damageDealtToBases + (tempHealth - 0);
 				}
 				if (this.isObjectAlive(obj) === false) {
-					//this.cleanUpArray.push(obj.id);
-					this.deleteObjectAtCoord(obj, x, y);
+					this.cleanUpArray.push(obj.id);
+					//this.deleteObjectAtCoord(obj, x, y);
 					//WE DO NEED TO DELETE THE OBJECT
 					this.players[obj.player-1].baseCount = this.players[obj.player-1].baseCount - 1;
 				}
 			}
 
 			if (proj.ableToBeDestroyed) {
-			//	this.cleanUpArray.push(obj.id);
-				this.deleteObjectAtCoord(proj, x, y);
+			  this.cleanUpArray.push(proj.id);
+				//this.deleteObjectAtCoord(proj, x, y);
 			}
 			break
 		}
@@ -487,9 +487,9 @@ export default class Game {
 							if (obj.objCategory === "Projectiles") {
 								for (let m = 0; m < collisionStack.length; m++) {
 									let collisionObj = this.gameObjects.get(collisionStack[m]);
-									//	if(this.isObjectAlive(collisionObj)){
+									  if(this.isObjectAlive(collisionObj)){
 											this.collideProjWithObject(obj, collisionObj, j, i);
-								 	//}
+								 	}
 									//console.log(collisionObj.collidedWith);
 								}
 							}
