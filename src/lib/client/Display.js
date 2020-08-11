@@ -15,11 +15,11 @@ export default class Display {
 		this.engine = engine;
 		this.stage = stage;
 		this.phase = 0;
-		this.playerColors =[[255,0,128,255],[176,196,243,255],[152, 255, 152,255],[210,130,240,255]];
-		this.unitList =[];
-		this.delay=0;
-		this.board=[[]];
-		this.t=1;
+		this.playerColors = [[255,0,128,255],[176,196,243,255],[152, 255, 152,255],[210,130,240,255]];
+		this.unitList = [];
+		this.delay = 0;
+		this.board = [[]];
+		this.t = 1;
 	}
 
 	init() {
@@ -206,8 +206,8 @@ export default class Display {
 				}
 
 				else if(this.app.gamePhase==1 && this.app.spectatorMode == false){
-					this.t=1;
-					animate=0;
+					this.t = 1;
+					animate = 0;
 
 					s.image(imgTwo,0,0,he*1.6,he);
 					if(this.app.playerNumber == 1){
@@ -391,14 +391,37 @@ export default class Display {
 					//s.text("Deal Damage To Opposing", wi/3.2, he/1.45);
           //s.text("Cores To Earn Credits", wi/3.1, he/1.4);
 					s.textSize(wi/40);
-					for(let a = 0; a < 4; a = a + 1){
-						s.fill(this.playerColors[a][0], this.playerColors[a][1], this.playerColors[a][2], this.playerColors[a][3]);
-						if(this.app.game.players[a].victoryCondition[0] == - 1){
+
+
+					for(let a = 1; a <= 4; a = a + 1){
+						s.fill(this.playerColors[a-1][0], this.playerColors[a-1][1], this.playerColors[a-1][2], this.playerColors[a-1][3]);
+						if (this.app.playersOnServer[a] !== null) {
+						switch (this.app.playersOnServer[a].gamePhase) {
+							case 0:
+							s.text("Loading", wi/35, he/1.75+(a-1)*si);
+
+							//newPlayerSpan.innerHTML = "Loading...";
+							break
+							case 1:
+							if (this.app.playersOnServer[a].ordersSubmitted) {
+							//	newPlayerSpan.innerHTML = "Orders submitted.";
+								s.text("Orders Submitted", wi/35, he/1.75+(a-1)*si);
+
+							} else {
+								s.text("Making Turn", wi/35, he/1.75+(a-1)*si);
+								//newPlayerSpan.innerHTML = "Making Turn...";
+							}
+						}
+					}
+					else {
+						s.text("Waiting For Player", wi/35, he/1.75+(a-1)*si);
+					}
+						/*f(this.app.game.players[a].victoryCondition[0] == - 1){
 							s.text("Player " + (a+1) + " Defeated" , wi/35, he/1.75+a*si);
 						}
 						else{
 						s.text("Player " + (a+1) + " Score: " + this.app.game.players[a].score, wi/35, he/1.75+a*si);
-						}
+					}*/
 					}
 					if(this.app.playerNumber == 2){
 						s.translate(-0,he/2);
@@ -654,7 +677,8 @@ export default class Display {
 										s.stroke(255);
 										s.ellipse(r,c,si,si);
 									}
-								}else{
+								}
+								else{
 									for(let c = (he-s.sin(s.radians(this.delay*2))*he); c < (he-s.sin(s.radians(this.delay*2))*he+si*4); c = c + si/8){
 										s.stroke(255);
 										s.ellipse(r,c,si,si);
@@ -681,7 +705,7 @@ export default class Display {
 				}
 
 			}
-			else if(this.app.gamePhase ==  3){
+			else if(this.app.gamePhase ==  3 && flag[this.app.playerNumber-1] != -1){
 				if(sideBarGrowth > 0.8){
 					sideBarGrowth = sideBarGrowth - .001;
 				}
@@ -859,9 +883,11 @@ export default class Display {
 					//bSubmit.func.call(this.app,1);
 			}
 			if(this.app.spectatorMode == true){
-				if(this.t = (Object.keys(this.simulationDisplayTurn.tick).length - 1)){
-					this.t = 0;
+
+				if(this.t = (Object.keys(this.simulationDisplayTurn.tick).length-1)){
+					this.t = 1;
 				}
+
 			  this.app.sendSubmitTurn();
 				s.stroke(0,100);
 				s.fill(255,100);
@@ -1777,7 +1803,7 @@ function drawCreditsSymbol(x, y, size, player, a, pColors){
 
 	this.engine = new p5(sketch);
 
-	//console.log('Initialized Display');
+
 }
 
 }

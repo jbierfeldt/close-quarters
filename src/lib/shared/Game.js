@@ -489,7 +489,6 @@ export default class Game {
 			// saveState
 			for(let p = 0; p < 4; p = p + 1){
 			if(this.players[p].baseCount == 0 && this.players[p].victoryCondition[0] == 0){
-				console.log(this.players[p].baseCount);
 					this.players[p].victoryCondition = [-1, tick];
 					console.log("Player " + p + " Defeated at tick "+ tick);
 				}
