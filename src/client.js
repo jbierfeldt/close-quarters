@@ -313,6 +313,9 @@ class App {
 						case 2:
 						newPlayerSpan.innerHTML = "Watching Simulation...";
 						break
+						case 3:
+						newPlayerSpan.innerHTML = "Reviewing Board...";
+						break
 					}
 				} else {
 					newPlayerSpan.innerHTML = "Empty";
