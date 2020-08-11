@@ -859,7 +859,7 @@ export default class Display {
 					//bSubmit.func.call(this.app,1);
 			}
 			if(this.app.spectatorMode == true){
-				if(this.t = (Object.keys(this.simulationDisplayTurn.tick).length - 1){
+				if(this.t = (Object.keys(this.simulationDisplayTurn.tick).length - 1)){
 					this.t = 0;
 				}
 			  this.app.sendSubmitTurn();
