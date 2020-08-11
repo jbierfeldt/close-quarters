@@ -368,29 +368,6 @@ export default class Game {
 			}
 		}
 	}
-	checkVictoryConditions(tick) {
-		let defeatedCount = 0;
-		for(let p = 0; p < 4; p = p + 1){
-
-		if(this.players[p].baseCount == 0 && this.players[p].victoryCondition[0] == 0){
-				this.players[p].victoryCondition = [-1, tick];
-				console.log("Player " + p + " Defeated at tick "+ tick);
-			}
-			if(this.players[p].victoryCondition[0] == - 1){
-				defeatedCount = defeatedCount + 1;
-				//clearPlayer'sUnits();
-			}
-		}
-		if(defeatedCount > 2){
-			for(let p = 0; p < 4; p = p + 1){
-				if(this.players[p].victoryCondition[0] == 0){
-					this.players[p].victoryCondition = [1, tick];
-					//Clear Projectiles
-					//End the Game
-				}
-			}
-		}
-	}
 
 	runSimulation(ticksPerTurn = tempConfig.ticksPerTurn) {
 		// updates game state based on ticks. Sweeps board and updates
@@ -510,9 +487,16 @@ export default class Game {
 			// update
 			// validate
 			// saveState
-			//Victory and Defeat Logic & Conditions
-			this.checkVictoryConditions(tick);
-			//End Victory and Defeat Logic & Conditions
+			for(let p = 0; p < 4; p = p + 1){
+			if(this.players[p].baseCount == 0 && this.players[p].victoryCondition[0] == 0){
+				console.log(this.players[p].baseCount);
+					this.players[p].victoryCondition = [-1, tick];
+					console.log("Player " + p + " Defeated at tick "+ tick);
+				}
+				if(this.players[p].victoryCondition[0] == - 1){
+					//clearPlayer'sUnits();
+				}
+			}
 			this.history.turn[this.turnNumber].tick[tick] = this.createGameSnapshot();
 		}
 
