@@ -35,8 +35,12 @@ export default class Display {
 			let submitShifterX;
 			let submitShifterY;
 			let gameStart;
+			let sideBarGrowth = 1;
+			let sideBarMenu = false;
 
 			//Button Declarations
+			let bPhaseOne;
+			let bPhaseThree;
 			let bBase;
 			let bRayTracer;
 			let bMaglev;
@@ -88,7 +92,7 @@ export default class Display {
 			//Different screens of the game are portioned off using trigger variables and user input to move between them
 			s.draw = () => {
 				//
-				//DEBUG this.app.setGamePhase(3);
+				//this.app.setGamePhase(3);
 				if(this.app.game.players[this.app.playerNumber-1].victoryCondition[0] == - 1 && flag[this.app.playerNumber-1] == -1){
 					this.app.spectatorMode = true;
 				}
@@ -167,6 +171,10 @@ export default class Display {
 							submitShifterX = wi/2;
 							submitShifterY = he/2;
 						}
+
+						bPhaseOne = new Buttoned(wi-si*5.55, si*2.9,si*5.1,si*1.1,"Deploy Machines",this.app.setGamePhase);
+						bPhaseThree = new Buttoned(wi/3.2 + submitShifterX, he/1.65 - submitShifterY,si*6.1,si*1.1,"Review Board",this.app.setGamePhase);
+
 						bSubmit = new Buttoned(wi/3.2 + submitShifterX, he/1.85 - submitShifterY,si*5,si*1.1,"Submit Turn",this.app.sendSubmitTurn);
 
 						bBase=new Buttoned(wi/2+si-playerShifter,si*buttonScale*2,wi/2-si*2,si*buttonScale*3,"Base",this.app.sendCreateBase);
@@ -261,6 +269,13 @@ export default class Display {
 					else{
 						s.textSize(wi/40);
 						gameStart=1;
+						if(this.app.turnNumber > 1){
+						bPhaseThree.drawButton();
+						s.fill(255);
+						s.stroke(0);
+						s.text("Review Board", bPhaseThree.xx+si/5, bPhaseThree.yy+si/1.25);
+					}
+
 						if(bSubmit.submitted === false){
 						bSubmit.drawButton();
 					}
@@ -295,7 +310,11 @@ export default class Display {
 						//drawUnitMenu(this.playerColors,this.app.playerNumber, buttonScale);
 
 						if(s.mouseIsPressed){
-
+							if(this.app.turnNumber > 1){
+							if(bPhaseThree.isInRange(s.mouseX,s.mouseY)){
+								bPhaseThree.func.call(this.app,3);
+							}
+						}
 							if(bSubmit.isInRange(s.mouseX,s.mouseY)){
 								bSubmit.buttonHasBeenPressed();
 								if(bSubmit.isPressed === true && bSubmit.confirmed === false){
@@ -364,12 +383,12 @@ export default class Display {
 					s.fill(255);
 					s.stroke(0);
 					s.strokeWeight(1);
-					drawCreditsSymbol(wi/2.73, he/1.57, si*.75, this.app.playerNumber, 10, this.playerColors);
-					s.text(":  "+this.app.game.players[this.app.playerNumber-1].credits, wi/2.53, he/1.54);
+					drawCreditsSymbol(wi/2.73, he/1.43, si*.75, this.app.playerNumber, 10, this.playerColors);
+					s.text(":  "+this.app.game.players[this.app.playerNumber-1].credits, wi/2.53, he/1.405);
 					s.textSize(wi/80);
 					s.fill(255);
-					s.text("Deal Damage To Opposing", wi/3.2, he/1.45);
-          s.text("Cores To Earn Credits", wi/3.1, he/1.4);
+					//s.text("Deal Damage To Opposing", wi/3.2, he/1.45);
+          //s.text("Cores To Earn Credits", wi/3.1, he/1.4);
 					s.textSize(wi/40);
 					for(let a = 0; a < 4; a = a + 1){
 						s.fill(this.playerColors[a][0], this.playerColors[a][1], this.playerColors[a][2], this.playerColors[a][3]);
@@ -542,7 +561,7 @@ export default class Display {
 
 											if(displayObject.collidedWith.length > 0){
 											if(displayObject.collidedWith[0] == true){
-												debug.log(3,displayObject);
+
 												drawCollision(l,k, si, displayObject.collidedWith[1], animate, this.playerColors);
 											}
 										}
@@ -656,12 +675,19 @@ export default class Display {
 				animate=animate+.8;
 				if(this.t === Object.keys(this.simulationDisplayTurn.tick).length - 1){
 					this.app.setGamePhase(3);
-
+					sideBarGrowth = 1;
+					sideBarMenu = false;
 				}
 
 			}
 			else if(this.app.gamePhase ==  3){
-				wi = tempConfig.canvasX * .8;
+				if(sideBarGrowth > 0.8){
+					sideBarGrowth = sideBarGrowth - .001;
+				}
+				else{
+					sideBarMenu = true;
+				}
+				wi = tempConfig.canvasX * sideBarGrowth;
 				si = wi/30;
 				he = si*20;
 				//
@@ -705,7 +731,6 @@ export default class Display {
 										if(displayObject.objCategory === "Units" || displayObject.objCategory === "Bases"){
 											if(displayObject.collidedWith.length > 0){
 											if(displayObject.collidedWith[0] == true){
-												debug.log(3,displayObject);
 												drawCollision(l,k, si, displayObject.collidedWith[1], animate, this.playerColors);
 											}
 										}
@@ -789,15 +814,48 @@ export default class Display {
 							}
 						}
 					}
+
+					s.textFont(titleFont);
 					s.fill(0,150);
 					s.noStroke();
 					s.rect(wi,0,tempConfig.canvasX - wi,he);
 					s.rect(0,he,tempConfig.canvasX,tempConfig.canvasX-he);
+				if(sideBarMenu == true){
 					s.textSize(si*1.05);
 					s.fill(this.playerColors[this.app.playerNumber-1][0], this.playerColors[this.app.playerNumber-1][1], this.playerColors[this.app.playerNumber-1][2], 255);
+					s.stroke(0);
 					s.text("Review Mode", wi+si/3, si*1.5);
 					s.stroke(255);
 					s.line(wi+si/4,si*2,tempConfig.canvasX-si/4,si*2);
+					s.textSize(si*.7);
+
+					bPhaseOne.drawButton();
+
+
+					s.fill(255);
+					s.stroke(0);
+					s.text("Deploy Machines", wi+si/1.3, si*4.5);
+          s.textSize(si*.62);
+					for(let a = 0; a < 4; a = a + 1){
+						s.fill(this.playerColors[a][0], this.playerColors[a][1], this.playerColors[a][2], this.playerColors[a][3]);
+						if(this.app.game.players[a].victoryCondition[0] == - 1){
+							s.text("Player " + (a+1) + " Defeated" , wi+si/1.6, si*7+a*si);
+						}
+						else{
+						s.text("Player " + (a+1) + " Score: " + this.app.game.players[a].score, wi+si/1.6, si*7+a*si);
+						}
+					}
+					s.textSize(si*1.1);
+					drawCreditsSymbol(wi+si/.45, si*13, si*1.3, this.app.playerNumber, 10, this.playerColors);
+					s.stroke(0);
+					s.strokeWeight(2);
+					s.text(":  "+this.app.game.players[this.app.playerNumber-1].credits, wi+si/.28, si*13.4);
+
+					if(s.mouseIsPressed && bPhaseOne.isInRange(s.mouseX,s.mouseY)){
+						bPhaseOne.func.call(this.app,1);
+					}
+				}
+					//bSubmit.func.call(this.app,1);
 			}
 			if(this.app.spectatorMode == true){
 			  this.app.sendSubmitTurn();
@@ -1004,7 +1062,7 @@ export default class Display {
 			s.vertex(refXX,refYY);
 			s.endShape();
 
-			drawCreditsSymbol(refXX+siz*2.32, refYY+siz/2, siz, player, 10, pColors);
+			drawCreditsSymbol(refXX+siz*2.32, refYY+siz/2.05, siz, player, 10, pColors);
 			//s.text("Cost",wid/2+siz*12.3,siz*2.45);
 			s.textSize(wid/37);
 			//s.textFont(standardFont);
@@ -1305,7 +1363,7 @@ export default class Display {
 		   s.ellipse(0,-iconSize/4.5,11,8);
 		   s.noStroke();
 		   s.ellipse(0,-iconSize/3.2,12,6);
-			 debug.log(3,tripped);
+
 			 if(tripped){
 				s.fill(pColors[player-1][0],pColors[player-1][1],pColors[player-1][2],255);
  			}
