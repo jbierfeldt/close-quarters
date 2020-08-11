@@ -206,6 +206,8 @@ export default class Display {
 				}
 
 				else if(this.app.gamePhase==1 && this.app.spectatorMode == false){
+					this.t=1;
+					animate=0;
 
 					s.image(imgTwo,0,0,he*1.6,he);
 					if(this.app.playerNumber == 1){
@@ -233,8 +235,7 @@ export default class Display {
 						s.rect(0,he/2,wi/2,he/2);
 					}
 					//s.background(0,190);
-					this.t=1;
-					animate=0;
+
 
 					if(this.app.game.players[this.app.playerNumber-1].baseCount < 2 && gameStart == 0){
 						bBase.drawButton();
@@ -858,6 +859,9 @@ export default class Display {
 					//bSubmit.func.call(this.app,1);
 			}
 			if(this.app.spectatorMode == true){
+				if(this.t = (Object.keys(this.simulationDisplayTurn.tick).length - 1){
+					this.t = 0;
+				}
 			  this.app.sendSubmitTurn();
 				s.stroke(0,100);
 				s.fill(255,100);
