@@ -258,6 +258,11 @@ class GameController {
 		// update all clients on who has submitted orders
 		this.sendServerStateToAll();
 
+		//  check if players Online
+		if (this.playersOnline.length == 0) {
+			return false;
+		}
+		
 		// check if all the online players have submitted their orders
 		// if not, return false and don't execute
 		for (let i = 0; i < this.playersOnline.length; i++) {
