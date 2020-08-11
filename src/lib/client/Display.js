@@ -672,7 +672,7 @@ export default class Display {
 
 				}
 				//IMPORTANT - ANIMATION SPEED
-				animate=animate+.8;
+				animate=animate+1;
 				if(this.t === Object.keys(this.simulationDisplayTurn.tick).length - 1){
 					this.app.setGamePhase(3);
 					sideBarGrowth = 1;
