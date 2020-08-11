@@ -266,7 +266,7 @@ export default class Game {
 			}
 
 			if (proj.ableToBeDestroyed) {
-				this.cleanUpArray.push(obj.id);
+			  this.cleanUpArray.push(proj.id);
 				//this.deleteObjectAtCoord(proj, x, y);
 			}
 			break
@@ -464,9 +464,9 @@ export default class Game {
 							if (obj.objCategory === "Projectiles") {
 								for (let m = 0; m < collisionStack.length; m++) {
 									let collisionObj = this.gameObjects.get(collisionStack[m]);
-									if(this.isObjectAlive(collisionObj)){
-									this.collideProjWithObject(obj, collisionObj, j, i);
-								 }
+									  if(this.isObjectAlive(collisionObj)){
+											this.collideProjWithObject(obj, collisionObj, j, i);
+								 	}
 									//console.log(collisionObj.collidedWith);
 								}
 							}

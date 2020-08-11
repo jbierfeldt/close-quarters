@@ -37,8 +37,12 @@ export default class Unit {
 			player: this.player,
 			health: this.health,
 			firing: this.firing,
-			collidedWith: this.collidedWith
-			//turnsActive: this.turnsActive
+			collidedWith: this.collidedWith,
+			tripped: this.tripped,
+			lifeSpan: this.lifeSpan,
+			ticksSinceDamage: this.ticksSinceDamage,
+			tripDamage: this.tripDamage
+			//ADD ALL OTHER VARIABLES
 	}
 
 }
@@ -114,7 +118,6 @@ export class Oscillator extends Unit {
 		this.player = player;
 		this.health = health;
 		this.firing = firing;
-		this.maxHealth = 250;
 		this.identifier = "Osc";
 		this.projArr = [];
 		this.collidedWith = collidedWith;
@@ -145,7 +148,7 @@ export class Oscillator extends Unit {
 		this.collidedWith = [false, 4];
 		// reset firing
 		this.firing = false;
-		// Ray Tracer fires every 4 ticks
+		// Oscillator fires at the beginning of the turn
 		if (tick === 1) {
 			if(this.player == 1){
 				this.startAttack([1,1]);
@@ -245,7 +248,6 @@ export class Maglev extends Unit {
 	startAttack(tick){
 		this.firing = true;
 		let firingChoice = Math.floor(Math.random()*2);
-		const arr = []
 		let i = 0;
 		for(let a = -1; a < 2; a = a + 1){
 			for(let b = -1; b < 2; b = b + 1){
@@ -284,6 +286,73 @@ export class Maglev extends Unit {
 		return super.serialize.call(this);
 	}
 
+}
+export class Tripwire extends Unit {
+
+	constructor(player, health = 250, firing = false, id, collidedWith = [false, 4], ticksSinceDamage = 0,tripped = false, tripDamage = 0)  {
+		super(id);
+		this.player = player;
+		this.health = health;
+		this.tripDamage = tripDamage;
+		this.firing = firing;
+		this.identifier="Tri";
+		this.projArr = [];
+		this.collidedWith = collidedWith;
+		this.ticksSinceDamage = ticksSinceDamage;
+		this.tripped = tripped;
+		this.value = 2;
+		this.fullName = "Tripwire";
+	}
+
+	static maxHealth = 250;
+	static cost = 2;
+	static description = "The Tripwire is...";
+
+	static createFromSerialized (props) {
+		return new Tripwire(props.player, props.health, props.firing, props.id, props.collidedWith, props.ticksSinceDamage, props.tripped, props.tripDamage);
+	}
+
+	startAttack (damage){
+		this.firing = true;
+		let i = 0;
+		for(let a = -1; a < 2; a = a + 1){
+			for(let b = -1; b < 2; b = b + 1){
+				if(a !== 0 || b !== 0){
+							this.projArr[i] = new Projectiles.TriBullet(this.player, [a,b], 1, damage);
+							i = i + 1;
+				}
+			}
+		}
+	}
+
+	update (tick) {
+		super.update(tick);
+		console.log(this.tripped);
+		this.firing=false;
+		this.ticksSinceDamage = this.ticksSinceDamage + 1;
+		if(this.collidedWith[0] == true && this.tripped == false){
+			this.ticksSinceDamage = 0;
+			this.tripped = true;
+			console.log("TRIPWIRE HIT");
+		}
+		else if(this.collidedWith[0] == true && this.tripped == true){
+			if(this.ticksSinceDamage < 10){
+				this.startAttack((this.constructor.maxHealth - this.health));
+				this.tripped = false;
+			}
+			else{
+				console.log("TRIPWIRE TURNED OFF");
+				this.tripped = false;
+			}
+		}
+		//this.startAttack(0);
+		this.collidedWith = [false, 4];
+		//this.firing=false;
+	}
+
+	serialize () {
+		return super.serialize.call(this);
+	}
 }
 
 export class Ballast extends Unit {
