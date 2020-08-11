@@ -5,7 +5,7 @@ import * as Units from './lib/shared/Unit.js';
 import * as Bases from './lib/shared/Base.js';
 import {DEBUG} from './lib/shared/utilities.js';
 
-window.debug = new DEBUG(true, 3);
+window.debug = new DEBUG(true, 0);
 
 const debugData = {
 	'playerNumber': 1
@@ -27,21 +27,62 @@ class App {
 		this.currentTurnInitialState = {};
 		this.lastTurnHistory = {};
 		this.clientID = undefined;
+		this.token = undefined;
 		this.playerNumber = undefined;
 		this.playersOnServer = undefined;
 		this.spectatorMode = false;
+		this.loadedClientInfoFromServer = false;
 	}
 
 	init() {
 		this.game = new Game();
 		this.display = new Display(this);
-		this.socket = io();
+		this.socket = io({
+			query: {
+				token: localStorage.getItem('authToken') || ''
+			}
+		});
 
 		this.game.init();
-
 		this.setGamePhase(0);
-
 		this.debugInit();
+
+		this.bindListeners();
+	}
+
+	onFinishedLoading () {
+		this.display.init();
+	}
+
+	bindListeners () {
+
+		this.socket.on('message', (data) => {
+			debug.log(0, data);
+		})
+
+		this.socket.on('disconnect', (reason) => {
+			// if (reason === 'io server disconnect') {
+			// 	// the disconnection was initiated by the server, you need to reconnect manually
+			// 	socket.connect();
+			// }
+			console.log('disconnect', reason);
+			// else the socket will automatically try to reconnect
+		});
+
+		this.socket.on('connect', () => {
+			console.log("connect");
+		});
+
+		this.socket.on('reconnect_attempt', () => {
+			console.log('reconnect attempt...', this.socket);
+			this.socket.io.opts.query = {
+				token: this.token || ''
+			};
+		});
+
+		this.socket.on('reconnect', (attemptNumber) => {
+			console.log('reconnect');
+		});
 
 		this.socket.on('updateServerState', (data) => {
 			let players = JSON.parse(data.players);
@@ -68,14 +109,21 @@ class App {
 			this.setGamePhase(data.newPhase);
 		})
 
-		this.socket.on('updatePlayerState', (data) => {
+		this.socket.on('updateClientInfo', (data) => {
+			this.updateTokenInfo(data.token);
+
 			this.clientID = data.clientID;
 			this.playerNumber = data.playerNumber;
-			debug.log(1, 'updating PlayerState');
 
-			// after loaded, start display
-			this.display.init();
-		});
+			// if first time getting clientInfo, start Display
+			if (this.loadedClientInfoFromServer === false) {
+				this.onFinishedLoading();
+				this.loadedClientInfoFromServer = true;
+			}
+
+			debug.log(1, "Got Client Info");
+		})
+
 	}
 
 	debugInit () {
@@ -85,6 +133,8 @@ class App {
 		document.getElementById("reset-game").addEventListener("click", this.sendResetGame.bind(this));
 		document.getElementById("phase-1").addEventListener("click", this.setGamePhase.bind(this, 1));
 		document.getElementById("phase-2").addEventListener("click", this.setGamePhase.bind(this, 2));
+		document.getElementById("disconnect").addEventListener("click", this.sendDisconnect.bind(this));
+		document.getElementById("connect").addEventListener("click", this.sendConnect.bind(this));
 	}
 
 	createOrder (orderType, args) {
@@ -143,6 +193,16 @@ class App {
 		this.socket.emit('forcesubmitTurn', JSON.stringify(this.currentTurnOrders));
 	}
 
+	sendDisconnect () {
+		debug.log(1, "disconnecting");
+		this.socket.close();
+	}
+
+	sendConnect () {
+		debug.log(1, "connecting");
+		this.socket.open();
+	}
+
 	sendPrintServerData () {
 		this.socket.emit('printServerData');
 	}
@@ -193,6 +253,16 @@ class App {
 		let lastTurnHistory = this.loadSerializedLastTurnHistory(data.s_lastTurnHistory);
 		this.display.simulationDisplayTurn = lastTurnHistory;
 		debug.log(0, "sent to Display", this.display.simulationDisplayTurn);
+	}
+
+	updateTokenInfo (token) {
+		this.token = token;
+		localStorage.setItem('authToken', this.token);
+
+		// save token with socket for reconnect
+		this.socket.io.opts.query = {
+			token: this.token || ''
+		};
 	}
 
 	updateDebugInfo () {
