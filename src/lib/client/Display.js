@@ -71,6 +71,8 @@ export default class Display {
 			let hoverObject;
 			let flag = [0,0,0,0];
 
+			let full = true;
+
 			p5.disableFriendlyErrors = true;
 			//Preload the fonts and other assets below
 			s.preload = () =>{
@@ -103,12 +105,54 @@ export default class Display {
 				}*/
 				let transitioning = 0;
 				//The below variables to be filled in by the size of the players current window
-				let wi=tempConfig.canvasX; //The width of the canvas
-				let he=tempConfig.canvasY; //The height of the canvas
-				let si=tempConfig.size; //the side length of each cell in canvas
+				let wi=s.width; //The width of the canvas
+				let he=s.height; //The height of the canvas
+				let si=s.width/30; //the side length of each cell in canvas
 
 				//Delay serves as a variable that has a constant increment for animation
 				this.delay=this.delay+.19;
+
+				if(buttonMaker===1){
+					if(this.app.playerNumber == 2){
+						submitShifterX = 0;
+						submitShifterY = he/2;;
+					}
+					else if(this.app.playerNumber == 3){
+						submitShifterX = wi/2;
+						submitShifterY = 0;
+					}
+					else if(this.app.playerNumber == 4){
+						submitShifterX = wi/2;
+						submitShifterY = he/2;
+					}
+
+					bPhaseOne = new Buttoned(wi-si*5.55, si*2.9,si*5.1,si*1.1,"Deploy Machines",this.app.setGamePhase);
+					bPhaseThree = new Buttoned(wi/3.2 + submitShifterX, he/1.65 - submitShifterY,si*6.1,si*1.1,"Review Board",this.app.setGamePhase);
+
+					bSubmit = new Buttoned(wi/3.2 + submitShifterX, he/1.85 - submitShifterY,si*5,si*1.1,"Submit Turn",this.app.sendSubmitTurn);
+
+					bBase=new Buttoned(wi/2+si-playerShifter,si*buttonScale*2,wi/2-si*2,si*buttonScale*3,"Base",this.app.sendCreateBase);
+
+					//Unit Buttons Below
+					bRayTracer=new Buttoned(wi/2+si-playerShifter,si*buttonScale*2,wi/2-si*2,si*buttonScale,"RayTracer",this.app.sendCreateUnit);
+					unitButtons.push(bRayTracer);
+					bBallast=new Buttoned(wi/2+si-playerShifter,si*buttonScale*4,wi/2-si*2,si*buttonScale,"Ballast",this.app.sendCreateUnit);
+					unitButtons.push(bBallast);
+					bJuggernode=new Buttoned(wi/2+si-playerShifter,si*buttonScale*5,wi/2-si*2,si*buttonScale,"Juggernode",this.app.sendCreateUnit);
+					unitButtons.push(bJuggernode);
+					bTripwire=new Buttoned(wi/2+si-playerShifter,si*buttonScale*6,wi/2-si*2,si*buttonScale,"Tripwire",this.app.sendCreateUnit);
+					unitButtons.push(bTripwire);
+					bMaglev=new Buttoned(wi/2+si-playerShifter,si*buttonScale*7,wi/2-si*2,si*buttonScale,"Maglev",this.app.sendCreateUnit);
+					unitButtons.push(bMaglev);
+					bResonator=new Buttoned(wi/2+si-playerShifter,si*buttonScale*8,wi/2-si*2,si*buttonScale,"Resonator",this.app.sendCreateUnit);
+					unitButtons.push(bResonator);
+					bIntegrator=new Buttoned(wi/2+si-playerShifter,si*buttonScale*9,wi/2-si*2,si*buttonScale,"Integrator",this.app.sendCreateUnit);
+					unitButtons.push(bIntegrator);
+					bOscillator=new Buttoned(wi/2+si-playerShifter,si*buttonScale*3,wi/2-si*2,si*buttonScale,"Oscillator",this.app.sendCreateUnit);
+					unitButtons.push(bOscillator);
+
+				}
+				buttonMaker=0;
 
 				//Sets the background to black each time around the loop in order to prevent sketch objects from stacking on each other
 				//s.background(0);
@@ -143,8 +187,8 @@ export default class Display {
 					}
 
 					s.strokeWeight(4);
-					s.text("Close",tempConfig.canvasX/3.05,tempConfig.canvasY/2.4);
-					s.text("Quarters",tempConfig.canvasX/4.45,tempConfig.canvasY/1.6);
+					s.text("Close",s.width/3.05,s.height/2.4);
+					s.text("Quarters",s.width/4.45,s.height/1.6);
 
 					//buttonScale sets the size of the buttons(dependent on their overall number)
 					buttonScale=1.5;
@@ -158,48 +202,12 @@ export default class Display {
 					}
 
 					//Only execute the following block once so the buttons are only created a single time
-					if(buttonMaker===1){
-						if(this.app.playerNumber == 2){
-							submitShifterX = 0;
-							submitShifterY = he/2;;
-						}
-						else if(this.app.playerNumber == 3){
-							submitShifterX = wi/2;
-							submitShifterY = 0;
-						}
-						else if(this.app.playerNumber == 4){
-							submitShifterX = wi/2;
-							submitShifterY = he/2;
-						}
 
-						bPhaseOne = new Buttoned(wi-si*5.55, si*2.9,si*5.1,si*1.1,"Deploy Machines",this.app.setGamePhase);
-						bPhaseThree = new Buttoned(wi/3.2 + submitShifterX, he/1.65 - submitShifterY,si*6.1,si*1.1,"Review Board",this.app.setGamePhase);
-
-						bSubmit = new Buttoned(wi/3.2 + submitShifterX, he/1.85 - submitShifterY,si*5,si*1.1,"Submit Turn",this.app.sendSubmitTurn);
-
-						bBase=new Buttoned(wi/2+si-playerShifter,si*buttonScale*2,wi/2-si*2,si*buttonScale*3,"Base",this.app.sendCreateBase);
-
-						//Unit Buttons Below
-						bRayTracer=new Buttoned(wi/2+si-playerShifter,si*buttonScale*2,wi/2-si*2,si*buttonScale,"RayTracer",this.app.sendCreateUnit);
-						unitButtons.push(bRayTracer);
-						bBallast=new Buttoned(wi/2+si-playerShifter,si*buttonScale*4,wi/2-si*2,si*buttonScale,"Ballast",this.app.sendCreateUnit);
-						unitButtons.push(bBallast);
-						bJuggernode=new Buttoned(wi/2+si-playerShifter,si*buttonScale*5,wi/2-si*2,si*buttonScale,"Juggernode",this.app.sendCreateUnit);
-						unitButtons.push(bJuggernode);
-						bTripwire=new Buttoned(wi/2+si-playerShifter,si*buttonScale*6,wi/2-si*2,si*buttonScale,"Tripwire",this.app.sendCreateUnit);
-						unitButtons.push(bTripwire);
-						bMaglev=new Buttoned(wi/2+si-playerShifter,si*buttonScale*7,wi/2-si*2,si*buttonScale,"Maglev",this.app.sendCreateUnit);
-						unitButtons.push(bMaglev);
-						bResonator=new Buttoned(wi/2+si-playerShifter,si*buttonScale*8,wi/2-si*2,si*buttonScale,"Resonator",this.app.sendCreateUnit);
-						unitButtons.push(bResonator);
-						bIntegrator=new Buttoned(wi/2+si-playerShifter,si*buttonScale*9,wi/2-si*2,si*buttonScale,"Integrator",this.app.sendCreateUnit);
-						unitButtons.push(bIntegrator);
-						bOscillator=new Buttoned(wi/2+si-playerShifter,si*buttonScale*3,wi/2-si*2,si*buttonScale,"Oscillator",this.app.sendCreateUnit);
-						unitButtons.push(bOscillator);
-
-					}
-					buttonMaker=0;
 					if(s.mouseIsPressed){
+
+						s.fullscreen(full);
+						s.resizeCanvas(window.screen.height*1.5, window.screen.height);
+						buttonMaker = 1;
 						this.app.setGamePhase(1);
 					}
 					//Exit this phase and move to the Battle Phase if the mouse is pressed(button trigger to be added)
@@ -712,7 +720,7 @@ export default class Display {
 				else{
 					sideBarMenu = true;
 				}
-				wi = tempConfig.canvasX * sideBarGrowth;
+				wi = s.width * sideBarGrowth;
 				si = wi/30;
 				he = si*20;
 				//
@@ -843,15 +851,15 @@ export default class Display {
 					s.textFont(titleFont);
 					s.fill(0,150);
 					s.noStroke();
-					s.rect(wi,0,tempConfig.canvasX - wi,he);
-					s.rect(0,he,tempConfig.canvasX,tempConfig.canvasX-he);
+					s.rect(wi,0,s.width - wi,he);
+					s.rect(0,he,s.width,s.width-he);
 				if(sideBarMenu == true){
 					s.textSize(si*1.05);
 					s.fill(this.playerColors[this.app.playerNumber-1][0], this.playerColors[this.app.playerNumber-1][1], this.playerColors[this.app.playerNumber-1][2], 255);
 					s.stroke(0);
 					s.text("Review Mode", wi+si/3, si*1.5);
 					s.stroke(255);
-					s.line(wi+si/4,si*2,tempConfig.canvasX-si/4,si*2);
+					s.line(wi+si/4,si*2,s.width-si/4,si*2);
 					s.textSize(si*.7);
 
 					bPhaseOne.drawButton();
@@ -1038,9 +1046,9 @@ export default class Display {
 
 		function drawUnitMenu(pColors, player, scale){
 			s.textFont(titleFont);
-			let wid=tempConfig.canvasX;
-			let hei=tempConfig.canvasY;
-			let siz =tempConfig.size;
+			let wid=s.width;
+			let hei=s.height;
+			let siz =s.width/30;
 			s.strokeWeight(3);
 			s.stroke(255);
 			s.textSize(wid/23);
@@ -1189,33 +1197,35 @@ export default class Display {
 			s.stroke(0,opacity);
 			s.strokeWeight(2);
 			let opacity = 227;
+			let rectSize = s.width / 30;
+			let rectSizeY = s.height / 20;
 			for (var i = 0; i < grid.length; i++) {
-				let rectSize = tempConfig.canvasX / grid[i].length;
-				let rectY = i * (tempConfig.canvasY / grid.length);
+				let rectY = i * (s.height / 20);
 				for (var j = 0; j < grid[i].length; j++) {
-					let rectX = j* tempConfig.canvasY/ grid.length;
+					//let rectX = j* s.height / grid.length;
+					let rectX = j* s.width / grid[i].length;
 					if(i<=grid.length/2-1 && j <= grid[i].length/2-1){
 						s.fill(pColors[0][0],pColors[0][1],pColors[0][2],opacity)
 						if(player == 1){
-							s.rect(rectX, rectY, rectSize, rectSize);
+							s.rect(rectX, rectY, rectSize, rectSizeY);
 						}
 					}
 					else if(i >= grid.length/2-1 && j <= grid[i].length/2-1) {
 						s.fill(pColors[1][0],pColors[1][1],pColors[1][2],opacity)
 						if(player == 2){
-							s.rect(rectX, rectY, rectSize, rectSize);
+							s.rect(rectX, rectY, rectSize, rectSizeY);
 						}
 					}
 					else if(i <= grid.length/2-1 && j >= grid[i].length/2-1) {
 						s.fill(pColors[2][0],pColors[2][1],pColors[2][2],opacity)
 						if(player == 3){
-							s.rect(rectX, rectY, rectSize, rectSize);
+							s.rect(rectX, rectY, rectSize, rectSizeY);
 						}
 					}
 					else if(i >= grid.length/2-1 && j >= grid[i].length/2-1) {
 						s.fill(pColors[3][0],pColors[3][1],pColors[3][2],opacity)
 						if(player == 4){
-							s.rect(rectX, rectY, rectSize, rectSize);
+							s.rect(rectX, rectY, rectSize, rectSizeY);
 						}
 					}
 				}
@@ -1226,7 +1236,7 @@ export default class Display {
 
 		function drawGrid(wi, he, si, pColors) {
 
-			s.image(imgTwo, 0, 0, tempConfig.canvasY*1.6, tempConfig.canvasY);
+			s.image(imgTwo, 0, 0, s.height*1.6, s.height);
 
 			s.noStroke();
 			let opacity = 227;
