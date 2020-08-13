@@ -95,7 +95,7 @@ export default class Display {
 			s.draw = () => {
 				//
 				//this.app.setGamePhase(3);
-				if(this.app.game.players[this.app.playerNumber-1].victoryCondition[0] == - 1 && flag[this.app.playerNumber-1] == -1){
+				if(this.app.game.players[this.app.playerNumber-1].victoryCondition == - 1 && flag[this.app.playerNumber-1] == -1){
 					this.app.spectatorMode = true;
 				}
 
@@ -207,8 +207,10 @@ export default class Display {
 
 						s.fullscreen(full);
 						s.resizeCanvas(window.screen.height*1.5, window.screen.height);
+						//s.resizeCanvas(window.innerHeight*1.5, window.innerHeight);
 						buttonMaker = 1;
 						this.app.setGamePhase(1);
+						s.mouseIsPressed = false;
 					}
 					//Exit this phase and move to the Battle Phase if the mouse is pressed(button trigger to be added)
 				}
@@ -351,6 +353,7 @@ export default class Display {
 									}
 								}
 							}
+							if(bSubmit.submitted == false){
 							for(let yy=0;yy<unitButtons.length;yy=yy+1){
 								if(unitButtons[yy].isPressed===true){
 									if(this.app.playerNumber == 1 && hoverX <= 14 && hoverY < 10 && hoverX < 30 && hoverY < 20){
@@ -375,6 +378,8 @@ export default class Display {
 									}
 								}
 							}
+
+						}
 						}
 						drawUnitMenu(this.playerColors,this.app.playerNumber, buttonScale);
 					}
@@ -639,10 +644,10 @@ export default class Display {
 						}
 					}
 					for(let p = 0; p < 4; p = p + 1){
-						if(this.app.game.players[p].victoryCondition[0] == - 1 && this.t == this.app.game.players[p].victoryCondition[1]){
+						if(this.simulationDisplayTurn.tick[this.t].players[p].victoryCondition == - 1){
 								flag[p] = -1;
 						}
-						if(this.app.game.players[p].victoryCondition[0] == 1 && this.t == this.app.game.players[p].victoryCondition[1]){
+						if(this.simulationDisplayTurn.tick[this.t].players[p].victoryCondition == 1){
 								flag[p] = 1;
 						}
 					}
@@ -713,6 +718,8 @@ export default class Display {
 				}
 
 			}
+
+			///REVIEW BOARD PHASE
 			else if(this.app.gamePhase ==  3 && flag[this.app.playerNumber-1] != -1){
 				if(sideBarGrowth > 0.8){
 					sideBarGrowth = sideBarGrowth - .001;
@@ -806,14 +813,6 @@ export default class Display {
 							//s.text("Turns Active: " + hoverObject.turnsActive, hoverX*si+si*1.2,hoverY*si+si*2.8);
 							s.translate(si*5*transX, si*4*transY);
 							}
-						}
-					}
-					for(let p = 0; p < 4; p = p + 1){
-						if(this.app.game.players[p].victoryCondition[0] == - 1 && this.t == this.app.game.players[p].victoryCondition[1]){
-								flag[p] = -1;
-						}
-						if(this.app.game.players[p].victoryCondition[0] == 1 && this.t == this.app.game.players[p].victoryCondition[1]){
-								flag[p] = 1;
 						}
 					}
 

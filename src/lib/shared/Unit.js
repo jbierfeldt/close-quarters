@@ -187,7 +187,7 @@ export class Juggernode extends Unit {
 
 	static maxHealth = 400;
 	static cost = 2;
-	static description = "The Juggernode is a standard defensive unit that also delivers diagonal strikes. Its photon beam fires toward the opposite corner of the player, dealing 7 damage to everything within the path.";
+	static description = "The Juggernode is a standard defensive unit that also delivers diagonal strikes. Its photon beam fires toward the opposite corner of the player, dealing a small amount of damage to everything within the path.";
 
 	static createFromSerialized (props) {
 		return new Juggernode(props.player, props.health, props.firing, props.id, props.collidedWith)
@@ -239,10 +239,10 @@ export class Maglev extends Unit {
 
   static maxHealth = 225;
 	static cost = 3;
-	static description = "The Maglev is a lightweight offensive powerhouse that emits indestructible magnetic pulses. It will randomly strike either in every diagonal direction or orthogonal direction. The pulses begin with a base damage of 50 and fade off exponentially as they travel.";
+	static description = "The Maglev is a lightweight offensive powerhouse that emits magnetic pulses. It will randomly strike either in every diagonal direction or orthogonal direction. The pulses begin with a high base damage and fade off exponentially as they travel.";
 
 	static createFromSerialized (props) {
-		return new Maglev(props.player, props.health, props.firing, props.id, props.collidedWith)
+		return new Maglev(props.player, props.health, props.firing, props.id, props.collidedWith);
 	}
 
 	startAttack(tick){
@@ -306,7 +306,7 @@ export class Tripwire extends Unit {
 
 	static maxHealth = 250;
 	static cost = 2;
-	static description = "The Tripwire is...";
+	static description = "The Tripwire is a retaliatory machine that returns magnified energy at a higher frequency. It requires an initial stimulus to activate or become 'tripped' and then a second stimulus in quick succession which is reflected in all diagonal and orthogonal directions with three times the destructive power. These pulses cover a short distance and cannot be blocked by other machines or cores.";
 
 	static createFromSerialized (props) {
 		return new Tripwire(props.player, props.health, props.firing, props.id, props.collidedWith, props.ticksSinceDamage, props.tripped, props.tripDamage);
@@ -327,21 +327,22 @@ export class Tripwire extends Unit {
 
 	update (tick) {
 		super.update(tick);
-		console.log(this.tripped);
+		if(tick == 1){
+			this.tripped = false;
+		}
 		this.firing=false;
 		this.ticksSinceDamage = this.ticksSinceDamage + 1;
 		if(this.collidedWith[0] == true && this.tripped == false){
 			this.ticksSinceDamage = 0;
+			this.tripDamage = this.health;
 			this.tripped = true;
-			console.log("TRIPWIRE HIT");
 		}
 		else if(this.collidedWith[0] == true && this.tripped == true){
 			if(this.ticksSinceDamage < 10){
-				this.startAttack((this.constructor.maxHealth - this.health));
+				this.startAttack(3*(this.tripDamage-this.health));
 				this.tripped = false;
 			}
 			else{
-				console.log("TRIPWIRE TURNED OFF");
 				this.tripped = false;
 			}
 		}
@@ -371,7 +372,7 @@ export class Ballast extends Unit {
 
 	static maxHealth = 250;
 	static cost = 2;
-	static description = "The Ballast is an advanced, bulky machine that can be used to block key channels while hitting a limited set of targets with significant force. It strikes for five consecutive seconds, delivering 60 total damage. The attacks rotate between 6 possible target locations that are a distance of 6 or 3 tiles away horizontally and the opposite number vertically.";
+	static description = "The Ballast is an advanced, bulky machine that can be used to block key channels while hitting a limited set of targets with significant force. It strikes for five consecutive seconds, delivering irreparable damage. The attacks rotate between 6 possible target locations that are a distance of either 6 or 3 tiles away horizontally and the opposite number vertically.";
 
 	static createFromSerialized (props) {
 		return new Ballast(props.player, props.health, props.firing, props.id, props.collidedWith)
@@ -450,7 +451,7 @@ export class Resonator extends Unit {
 
 	static maxHealth = 300;
 	static cost = 3;
-	static description = "The Resonator is a resiliant, catapult-style machine that delivers damage in a cross shape encompassing a five-tile area. The center of its strike deals 150 damage and fades to half that amount in the adjacent tiles. The sheer power of its attack causes erratic projectile fire that falls between a distance of 9 - 17 spaces away. It will randomly strike vertically, horizontally or diagonally and does not do damage prior to reaching its destination.";
+	static description = "The Resonator is a resiliant, catapult-style machine that delivers damage in a cross shape encompassing a five-tile area. The center of its strike deals significant damage and fades to half the amount in the adjacent tiles. The sheer power of its attack causes erratic projectile fire that hits a random number of spaces away. It will either strike vertically, horizontally or diagonally and does not do damage prior to reaching its destination.";
 
 	static createFromSerialized (props) {
 		return new Resonator(props.player, props.health, props.firing, props.id, props.collidedWith)
@@ -465,7 +466,7 @@ export class Resonator extends Unit {
 		super.update(tick);
 		this.collidedWith = [false, 4];
 		this.firing=false;
-		if(tick % 12 === 0){
+		if(tick % 15 === 0){
 			let rando = Math.random()*3;
 			if(rando < 1){
 				if(this.player == 1 || this.player == 2){
@@ -591,7 +592,6 @@ export class Integrator extends Unit {
 						}
 					}
 		this.projArr[i]  = new Projectiles.IntBullet(this.player, orient, 1, pC, this.lifeSpan);
-		//console.log(pC);
 	 }
 	}
 
