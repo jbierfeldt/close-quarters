@@ -186,12 +186,12 @@ class App {
 	}
 
 	sendSubmitTurn () {
-		debug.log(1, "submit turn!");
+		//debug.log(1, "submit turn!");
 		this.socket.emit('submitTurn', JSON.stringify(this.currentTurnOrders));
 	}
 
 	forcesendSubmitTurn () {
-		debug.log(1, "submit turn!");
+		//debug.log(1, "submit turn!");
 		this.socket.emit('forcesubmitTurn', JSON.stringify(this.currentTurnOrders));
 	}
 
