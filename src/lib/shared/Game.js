@@ -191,8 +191,10 @@ export default class Game {
 	}
 
 	deregisterGameObject (object) {
-		console.log("deregistering", object.id);
-		this.gameObjects.delete(object.id);
+		if (object) {
+			console.log("deregistering", object.id);
+			this.gameObjects.delete(object.id);
+		}
 	}
 
 	addObjectAtCoord(object, x, y) {
@@ -201,6 +203,11 @@ export default class Game {
 
 	removeObjectAtCoord(object, x, y) {
 		const objIndex = this.board[y][x].indexOf(object.id);
+		this.board[y][x].splice(objIndex, 1);
+	}
+
+	removeIDAtCoord(id, x, y) {
+		const objIndex = this.board[y][x].indexOf(id);
 		this.board[y][x].splice(objIndex, 1);
 	}
 
@@ -350,14 +357,43 @@ export default class Game {
 		}
 	}
 
-	clearProjectiles () {
+	clearProjectiles (player) {
+		// if given a player number, only clear projeciles of that player
 		for (let i = 0; i < this.board.length; i++)  {
 			for (let j = 0; j < this.board[i].length; j++) {
 				if (this.board[i][j].length != 0) {
 					for (let k = 0; k < this.board[i][j].length; k++) {
 						let gameObj = this.gameObjects.get(this.board[i][j][k]); // game obj to be updated
-						if (gameObj.objCategory === "Projectiles") {
-							this.deleteObjectAtCoord(gameObj, j, i);
+						if (player) {
+							if (gameObj.objCategory === "Projectiles" && gameObj.player == player) {
+								this.deleteObjectAtCoord(gameObj, j, i);
+							}
+						} else {
+							if (gameObj.objCategory === "Projectiles") {
+								this.deleteObjectAtCoord(gameObj, j, i);
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	clearUnits (player) {
+		// if given a player number, only clear units of that player
+		for (let i = 0; i < this.board.length; i++)  {
+			for (let j = 0; j < this.board[i].length; j++) {
+				if (this.board[i][j].length != 0) {
+					for (let k = 0; k < this.board[i][j].length; k++) {
+						let gameObj = this.gameObjects.get(this.board[i][j][k]); // game obj to be updated
+						if (player) {
+							if (gameObj.objCategory === "Units" && gameObj.player == player) {
+								this.deleteObjectAtCoord(gameObj, j, i);
+							}
+						} else {
+							if (gameObj.objCategory === "Units") {
+								this.deleteObjectAtCoord(gameObj, j, i);
+							}
 						}
 					}
 				}
@@ -371,9 +407,14 @@ export default class Game {
 				if (this.board[i][j].length != 0) {
 					for (let k = 0; k < this.board[i][j].length; k++) {
 						if (this.board[i][j][k] === idToClean) {
-							this.deleteObjectAtCoord(this.gameObjects.get(idToClean), j, i);
-							// const idx = this.board[i][j].indexOf(this.board[i][j][k]);
-							// this.board[i][j].splice(idx, 1);
+							let obj = this.gameObjects.get(idToClean);
+							if (obj) {
+								// if object hasn't already been deregistered, do both
+								this.deleteObjectAtCoord(this.gameObjects.get(idToClean), j, i);
+							} else {
+								// if object has already been deregistered, just clear id from board
+								this.removeIDAtCoord(idToClean, j, i);
+							}
 						}
 					}
 				}
@@ -511,8 +552,8 @@ export default class Game {
 				if (this.players[i].victoryCondition !== -1 && this.players[i].baseCount == 0) {
 					console.log("Player " + i + " Defeated at tick "+ tick);
 					this.players[i].victoryCondition = -1;
-					// clear units from player
-					// clear projectiles from player
+					this.clearProjectiles(i+1);
+					this.clearUnits(i+1);
 				}
 			}
 
