@@ -205,9 +205,8 @@ export default class Display {
 
 					if(s.mouseIsPressed){
 
-						s.fullscreen(full);
-						s.resizeCanvas(window.screen.height*1.5, window.screen.height);
-						//s.resizeCanvas(window.innerHeight*1.5, window.innerHeight);
+						// s.fullscreen(full);
+						// s.resizeCanvas(window.screen.height*1.5, window.screen.height);
 						buttonMaker = 1;
 						this.app.setGamePhase(1);
 						s.mouseIsPressed = false;

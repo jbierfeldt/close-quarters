@@ -110,6 +110,11 @@ class App {
 			this.setGamePhase(data.newPhase);
 		})
 
+		this.socket.on('updateClientState', (data) => {
+			console.log("got new client state");
+			this.clientState = data.clientState;
+		})
+
 		this.socket.on('updateClientInfo', (data) => {
 			this.updateTokenInfo(data.token);
 
@@ -137,6 +142,7 @@ class App {
 		document.getElementById("phase-2").addEventListener("click", this.setGamePhase.bind(this, 2));
 		document.getElementById("disconnect").addEventListener("click", this.sendDisconnect.bind(this));
 		document.getElementById("connect").addEventListener("click", this.sendConnect.bind(this));
+		document.getElementById("authdump").addEventListener("click", function(){ localStorage.authToken = ''; });
 	}
 
 	createOrder (orderType, args) {
