@@ -66,15 +66,21 @@ export default class Game {
 	createGameSnapshot () {
 
 		// custom serialize gameObjects using serialize method
-		let gameObjs = [...this.gameObjects];
+		let gameObjs = [...this.gameObjects]; // shallow copy
 		for (let i = 0; i < gameObjs.length; i++) {
 			gameObjs[i][1] = JSON.stringify(gameObjs[i][1].serialize());
+		}
+
+		console.log('player serialize');
+		let players = [...this.players];
+		for (let i = 0; i < players.length; i++) {
+			players[i] = JSON.stringify(players[i]);
 		}
 
 		// create serialized GameState with serialized GameObjects and board
 		const snapshotObj = {
 			id: this.id,
-			players: this.players,
+			players: players,
 			board: JSON.parse(JSON.stringify(this.board)),
 			gameObjects: gameObjs
 		}
@@ -85,6 +91,10 @@ export default class Game {
 	rebuildGameSnapshot (snapshotObj) {
 
 		// rebuild classes from serialized data
+		for (let i = 0; i < snapshotObj.players.length; i++) {
+			snapshotObj.players[i] = JSON.parse(snapshotObj.players[i]);
+		}
+
 		for (let i = 0; i < snapshotObj.gameObjects.length; i++) {
 			snapshotObj.gameObjects[i][1] = JSON.parse(snapshotObj.gameObjects[i][1]);
 			let newObject = snapshotObj.gameObjects[i][1];
@@ -181,6 +191,7 @@ export default class Game {
 	}
 
 	deregisterGameObject (object) {
+		console.log("deregistering", object.id);
 		this.gameObjects.delete(object.id);
 	}
 
@@ -340,6 +351,7 @@ export default class Game {
 	}
 
 	clearProjectiles () {
+		console.log("clearing proj");
 		for (let i = 0; i < this.board.length; i++)  {
 			for (let j = 0; j < this.board[i].length; j++) {
 				if (this.board[i][j].length != 0) {
@@ -360,8 +372,9 @@ export default class Game {
 				if (this.board[i][j].length != 0) {
 					for (let k = 0; k < this.board[i][j].length; k++) {
 						if (this.board[i][j][k] === idToClean) {
-							const idx = this.board[i][j].indexOf(this.board[i][j][k]);
-							this.board[i][j].splice(idx, 1);
+							this.deleteObjectAtCoord(this.gameObjects.get(idToClean), j, i);
+							// const idx = this.board[i][j].indexOf(this.board[i][j][k]);
+							// this.board[i][j].splice(idx, 1);
 						}
 					}
 				}
@@ -427,8 +440,6 @@ export default class Game {
 								// if  unit is firing, add projectile to list and place on board
 								if (gameObj.dump) {
 									this.cleanUpArray.push(gameObj.id);
-									console.log("In Game",gameObj.id);
-									//this.deleteObjectAtCoord(gameObj, j, i);
 								}
 
 								if (gameObj.firing) {
@@ -484,36 +495,37 @@ export default class Game {
 				cleanUpArrayTempLength = cleanUpArrayTempLength-1;
 			}
 
-			// update
-			// validate
-			// saveState
-			for(let p = 0; p < 4; p = p + 1){
-			if(this.players[p].baseCount == 0 && this.players[p].victoryCondition[0] == 0){
-				console.log(this.players[p].baseCount);
-					this.players[p].victoryCondition = [-1, tick];
-					console.log("Player " + p + " Defeated at tick "+ tick);
-				}
-				if(this.players[p].victoryCondition[0] == - 1){
-					//clearPlayer'sUnits();
+			// // check if player is defeated
+			// for(let p = 0; p < 4; p = p + 1){
+			// if(this.players[p].baseCount == 0 && this.players[p].victoryCondition[0] == 0){
+			// 	console.log(this.players[p].baseCount);
+			// 		this.players[p].victoryCondition = [-1, tick];
+			// 		console.log("Player " + p + " Defeated at tick "+ tick);
+			// 	}
+			// 	if(this.players[p].victoryCondition[0] == - 1){
+			// 		//clearPlayer'sUnits();
+			// 	}
+			// }
+
+			for (let i = 0; i < 4; i++) {
+				// if not already defeated and if no more bases
+				if (this.players[i].victoryCondition !== -1 && this.players[i].baseCount == 0) {
+					console.log("Player " + i + " Defeated at tick "+ tick);
+					this.players[i].victoryCondition = -1;
+					// clear units from player
+					// clear projectiles from player
 				}
 			}
+
 			this.history.turn[this.turnNumber].tick[tick] = this.createGameSnapshot();
 		}
 
 		// move to next Turn
 		this.clearProjectiles(); // clear all projectiles at the end of the turn
 		this.currentTurnInitialState = this.createGameSnapshot();
-
-//prior victory condition part
-		for(let p = 0; p < 4; p = p + 1){
+		for (let p = 0; p < 4; p++) {
 			this.players[p].credits = this.players[p].credits + 3 + Math.floor(this.players[p].damageDealtToBases/200);
 			this.players[p].damageDealtToBases = 0;
-		/*	if(this.players[p].baseCount == 0){
-				this.players[p].victoryCondition = - 1;
-			}
-			if(this.players[p].victoryCondition == - 1){
-				//clearPlayer'sUnits();
-			}*/
 		}
 		this.turnNumber++;
 	}

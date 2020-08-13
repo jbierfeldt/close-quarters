@@ -31,6 +31,7 @@ class App {
 		this.playerNumber = undefined;
 		this.playersOnServer = undefined;
 		this.spectatorMode = false;
+		this.clientState = null;
 		this.loadedClientInfoFromServer = false;
 	}
 
@@ -114,6 +115,7 @@ class App {
 
 			this.clientID = data.clientID;
 			this.playerNumber = data.playerNumber;
+			this.clientState = data.clientState;
 
 			// if first time getting clientInfo, start Display
 			if (this.loadedClientInfoFromServer === false) {
@@ -228,6 +230,7 @@ class App {
 
 	loadSerializedGameState(serializedGameState) {
 		let gameState = JSON.parse(serializedGameState);
+		console.log('unpacked state', gameState);
 		return this.game.rebuildGameSnapshot(gameState);
 	}
 
@@ -269,6 +272,7 @@ class App {
 
 		const debugData = {
 			'clientID': this.clientID,
+			'clientState': this.clientState,
 			'playerNumber': this.playerNumber,
 			'turnNumber': this.turnNumber,
 		}

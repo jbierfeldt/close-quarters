@@ -85,18 +85,21 @@ class GameController {
 				}
 			} else {
 				// get player spot if available
-				let playerSpot = this.getOpenPlayerSpot();
+				let playerSpot = this.getOpenPlayerSpot(); // returns playerSpot or false
 
 				if (playerSpot === false) {
 					// don't allow new player to enter game, create spectator
 					debug.log(1, "Game full.");
 				}
-				else {
-					// create clientController and then connect it
-					let newClientController = this.newClientController(playerSpot);
-					this.clientControllerConnect(newClientController, socket);
-					console.log('connected', newClientController.playerNumber, newClientController.id, newClientController.socket.id);
-				}
+				// else {
+				// 	// create clientController and then connect it
+				// 	let newClientController = this.newClientController(playerSpot);
+				// 	this.clientControllerConnect(newClientController, socket);
+				// 	console.log('connected', newClientController.playerNumber, newClientController.id, newClientController.socket.id);
+				// }
+				let newClientController = this.newClientController(playerSpot);
+				this.clientControllerConnect(newClientController, socket);
+				console.log('connected', newClientController.playerNumber, newClientController.id, newClientController.socket.id);
 			}
 
 			this.sendServerStateToAll();
@@ -135,7 +138,14 @@ class GameController {
 		let token = this.generatePlayerToken(id);
 
 		let pc = new ClientController(this, id, token, playerSpot);
-		this.playerSpots[playerSpot] = pc;
+
+		if (playerSpot !== false) {
+			this.playerSpots[playerSpot] = pc;
+			pc.clientState = 'ACTIVE_PLAYER';
+		} else {
+			pc.clientState = 'SPECTATOR';
+		}
+
 		this.clientControllers.push(pc);
 
 		return pc;
@@ -254,7 +264,16 @@ class GameController {
 		console.log("Made", args.unitType, "at", args.x, args.y);
 	}
 
-	checkAllOrdersSubmitted() {
+	checkPlayerStateChanges () {
+		// checks if players have been defeated/victorious
+
+		for (let i = 1; i <= 4; i++) {
+			console.log("Victory condition", i, this.game.players[i-1].victoryCondition);
+		}
+
+	}
+
+	checkAllOrdersSubmitted () {
 		// update all clients on who has submitted orders
 		this.sendServerStateToAll();
 
@@ -262,7 +281,7 @@ class GameController {
 		if (this.playersOnline.length == 0) {
 			return false;
 		}
-		
+
 		// check if all the online players have submitted their orders
 		// if not, return false and don't execute
 		for (let i = 0; i < this.playersOnline.length; i++) {
@@ -315,9 +334,10 @@ class GameController {
 		for (let i =  0; i < this.playersOnline.length; i++) {
 			console.log(this.playersOnline[i].id, this.playersOnline[i].playerNumber, this.playersOnline[i].ordersSubmitted, this.playersOnline[i].ordersToExecute);
 		}
-		// for (let i =  0; i < this.clientControllers.length; i++) {
-		// 	console.log(this.clientControllers[i].id, this.clientControllers[i].playerNumber);
-		// }
+		console.log("Client Controllers:")
+		for (let i =  0; i < this.clientControllers.length; i++) {
+			console.log(this.clientControllers[i].id, this.clientControllers[i].playerNumber, this.clientControllers[i].clientState);
+		}
 	}
 
 	executeOrder (order) {
@@ -330,6 +350,7 @@ class GameController {
 
 	runSimulation() {
 		this.game.runSimulation();
+		this.checkPlayerStateChanges();
 		this.sendGameStateToAll();
 		this.sendLastTurnHistoryToAll();
 		this.setGamePhaseForAll(2);
@@ -352,6 +373,7 @@ class ClientController {
 		this.ordersSubmitted = false;
 
 		this.clientGamePhase = null;
+		this.clientState = null; // null, SPECTATOR, ACTIVE_PLAYER, DEFEATED_PLAYER
 	}
 
 	init() {
@@ -437,6 +459,7 @@ class ClientController {
 		this.socket.emit("updateClientInfo", {
 			'clientID': this.id,
 			'token': this.token,
+			'clientState': this.clientState,
 			'playerNumber': this.playerNumber
 		});
 	}
