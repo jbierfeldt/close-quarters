@@ -155,6 +155,7 @@ class GameController {
 
 		clientController.setSocket(newSocket);
 		clientController.isConnected = true;
+		clientController.setClientStateFromVictoryCondition(this.game.players[clientController.playerNumber].victoryCondition);
 		clientController.onConnect();
 
 		this.playersOnline.push(clientController);
@@ -168,6 +169,7 @@ class GameController {
 
 	clientControllerDisconnect (clientController) {
 		clientController.isConnected = false;
+		clientController.clientState = "DISCONNECTED";
 
 		if (clientController.playerNumber) {
 			this.playerSpots[clientController.playerNumber] = null;
@@ -206,6 +208,11 @@ class GameController {
 		this.io.emit('updateClientGamePhase', {
 			newPhase: phase
 		});
+	}
+
+	sendTurnsSubmittedToAll () {
+		// tells all clients that the turns have been subitted
+		this.io.emit('turnsSubmitted');
 	}
 
 	sendLastTurnHistoryToAll () {
@@ -269,7 +276,7 @@ class GameController {
 
 		for (let i = 1; i <= 4; i++) {
 			if (this.playerSpots[i] !== null) {
-				this.playerSpots[i].setClientState(this.game.players[i-1].victoryCondition);
+				this.playerSpots[i].setClientStateFromVictoryCondition(this.game.players[i-1].victoryCondition);
 				this.playerSpots[i].sendClientState();
 			}
 		}
@@ -293,6 +300,9 @@ class GameController {
 				return false;
 			}
 		}
+
+		// send turnsSubmitted event to clients
+		this.sendTurnsSubmittedToAll();
 
 		//if all online players have submitted their orders, execute orders
 		// execute orders
@@ -458,7 +468,7 @@ class ClientController {
 
 	}
 
-	setClientState (victoryCondition) {
+	setClientStateFromVictoryCondition (victoryCondition) {
 		switch (victoryCondition) {
 			case -1:
 				this.clientState = "DEFEATED_PLAYER";

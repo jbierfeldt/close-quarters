@@ -85,6 +85,10 @@ class App {
 			console.log('reconnect');
 		});
 
+		this.socket.on('turnsSubmitted', () => {
+			console.log('all turns submitted');
+		});
+
 		this.socket.on('updateServerState', (data) => {
 			let players = JSON.parse(data.players);
 			this.playersOnServer = players;
