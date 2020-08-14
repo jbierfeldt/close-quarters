@@ -171,15 +171,10 @@ export default class Display {
 				//Phase 0 is the Title Sccreen, Phase 1 is Unit Placement, and Phase 2 is the Battle Phase
 				if(this.app.gamePhase == 0){
 					gameStart=0;
-					s.background(0);
-
 					//The below function displays the title sequence
 					// Add bar magnet field lines
-
 					titleSequence(wi,he,this.delay,si/2);
-
 					//Display the game title on top of the title sequence
-
 					if(this.delay>25){
 						s.stroke(0,(this.delay-25)*2.9);
 						s.fill(255,0,128,(this.delay-25)*2.9);
@@ -319,13 +314,10 @@ export default class Display {
 
 						for(let i=0;i<unitButtons.length;i=i+1){
 							unitButtons[i].drawButton();
-						}
-						for(let i=0;i<unitButtons.length;i=i+1){
 							if(unitButtons[i].isPressed == true){
 								showUnitDescription(unitButtons[i].text,this.app.playerNumber, wi, he, si);
 							}
 						}
-
 						//drawUnitMenu(this.playerColors,this.app.playerNumber, buttonScale);
 
 						if(s.mouseIsPressed){
@@ -354,7 +346,7 @@ export default class Display {
 									newButtonPressed=i;
 								}
 							}
-							if(newButtonPressed >=0){
+							if(newButtonPressed >= 0){
 								for(let j=0;j<unitButtons.length;j=j+1){
 									if(j!=newButtonPressed){
 										unitButtons[j].isPressed=false;
@@ -434,18 +426,13 @@ export default class Display {
 							}
 							break
 							default:
-								s.text("Magnetic Meditation", wi/35, he/1.75+(a-1)*si);
+								s.text("Reviewing Board", wi/35, he/1.75+(a-1)*si);
 						}
 					}
 					else {
 						s.text("Waiting For Player", wi/35, he/1.75+(a-1)*si);
 					}
-						/*f(this.app.game.players[a].victoryCondition[0] == - 1){
-							s.text("Player " + (a+1) + " Defeated" , wi/35, he/1.75+a*si);
-						}
-						else{
-						s.text("Player " + (a+1) + " Score: " + this.app.game.players[a].score, wi/35, he/1.75+a*si);
-					}*/
+
 					}
 					if(this.app.playerNumber == 2){
 						s.translate(-0,he/2);
@@ -797,6 +784,7 @@ export default class Display {
 					s.textSize(si*1.25);
 					s.textAlign(s.CENTER);
 					s.text("Score" , wi+wi*.125, si*7.5);
+					s.line(wi+wi*.1,si*8.5,s.width-wi*.1,si*8.5)
 					s.stroke(255);
 					s.fill(255,100);
 					//s.quad(wi+si/.8,si*8,wi+si/.8,si*12.5,s.width-si/.8,si*12.5,s.width-si/.8,si*8);
@@ -856,6 +844,7 @@ export default class Display {
 				runLoadScreen(alpha);
 			}
 			if(this.app.simulationRun == true){
+				this.app.setGamePhase(2);
 				this.app.turnIsIn = false;
 				this.app.simulationRun = false;
 			}
@@ -1235,9 +1224,7 @@ export default class Display {
 
 
 		function drawGrid(wi, he, si, pColors) {
-
 			s.image(imgTwo, 0, 0, s.height*1.6, s.height);
-
 			s.noStroke();
 			let opacity = 227;
 			//s.fill(pColors[0][0],pColors[0][1],pColors[0][2],pColors[0][3]);
@@ -1264,18 +1251,14 @@ export default class Display {
 
 
 		function drawBase(x,y,player,size,health,max,pColors){
-			//s.fill(pColors[player][0],pColors[player][1],pColors[player][2],pColors[player][3])
-			//x,y,radius,npoints
-			//s.stroke((max-health)*255/max);
 			s.stroke(0);
 			s.fill(pColors[player-1][0],pColors[player-1][1],pColors[player-1][2],255);
-			s.strokeWeight(2);
+			s.strokeWeight(2+s.width/3000);
 			let offset=size/10;
 			let alpha = 0;
 			for(let row = x*size+offset; row < (x*size+size); row = row + offset*2){
 				let bravo = 0;
 				for(let col = y*size+offset; col < (y*size+size); col = col + offset*2){
-
 					if(alpha < 2){
 					s.line(row,col,row+offset*2,col);
 				}
@@ -1297,7 +1280,6 @@ export default class Display {
 		}
 
 		function drawRayTracer(x,y,player,size,health,max,pColors){
-			//s.fill(pColors[player][0],pColors[player][1],pColors[player][2],pColors[player][3])
 			s.stroke(0);
 			s.strokeWeight(2);
 			s.translate(x*size+size/2, y*size+size/2);
@@ -1310,7 +1292,6 @@ export default class Display {
 			s.translate(-x*size-size/2, -y*size-size/2);
 			s.fill((max-health)*255/max);
 			s.ellipse(x*size+size/2,y*size+size/2,size/5,size/5);
-
 		}
 
 		function drawOscillator(x,y,player,size,health,max,pColors){
@@ -1328,15 +1309,16 @@ export default class Display {
 
 		function drawMaglev(x,y,player,size,health,max,pColors){
 			s.stroke(0);
-			//s.fill((max-health)*255/max);
-			s.fill(0);
-			s.strokeWeight(1);
-			for(let i = -6;i < 6;i=i+.5){
-				s.ellipse(x*size+size/2,y*size+size/2+i*size/20,s.abs(i)*size/10,s.abs(i))*size/10;
+			s.noFill();
+			s.strokeWeight(2);
+			s.beginShape();
+			for(let i = 0; i <= 361; i = i +20){
+				s.curveVertex(size/2+size*x+(size/3)*s.sin(7*s.radians(i) + Math.PI/2),size/2+size*y+(size/2.5)*s.sin(s.radians(i)));
 			}
+			s.endShape();
 		}
-		function drawResonator(x,y,player,size,health,max,pColors){
 
+		function drawResonator(x,y,player,size,health,max,pColors){
 			s.stroke(0);
 			s.strokeWeight(2);
 			s.translate(size*x+size/2,size*y+size/2);
@@ -1350,10 +1332,10 @@ export default class Display {
 			s.fill((max-health)*255/max);
 			s.ellipse(0,0,size/3,size/3);
 			s.translate(-(size*x+size/2),-(size*y+size/2));
-
 		}
+
 		function drawIntegrator(x,y,player,size,health,max,pColors){
-			s.fill((max-health)*255/max);
+			s.fill(0);
 			s.stroke(0);
 			s.strokeWeight(1);
 			s.translate(size*x+size/2,size*y+size/2);
@@ -1366,19 +1348,13 @@ export default class Display {
 			s.vertex(size/6,size/2.4);
 			s.vertex(-size/6,size/2.4);
 			s.endShape();
-			//s.rect(-size/50,-size/8,size/25,size/2);
 			s.strokeWeight(2);
 			for(let l = 2*size/12.5; l < size/1.6; l = l + size/12.5){
 				s.line(-size/12,-size/6+l,size/12,-size/5+l);
 			}
-			//s.ellipse(0,size/4.5,size/2,size/500);
-			//s.ellipse(0,size/9,size/3,size/500);
-			//s.ellipse(0,size/10-s.abs(size/9-size/4.5),size/4,size/500);
 			s.fill(255);
-
 			s.ellipse(0,-size/4,size/2.9,size/2.9);
 			s.translate(-(size*x+size/2),-(size*y+size/2));
-
 		}
 
 		function drawTripwire(x, y, player, size, health, max, pColors, tripped){
@@ -1410,7 +1386,6 @@ export default class Display {
 			else{
 				s.fill(255);
 			}
-			 //s.fill(255);
 		   s.ellipse(0,-iconSize/2.3,iconSize/2,iconSize/2);
 		   s.translate(0,-iconSize/2);
 			 s.translate(-(x*size+size/2), -(y*size+size/2));
@@ -1420,7 +1395,6 @@ export default class Display {
 			s.stroke(0);
 			s.strokeWeight(2);
 			s.translate(x*size+size/2, y*size+size/2);
-
 			for(let angle = 0; angle < 360; angle = angle + 60){
 				s.rotate(s.radians(angle));
 				s.fill(pColors[player-1][0],pColors[player-1][1],pColors[player-1][2],255);
@@ -1434,7 +1408,6 @@ export default class Display {
 			s.fill(0,255*(health/max))
 			s.ellipse(0,0,size/5,size/5);
 			s.translate(-x*size-size/2, -y*size-size/2);
-
 		}
 
 		function drawBallast(x,y,player,size,health,max,pColors){
@@ -1442,7 +1415,7 @@ export default class Display {
 			s.stroke(0);
 			s.strokeWeight(0);
 			s.fill((max-health)*255/max);
-			s.ellipse(x*size+size/2,y*size+3*size/4,size*.9,size*.2);
+			s.ellipse(x*size+size/2,y*size+4*size/5,size*.65,size*.2);
 			s.beginShape();
 			s.vertex(x*size+2*size/3,y*size+3*size/4);
 			s.vertex(x*size+3*size/4,y*size+size/2);
@@ -1454,14 +1427,11 @@ export default class Display {
 		}
 
 		function titleSequence(width,height,delay,scale){
-			//s.background(0);
-			//s.image(imgTwo,0,0,height*1.77,height);
-      //s.background(0);
-			if(delay>25){
-			//	s.background(0,255-25*2);
+			if(delay>50){
+				s.background(0,255);
 			}
 			else{
-			//	s.background(0,255-delay*2);
+				s.background(0,delay*5);
 			}
 			s.translate(width/2,height/2);
 			s.noStroke();
@@ -1489,6 +1459,7 @@ export default class Display {
 			}
 			s.translate(-width/2,-height/2);
 		}
+
 		function drawRayTracerProjectile(x, y, player, size, pColors, orient, a){
 			let refx=x*size;
 			let refy=y*size;
@@ -1565,7 +1536,6 @@ export default class Display {
 	     }
 			 s.rotate(-s.radians(angle));
 	 	}
-	//translate(refx,refy);
 			s.stroke(0,255);
 			s.ellipse(0, 0, size/4,size/4);
 			s.translate(-refx,-refy);
@@ -1604,36 +1574,26 @@ export default class Display {
 			//s.ellipse(refx,refy,size,size);
 		}
 		function drawBallastProjectile(x,y,player,size,pColors,damage, a){
-
 			let refx=x*size;
 			let refy=y*size;
 			s.stroke(pColors[player-1][0],pColors[player-1][1],pColors[player-1][2],115);
 			s.strokeWeight(1);
-			//s.stroke(0);
-			//a=a/100;
-			//	Lissajous
 			let amp=size/(20+2*s.abs(5-a));
 			let n = 20+s.abs(5-a)/50;
-
-
 			s.noFill();
-
 			s.strokeWeight(2);
 			s.stroke(0,255);
 			s.translate(refx+size/2,refy+size/2);
 			s.beginShape();
 			s.curveVertex((size/3+(amp)*s.sin(n*s.radians(0)))*s.cos(s.radians(0)),(size/3+(amp)*s.sin(n*s.radians(0)))*s.sin(s.radians(0)));
-
 			for(let angle = 0; angle <= 360; angle = angle + 5){
 				s.curveVertex((size/3+(amp)*s.sin(n*s.radians(angle)))*s.cos(s.radians(angle)),(size/3+(amp)*s.sin(n*s.radians(angle)))*s.sin(s.radians(angle)));
 			}
 			s.curveVertex((size/3+(amp)*s.sin(n*s.radians(0)))*s.cos(s.radians(0)),(size/3+(amp)*s.sin(n*s.radians(0)))*s.sin(s.radians(0)));
 
 			s.endShape();
-			s.translate(-(refx+size/2),-(refy+size/2));
 			s.strokeWeight(1);
 			s.stroke(pColors[player-1][0],pColors[player-1][1],pColors[player-1][2],255);
-			s.translate(refx+size/2,refy+size/2);
 			s.beginShape();
 			s.curveVertex((size/3+(amp)*s.sin(n*s.radians(0)))*s.cos(s.radians(0)),(size/3+(amp)*s.sin(n*s.radians(0)))*s.sin(s.radians(0)));
 
@@ -1765,7 +1725,6 @@ function drawCreditsSymbol(x, y, size, player, a, pColors){
 		function drawCollision(x, y, size, player, a, pColors){
 			let refx=x*size+size/2;
 			let refy=y*size+size/2;
-			let scalar = size/4;
 			s.noFill();
 			let theta=0;
 			let phase=0;
@@ -1775,7 +1734,6 @@ function drawCreditsSymbol(x, y, size, player, a, pColors){
 			let wave = 4+(x*y)%15;
 			let rad = 360;
 			let radius=size/25;
-			s.translate(refx,refy);
 			for (let i = 0; i < rad; i = i + 30){
 				s.stroke(pColors[player-1][0],pColors[player-1][1],pColors[player-1][2], 50-a);
 				theta = i*(360/rad);
@@ -1784,17 +1742,18 @@ function drawCreditsSymbol(x, y, size, player, a, pColors){
 				osx=(size/25+meh)*s.cos(theta);
 				osy=(size/25+meh)*s.sin(theta);
 				s.strokeWeight(8);
-				s.point(osx,osy);
+				s.point(osx+refx,osy+refy);
 				s.strokeWeight(6);
-				s.point(osx,osy);
+				s.point(osx+refx,osy+refy);
+				//s.point(osx,osy);
 				s.strokeWeight(3);
-				s.point(osx,osy);
+				s.point(osx+refx,osy+refy);
+				//s.point(osx,osy);
 				s.stroke(255,45-a*3);
 				s.strokeWeight(1.5);
-				s.point(osx,osy);
+				s.point(osx+refx,osy+refy);
+				//s.point(osx,osy);
 			}
-			s.translate(-refx,-refy);
-			//s.ellipse(refx+size/2, refy+size/2, size-a, size-a);
 		}
 
 		function keyPressed() {
