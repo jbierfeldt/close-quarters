@@ -192,6 +192,12 @@ class GameController {
 		this.io.emit('turnsSubmitted');
 	}
 
+	sendSuccessfulSimulationToAll () {
+		this.io.emit('simulationSuccessful', {
+			s_lastTurnHistory: JSON.stringify(this.game.getLastTurnHistory())
+		});
+	}
+
 	sendLastTurnHistoryToAll () {
 		this.io.emit('updateLastTurnHistory', {
 			s_lastTurnHistory: JSON.stringify(this.game.getLastTurnHistory())
@@ -342,8 +348,7 @@ class GameController {
 		this.game.runSimulation();
 		this.checkPlayerStateChanges();
 		this.sendGameStateToAll();
-		this.sendLastTurnHistoryToAll();
-		this.setGamePhaseForAll(2);
+		this.sendSuccessfulSimulationToAll();
 	}
 
 }

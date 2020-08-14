@@ -97,6 +97,12 @@ class App {
 			this.turnIsIn = true;
 		});
 
+		this.socket.on('simulationSuccessful', (data) => {
+			this.updateLastTurnHistory(data);
+			this.simulationRun = true;
+			this.setGamePhase(2); // show simulation phase
+		})
+
 		this.socket.on('updateServerState', (data) => {
 			let players = JSON.parse(data.players);
 			this.playersOnServer = players;
@@ -105,7 +111,6 @@ class App {
 
 		this.socket.on('updateLastTurnHistory', (data) => {
 			this.updateLastTurnHistory(data);
-			this.simulationRun = true;
 		});
 
 		this.socket.on('updateGameState', (data) => {
