@@ -897,7 +897,7 @@ export default class Display {
 
 					for(let a = 0; a < 4; a = a + 1){
 						s.fill(this.playerColors[a][0], this.playerColors[a][1], this.playerColors[a][2], this.playerColors[a][3]);
-						s.textAlign(CENTER);
+						s.textAlign(s.CENTER);
 						if(this.app.game.players[a].victoryCondition == - 1){
 							s.text("Defeated" , wi+si/.54, si*9+a*si);
 						}
@@ -905,7 +905,7 @@ export default class Display {
 						s.text("- " + this.app.game.players[a].score+ " -", wi+si/.41, si*9+a*si);
 						}
 					}
-					s.textAlign(LEFT);
+					s.textAlign(s.LEFT);
 					s.textSize(si*1.1);
 					drawCreditsSymbol(wi+si/.42, si*15, si*1.3, this.app.playerNumber, 10, this.playerColors);
 					s.stroke(0);
