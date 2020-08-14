@@ -16,6 +16,10 @@ const app = express();
 const server = http.Server(app);
 // const io = socketIO(server);
 
+if (process.env.NODE_ENV === "development") {
+  console.log('development only');
+}
+
 const CONFIG = {
 	maxPlayers: 4
 }
@@ -127,9 +131,6 @@ class GameController {
 
 		if (playerSpot !== false) {
 			this.playerSpots[playerSpot] = pc;
-			pc.clientState = 'ACTIVE_PLAYER';
-		} else {
-			pc.clientState = 'SPECTATOR';
 		}
 
 		this.clientControllers.push(pc);
@@ -141,7 +142,14 @@ class GameController {
 
 		clientController.setSocket(newSocket);
 		clientController.isConnected = true;
-		clientController.setClientStateFromVictoryCondition(this.game.players[clientController.playerNumber-1].victoryCondition);
+
+		if (clientController.playerNumber) {
+			clientController.setClientStateFromVictoryCondition(this.game.players[clientController.playerNumber-1].victoryCondition);
+		} else {
+			clientController.clientState = 'SPECTATOR';
+			clientController.sendClientState();
+		}
+
 		clientController.onConnect();
 
 		this.playersOnline.push(clientController);
@@ -265,6 +273,46 @@ class GameController {
 
 	}
 
+	// checkAllOrdersSubmitted () {
+	// 	// update all clients on who has submitted orders
+	// 	this.sendServerStateToAll();
+	//
+	// 	//  check if players Online
+	// 	if (this.playersOnline.length == 0) {
+	// 		return false;
+	// 	}
+	//
+	// 	// check if all the online players have submitted their orders
+	// 	// if not, return false and don't execute
+	// 	for (let i = 0; i < this.playersOnline.length; i++) {
+	// 		// console.log("orders submitted?", this.playersOnline[i], this.playersOnline[i].ordersSubmitted);
+	// 		if (!this.playersOnline[i].ordersSubmitted) {
+	// 			return false;
+	// 		}
+	// 	}
+	//
+	// 	// send turnsSubmitted event to clients
+	// 	this.sendTurnsSubmittedToAll();
+	//
+	// 	//if all online players have submitted their orders, execute orders
+	// 	// execute orders
+	// 	for (let i = 0; i < this.playersOnline.length; i++) {
+	// 		if (this.playersOnline[i].ordersToExecute.length > 0) {
+	// 			for (let j = 0; j < this.playersOnline[i].ordersToExecute.length; j++) {
+	// 				this.executeOrder(this.playersOnline[i].ordersToExecute[j]);
+	// 			}
+	// 		}
+	//
+	// 		// after orders executed, reset ClientController
+	// 		this.playersOnline[i].ordersSubmitted = false;
+	// 		this.playersOnline[i].ordersToExecute = [];
+	// 	}
+	//
+	// 	// once all orders have been executed, run simulation
+	// 	this.runSimulation();
+	//
+	// }
+
 	checkAllOrdersSubmitted () {
 		// update all clients on who has submitted orders
 		this.sendServerStateToAll();
@@ -274,12 +322,13 @@ class GameController {
 			return false;
 		}
 
-		// check if all the online players have submitted their orders
+		// check if all the seated players have submitted their orders
 		// if not, return false and don't execute
-		for (let i = 0; i < this.playersOnline.length; i++) {
-			// console.log("orders submitted?", this.playersOnline[i], this.playersOnline[i].ordersSubmitted);
-			if (!this.playersOnline[i].ordersSubmitted) {
-				return false;
+		for (let i = 1; i <= 4; i++) {
+			if (this.playerSpots[i] !== null) {
+				if (this.playerSpots[i].clientState === 'ACTIVE_PLAYER' && !this.playerSpots[i].ordersSubmitted) {
+					return false;
+				}
 			}
 		}
 

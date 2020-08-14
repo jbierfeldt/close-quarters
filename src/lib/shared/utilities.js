@@ -1,12 +1,12 @@
 export class DEBUG {
 
 	constructor(enabled = false, debugLevel = 0) {
-		this.enabled = enabled;
+		this.enabled = (enabled == 'true');
 		this.debugLevel = debugLevel;
 	}
 
 	log(level, ...messages) {
-		if (level >= this.debugLevel) {
+		if (this.enabled == true && level >= this.debugLevel) {
 			messages.forEach( (message) => {
 				console.log(message);
 			})

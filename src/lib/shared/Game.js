@@ -5,7 +5,7 @@ import * as Projectiles from './Projectile.js';
 import * as Bases from './Base.js';
 import {DEBUG} from './utilities.js';
 
-const debug = new DEBUG(true, 0);
+const debug = new DEBUG(process.env.DEBUG, 0);
 
 const tempConfig = {
 	boardDimensions: [20, 30],
@@ -557,7 +557,7 @@ export default class Game {
 				for (let i = 0; i < 4; i++) {
 					// if not already defeated and if no more bases
 					if (this.players[i].victoryCondition !== -1) {
-						this.players[i].victoryCondition = 1;	
+						this.players[i].victoryCondition = 1;
 					}
 				}
 			}
