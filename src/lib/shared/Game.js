@@ -160,7 +160,16 @@ export default class Game {
 	}
 
 	createNewBaseAtCoord(baseType, player, x, y) {
-		if (this.isEmptyCoord(x, y) && this.isEmptyCoord(x+1, y) && this.isEmptyCoord(x, y+1) && this.isEmptyCoord(x+1, y+1)) {
+		if (this.isCoordInPlayerRegion(x, y, player) &&
+				this.isCoordInPlayerRegion(x+1, y, player) &&
+				this.isCoordInPlayerRegion(x, y+1, player) &&
+				this.isCoordInPlayerRegion(x+1, y+1, player) &&
+				this.isEmptyCoord(x, y) &&
+				this.isEmptyCoord(x+1, y) &&
+				this.isEmptyCoord(x, y+1) &&
+				this.isEmptyCoord(x+1, y+1)
+			)
+		{
 			let newBase = new Bases[baseType](player);
 			this.registerGameObject(newBase);
 			this.addObjectAtCoord(newBase, x, y);
@@ -325,6 +334,43 @@ export default class Game {
 			this.deregisterGameObject(object);
 		}
 
+	}
+
+	isCoordInPlayerRegion (x, y, playerNumber) {
+		let xMin, yMin, xMax, yMax;
+
+		switch (parseInt(playerNumber)) {
+			case 1:
+				xMin = 0;
+				yMin = 0;
+				xMax = tempConfig.boardDimensions[1]/2;
+				yMax = tempConfig.boardDimensions[0]/2;
+				break;
+			case 2:
+				xMin = 0;
+				yMin = tempConfig.boardDimensions[0]/2;
+				xMax = tempConfig.boardDimensions[1]/2;
+				yMax = tempConfig.boardDimensions[0];
+				break;
+			case 3:
+				xMin = tempConfig.boardDimensions[1]/2;
+				yMin = 0;
+				xMax = tempConfig.boardDimensions[1];
+				yMax = tempConfig.boardDimensions[0]/2;
+				break;
+			case 4:
+				xMin = tempConfig.boardDimensions[1]/2;
+				yMin = tempConfig.boardDimensions[0]/2;
+				xMax = tempConfig.boardDimensions[1];
+				yMax = tempConfig.boardDimensions[0];
+		}
+
+		if (xMin <= x && x < xMax && yMin <= y && y < yMax)  {
+			return true;
+		} else {
+			debug.log(0, "Coord doesn't belong to player");
+			return false;
+		}
 	}
 
 	isEmptyCoord(x, y) {
@@ -556,7 +602,6 @@ export default class Game {
 			}
 			if(this.numberOfDefeatedPlayers == 3){
 				for (let i = 0; i < 4; i++) {
-					// if not already defeated and if no more bases
 					if (this.players[i].victoryCondition !== -1) {
 						this.players[i].victoryCondition = 1;
 					}
@@ -568,11 +613,14 @@ export default class Game {
 
 		// move to next Turn
 		this.clearProjectiles(); // clear all projectiles at the end of the turn
-		this.currentTurnInitialState = this.createGameSnapshot();
+
+		// increase credits
 		for (let p = 0; p < 4; p++) {
 			this.players[p].credits = this.players[p].credits + 3 + Math.floor(this.players[p].damageDealtToBases/200);
 			this.players[p].damageDealtToBases = 0;
 		}
+
+		this.currentTurnInitialState = this.createGameSnapshot();
 		this.turnNumber++;
 	}
 
