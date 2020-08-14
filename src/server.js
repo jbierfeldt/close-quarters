@@ -82,7 +82,7 @@ class GameController {
 					// don't allow new player to enter game, create spectator
 					debug.log(1, "Game full.");
 				}
-				
+
 				let newClientController = this.newClientController(playerSpot);
 				this.clientControllerConnect(newClientController, socket);
 				console.log('connected', newClientController.playerNumber, newClientController.id, newClientController.socket.id);
@@ -141,7 +141,7 @@ class GameController {
 
 		clientController.setSocket(newSocket);
 		clientController.isConnected = true;
-		clientController.setClientStateFromVictoryCondition(this.game.players[clientController.playerNumber].victoryCondition);
+		clientController.setClientStateFromVictoryCondition(this.game.players[clientController.playerNumber-1].victoryCondition);
 		clientController.onConnect();
 
 		this.playersOnline.push(clientController);
@@ -176,15 +176,6 @@ class GameController {
 		}
 
 		this.clientControllerConnect(clientController, newSocket);
-
-		// clientController.setSocket(newSocket);
-		// clientController.isConnected = true;
-		// clientController.onConnect();
-		//
-		// this.playersOnline.push(clientController);
-		//
-		// this.sendGameStateToClient(clientController.socket);
-		// this.sendLastTurnHistoryToClient(clientController.socket);
 
 		console.log('reconnected', clientController.playerNumber, clientController.id, clientController.socket.id);
 
@@ -331,6 +322,7 @@ class GameController {
 		console.log("Players Online:")
 		for (let i =  0; i < this.playersOnline.length; i++) {
 			console.log(this.playersOnline[i].id, this.playersOnline[i].playerNumber, this.playersOnline[i].ordersSubmitted, this.playersOnline[i].ordersToExecute);
+			console.log(this.game.players[this.playersOnline[i].playerNumber - 1]);
 		}
 		console.log("Client Controllers:")
 		for (let i =  0; i < this.clientControllers.length; i++) {
@@ -464,17 +456,16 @@ class ClientController {
 				break;
 			case 1:
 				newState = "VICTORIOUS_PLAYER";
-				break;
+		}
 
-			if (this.clientState !== newState) {
-				this.clientState = newState;
-				this.sendClientState();
-			}
+		if (this.clientState !== newState) {
+			this.clientState = newState;
+			this.sendClientState();
 		}
 	}
 
 	sendClientState () {
-		console.log("sending client state");
+		console.log("sending client state", this.id, this.clientState);
 		this.socket.emit("updateClientState", {
 			'clientState': this.clientState
 		});
