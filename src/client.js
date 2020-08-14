@@ -145,19 +145,6 @@ class App {
 
 	}
 
-	debugInit () {
-		document.getElementById("debug-pane").style.visibility = 'visible';
-		document.getElementById("submit-turn").addEventListener("click", this.sendSubmitTurn.bind(this));
-		document.getElementById("force-submit-turn").addEventListener("click", this.forcesendSubmitTurn.bind(this));
-		document.getElementById("server-data").addEventListener("click", this.sendPrintServerData.bind(this));
-		document.getElementById("reset-game").addEventListener("click", this.sendResetGame.bind(this));
-		document.getElementById("phase-1").addEventListener("click", this.setGamePhase.bind(this, 1));
-		document.getElementById("phase-2").addEventListener("click", this.setGamePhase.bind(this, 2));
-		document.getElementById("disconnect").addEventListener("click", this.sendDisconnect.bind(this));
-		document.getElementById("connect").addEventListener("click", this.sendConnect.bind(this));
-		document.getElementById("authdump").addEventListener("click", function(){ localStorage.authToken = ''; window.open(window.location.href,'_blank'); });
-	}
-
 	createOrder (orderType, args) {
 		let order = {
 			player: this.playerNumber,
@@ -285,6 +272,42 @@ class App {
 		this.socket.io.opts.query = {
 			token: this.token || ''
 		};
+	}
+
+ /* Debug ============================== Debug
+ */
+
+	debugInit () {
+		document.getElementById("debug-pane").style.visibility = 'visible';
+		document.getElementById("submit-turn").addEventListener("click", this.sendSubmitTurn.bind(this));
+		document.getElementById("force-submit-turn").addEventListener("click", this.forcesendSubmitTurn.bind(this));
+		document.getElementById("server-data").addEventListener("click", this.sendPrintServerData.bind(this));
+		document.getElementById("reset-game").addEventListener("click", this.sendResetGame.bind(this));
+		document.getElementById("phase-1").addEventListener("click", this.setGamePhase.bind(this, 1));
+		document.getElementById("phase-2").addEventListener("click", this.setGamePhase.bind(this, 2));
+		document.getElementById("disconnect").addEventListener("click", this.sendDisconnect.bind(this));
+		document.getElementById("connect").addEventListener("click", this.sendConnect.bind(this));
+		document.getElementById("authdump").addEventListener("click", function(){ localStorage.authToken = ''; window.open(window.location.href,'_blank'); });
+		document.getElementById("save-snapshot").addEventListener("click", this.saveSnapshot.bind(this));
+		document.getElementById("load-snapshot").addEventListener("click", this.loadSnapshot.bind(this));
+	}
+
+	saveSnapshot () {
+		let name = document.getElementById("snapshot-name").value;
+		let snapshot = {
+			turnNumber: this.game.turnNumber,
+			currentTurnInitialState: JSON.stringify(this.game.createGameSnapshot())
+		}
+
+		localStorage['snapshot_'+name] = JSON.stringify(snapshot);
+	}
+
+	loadSnapshot () {
+		let name = document.getElementById("snapshot-name").value;
+		let snapshot = localStorage['snapshot_'+name];
+		if (snapshot) {
+			this.socket.emit('loadSnapshot', snapshot);
+		}
 	}
 
 	updateDebugInfo () {

@@ -119,6 +119,7 @@ export default class Game {
 
 	loadGameSnapshot (snapshotObj) {
 
+		this.id = snapshotObj.id;
 		this.board = snapshotObj.board;
 		this.players = snapshotObj.players;
 		this.gameObjects = snapshotObj.gameObjects;

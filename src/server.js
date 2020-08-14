@@ -3,7 +3,7 @@ import Game from './lib/shared/Game.js';
 import * as Units from './lib/shared/Unit.js';
 import Base from './lib/shared/Base.js';
 
-const debug = new DEBUG(true, 0);
+const debug = new DEBUG(process.env.DEBUG, 0);
 
 const express = require('express');
 const http = require('http');
@@ -15,10 +15,6 @@ const port = 3000;
 const app = express();
 const server = http.Server(app);
 // const io = socketIO(server);
-
-if (process.env.NODE_ENV === "development") {
-  console.log('development only');
-}
 
 const CONFIG = {
 	maxPlayers: 4
@@ -111,6 +107,28 @@ class GameController {
 		this.setGamePhaseForAll(0);
 		this.sendGameStateToAll();
 		this.sendLastTurnHistoryToAll();
+	}
+
+	loadSnapshot (snapshot)  {
+
+		console.log('loading snapshot');
+
+		// // reset game just in case
+		// let newGame = new Game();
+		// this.game = newGame;
+		// this.game.init();
+
+		this.game.turnNumber = snapshot.turnNumber;
+		let gameState = JSON.parse(snapshot.currentTurnInitialState);
+		gameState = this.game.rebuildGameSnapshot(gameState);
+		// this.game.currentTurnInitialState = gameState;
+		this.game.loadGameSnapshot(gameState);
+
+		// console.log(JSON.stringify(this.game.createGameSnapshot()));
+		//
+		// this.setGamePhaseForAll(0);
+		this.sendGameStateToAll();
+		// this.sendLastTurnHistoryToAll();
 	}
 
 	getOpenPlayerSpot () {
@@ -221,7 +239,7 @@ class GameController {
 	sendGameStateToAll () {
 		this.io.emit('updateGameState',  {
 			turnNumber: this.game.turnNumber,
-			currentTurnInitialState: JSON.stringify(this.game.currentTurnInitialState)
+			currentTurnInitialState: JSON.stringify(this.game.createGameSnapshot())
 		});
 	}
 
@@ -272,46 +290,6 @@ class GameController {
 		}
 
 	}
-
-	// checkAllOrdersSubmitted () {
-	// 	// update all clients on who has submitted orders
-	// 	this.sendServerStateToAll();
-	//
-	// 	//  check if players Online
-	// 	if (this.playersOnline.length == 0) {
-	// 		return false;
-	// 	}
-	//
-	// 	// check if all the online players have submitted their orders
-	// 	// if not, return false and don't execute
-	// 	for (let i = 0; i < this.playersOnline.length; i++) {
-	// 		// console.log("orders submitted?", this.playersOnline[i], this.playersOnline[i].ordersSubmitted);
-	// 		if (!this.playersOnline[i].ordersSubmitted) {
-	// 			return false;
-	// 		}
-	// 	}
-	//
-	// 	// send turnsSubmitted event to clients
-	// 	this.sendTurnsSubmittedToAll();
-	//
-	// 	//if all online players have submitted their orders, execute orders
-	// 	// execute orders
-	// 	for (let i = 0; i < this.playersOnline.length; i++) {
-	// 		if (this.playersOnline[i].ordersToExecute.length > 0) {
-	// 			for (let j = 0; j < this.playersOnline[i].ordersToExecute.length; j++) {
-	// 				this.executeOrder(this.playersOnline[i].ordersToExecute[j]);
-	// 			}
-	// 		}
-	//
-	// 		// after orders executed, reset ClientController
-	// 		this.playersOnline[i].ordersSubmitted = false;
-	// 		this.playersOnline[i].ordersToExecute = [];
-	// 	}
-	//
-	// 	// once all orders have been executed, run simulation
-	// 	this.runSimulation();
-	//
-	// }
 
 	checkAllOrdersSubmitted () {
 		// update all clients on who has submitted orders
@@ -450,6 +428,7 @@ class ClientController {
 		})
 
 		this.socket.on('createUnit', (data) => {
+			debug.log(0, `Received createUnit from ${this.socket.id}`);
 			this.gameController.createUnit(data.unitType, data.player, data.x, data.y);
 		});
 
@@ -458,6 +437,7 @@ class ClientController {
 		});
 
 		this.socket.on('submitTurn', (data) =>  {
+			debug.log(0, `Received submit turn with ${data}`);
 			// will update game controller saying that this player has submitted their turn
 			// for now, just forcing runSimulation
 			this.ordersToExecute = JSON.parse(data);
@@ -485,6 +465,22 @@ class ClientController {
 			// reset Game
 			this.gameController.resetGame();
 		});
+
+		this.socket.on('loadSnapshot', (data) => {
+			debug.log(0, `Got loadSnapshot`);
+
+			try {
+        let snapshot = JSON.parse(data);
+				if (snapshot.turnNumber && snapshot.currentTurnInitialState) {
+					this.gameController.loadSnapshot(snapshot);
+				}
+				return true;
+    	} catch(e) {
+				debug.log(0, e);
+				return false;
+    	}
+
+		})
 
 		this.socket.on('updateClientPhase', (data) => {
 			this.clientGamePhase = data.newPhase;
