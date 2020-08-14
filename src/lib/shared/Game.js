@@ -442,6 +442,7 @@ export default class Game {
 			// enable movement at beginning of tick
 			this.gameObjects.forEach( (value, key, ownerMap) => {
 				value.updatedThisTick = false;
+				value.turnsActive = value.turnsActive + 1;
 			});
 
 			// update walk
@@ -557,7 +558,7 @@ export default class Game {
 				for (let i = 0; i < 4; i++) {
 					// if not already defeated and if no more bases
 					if (this.players[i].victoryCondition !== -1) {
-						this.players[i].victoryCondition = 1;	
+						this.players[i].victoryCondition = 1;
 					}
 				}
 			}

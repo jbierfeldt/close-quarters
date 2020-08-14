@@ -16,7 +16,7 @@ export default class Unit {
 		this.invulnerable=false;
 		this.objCategory = "Units";
 		this.collidedWith = [];
-		//this.turnsActive = turnsActive;
+		this.turnsActive = 0;
 	}
 
 	static createFromSerialized (serializedObject) {
@@ -41,7 +41,8 @@ export default class Unit {
 			tripped: this.tripped,
 			lifeSpan: this.lifeSpan,
 			ticksSinceDamage: this.ticksSinceDamage,
-			tripDamage: this.tripDamage
+			tripDamage: this.tripDamage,
+			turnsActive: this.turnsActive
 			//ADD ALL OTHER VARIABLES
 	}
 
