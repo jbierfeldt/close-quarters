@@ -96,17 +96,9 @@ export default class Display {
 			//The draw function loops continuously while the sketch is active
 			//Different screens of the game are portioned off using trigger variables and user input to move between them
 			s.draw = () => {
-				//
-				//this.app.setGamePhase(3);
-			//	if(this.app.game.players[this.app.playerNumber-1].victoryCondition == - 1){
-				//	this.app.spectatorMode = true;
-			//	}
 
 				s.cursor(s.CROSS);
 
-				/*if(this.app.spectatorMode = true){
-
-				}*/
 				let transitioning = 0;
 				//The below variables to be filled in by the size of the players current window
 				let wi=s.width; //The width of the canvas
@@ -222,7 +214,7 @@ export default class Display {
 					//Exit this phase and move to the Battle Phase if the mouse is pressed(button trigger to be added)
 				}
 
-				else if(this.app.gamePhase==1 && this.app.spectatorMode == false){
+				else if(this.app.gamePhase==1 && this.app.clientState !== 'SPECTATOR' && this.app.clientState !== 'DEFEATED_PLAYER'){
 					justTriggered = 1;
 					this.t = 1;
 					animate = 0;
@@ -522,19 +514,11 @@ export default class Display {
 					}*/
 				}
 				// if phase where grid should be shown, draw grid
-				else if(this.app.gamePhase==2 || this.app.spectatorMode == true){
+				else if(this.app.gamePhase==2 || this.app.clientState === 'SPECTATOR' || this.app.clientState === 'DEFEATED_PLAYER'){
 					bSubmit.submitted = false;
 					bSubmit.confirmed = false;
 					//s.background(255);
 					//s.filter(GRAY);
-
-
-					/*if(s.keyIsPressed){
-					this.t=this.t+keyPressed();
-				}*/
-				if(this.simulationDisplayTurn.tick[this.t].players[this.app.playerNumber-1].victoryCondition == - 1){
-					this.app.spectatorMode = true;
-				}
 
 				if(animate >= 10 && this.t < (Object.keys(this.simulationDisplayTurn.tick).length-1)){
 					this.t=this.t+1;
@@ -831,7 +815,7 @@ export default class Display {
 					}
 				}
 			}
-			if(this.app.spectatorMode == true){
+			if(this.app.clientState === "SPECTATOR" || this.app.clientState === "DEFEATED_PLAYER" ) {
 
 				if(this.t = (Object.keys(this.simulationDisplayTurn.tick).length-1)){
 					this.t = 1;
