@@ -5,7 +5,7 @@ import * as Projectiles from './Projectile.js';
 import * as Bases from './Base.js';
 import {DEBUG} from './utilities.js';
 
-const debug = new DEBUG(true, 0);
+const debug = new DEBUG(process.env.DEBUG, 0);
 
 const tempConfig = {
 	boardDimensions: [20, 30],

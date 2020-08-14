@@ -5,7 +5,7 @@ import * as Units from './lib/shared/Unit.js';
 import * as Bases from './lib/shared/Base.js';
 import {DEBUG} from './lib/shared/utilities.js';
 
-window.debug = new DEBUG(true, 0);
+window.debug = new DEBUG(process.env.DEBUG, 0);
 
 const debugData = {
 	'playerNumber': 1
@@ -48,8 +48,7 @@ class App {
 
 		this.game.init();
 		this.setGamePhase(0);
-		this.debugInit();
-
+		if (debug.enabled) {this.debugInit();};
 		this.bindListeners();
 	}
 
@@ -68,23 +67,23 @@ class App {
 			// 	// the disconnection was initiated by the server, you need to reconnect manually
 			// 	socket.connect();
 			// }
-			console.log('disconnect', reason);
+			debug.log(0, 'disconnect', reason);
 			// else the socket will automatically try to reconnect
 		});
 
 		this.socket.on('connect', () => {
-			console.log("connect");
+			debug.log(0, "connect");
 		});
 
 		this.socket.on('reconnect_attempt', () => {
-			console.log('reconnect attempt...', this.socket);
+			debug.log(0, 'reconnect attempt...', this.socket);
 			this.socket.io.opts.query = {
 				token: this.token || ''
 			};
 		});
 
 		this.socket.on('reconnect', (attemptNumber) => {
-			console.log('reconnect');
+			debug.log(0, 'reconnect');
 		});
 
 		this.socket.on('debugInfoUpdate', (data) => {
@@ -93,9 +92,15 @@ class App {
 		});
 
 		this.socket.on('turnsSubmitted', () => {
-			console.log('all turns submitted');
+			debug.log(0, 'all turns submitted');
 			this.turnIsIn = true;
 		});
+
+		this.socket.on('simulationSuccessful', (data) => {
+			this.updateLastTurnHistory(data);
+			this.simulationRun = true;
+			this.setGamePhase(2); // show simulation phase
+		})
 
 		this.socket.on('updateServerState', (data) => {
 			let players = JSON.parse(data.players);
@@ -105,7 +110,6 @@ class App {
 
 		this.socket.on('updateLastTurnHistory', (data) => {
 			this.updateLastTurnHistory(data);
-			this.simulationRun = true;
 		});
 
 		this.socket.on('updateGameState', (data) => {
@@ -119,7 +123,7 @@ class App {
 		})
 
 		this.socket.on('updateClientState', (data) => {
-			console.log("got new client state");
+			debug.log(0, "got new client state");
 			this.clientState = data.clientState;
 		})
 
@@ -142,6 +146,7 @@ class App {
 	}
 
 	debugInit () {
+		document.getElementById("debug-pane").style.visibility = 'visible';
 		document.getElementById("submit-turn").addEventListener("click", this.sendSubmitTurn.bind(this));
 		document.getElementById("force-submit-turn").addEventListener("click", this.forcesendSubmitTurn.bind(this));
 		document.getElementById("server-data").addEventListener("click", this.sendPrintServerData.bind(this));
@@ -150,7 +155,7 @@ class App {
 		document.getElementById("phase-2").addEventListener("click", this.setGamePhase.bind(this, 2));
 		document.getElementById("disconnect").addEventListener("click", this.sendDisconnect.bind(this));
 		document.getElementById("connect").addEventListener("click", this.sendConnect.bind(this));
-		document.getElementById("authdump").addEventListener("click", function(){ localStorage.authToken = ''; });
+		document.getElementById("authdump").addEventListener("click", function(){ localStorage.authToken = ''; window.open(window.location.href,'_blank'); });
 	}
 
 	createOrder (orderType, args) {
@@ -244,7 +249,7 @@ class App {
 
 	loadSerializedGameState(serializedGameState) {
 		let gameState = JSON.parse(serializedGameState);
-		console.log('unpacked state', gameState);
+		debug.log(0, 'unpacked state', gameState);
 		return this.game.rebuildGameSnapshot(gameState);
 	}
 
