@@ -1004,7 +1004,7 @@ export default class Display {
 				drawTripwireProjectile(x,y,displayObject.player,size,colors,displayObject.orientation,displayObject.damage, a);
 			}
 			if(displayObject.identifier == "CirProj"){
-				drawResonatorProjectile(x,y,displayObject.player,size,colors,displayObject.damage, a);
+				drawResonatorProjectile(x,y,displayObject.player,size,colors,displayObject.orientation,displayObject.damage, a);
 			}
 			if(displayObject.identifier == "IntProj"){
 				drawIntegratorProjectile(x,y,displayObject.player,size,colors,displayObject.orientation,displayObject.damage, a);
@@ -1411,12 +1411,8 @@ export default class Display {
 		}
 
 		function titleSequence(width,height,delay,scale){
-			if(delay>50){
-				s.background(0,255);
-			}
-			else{
-				s.background(0,delay*5);
-			}
+			delay=delay/1.2;
+			s.background(0);
 			s.translate(width/2,height/2);
 			s.noStroke();
 			s.noFill();
@@ -1432,16 +1428,20 @@ export default class Display {
 					s.quad(-width/2+i*scale,-height/2+i*scale,-width/2+i*scale,height/2-i*scale,width/2-i*scale,height/2-i*scale,width/2-i*scale,-height/2+i*scale);
 				}
 			}
-			s.noStroke();
+
+
 			for(var angle=delay*3;angle<delay*3+360;angle=angle+30){
 				let titleX=(height/3+90*s.cos(3.14*s.radians(delay)))*s.cos(s.radians(angle))-0;
 				let titleY=(height/3+2*s.tan(3.14*s.radians(delay/20)))*s.sin(s.radians(angle))+0;
+				s.noStroke();
 				for(let o = 255; o > 0; o = o - 5){
 					s.fill(152, 255, 152, o);
-					s.ellipse(titleX,titleY,height/12-o*height/(255*12),height/12-o*height/(255*12));
+					s.ellipse(titleX*1.2,titleY,height/12-o*height/(255*12),height/12-o*height/(255*12));
 				}
 			}
 			s.translate(-width/2,-height/2);
+			s.background(0,255-delay*7);
+
 		}
 
 		function drawRayTracerProjectile(x, y, player, size, pColors, orient, a){
@@ -1591,11 +1591,13 @@ export default class Display {
 
 		}
 
-		function drawResonatorProjectile(x, y, player, size, pColors, damage, a){
+		function drawResonatorProjectile(x, y, player, size, pColors, orient, damage, a){
 			s.strokeWeight(1);
 			s.fill(pColors[player-1][0],pColors[player-1][1],pColors[player-1][2],105);
 			let crossHairOffset = size/5;
+
 			if(damage == 0){
+				s.translate(((a-5)*size/10)*orient[0],((a-5)*size/10)*orient[1]);
 				s.strokeWeight(2)
 				s.stroke(255,185);
 				s.ellipse(x*size+size/2, y*size+size/2,size/20,size/20);
@@ -1610,6 +1612,7 @@ export default class Display {
 				s.line(x*size+size/2-size/20, y*size+size/2,x*size+size/2-crossHairOffset, y*size+size/2);
 				s.line(x*size+size/2, y*size+size/2+size/20,x*size+size/2, y*size+size/2+crossHairOffset);
 				s.line(x*size+size/2+size/20, y*size+size/2,x*size+size/2+crossHairOffset, y*size+size/2);
+				s.translate(-((a-5)*size/10)*orient[0],-((a-5)*size/10)*orient[1]);
 			}
 			else{
 				s.noStroke();

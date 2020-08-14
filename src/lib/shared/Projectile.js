@@ -166,7 +166,7 @@ export class BalBullet extends Projectile {
 }
 
 export class CirBullet extends Projectile {
-	constructor(player, initialOrientation = [0, 0], initialSpeed = 0, damage = 0, distance = 4, id)  {
+	constructor(player, initialOrientation = [0, 0], initialSpeed = 0, damage = 0, distance = distance = 5 + Math.floor(Math.random()*10), id)  {
 		super(player, initialOrientation, initialSpeed, id);
 		//distance = 4 + Math.floor(Math.random()*5
 		this.identifier = "CirProj";
@@ -193,16 +193,16 @@ export class CirBullet extends Projectile {
 			this.firing=true;
 			for(let i = 0; i < 4; i = i + 1){
 				if(i == 0){
-					this.projArr[i] = new CirBullet(this.player, [1+2*this.orientation[0],0+2*this.orientation[1]], 0,this.damage/4, 0);
+					this.projArr[i] = new CirBullet(this.player, [1+1*this.orientation[0],0+1*this.orientation[1]], 0,this.damage/4, 0);
 				}
 				else if(i == 1){
-					this.projArr[i] = new CirBullet(this.player, [0+2*this.orientation[0],1+2*this.orientation[1]], 0,this.damage/4, 0);
+					this.projArr[i] = new CirBullet(this.player, [0+1*this.orientation[0],1+1*this.orientation[1]], 0,this.damage/4, 0);
 				}
 				else if(i == 2){
-					this.projArr[i] = new CirBullet(this.player, [0+2*this.orientation[0],-1+2*this.orientation[1]], 0,this.damage/4, 0);
+					this.projArr[i] = new CirBullet(this.player, [0+1*this.orientation[0],-1+1*this.orientation[1]], 0,this.damage/4, 0);
 				}
 				else if(i == 3){
-					this.projArr[i] = new CirBullet(this.player, [-1+2*this.orientation[0],0+2*this.orientation[1]], 0,this.damage/4, 0);
+					this.projArr[i] = new CirBullet(this.player, [-1+1*this.orientation[0],0+1*this.orientation[1]], 0,this.damage/4, 0);
 				}
 			}
 		}

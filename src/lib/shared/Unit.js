@@ -460,7 +460,7 @@ export class Resonator extends Unit {
 
 	startAttack (orientation){
 		this.firing = true;
-		this.projArr[0]  = new Projectiles.CirBullet(this.player, orientation, 2);
+		this.projArr[0]  = new Projectiles.CirBullet(this.player, orientation, 1);
 	}
 
 	update (tick) {
