@@ -155,6 +155,7 @@ class GameController {
 
 		clientController.setSocket(newSocket);
 		clientController.isConnected = true;
+		clientController.setClientStateFromVictoryCondition(this.game.players[clientController.playerNumber].victoryCondition);
 		clientController.onConnect();
 
 		this.playersOnline.push(clientController);
@@ -168,6 +169,7 @@ class GameController {
 
 	clientControllerDisconnect (clientController) {
 		clientController.isConnected = false;
+		clientController.clientState = "DISCONNECTED";
 
 		if (clientController.playerNumber) {
 			this.playerSpots[clientController.playerNumber] = null;
@@ -206,6 +208,11 @@ class GameController {
 		this.io.emit('updateClientGamePhase', {
 			newPhase: phase
 		});
+	}
+
+	sendTurnsSubmittedToAll () {
+		// tells all clients that the turns have been subitted
+		this.io.emit('turnsSubmitted');
 	}
 
 	sendLastTurnHistoryToAll () {
@@ -256,19 +263,22 @@ class GameController {
 
 	createBase(args) {
 		this.game.createNewBaseAtCoord(args.baseType, args.player, args.x, args.y);
-		console.log("Made", args.baseType, "at", args.x, args.y);
+		// console.log("Made", args.baseType, "at", args.x, args.y);
 	}
 
 	createUnit(args) {
 		this.game.createNewUnitAtCoord(args.unitType, args.player, args.x, args.y);
-		console.log("Made", args.unitType, "at", args.x, args.y);
+		// console.log("Made", args.unitType, "at", args.x, args.y);
 	}
 
 	checkPlayerStateChanges () {
 		// checks if players have been defeated/victorious
 
 		for (let i = 1; i <= 4; i++) {
-			console.log("Victory condition", i, this.game.players[i-1].victoryCondition);
+			if (this.playerSpots[i] !== null) {
+				this.playerSpots[i].setClientStateFromVictoryCondition(this.game.players[i-1].victoryCondition);
+				this.playerSpots[i].sendClientState();
+			}
 		}
 
 	}
@@ -290,6 +300,9 @@ class GameController {
 				return false;
 			}
 		}
+
+		// send turnsSubmitted event to clients
+		this.sendTurnsSubmittedToAll();
 
 		//if all online players have submitted their orders, execute orders
 		// execute orders
@@ -453,6 +466,27 @@ class ClientController {
 			this.gameController.sendServerStateToAll();
 		});
 
+	}
+
+	setClientStateFromVictoryCondition (victoryCondition) {
+		switch (victoryCondition) {
+			case -1:
+				this.clientState = "DEFEATED_PLAYER";
+				break;
+			case 0:
+				this.clientState = "ACTIVE_PLAYER";
+				break;
+			case 1:
+				this.clientState = "VICTORIOUS_PLAYER";
+				break;
+		}
+	}
+
+	sendClientState () {
+		console.log("sending client state");
+		this.socket.emit("updateClientState", {
+			'clientState': this.clientState
+		});
 	}
 
 	sendClientInfo () {

@@ -85,6 +85,10 @@ class App {
 			console.log('reconnect');
 		});
 
+		this.socket.on('turnsSubmitted', () => {
+			console.log('all turns submitted');
+		});
+
 		this.socket.on('updateServerState', (data) => {
 			let players = JSON.parse(data.players);
 			this.playersOnServer = players;
@@ -108,6 +112,11 @@ class App {
 		this.socket.on('updateClientGamePhase', (data) => {
 			debug.log(0, 'got new phase from server', data.newPhase);
 			this.setGamePhase(data.newPhase);
+		})
+
+		this.socket.on('updateClientState', (data) => {
+			console.log("got new client state");
+			this.clientState = data.clientState;
 		})
 
 		this.socket.on('updateClientInfo', (data) => {
@@ -137,6 +146,7 @@ class App {
 		document.getElementById("phase-2").addEventListener("click", this.setGamePhase.bind(this, 2));
 		document.getElementById("disconnect").addEventListener("click", this.sendDisconnect.bind(this));
 		document.getElementById("connect").addEventListener("click", this.sendConnect.bind(this));
+		document.getElementById("authdump").addEventListener("click", function(){ localStorage.authToken = ''; });
 	}
 
 	createOrder (orderType, args) {

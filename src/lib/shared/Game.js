@@ -72,7 +72,6 @@ export default class Game {
 			gameObjs[i][1] = JSON.stringify(gameObjs[i][1].serialize());
 		}
 
-		console.log('player serialize');
 		let players = [...this.players];
 		for (let i = 0; i < players.length; i++) {
 			players[i] = JSON.stringify(players[i]);
@@ -193,7 +192,6 @@ export default class Game {
 
 	deregisterGameObject (object) {
 		if (object) {
-			console.log("deregistering", object.id);
 			this.gameObjects.delete(object.id);
 		}
 	}
@@ -510,7 +508,6 @@ export default class Game {
 				for (let j = 0; j < this.board[i].length; j++) {
 					if (this.board[i][j].length > 1) {
 						let collisionStack = this.board[i][j];
-						console.log("collide", tick, i, j, collisionStack);
 						for (let k = 0; k < collisionStack.length; k++) {
 							let obj = this.gameObjects.get(this.board[i][j][k]);
 							if (obj.objCategory === "Projectiles") {
@@ -519,7 +516,6 @@ export default class Game {
 									  if(this.isObjectAlive(collisionObj)){
 											this.collideProjWithObject(obj, collisionObj, j, i);
 								 	}
-									//console.log(collisionObj.collidedWith);
 								}
 							}
 						}
@@ -530,7 +526,6 @@ export default class Game {
 			// clean up ids marked for deletion
 			let cleanUpArrayTempLength = this.cleanUpArray.length;
 			while ( cleanUpArrayTempLength > 0 ){
-				//console.log(cleanUpArrayTempLength);
 				this.cleanUpByID(this.cleanUpArray[cleanUpArrayTempLength-1]);
 				this.cleanUpArray.pop();
 				cleanUpArrayTempLength = cleanUpArrayTempLength-1;
