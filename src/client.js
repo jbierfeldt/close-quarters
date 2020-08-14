@@ -85,8 +85,9 @@ class App {
 			console.log('reconnect');
 		});
 
-		this.socket.on('turnsSubmitted', () => {
-			console.log('all turns submitted');
+		this.socket.on('debugInfoUpdate', (data) => {
+			debug.log(0, 'update debug');
+			this.updateDebugInfo();
 		});
 
 		this.socket.on('updateServerState', (data) => {
@@ -95,9 +96,8 @@ class App {
 			this.updateDebugInfo();
 		});
 
-		this.socket.on('debugInfoUpdate', (data) => {
-			debug.log(0, 'update debug');
-			this.updateDebugInfo();
+		this.socket.on('turnsSubmitted', () => {
+			console.log('all turns submitted');
 		});
 
 		this.socket.on('updateLastTurnHistory', (data) => {

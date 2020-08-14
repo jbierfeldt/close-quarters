@@ -48,18 +48,9 @@ class GameController {
 		this.game.init();
 
 		// if authToken matches that of extant clientController, reconnect player to clientController
-		// if no token or unauthorized token, treat new connection as a new player
 
-		// generate new secret for each game session, that way old tokens won't authorize
-
-		// on success, lookup matching token in clientController and assign new socket to it
-
-		// possibly implement a isConnected bool inside of the clientController that gets set to false
-		// when the socket disconnects, but can be reinstatiated upon successful authentication and
-		// reconnection. If the game gets a new request and one of the positions is filled by an offline
-		// clientController, then it can be removed
-
-		// need to implement timeout on disconnect
+		// decode authToken using session specific secret, if set
+		// put decoded authToken in socket.sessionID
 		this.io.use((socket, next) => {
 			if (socket.handshake.query && socket.handshake.query.token && socket.handshake.query.token !== '') {
 				jwt.verify(socket.handshake.query.token, this.SECRET_KEY, (err, decoded) => {
@@ -91,12 +82,7 @@ class GameController {
 					// don't allow new player to enter game, create spectator
 					debug.log(1, "Game full.");
 				}
-				// else {
-				// 	// create clientController and then connect it
-				// 	let newClientController = this.newClientController(playerSpot);
-				// 	this.clientControllerConnect(newClientController, socket);
-				// 	console.log('connected', newClientController.playerNumber, newClientController.id, newClientController.socket.id);
-				// }
+				
 				let newClientController = this.newClientController(playerSpot);
 				this.clientControllerConnect(newClientController, socket);
 				console.log('connected', newClientController.playerNumber, newClientController.id, newClientController.socket.id);
@@ -277,7 +263,6 @@ class GameController {
 		for (let i = 1; i <= 4; i++) {
 			if (this.playerSpots[i] !== null) {
 				this.playerSpots[i].setClientStateFromVictoryCondition(this.game.players[i-1].victoryCondition);
-				this.playerSpots[i].sendClientState();
 			}
 		}
 
@@ -469,16 +454,22 @@ class ClientController {
 	}
 
 	setClientStateFromVictoryCondition (victoryCondition) {
+		let newState;
 		switch (victoryCondition) {
 			case -1:
-				this.clientState = "DEFEATED_PLAYER";
+				newState = "DEFEATED_PLAYER";
 				break;
 			case 0:
-				this.clientState = "ACTIVE_PLAYER";
+				newState = "ACTIVE_PLAYER";
 				break;
 			case 1:
-				this.clientState = "VICTORIOUS_PLAYER";
+				newState = "VICTORIOUS_PLAYER";
 				break;
+
+			if (this.clientState !== newState) {
+				this.clientState = newState;
+				this.sendClientState();
+			}
 		}
 	}
 
