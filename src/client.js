@@ -18,6 +18,8 @@ class App {
 		this.display = null;
 		this.gameState = undefined;
 		this.socket = undefined;
+		this.turnIsIn = false; //Use this for the transition
+		this.simulationRun = false;
 
 		this.gamePhase = undefined;
 		this.currentTurnOrders = [];
@@ -90,18 +92,20 @@ class App {
 			this.updateDebugInfo();
 		});
 
+		this.socket.on('turnsSubmitted', () => {
+			console.log('all turns submitted');
+			this.turnIsIn = true;
+		});
+
 		this.socket.on('updateServerState', (data) => {
 			let players = JSON.parse(data.players);
 			this.playersOnServer = players;
 			this.updateDebugInfo();
 		});
 
-		this.socket.on('turnsSubmitted', () => {
-			console.log('all turns submitted');
-		});
-
 		this.socket.on('updateLastTurnHistory', (data) => {
 			this.updateLastTurnHistory(data);
+			this.simulationRun = true;
 		});
 
 		this.socket.on('updateGameState', (data) => {

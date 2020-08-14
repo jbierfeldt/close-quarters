@@ -69,9 +69,12 @@ export default class Display {
 			let b;
 
 			let hoverObject;
-			let flag = [0,0,0,0];
+			//let flag = [0,0,0,0];
 
 			let full = true;
+			let justTriggered = 1;
+			let gameOver = 0;
+			let alpha = 0;
 
 			p5.disableFriendlyErrors = true;
 			//Preload the fonts and other assets below
@@ -95,11 +98,12 @@ export default class Display {
 			s.draw = () => {
 				//
 				//this.app.setGamePhase(3);
-				if(this.app.game.players[this.app.playerNumber-1].victoryCondition == - 1 && flag[this.app.playerNumber-1] == -1){
-					this.app.spectatorMode = true;
-				}
+			//	if(this.app.game.players[this.app.playerNumber-1].victoryCondition == - 1){
+				//	this.app.spectatorMode = true;
+			//	}
 
 				s.cursor(s.CROSS);
+
 				/*if(this.app.spectatorMode = true){
 
 				}*/
@@ -215,6 +219,7 @@ export default class Display {
 				}
 
 				else if(this.app.gamePhase==1 && this.app.spectatorMode == false){
+					justTriggered = 1;
 					this.t = 1;
 					animate = 0;
 
@@ -423,6 +428,9 @@ export default class Display {
 								s.text("Making Turn", wi/35, he/1.75+(a-1)*si);
 								//newPlayerSpan.innerHTML = "Making Turn...";
 							}
+							break
+							default:
+								s.text("Magnetic Meditation", wi/35, he/1.75+(a-1)*si);
 						}
 					}
 					else {
@@ -550,7 +558,9 @@ export default class Display {
 					/*if(s.keyIsPressed){
 					this.t=this.t+keyPressed();
 				}*/
-
+				if(this.simulationDisplayTurn.tick[this.t].players[this.app.playerNumber-1].victoryCondition == - 1){
+					this.app.spectatorMode = true;
+				}
 
 				if(animate >= 10 && this.t < (Object.keys(this.simulationDisplayTurn.tick).length-1)){
 					this.t=this.t+1;
@@ -560,7 +570,7 @@ export default class Display {
 				if(this.t<Object.keys(this.simulationDisplayTurn.tick).length && this.t>0){
 					drawGrid(wi, he, si, this.playerColors);
 					for(let p = 0; p < 4; p = p + 1){
-						if(flag[p] == -1){
+						if(this.simulationDisplayTurn.tick[this.t].players[p].victoryCondition == - 1){
 							if(p == 1){
 								s.translate(0,he/2);
 							}
@@ -642,17 +652,18 @@ export default class Display {
 							}
 						}
 					}
-					for(let p = 0; p < 4; p = p + 1){
+				/*	for(let p = 0; p < 4; p = p + 1){
 						if(this.simulationDisplayTurn.tick[this.t].players[p].victoryCondition == - 1){
 								flag[p] = -1;
 						}
 						if(this.simulationDisplayTurn.tick[this.t].players[p].victoryCondition == 1){
 								flag[p] = 1;
 						}
-					}
+					}*/
 
 					for(let p = 0; p < 4; p = p + 1){
-						if(flag[p] == -1){
+						if(this.simulationDisplayTurn.tick[this.t].players[p].victoryCondition == - 1){
+
 							s.textFont(titleFont);
 							if(p == 1){
 								s.translate(0,he/2);
@@ -667,7 +678,7 @@ export default class Display {
 							s.fill(this.playerColors[p][0], this.playerColors[p][1], this.playerColors[p][2], 255);
 							s.stroke(0);
 							s.text("Defeated",wi/8,he/4);
-							if(flag[p] == -1){
+							if(this.simulationDisplayTurn.tick[this.t].players[p].victoryCondition == - 1){
 								s.textFont(titleFont);
 								if(p == 1){
 									s.translate(0,-he/2);
@@ -680,18 +691,22 @@ export default class Display {
 								}
 							}
 						}
-							else if(flag[p] == 1){
+							else if(this.simulationDisplayTurn.tick[this.t].players[p].victoryCondition == 1){
+								gameOver = 1;
 								//Victory Sequence, fix it.
+								s.strokeWeight(1);
+								s.noFill();
 								let row = 0;
 								for(let r = 0; r < wi; r = r + si*2){
 									if(row % 2 == 0){
-									for(let c = s.sin(s.radians(this.delay*2))*he; c < s.sin(s.radians(this.delay*2))*he+si*4; c = c + si/8){
+
+									for(let c = s.sin(s.radians(this.delay*2))*he; c < s.sin(s.radians(this.delay*2))*he+si*10; c = c + si/8){
 										s.stroke(255);
 										s.ellipse(r,c,si,si);
 									}
 								}
 								else{
-									for(let c = (he-s.sin(s.radians(this.delay*2))*he); c < (he-s.sin(s.radians(this.delay*2))*he+si*4); c = c + si/8){
+									for(let c = (he-s.sin(s.radians(this.delay*2))*he); c < (he-s.sin(s.radians(this.delay*2))*he+si*10); c = c + si/8){
 										s.stroke(255);
 										s.ellipse(r,c,si,si);
 									}
@@ -706,20 +721,21 @@ export default class Display {
 								s.text("Is Victorious",wi/13,he/1.5);
 							}
 						}
-
 				}
 				//IMPORTANT - ANIMATION SPEED
 				animate=animate+1;
 				if(this.t === Object.keys(this.simulationDisplayTurn.tick).length - 1){
+					if(gameOver == 0){
 					this.app.setGamePhase(3);
 					sideBarGrowth = 1;
 					sideBarMenu = false;
+				}
 				}
 
 			}
 
 			///REVIEW BOARD PHASE
-			else if(this.app.gamePhase ==  3 && flag[this.app.playerNumber-1] != -1){
+			else if(this.app.gamePhase ==  3 && this.app.game.players[this.app.playerNumber-1].victoryCondition != -1){
 				if(sideBarGrowth > 0.8){
 					sideBarGrowth = sideBarGrowth - .001;
 				}
@@ -733,7 +749,7 @@ export default class Display {
 				this.t = Object.keys(this.simulationDisplayTurn.tick).length;
 					drawGrid(wi, he, si, this.playerColors);
 					for(let p = 0; p < 4; p = p + 1){
-						if(flag[p] == -1){
+						if(this.app.game.players[p].victoryCondition == -1){
 							if(p == 1){
 								s.translate(0,he/2);
 							}
@@ -816,7 +832,7 @@ export default class Display {
 					}
 
 					for(let p = 0; p < 4; p = p + 1){
-						if(flag[p] == -1){
+						if(this.app.game.players[p].victoryCondition == -1){
 							s.textFont(titleFont);
 							if(p == 1){
 								s.translate(0,he/2);
@@ -831,7 +847,7 @@ export default class Display {
 							s.fill(this.playerColors[p][0], this.playerColors[p][1], this.playerColors[p][2], 255);
 							s.stroke(0);
 							s.text("Defeated",wi/8,he/4);
-							if(flag[p] == -1){
+							if(this.app.game.players[p].victoryCondition == -1){
 								s.textFont(titleFont);
 								if(p == 1){
 									s.translate(0,-he/2);
@@ -846,6 +862,7 @@ export default class Display {
 						}
 					}
 
+///SIDE BAR FOR REVIEW MODE
 					s.textFont(titleFont);
 					s.fill(0,150);
 					s.noStroke();
@@ -866,21 +883,34 @@ export default class Display {
 					s.fill(255);
 					s.stroke(0);
 					s.text("Deploy Machines", wi+si/1.3, si*4.5);
-          s.textSize(si*.62);
+					s.textSize(si*.92);
+					s.text("Scoreboard" , wi+si/1.1, si*7.5);
+					s.stroke(255);
+					s.noFill();
+					s.rect(wi+si/.9,si*8,si*4,si*4.8);
+					s.stroke(0);
+          s.textSize(si*.82);
+					let scores = {}
+					for(let p = 0; p < 4; p = p + 1){
+						scores[p] = this.app.game.players[p].score;
+					}
+
 					for(let a = 0; a < 4; a = a + 1){
 						s.fill(this.playerColors[a][0], this.playerColors[a][1], this.playerColors[a][2], this.playerColors[a][3]);
-						if(this.app.game.players[a].victoryCondition[0] == - 1){
-							s.text("Player " + (a+1) + " Defeated" , wi+si/1.6, si*7+a*si);
+						s.textAlign(CENTER);
+						if(this.app.game.players[a].victoryCondition == - 1){
+							s.text("Defeated" , wi+si/.54, si*9+a*si);
 						}
 						else{
-						s.text("Player " + (a+1) + " Score: " + this.app.game.players[a].score, wi+si/1.6, si*7+a*si);
+						s.text("- " + this.app.game.players[a].score+ " -", wi+si/.41, si*9+a*si);
 						}
 					}
+					s.textAlign(LEFT);
 					s.textSize(si*1.1);
-					drawCreditsSymbol(wi+si/.45, si*13, si*1.3, this.app.playerNumber, 10, this.playerColors);
+					drawCreditsSymbol(wi+si/.42, si*15, si*1.3, this.app.playerNumber, 10, this.playerColors);
 					s.stroke(0);
 					s.strokeWeight(2);
-					s.text(":  "+this.app.game.players[this.app.playerNumber-1].credits, wi+si/.28, si*13.4);
+					s.text(":  "+this.app.game.players[this.app.playerNumber-1].credits, wi+si/.25, si*15.4);
 
 					if(s.mouseIsPressed && bPhaseOne.isInRange(s.mouseX,s.mouseY)){
 						bPhaseOne.func.call(this.app,1);
@@ -901,6 +931,20 @@ export default class Display {
 				s.textSize(wi/15);
 				s.textFont(titleFont);
 				s.text("SPECTATOR MODE",wi/4.6,he/1.87);
+			}
+			if(this.app.turnIsIn == true){
+				if(justTriggered = 1){
+					alpha = 255;
+					justTriggered = 0;
+				}
+				else{
+					alpha = alpha + .1;
+				}
+				runLoadScreen(alpha);
+			}
+			if(this.app.simulationRun == true){
+				this.app.turnIsIn = false;
+				this.app.simulationRun = false;
 			}
 		}
 
@@ -957,6 +1001,12 @@ export default class Display {
 			}
 		}
 
+		function runLoadScreen(alpha){
+			s.stroke(255);
+			s.fill(0,alpha)
+			s.rect(0,0,s.width,s.height);
+
+		}
 		function showUnitDescription(unitType, player, wid, hei, siz){
 			let tranX = 0;
 			let tranY = 0;

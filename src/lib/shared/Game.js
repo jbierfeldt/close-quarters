@@ -23,6 +23,7 @@ export default class Game {
 		this.turnNumber =  turnNumber;
 		this.numberOfProjectiles = 0;
 		this.tempNumberOfProjectiles = 0;
+		this.numberOfDefeatedPlayers = 0;
 		this.history = {
 			'turn': {}
 		};
@@ -549,6 +550,15 @@ export default class Game {
 					this.players[i].victoryCondition = -1;
 					this.clearProjectiles(i+1);
 					this.clearUnits(i+1);
+					this.numberOfDefeatedPlayers = this.numberOfDefeatedPlayers + 1;
+				}
+			}
+			if(this.numberOfDefeatedPlayers == 3){
+				for (let i = 0; i < 4; i++) {
+					// if not already defeated and if no more bases
+					if (this.players[i].victoryCondition !== -1) {
+						this.players[i].victoryCondition = 1;	
+					}
 				}
 			}
 
