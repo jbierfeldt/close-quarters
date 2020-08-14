@@ -72,8 +72,9 @@ export default class Display {
 			//let flag = [0,0,0,0];
 
 			let full = true;
-
+			let justTriggered = 1;
 			let gameOver = 0;
+			let alpha = 0;
 
 			p5.disableFriendlyErrors = true;
 			//Preload the fonts and other assets below
@@ -102,6 +103,7 @@ export default class Display {
 			//	}
 
 				s.cursor(s.CROSS);
+
 				/*if(this.app.spectatorMode = true){
 
 				}*/
@@ -217,6 +219,7 @@ export default class Display {
 				}
 
 				else if(this.app.gamePhase==1 && this.app.spectatorMode == false){
+					justTriggered = 1;
 					this.t = 1;
 					animate = 0;
 
@@ -884,7 +887,7 @@ export default class Display {
 					s.text("Scoreboard" , wi+si/1.1, si*7.5);
 					s.stroke(255);
 					s.noFill();
-					s.rect(wi+si/1.2,si*8,si*4,si*8);
+					s.rect(wi+si/.9,si*8,si*4,si*4.8);
 					s.stroke(0);
           s.textSize(si*.82);
 					let scores = {}
@@ -894,6 +897,7 @@ export default class Display {
 
 					for(let a = 0; a < 4; a = a + 1){
 						s.fill(this.playerColors[a][0], this.playerColors[a][1], this.playerColors[a][2], this.playerColors[a][3]);
+						s.textAlign(CENTER);
 						if(this.app.game.players[a].victoryCondition == - 1){
 							s.text("Defeated" , wi+si/.54, si*9+a*si);
 						}
@@ -901,11 +905,12 @@ export default class Display {
 						s.text("- " + this.app.game.players[a].score+ " -", wi+si/.41, si*9+a*si);
 						}
 					}
+					s.textAlign(LEFT);
 					s.textSize(si*1.1);
-					drawCreditsSymbol(wi+si/.45, si*14, si*1.3, this.app.playerNumber, 10, this.playerColors);
+					drawCreditsSymbol(wi+si/.42, si*15, si*1.3, this.app.playerNumber, 10, this.playerColors);
 					s.stroke(0);
 					s.strokeWeight(2);
-					s.text(":  "+this.app.game.players[this.app.playerNumber-1].credits, wi+si/.28, si*14.4);
+					s.text(":  "+this.app.game.players[this.app.playerNumber-1].credits, wi+si/.25, si*15.4);
 
 					if(s.mouseIsPressed && bPhaseOne.isInRange(s.mouseX,s.mouseY)){
 						bPhaseOne.func.call(this.app,1);
@@ -926,6 +931,20 @@ export default class Display {
 				s.textSize(wi/15);
 				s.textFont(titleFont);
 				s.text("SPECTATOR MODE",wi/4.6,he/1.87);
+			}
+			if(this.app.turnIsIn == true){
+				if(justTriggered = 1){
+					alpha = 255;
+					justTriggered = 0;
+				}
+				else{
+					alpha = alpha + .1;
+				}
+				runLoadScreen(alpha);
+			}
+			if(this.app.simulationRun == true){
+				this.app.turnIsIn = false;
+				this.app.simulationRun = false;
 			}
 		}
 
@@ -982,6 +1001,12 @@ export default class Display {
 			}
 		}
 
+		function runLoadScreen(alpha){
+			s.stroke(255);
+			s.fill(0,alpha)
+			s.rect(0,0,s.width,s.height);
+
+		}
 		function showUnitDescription(unitType, player, wid, hei, siz){
 			let tranX = 0;
 			let tranY = 0;
