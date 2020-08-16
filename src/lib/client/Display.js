@@ -110,6 +110,8 @@ export default class Display {
 				//Delay serves as a variable that has a constant increment for animation
 				this.delay=this.delay+.19;
 
+
+
 				if(buttonMaker===1){
 					if(this.app.playerNumber == 2){
 						submitShifterX = 0;
@@ -209,7 +211,7 @@ export default class Display {
 					//Exit this phase and move to the Battle Phase if the mouse is pressed(button trigger to be added)
 				}
 
-				else if(this.app.gamePhase==1 && this.app.clientState !== 'SPECTATOR' && this.app.clientState !== 'DEFEATED_PLAYER'){
+				else if(this.app.gamePhase == 1 && this.app.clientState !== 'SPECTATOR' && this.app.clientState !== 'DEFEATED_PLAYER'){
 					justTriggered = 1;
 					this.t = 1;
 					animate = 0;
@@ -491,28 +493,17 @@ export default class Display {
 					else if(this.app.playerNumber == 4 && hoverX>14 && hoverY >= 10 && hoverX < 30 && hoverY < 20){
 						s.rect(hoverX*si,hoverY*si,si,si);
 					}
-					//Buttons Section
-				/*	if(transitioning == 0){
-						transitionCounter = 0;
-						transitioning = - 1;
-					}
-					if(transitioning == -1){
-
-					}*/
 				}
-				// if phase where grid should be shown, draw grid
+
 				else if(this.app.gamePhase==2 || this.app.clientState === 'SPECTATOR' || this.app.clientState === 'DEFEATED_PLAYER'){
 					bSubmit.submitted = false;
 					bSubmit.confirmed = false;
-					//s.background(255);
-					//s.filter(GRAY);
+					if(animate >= 10 && this.t < (Object.keys(this.simulationDisplayTurn.tick).length-1)){
+						this.t = this.t + 1; //Leaves User On Final Tick #
+						animate=0;
+					}
 
-				if(animate >= 10 && this.t < (Object.keys(this.simulationDisplayTurn.tick).length-1)){
-					this.t=this.t+1;
-					animate=0;
-				}
-
-				if(this.t<Object.keys(this.simulationDisplayTurn.tick).length && this.t>0){
+				if(this.t < Object.keys(this.simulationDisplayTurn.tick).length && this.t > 0){
 					drawGrid(wi, he, si, this.playerColors);
 					for(let p = 0; p < 4; p = p + 1){
 						if(this.simulationDisplayTurn.tick[this.t].players[p].victoryCondition == - 1){
@@ -771,8 +762,6 @@ export default class Display {
 					s.line(wi+wi*.1,si*8.5,s.width-wi*.1,si*8.5)
 					s.stroke(255);
 					s.fill(255,100);
-					//s.quad(wi+si/.8,si*8,wi+si/.8,si*12.5,s.width-si/.8,si*12.5,s.width-si/.8,si*8);
-				//	s.rect(wi+si/.9,si*8,si*4,si*4.8);
 					s.stroke(0);
 					s.textFont(standardFont);
           s.textSize(si*.89);
@@ -780,7 +769,6 @@ export default class Display {
 					for(let p = 0; p < 4; p = p + 1){
 						scores[p] = this.app.game.players[p].score;
 					}
-
 					for(let a = 0; a < 4; a = a + 1){
 						s.fill(this.playerColors[a][0], this.playerColors[a][1], this.playerColors[a][2], this.playerColors[a][3]);
 						if(this.app.game.players[a].victoryCondition == - 1){
@@ -797,25 +785,35 @@ export default class Display {
 					s.stroke(0);
 					s.strokeWeight(2);
 					s.text(":  "+this.app.game.players[this.app.playerNumber-1].credits, wi+si/.25, si*15.4);
+					//Scrolling Bar;
+					s.textSize(si*1.7);
+
+					s.textFont(standardFont);
+					let scroller = this.delay/100;
+					s.text("Damage Dealt: "+ this.app.game.players[this.app.playerNumber-1].damageDealtThisTurn, s.width/2+scroller,s.height-si*1.7);
 
 					if(s.mouseIsPressed && bPhaseOne.isInRange(s.mouseX,s.mouseY)){
 						bPhaseOne.func.call(this.app,1);
 					}
 				}
 			}
+
+			//End Phase 3
+			//Begin Spectator Mode
 			if(this.app.clientState === "SPECTATOR" || this.app.clientState === "DEFEATED_PLAYER" ) {
 
-				if(this.t = (Object.keys(this.simulationDisplayTurn.tick).length-1)){
+				if(this.app.simulationRun == true){
 					this.t = 1;
+					//animate = 0;
 				}
-
-			  this.app.sendSubmitTurn();
 				s.stroke(0,100);
 				s.fill(255,100);
 				s.strokeWeight(2);
 				s.textSize(wi/15);
 				s.textFont(titleFont);
-				s.text("SPECTATOR MODE",wi/4.6,he/1.87);
+				s.textAlign(s.CENTER);
+				s.text("SPECTATOR MODE",s.width/2,s.height/1.87);
+				s.textAlign(s.LEFT);
 			}
 			if(this.app.turnIsIn == true){
 				if(justTriggered = 1){

@@ -16,6 +16,18 @@ export default class Player {
 		this.victoryCondition = 0;
 
 		this.damageDealtToBases = 0;
+
+
+		//Statistics (for review phase)
+		this.damageDealtThisTurn = 0;
+		this.unitsLostThisTurn = 0;
+		this.unitsKilledThisTurn = 0;
+		this.creditsEarnedThisTurn = 0;
+
+		this.damageDealtTotal = 0 ;
+		this.unitsLostTotal = 0;
+		this.unitsKilledTotal = 0;
+		this.creditsEarnedTotal = 0;
 	}
 
 }
