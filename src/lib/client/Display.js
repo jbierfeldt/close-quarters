@@ -826,7 +826,6 @@ export default class Display {
 				runLoadScreen(alpha);
 			}
 			if(this.app.simulationRun == true){
-				this.app.setGamePhase(2);
 				this.app.turnIsIn = false;
 				this.app.simulationRun = false;
 			}
