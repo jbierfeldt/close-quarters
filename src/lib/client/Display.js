@@ -111,7 +111,13 @@ export default class Display {
 				this.delay=this.delay+.19;
 
 
-
+				//playerShifter shifts the Button Menu if the player is on the right side of the screen
+				playerShifter = 0;
+				submitShifterX = 0;
+				submitShifterY = 0;
+				if(this.app.playerNumber>2){
+					playerShifter=s.width/2;
+				}
 				if(buttonMaker===1){
 					if(this.app.playerNumber == 2){
 						submitShifterX = 0;
@@ -188,22 +194,16 @@ export default class Display {
 					//buttonScale sets the size of the buttons(dependent on their overall number)
 					buttonScale=1.5;
 
-					//playerShifter shifts the Button Menu if the player is on the right side of the screen
-					playerShifter = 0;
-					submitShifterX = 0;
-					submitShifterY = 0;
-					if(this.app.playerNumber>2){
-						playerShifter=wi/2;
-					}
+
 
 					//Only execute the following block once so the buttons are only created a single time
 
 					if(s.mouseIsPressed){
 
-						if (!debug.enabled) {
+						//if (!debug.enabled) {
 							s.fullscreen(full);
 							s.resizeCanvas(window.screen.height*1.5, window.screen.height);
-						}
+						//}
 						buttonMaker = 1;
 						this.app.setGamePhase(1);
 						s.mouseIsPressed = false;
@@ -790,7 +790,7 @@ export default class Display {
 
 					s.textFont(standardFont);
 					let scroller = this.delay/100;
-					s.text("Damage Dealt: "+ this.app.game.players[this.app.playerNumber-1].damageDealtThisTurn, s.width/2+scroller,s.height-si*1.7);
+					s.text("Damage Dealt: "+ this.app.game.players[this.app.playerNumber-1].damageDealtThisTurn, s.width*(scroller-Math.floor(scroller)), s.height-si*1.7);
 
 					if(s.mouseIsPressed && bPhaseOne.isInRange(s.mouseX,s.mouseY)){
 						bPhaseOne.func.call(this.app,1);
@@ -802,10 +802,6 @@ export default class Display {
 			//Begin Spectator Mode
 			if(this.app.clientState === "SPECTATOR" || this.app.clientState === "DEFEATED_PLAYER" ) {
 
-				if(this.app.simulationRun == true){
-					this.t = 1;
-					//animate = 0;
-				}
 				s.stroke(0,100);
 				s.fill(255,100);
 				s.strokeWeight(2);
@@ -815,6 +811,7 @@ export default class Display {
 				s.text("SPECTATOR MODE",s.width/2,s.height/1.87);
 				s.textAlign(s.LEFT);
 			}
+			//Load Screen Logic Below
 			if(this.app.turnIsIn == true){
 				if(justTriggered = 1){
 					alpha = 155;
@@ -825,15 +822,11 @@ export default class Display {
 				}
 				runLoadScreen(alpha);
 			}
-			if(this.app.simulationRun == true){
-				this.app.setGamePhase(2);
+			if(this.app.simulationRun === true){
 				this.app.turnIsIn = false;
 				this.app.simulationRun = false;
 			}
 		}
-
-
-
 
 
 
