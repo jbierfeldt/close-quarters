@@ -594,22 +594,33 @@ export default class Display {
 								//Victory Sequence, fix it.
 								s.strokeWeight(1);
 								s.noFill();
-								let row = 0;
-								for(let r = 0; r < wi; r = r + si*2){
-									if(row % 2 == 0){
-
-									for(let c = s.sin(s.radians(this.delay*2))*he; c < s.sin(s.radians(this.delay*2))*he+si*10; c = c + si/8){
-										s.stroke(255);
-										s.ellipse(r,c,si,si);
-									}
-								}
-								else{
-									for(let c = (he-s.sin(s.radians(this.delay*2))*he); c < (he-s.sin(s.radians(this.delay*2))*he+si*10); c = c + si/8){
-										s.stroke(255);
-										s.ellipse(r,c,si,si);
-									}
-								}
-									row = row + 1;
+								let refx=s.width/2;
+								let refy=s.height/2;
+								s.noFill();
+								let theta=0;
+								let phase=0;
+								let meh=0;
+								let osx=0;
+								let osy=0;
+								let wave = 12;
+								let rad = 360;
+								let radius=s.height/4+s.height*s.sin(s.radians(this.delay));
+								for (let i = 0; i < rad; i = i + 1){
+									s.stroke(255, 20);
+									theta = i*(360/rad);
+									phase=((Math.PI)/rad);
+									meh = (radius*1.5+11.5)*s.sin(wave*theta+phase)*s.cos(phase);
+									osx=(s.width/25+meh)*s.cos(theta);
+									osy=(s.width/25+meh)*s.sin(theta);
+									s.strokeWeight(8);
+									s.point(osx+refx,osy+refy);
+									s.strokeWeight(6);
+									s.point(osx+refx,osy+refy);
+									s.strokeWeight(3);
+									s.point(osx+refx,osy+refy);
+									s.stroke(255,255);
+									s.strokeWeight(1);
+									s.point(osx+refx,osy+refy);
 								}
 								s.textFont(titleFont);
 								s.textSize(si*3.6);
@@ -1723,14 +1734,11 @@ function drawCreditsSymbol(x, y, size, player, a, pColors){
 				s.point(osx+refx,osy+refy);
 				s.strokeWeight(6);
 				s.point(osx+refx,osy+refy);
-				//s.point(osx,osy);
 				s.strokeWeight(3);
 				s.point(osx+refx,osy+refy);
-				//s.point(osx,osy);
 				s.stroke(255,45-a*3);
 				s.strokeWeight(1.5);
 				s.point(osx+refx,osy+refy);
-				//s.point(osx,osy);
 			}
 		}
 
