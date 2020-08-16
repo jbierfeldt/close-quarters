@@ -822,7 +822,7 @@ export default class Display {
 				}
 				runLoadScreen(alpha);
 			}
-			if(this.app.simulationRun === true){
+			if(this.app.simulationRun == true){
 				this.app.turnIsIn = false;
 				this.app.simulationRun = false;
 			}

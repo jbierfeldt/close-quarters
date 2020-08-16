@@ -18,9 +18,7 @@ class App {
 		this.display = null;
 		this.gameState = undefined;
 		this.socket = undefined;
-		this.turnIsIn = false; //Use this for the transition
-		this.simulationRun = false;
-
+		
 		this.gamePhase = undefined;
 		this.currentTurnOrders = [];
 
@@ -35,6 +33,8 @@ class App {
 		this.spectatorMode = false;
 		this.clientState = null;
 		this.loadedClientInfoFromServer = false;
+		this.turnIsIn = false; //Use this for the transition
+		this.simulationRun = false;
 	}
 
 	init() {

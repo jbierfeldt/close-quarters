@@ -355,7 +355,7 @@ class GameController {
 		console.log("Players Online:")
 		for (let i =  0; i < this.playersOnline.length; i++) {
 			console.log(this.playersOnline[i].id, this.playersOnline[i].playerNumber, this.playersOnline[i].ordersSubmitted, this.playersOnline[i].ordersToExecute);
-			console.log(this.game.players[this.playersOnline[i].playerNumber - 1]);
+			// console.log(this.game.players[this.playersOnline[i].playerNumber - 1]);
 		}
 		console.log("Client Controllers:")
 		for (let i =  0; i < this.clientControllers.length; i++) {
@@ -491,6 +491,9 @@ class ClientController {
 			console.log("disconnected", this.id, this.socket.id, reason);
 			this.gameController.clientControllerDisconnect(this);
 			this.gameController.sendServerStateToAll();
+
+			// check if all orders have now been submitted
+			this.gameController.checkAllOrdersSubmitted();
 		});
 
 	}
