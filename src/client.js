@@ -285,6 +285,7 @@ class App {
 		document.getElementById("reset-game").addEventListener("click", this.sendResetGame.bind(this));
 		document.getElementById("phase-1").addEventListener("click", this.setGamePhase.bind(this, 1));
 		document.getElementById("phase-2").addEventListener("click", this.setGamePhase.bind(this, 2));
+		document.getElementById("phase-3").addEventListener("click", this.setGamePhase.bind(this, 3));
 		document.getElementById("disconnect").addEventListener("click", this.sendDisconnect.bind(this));
 		document.getElementById("connect").addEventListener("click", this.sendConnect.bind(this));
 		document.getElementById("authdump").addEventListener("click", function(){ localStorage.authToken = ''; window.open(window.location.href,'_blank'); });
@@ -378,5 +379,8 @@ class App {
 
 const app = new App();
 app.init();
+
+// secret reset for production games
+window.resetGame = app.sendResetGame.bind(app);
 
 app.display.stage.grid = app.game.board;
