@@ -244,7 +244,7 @@ export default class Game {
 	}
 
 	collideProjWithObject(proj, obj, x, y) {
-
+		let tempHealth = obj.health;
 		// separate logic for colliding with a base / unit
 		switch (obj.objCategory) {
 
@@ -257,6 +257,12 @@ export default class Game {
 			}
 
 				obj.health = obj.health - proj.damage;
+				if(obj.health > 0){
+				this.players[proj.player-1].damageDealtThisTurn = this.players[proj.player-1].damageDealtThisTurn + (tempHealth - obj.health);
+				}
+				else{
+				this.players[proj.player-1].damageDealtThisTurn = this.players[proj.player-1].damageDealtThisTurn + (tempHealth - 0);
+				}
 				if (this.isObjectAlive(obj) === false) {
 					this.cleanUpArray.push(obj.id);
 					//this.deleteObjectAtCoord(obj, x, y);
@@ -276,13 +282,15 @@ export default class Game {
 			if(proj.damage > 0){
 				obj.collidedWith = [true, proj.player];
 			}
-				let tempHealth = obj.health;
+
 				obj.health = obj.health - proj.damage;
 				if(obj.health > 0){
 				this.players[proj.player-1].damageDealtToBases = this.players[proj.player-1].damageDealtToBases + (tempHealth - obj.health);
+				this.players[proj.player-1].damageDealtThisTurn = this.players[proj.player-1].damageDealtThisTurn + (tempHealth - obj.health);
 				}
 				else{
 					this.players[proj.player-1].damageDealtToBases = this.players[proj.player-1].damageDealtToBases + (tempHealth - 0);
+					this.players[proj.player-1].damageDealtThisTurn = this.players[proj.player-1].damageDealtThisTurn + (tempHealth - 0);
 				}
 				if (this.isObjectAlive(obj) === false) {
 					this.cleanUpArray.push(obj.id);
@@ -619,6 +627,7 @@ export default class Game {
 		for (let p = 0; p < 4; p++) {
 			this.players[p].credits = this.players[p].credits + 3 + Math.floor(this.players[p].damageDealtToBases/200);
 			this.players[p].damageDealtToBases = 0;
+			this.players[p].damageDealtTotal = this.players[p].damageDealtTotal + this.players[p].damageDealtThisTurn;
 		}
 
 		this.currentTurnInitialState = this.createGameSnapshot();

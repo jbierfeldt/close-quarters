@@ -260,6 +260,7 @@ class App {
 
 	updateLastTurnHistory (data) {
 		let lastTurnHistory = this.loadSerializedLastTurnHistory(data.s_lastTurnHistory);
+		this.display.t = 1;
 		this.display.simulationDisplayTurn = lastTurnHistory;
 		debug.log(0, "sent to Display", this.display.simulationDisplayTurn);
 	}
