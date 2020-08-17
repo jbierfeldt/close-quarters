@@ -65,6 +65,8 @@ export default class Display {
 			let imgTwo;
 			let imgThree;
 			let imgFour;
+			let imgFive;
+			let imgSix;
 
 			let b;
 
@@ -83,8 +85,10 @@ export default class Display {
 				standardFont = s.loadFont('static/ISB.ttf');
 				//img = s.loadImage('static/CCBolt.png');
 				imgTwo = s.loadImage('static/CBoard3.png');
-				//imgThree = s.loadImage('static/wallpaper1.png');
-				//imgFour = s.loadImage('static/glassCopy.jpg');
+				imgThree = s.loadImage('static/P1_Core.png');
+				imgFour = s.loadImage('static/P2_Core.png');
+				imgFive = s.loadImage('static/P3_Core.png');
+				imgSix = s.loadImage('static/P4_Core.png');
 			}
 
 			//Create the canvas based on the size of the user window
@@ -776,10 +780,7 @@ export default class Display {
 					s.stroke(0);
 					s.textFont(standardFont);
           s.textSize(si*.89);
-					let scores = {}
-					for(let p = 0; p < 4; p = p + 1){
-						scores[p] = this.app.game.players[p].score;
-					}
+
 					for(let a = 0; a < 4; a = a + 1){
 						s.fill(this.playerColors[a][0], this.playerColors[a][1], this.playerColors[a][2], this.playerColors[a][3]);
 						if(this.app.game.players[a].victoryCondition == - 1){
@@ -800,8 +801,8 @@ export default class Display {
 					s.textSize(si*1.7);
 
 					s.textFont(standardFont);
-					let scroller = this.delay/100;
-					s.text("Damage Dealt: "+ this.app.game.players[this.app.playerNumber-1].damageDealtThisTurn, s.width*(scroller-Math.floor(scroller)), s.height-si*1.7);
+					let scroller = this.delay/150;
+					s.text("Damage Dealt: "+ this.app.game.players[this.app.playerNumber-1].damageDealtThisTurn, -s.width/2+1.5*s.width*(scroller-Math.floor(scroller)), s.height-si*1.7);
 
 					if(s.mouseIsPressed && bPhaseOne.isInRange(s.mouseX,s.mouseY)){
 						bPhaseOne.func.call(this.app,1);
@@ -1237,10 +1238,22 @@ export default class Display {
 
 
 		function drawBase(x,y,player,size,health,max,pColors){
+			if(player == 1){
+			s.image(imgThree, x*size+1, y*size+1, size-2, size-2);
+		}
+		else if(player == 2){
+			s.image(imgFour, x*size+1, y*size+1, size-2, size-2);
+		}
+		else if(player == 3){
+		  s.image(imgFive, x*size+1, y*size+1, size-2, size-2);
+		}
+		else if(player == 4){
+			s.image(imgSix, x*size+1, y*size+1, size-2, size-2);
+		}
 			s.stroke(0);
 			s.fill(pColors[player-1][0],pColors[player-1][1],pColors[player-1][2],255);
 			s.strokeWeight(2+s.width/3000);
-			let offset=size/10;
+			/*let offset=size/10;
 			let alpha = 0;
 			for(let row = x*size+offset; row < (x*size+size); row = row + offset*2){
 				let bravo = 0;
@@ -1262,19 +1275,33 @@ export default class Display {
 			}
 			s.fill(255,(max-health)*155/max);
 			s.noStroke();
-			s.rect(x*size, y*size, size, size);
+			s.rect(x*size, y*size, size, size);*/
 		}
 
 		function drawRayTracer(x,y,player,size,health,max,pColors){
 			s.stroke(0);
 			s.strokeWeight(2);
 			s.translate(x*size+size/2, y*size+size/2);
-			for(let angle = 0; angle < 360; angle = angle + 90){
-				s.rotate(s.radians(angle));
-				s.line(size/2.5,size/2.5,size/6,size/8);
-				s.line(size/2.5,size/2.5,size/8,size/6);
-				s.rotate(-s.radians(angle));
-			}
+			let angle = 0;
+			s.rotate(s.radians(angle));
+			s.line(size/2.5,size/2.5,size/6,size/8);
+			s.line(size/2.5,size/2.5,size/8,size/6);
+			s.rotate(-s.radians(angle));
+			angle = 90;
+			s.rotate(s.radians(angle));
+			s.line(size/2.5,size/2.5,size/6,size/8);
+			s.line(size/2.5,size/2.5,size/8,size/6);
+			s.rotate(-s.radians(angle));
+			angle = 180;
+			s.rotate(s.radians(angle));
+			s.line(size/2.5,size/2.5,size/6,size/8);
+			s.line(size/2.5,size/2.5,size/8,size/6);
+			s.rotate(-s.radians(angle));
+			angle = 270;
+			s.rotate(s.radians(angle));
+			s.line(size/2.5,size/2.5,size/6,size/8);
+			s.line(size/2.5,size/2.5,size/8,size/6);
+			s.rotate(-s.radians(angle));
 			s.translate(-x*size-size/2, -y*size-size/2);
 			s.fill((max-health)*255/max);
 			s.ellipse(x*size+size/2,y*size+size/2,size/5,size/5);
@@ -1723,11 +1750,11 @@ function drawCreditsSymbol(x, y, size, player, a, pColors){
 			let wave = 4+(x*y)%15;
 			let rad = 360;
 			let radius=size/25;
-			for (let i = 0; i < rad; i = i + 30){
-				s.stroke(pColors[player-1][0],pColors[player-1][1],pColors[player-1][2], 50-a);
+			for (let i = 0; i < rad; i = i + 20){
+				s.stroke(pColors[player-1][0],pColors[player-1][1],pColors[player-1][2], 23-a);
 				theta = i*(360/rad);
 				phase=((Math.PI)/rad);
-				meh = (radius*1.5+11.5)*s.sin(wave*theta+phase)*s.cos(phase);
+				meh = (radius*1.8+11.5)*s.sin(wave*theta+phase)*s.cos(phase);
 				osx=(size/25+meh)*s.cos(theta);
 				osy=(size/25+meh)*s.sin(theta);
 				s.strokeWeight(8);
@@ -1736,8 +1763,8 @@ function drawCreditsSymbol(x, y, size, player, a, pColors){
 				s.point(osx+refx,osy+refy);
 				s.strokeWeight(3);
 				s.point(osx+refx,osy+refy);
-				s.stroke(255,45-a*3);
-				s.strokeWeight(1.5);
+				s.stroke(255,150-17*s.abs(a-4.5));
+				s.strokeWeight(1);
 				s.point(osx+refx,osy+refy);
 			}
 		}

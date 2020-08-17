@@ -483,6 +483,10 @@ export default class Game {
 
 		for(let i = 0; i < 4; i = i + 1){
 			this.players[i].score = 0;
+			this.players[i].damageDealtThisTurn = 0;
+			this.players[i].unitsLostThisTurn = 0;
+			this.players[i].unitsKilledThisTurn = 0;
+			this.players[i].creditsEarnedThisTurn = 0;
 		}
 		console.log("Running simulation for turn " + this.turnNumber);
 		this.history.turn[this.turnNumber] = {
