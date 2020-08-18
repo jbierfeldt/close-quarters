@@ -10,11 +10,11 @@ const http = require('http');
 const path = require('path');
 const socketIO = require('socket.io');
 const jwt = require('jsonwebtoken');
+
 const port = 3000;
 
 const app = express();
 const server = http.Server(app);
-// const io = socketIO(server);
 
 const CONFIG = {
 	maxPlayers: 4

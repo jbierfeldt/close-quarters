@@ -594,18 +594,6 @@ export default class Game {
 				cleanUpArrayTempLength = cleanUpArrayTempLength-1;
 			}
 
-			// // check if player is defeated
-			// for(let p = 0; p < 4; p = p + 1){
-			// if(this.players[p].baseCount == 0 && this.players[p].victoryCondition[0] == 0){
-			// 	console.log(this.players[p].baseCount);
-			// 		this.players[p].victoryCondition = [-1, tick];
-			// 		console.log("Player " + p + " Defeated at tick "+ tick);
-			// 	}
-			// 	if(this.players[p].victoryCondition[0] == - 1){
-			// 		//clearPlayer'sUnits();
-			// 	}
-			// }
-
 			for (let i = 0; i < 4; i++) {
 				// if not already defeated and if no more bases
 				if (this.players[i].victoryCondition !== -1 && this.players[i].baseCount == 0) {
