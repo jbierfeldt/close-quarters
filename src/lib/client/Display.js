@@ -50,7 +50,7 @@ export default class Display {
 			let bResonator;
 			let bOscillator;
 			let bIntegrator;
-
+			let newButtonPressed;
 
 			let bSubmit;
 
@@ -248,7 +248,7 @@ export default class Display {
 					//s.background(0,190);
 
 
-					if(this.app.game.players[this.app.playerNumber-1].baseCount < 2 && gameStart == 0){
+					if(this.app.game.players[this.app.playerNumber-1].baseCount < 2 && gameStart == 0 && this.app.game.turnNumber < 2){
 						bBase.drawButton();
 						s.fill(255);
 						s.stroke(0);
@@ -310,7 +310,7 @@ export default class Display {
 						}
 
 
-						for(let i=0;i<unitButtons.length;i=i+1){
+						for(let i = 0; i < unitButtons.length; i = i + 1){
 							unitButtons[i].drawButton();
 							if(unitButtons[i].isPressed == true){
 								showUnitDescription(unitButtons[i].text,this.app.playerNumber, wi, he, si);
@@ -336,48 +336,38 @@ export default class Display {
 									bSubmit.func.call(this.app);
 								}
 							}
-
-							let newButtonPressed=-1;
-							for(let i=0;i<unitButtons.length;i=i+1){
+							//newButtonPressed = -1;
+							//currentButtonPressed
+							for(let i = 0; i < unitButtons.length; i = i + 1){
 								if(unitButtons[i].isInRange(s.mouseX,s.mouseY)){
 									unitButtons[i].buttonHasBeenPressed();
-									newButtonPressed=i;
+									newButtonPressed = i;
+									//currentButtonPressed = i;
 								}
-							}
-							if(newButtonPressed >= 0){
-								for(let j=0;j<unitButtons.length;j=j+1){
-									if(j!=newButtonPressed){
-										unitButtons[j].isPressed=false;
-									}
+								else if(i != newButtonPressed){
+									unitButtons[i].isPressed = false;
 								}
 							}
 							if(bSubmit.submitted == false){
-							for(let yy=0;yy<unitButtons.length;yy=yy+1){
-								if(unitButtons[yy].isPressed===true){
-									if(this.app.playerNumber == 1 && hoverX <= 14 && hoverY < 10 && hoverX < 30 && hoverY < 20){
-										//this.app.makeRayTracer(this.player,hoverX,hoverY);
-										unitButtons[yy].func.call(this.app,unitButtons[yy].text, this.app.playerNumber, hoverX, hoverY);
-										unitButtons[yy].isPressed=false;
+								if(unitButtons[newButtonPressed].isPressed === true){
+										if(this.app.playerNumber == 1 && hoverX <= 14 && hoverY < 10 && hoverX < 30 && hoverY < 20){
+											unitButtons[newButtonPressed].func.call(this.app,unitButtons[newButtonPressed].text, this.app.playerNumber, hoverX, hoverY);
+											unitButtons[newButtonPressed].isPressed=false;
+										}
+										else if(this.app.playerNumber == 2 && hoverX <= 14 && hoverY >= 10 && hoverX < 30 && hoverY < 20){
+											unitButtons[newButtonPressed].func.call(this.app,unitButtons[newButtonPressed].text, this.app.playerNumber, hoverX, hoverY);
+											unitButtons[newButtonPressed].isPressed=false;
+										}
+										else if(this.app.playerNumber == 3 && hoverX > 14 && hoverY < 10 && hoverX < 30 && hoverY < 20){
+											unitButtons[newButtonPressed].func.call(this.app,unitButtons[newButtonPressed].text, this.app.playerNumber, hoverX, hoverY);
+											unitButtons[newButtonPressed].isPressed=false;
+										}
+										else if(this.app.playerNumber == 4 && hoverX > 14 && hoverY >= 10 && hoverX < 30 && hoverY < 20){
+											unitButtons[newButtonPressed].func.call(this.app,unitButtons[newButtonPressed].text, this.app.playerNumber, hoverX, hoverY);
+											unitButtons[newButtonPressed].isPressed=false;
+										}
 									}
-									else if(this.app.playerNumber == 2 && hoverX<=14 && hoverY >= 10 && hoverX < 30 && hoverY < 20){
-										//this.app.makeRayTracer(this.player,hoverX,hoverY);
-										unitButtons[yy].func.call(this.app,unitButtons[yy].text, this.app.playerNumber,hoverX,hoverY);
-										unitButtons[yy].isPressed=false;
-									}
-									else if(this.app.playerNumber == 3 && hoverX>14 && hoverY < 10 && hoverX < 30 && hoverY < 20){
-										//this.app.makeRayTracer(this.player,hoverX,hoverY);
-										unitButtons[yy].func.call(this.app,unitButtons[yy].text, this.app.playerNumber,hoverX,hoverY);
-										unitButtons[yy].isPressed=false;
-									}
-									else if(this.app.playerNumber == 4 && hoverX>14 && hoverY >= 10 && hoverX < 30 && hoverY < 20){
-										//this.app.makeRayTracer(this.player,hoverX,hoverY);
-										unitButtons[yy].func.call(this.app,unitButtons[yy].text, this.app.playerNumber,hoverX,hoverY);
-										unitButtons[yy].isPressed=false;
-									}
-								}
 							}
-
-						}
 						}
 						drawUnitMenu(this.playerColors,this.app.playerNumber, buttonScale);
 					}
@@ -636,14 +626,14 @@ export default class Display {
 						}
 				}
 				//IMPORTANT - ANIMATION SPEED
-				console.log(s.deltaTime);
+				//console.log(s.deltaTime);
 			/*	if(s.frameRate() > 30){
 					animate=animate+.5;
 			}
 			else{
 				animate=animate+1;
 			}*/
-		    animate = animate + (.8 + s.deltaTime/100);
+		    animate = animate + (.65 + s.deltaTime/100);
 				if(this.t === Object.keys(this.simulationDisplayTurn.tick).length - 1){
 					if(gameOver == 0){
 					this.app.setGamePhase(3);
@@ -809,10 +799,10 @@ export default class Display {
 
 					s.textFont(standardFont);
 					let scroller = this.delay/230;
-					s.text("Damage Dealt: "+ this.app.game.players[this.app.playerNumber-1].damageDealtThisTurn+ "             Machines Lost: "+ this.app.game.players[this.app.playerNumber-1].unitsLostThisTurn, -s.width/2+3.5*s.width*(scroller-Math.floor(scroller)), s.height-si*1.7);
+					s.text("Damage Dealt: "+ this.app.game.players[this.app.playerNumber-1].damageDealtThisTurn, -s.width/2+3*s.width*(scroller-Math.floor(scroller)), s.height-si*1.7);
 					//s.translate(-s.width/1.5, 0);
 					//scroller = (this.delay+300)/230;
-					//s.text("Machines Lost: "+ this.app.game.players[this.app.playerNumber-1].unitsLostThisTurn, -s.width/2+3.5*s.width*(scroller-Math.floor(scroller)), s.height-si*1.7);
+					s.text("Machines Lost: "+ this.app.game.players[this.app.playerNumber-1].unitsLostThisTurn, s.width/2+3*s.width*(scroller-Math.floor(scroller)), s.height-si*1.7);
 					//scroller = (this.delay+600)/230;
 					//s.translate(-s.width/1.5, 0);
 					//s.text("Machines Destroyed: "+ this.app.game.players[this.app.playerNumber-1].unitsKilledThisTurn, -s.width/2+3.5*s.width*(scroller-Math.floor(scroller)), s.height-si*1.7);
@@ -824,6 +814,7 @@ export default class Display {
 						bPhaseOne.func.call(this.app,1);
 					}
 				}
+
 			}
 
 			//End Phase 3
@@ -854,6 +845,8 @@ export default class Display {
 				this.app.turnIsIn = false;
 				this.app.simulationRun = false;
 			}
+			//EXPERIMENT
+			s.mouseIsPressed = false;
 		}
 
 
@@ -1236,10 +1229,8 @@ export default class Display {
 			//s.fill(pColors[1][0],pColors[1][1],pColors[1][2],pColors[1][3]);
 			s.fill(pColors[1][0],pColors[1][1],pColors[1][2],opacity);
 			s.rect(0,he/2,wi/2,he/2);
-			//s.fill(pColors[2][0],pColors[2][1],pColors[2][2],pColors[2][3]);
 			s.fill(pColors[2][0],pColors[2][1],pColors[2][2],opacity);
 			s.rect(wi/2,0,wi/2,he/2);
-			//s.fill(pColors[3][0],pColors[3][1],pColors[3][2],pColors[3][3]);
 			s.fill(pColors[3][0],pColors[3][1],pColors[3][2],opacity);
 			s.rect(wi/2,he/2,wi/2,he/2);
 			s.stroke(0,opacity);
@@ -1255,20 +1246,21 @@ export default class Display {
 
 		function drawBase(x,y,player,size,health,max,pColors){
 			if(player == 1){
-			s.image(imgThree, x*size+1, y*size+1, size-2, size-2);
-		}
-		else if(player == 2){
-			s.image(imgFour, x*size+1, y*size+1, size-2, size-2);
-		}
-		else if(player == 3){
-		  s.image(imgFive, x*size+1, y*size+1, size-2, size-2);
-		}
-		else if(player == 4){
-			s.image(imgSix, x*size+1, y*size+1, size-2, size-2);
-		}
-			s.stroke(0);
-			s.fill(pColors[player-1][0],pColors[player-1][1],pColors[player-1][2],255);
-			s.strokeWeight(2+s.width/3000);
+			s.image(imgThree, x*size, y*size, size-1, size-1);
+			}
+			else if(player == 2){
+				s.image(imgFour, x*size, y*size, size-1, size-1);
+			}
+			else if(player == 3){
+		  	s.image(imgFive, x*size, y*size, size-1, size-1);
+			}
+			else if(player == 4){
+				s.image(imgSix, x*size, y*size, size-1, size-1);
+			}
+		//	s.stroke(0);
+		//	s.strokeWeight(1);
+		//	s.fill(pColors[player-1][0],pColors[player-1][1],pColors[player-1][2],255);
+			//s.strokeWeight(2+s.width/3000);
 			/*let offset=size/10;
 			let alpha = 0;
 			for(let row = x*size+offset; row < (x*size+size); row = row + offset*2){
@@ -1665,7 +1657,7 @@ export default class Display {
 					s.noFill();
 				}
 				else{
-					s.fill(pColors[player-1][0],pColors[player-1][1],pColors[player-1][2],175);
+					s.fill(pColors[player-1][0],pColors[player-1][1],pColors[player-1][2],155);
 				}
 				s.rect(x*size,y*size,size,size);
 			}

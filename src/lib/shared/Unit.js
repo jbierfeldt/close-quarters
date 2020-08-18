@@ -359,7 +359,7 @@ export class Tripwire extends Unit {
 
 export class Ballast extends Unit {
 
-	constructor(player, health = 350, firing = false, id, collidedWith = [false, 4])  {
+	constructor(player, health = 300, firing = false, id, collidedWith = [false, 4])  {
 		super(id);
 		this.player = player;
 		this.health = health;
@@ -371,7 +371,7 @@ export class Ballast extends Unit {
 		this.fullName = "Ballast";
 	}
 
-	static maxHealth = 250;
+	static maxHealth = 300;
 	static cost = 2;
 	static description = "The Ballast is an advanced, bulky machine that can be used to block key channels while hitting a limited set of targets with significant force. It strikes for five consecutive seconds, delivering irreparable damage. The attacks rotate between 6 possible target locations that are a distance of either 6 or 3 tiles away horizontally and the opposite number vertically.";
 
@@ -438,7 +438,7 @@ export class Ballast extends Unit {
 
 export class Resonator extends Unit {
 
-	constructor(player, health = 300, firing = false, id, collidedWith = [false, 4])  {
+	constructor(player, health = 225, firing = false, id, collidedWith = [false, 4])  {
 		super(id);
 		this.player = player;
 		this.health = health;
@@ -450,7 +450,7 @@ export class Resonator extends Unit {
 		this.fullName = "Resonator";
 	}
 
-	static maxHealth = 300;
+	static maxHealth = 225;
 	static cost = 3;
 	static description = "The Resonator is a resiliant, catapult-style machine that delivers damage in a cross shape encompassing a five-tile area. The center of its strike deals significant damage and fades to half the amount in the adjacent tiles. The sheer power of its attack causes erratic projectile fire that hits a random number of spaces away. It will either strike vertically, horizontally or diagonally and does not do damage prior to reaching its destination.";
 
