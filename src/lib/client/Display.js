@@ -50,11 +50,11 @@ export default class Display {
 			let bResonator;
 			let bOscillator;
 			let bIntegrator;
-			let newButtonPressed;
+			let newButtonPressed = 0;
 
 			let bSubmit;
 
-			let counter;
+			let counter = 0;
 
 			let unitButtons=[]; //List of the Buttons for unit creation
 			let buttonMaker=1; //Variable so buttons only get created once
@@ -122,7 +122,8 @@ export default class Display {
 				if(this.app.playerNumber>2){
 					playerShifter=s.width/2;
 				}
-				if(buttonMaker===1){
+				if(buttonMaker === 1){
+
 					if(this.app.playerNumber == 2){
 						submitShifterX = 0;
 						submitShifterY = he/2;;
@@ -136,7 +137,7 @@ export default class Display {
 						submitShifterY = he/2;
 					}
 
-					bPhaseOne = new Buttoned(wi-si*5.55, si*2.9,si*5.1,si*1.1,"Deploy Machines",this.app.setGamePhase);
+					bPhaseOne = new Buttoned(wi-si*5.55, si*2.9, si*5.1, si*1.1, "Deploy Machines", this.app.setGamePhase);
 					bPhaseThree = new Buttoned(wi/3.2 + submitShifterX, he/1.65 - submitShifterY,si*6.1,si*1.1,"Review Board",this.app.setGamePhase);
 
 					bSubmit = new Buttoned(wi/3.2 + submitShifterX, he/1.85 - submitShifterY,si*5,si*1.1,"Submit Turn",this.app.sendSubmitTurn);
@@ -198,10 +199,6 @@ export default class Display {
 					//buttonScale sets the size of the buttons(dependent on their overall number)
 					buttonScale=1.5;
 
-
-
-					//Only execute the following block once so the buttons are only created a single time
-
 					if(s.mouseIsPressed){
 
 						if (!debug.enabled) {
@@ -214,8 +211,7 @@ export default class Display {
 					}
 					//Exit this phase and move to the Battle Phase if the mouse is pressed(button trigger to be added)
 				}
-
-				else if(this.app.gamePhase == 1 && this.app.clientState !== 'SPECTATOR' && this.app.clientState !== 'DEFEATED_PLAYER'){
+				else if(this.app.gamePhase === 1 && this.app.clientState !== 'SPECTATOR' && this.app.clientState !== 'DEFEATED_PLAYER'){
 					justTriggered = 1;
 					this.t = 1;
 					animate = 0;
@@ -245,8 +241,6 @@ export default class Display {
 						s.rect(0,0,wi,he/2);
 						s.rect(0,he/2,wi/2,he/2);
 					}
-					//s.background(0,190);
-
 
 					if(this.app.game.players[this.app.playerNumber-1].baseCount < 2 && gameStart == 0 && this.app.game.turnNumber < 2){
 						bBase.drawButton();
@@ -282,20 +276,19 @@ export default class Display {
 						s.textSize(wi/40);
 						gameStart=1;
 						if(this.app.turnNumber > 1){
-						bPhaseThree.drawButton();
-						s.fill(255);
-						s.stroke(0);
-						s.text("Review Board", bPhaseThree.xx+si/5, bPhaseThree.yy+si/1.25);
+							bPhaseThree.drawButton();
+							s.fill(255);
+							s.stroke(0);
+							s.text("Review Board", bPhaseThree.xx+si/5, bPhaseThree.yy+si/1.25);
 					}
-
 						if(bSubmit.submitted === false){
-						bSubmit.drawButton();
-					}
+							bSubmit.drawButton();
+						}
 						if(bSubmit.confirmed === false){
 					 		s.fill(255);
 					 		s.stroke(0);
 							s.text("Submit Turn", bSubmit.xx+si/5, bSubmit.yy+si/1.25);
-							counter=0;
+							counter = 0;
 						}
 						else if(bSubmit.submitted === true){
 							s.fill(this.playerColors[this.app.playerNumber-1][0], this.playerColors[this.app.playerNumber-1][1], this.playerColors[this.app.playerNumber-1][2], this.playerColors[this.app.playerNumber-1][3]);
@@ -320,10 +313,12 @@ export default class Display {
 
 						if(s.mouseIsPressed){
 							if(this.app.turnNumber > 1){
-							if(bPhaseThree.isInRange(s.mouseX,s.mouseY)){
-								bPhaseThree.func.call(this.app,3);
+								if(bPhaseThree.isInRange(s.mouseX,s.mouseY)){
+									//bPhaseThree.func.call(this.app, 3);
+									this.app.setGamePhase(3);
+									//break
+								}
 							}
-						}
 							if(bSubmit.isInRange(s.mouseX,s.mouseY)){
 								bSubmit.buttonHasBeenPressed();
 								if(bSubmit.isPressed === true && bSubmit.confirmed === false){
@@ -334,6 +329,7 @@ export default class Display {
 									//bSubmit.confirmed = false;
 									bSubmit.submission();
 									bSubmit.func.call(this.app);
+									//break
 								}
 							}
 							//newButtonPressed = -1;
@@ -367,8 +363,9 @@ export default class Display {
 											unitButtons[newButtonPressed].isPressed=false;
 										}
 									}
+								}
 							}
-						}
+
 						drawUnitMenu(this.playerColors,this.app.playerNumber, buttonScale);
 					}
 
@@ -399,29 +396,23 @@ export default class Display {
 						if (this.app.playersOnServer[a] !== null) {
 						switch (this.app.playersOnServer[a].gamePhase) {
 							case 0:
-							s.text("Loading", wi/35, he/1.75+(a-1)*si);
-
-							//newPlayerSpan.innerHTML = "Loading...";
-							break
+								s.text("Loading", wi/35, he/1.75+(a-1)*si);
+								break
 							case 1:
-							if (this.app.playersOnServer[a].ordersSubmitted) {
-							//	newPlayerSpan.innerHTML = "Orders submitted.";
-								s.text("Orders Submitted", wi/35, he/1.75+(a-1)*si);
-
-							} else {
-								s.text("Making Turn", wi/35, he/1.75+(a-1)*si);
-								//newPlayerSpan.innerHTML = "Making Turn...";
-							}
-							break
-							default:
+								if (this.app.playersOnServer[a].ordersSubmitted) {
+									s.text("Orders Submitted", wi/35, he/1.75+(a-1)*si);
+								} else {
+									s.text("Making Turn", wi/35, he/1.75+(a-1)*si);
+								}
+								break
+							case 3:
 								s.text("Reviewing Board", wi/35, he/1.75+(a-1)*si);
-						}
+								}
 					}
 					else {
 						s.text("Waiting For Player", wi/35, he/1.75+(a-1)*si);
 					}
-
-					}
+				}
 					if(this.app.playerNumber == 2){
 						s.translate(-0,he/2);
 					}
@@ -433,7 +424,6 @@ export default class Display {
 					}
 					//Run the functions for drawing the players quadrant and the unit menu
 					drawQuarterGrid(this.stage.grid,this.playerColors,this.app.playerNumber);
-					//drawGrid(wi, he, si, this.playerColors);
 					let board = this.app.game.board;
 					for(var k=0; k<board.length; k=k+1){
 						for(var l=0; l<board[k].length; l=l+1){
@@ -452,8 +442,6 @@ export default class Display {
 
 
 					//Calculate which cell the mouse is currently hovering over and highlight it
-
-
 
 					if(hoverX >= 0 && hoverX < 30 && hoverY >= 0 && hoverY < 20) {
 				  if(board[hoverY][hoverX].length != 0){
@@ -798,17 +786,20 @@ export default class Display {
 					s.textSize(si*1.7);
 
 					s.textFont(standardFont);
-					let scroller = this.delay/230;
-					s.text("Damage Dealt: "+ this.app.game.players[this.app.playerNumber-1].damageDealtThisTurn, -s.width/2+3*s.width*(scroller-Math.floor(scroller)), s.height-si*1.7);
+					let scroller = this.delay/250;
+					s.text("Damage Dealt: "+ this.app.game.players[this.app.playerNumber-1].damageDealtThisTurn, -s.width+3*s.width*(scroller-Math.floor(scroller)), s.height-si*1.7);
 					//s.translate(-s.width/1.5, 0);
 					//scroller = (this.delay+300)/230;
-					s.text("Machines Lost: "+ this.app.game.players[this.app.playerNumber-1].unitsLostThisTurn, s.width/2+3*s.width*(scroller-Math.floor(scroller)), s.height-si*1.7);
+					scroller = (this.delay+ 60)/250;
+					s.text("Machines Lost: "+ this.app.game.players[this.app.playerNumber-1].unitsLostThisTurn, -s.width+3*s.width*(scroller-Math.floor(scroller)), s.height-si*1.7);
 					//scroller = (this.delay+600)/230;
 					//s.translate(-s.width/1.5, 0);
-					//s.text("Machines Destroyed: "+ this.app.game.players[this.app.playerNumber-1].unitsKilledThisTurn, -s.width/2+3.5*s.width*(scroller-Math.floor(scroller)), s.height-si*1.7);
+					scroller = (this.delay + 120)/250;
+					s.text("Machines Destroyed: "+ this.app.game.players[this.app.playerNumber-1].unitsKilledThisTurn, -s.width+3*s.width*(scroller-Math.floor(scroller)), s.height-si*1.7);
 				//	scroller = (this.delay+150)/230;
 				 // s.translate(-s.width/1.5, 0);
-				//	s.text("Credits Earned: "+ this.app.game.players[this.app.playerNumber-1].creditsEarnedThisTurn, -s.width/2+3.5*s.width*(scroller-Math.floor(scroller)), s.height-si*1.7);
+				 scroller = (this.delay - 60)/250;
+					s.text("Credits Earned: "+ this.app.game.players[this.app.playerNumber-1].creditsEarnedThisTurn, -s.width+3*s.width*(scroller-Math.floor(scroller)), s.height-si*1.7);
 					//s.translate(3*s.width/1.5 , 0);
 					if(s.mouseIsPressed && bPhaseOne.isInRange(s.mouseX,s.mouseY)){
 						bPhaseOne.func.call(this.app,1);

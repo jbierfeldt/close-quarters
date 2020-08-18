@@ -620,8 +620,8 @@ export default class Game {
 
 		// increase credits
 		for (let p = 0; p < 4; p++) {
-			this.players[p].credits = this.players[p].credits + 3 + Math.floor(this.players[p].damageDealtToBases/200);
-		  this.players[p].creditsEarnedThisTurn = Math.floor(this.players[p].damageDealtToBases/200);
+			this.players[p].credits = this.players[p].credits + 3 + Math.floor(this.players[p].damageDealtToBases/250);
+		  this.players[p].creditsEarnedThisTurn = Math.floor(this.players[p].damageDealtToBases/250);
 			this.players[p].creditsEarnedTotal = this.players[p].creditsEarnedTotal + this.players[p].creditsEarnedThisTurn;
 			this.players[p].damageDealtTotal = this.players[p].damageDealtTotal + this.players[p].damageDealtThisTurn;
 			this.players[p].unitsKilledTotal = this.players[p].unitsKilledTotal + this.players[p].unitsKilledThisTurn;
