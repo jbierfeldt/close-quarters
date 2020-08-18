@@ -636,7 +636,14 @@ export default class Display {
 						}
 				}
 				//IMPORTANT - ANIMATION SPEED
+				console.log(s.deltaTime);
+			/*	if(s.frameRate() > 30){
+					animate=animate+.5;
+			}
+			else{
 				animate=animate+1;
+			}*/
+		    animate = animate + (.8 + s.deltaTime/100);
 				if(this.t === Object.keys(this.simulationDisplayTurn.tick).length - 1){
 					if(gameOver == 0){
 					this.app.setGamePhase(3);
@@ -801,9 +808,18 @@ export default class Display {
 					s.textSize(si*1.7);
 
 					s.textFont(standardFont);
-					let scroller = this.delay/150;
-					s.text("Damage Dealt: "+ this.app.game.players[this.app.playerNumber-1].damageDealtThisTurn, -s.width/2+1.5*s.width*(scroller-Math.floor(scroller)), s.height-si*1.7);
-
+					let scroller = this.delay/230;
+					s.text("Damage Dealt: "+ this.app.game.players[this.app.playerNumber-1].damageDealtThisTurn+ "             Machines Lost: "+ this.app.game.players[this.app.playerNumber-1].unitsLostThisTurn, -s.width/2+3.5*s.width*(scroller-Math.floor(scroller)), s.height-si*1.7);
+					//s.translate(-s.width/1.5, 0);
+					//scroller = (this.delay+300)/230;
+					//s.text("Machines Lost: "+ this.app.game.players[this.app.playerNumber-1].unitsLostThisTurn, -s.width/2+3.5*s.width*(scroller-Math.floor(scroller)), s.height-si*1.7);
+					//scroller = (this.delay+600)/230;
+					//s.translate(-s.width/1.5, 0);
+					//s.text("Machines Destroyed: "+ this.app.game.players[this.app.playerNumber-1].unitsKilledThisTurn, -s.width/2+3.5*s.width*(scroller-Math.floor(scroller)), s.height-si*1.7);
+				//	scroller = (this.delay+150)/230;
+				 // s.translate(-s.width/1.5, 0);
+				//	s.text("Credits Earned: "+ this.app.game.players[this.app.playerNumber-1].creditsEarnedThisTurn, -s.width/2+3.5*s.width*(scroller-Math.floor(scroller)), s.height-si*1.7);
+					//s.translate(3*s.width/1.5 , 0);
 					if(s.mouseIsPressed && bPhaseOne.isInRange(s.mouseX,s.mouseY)){
 						bPhaseOne.func.call(this.app,1);
 					}
@@ -1649,7 +1665,7 @@ export default class Display {
 					s.noFill();
 				}
 				else{
-					s.fill(pColors[player-1][0],pColors[player-1][1],pColors[player-1][2],105);
+					s.fill(pColors[player-1][0],pColors[player-1][1],pColors[player-1][2],175);
 				}
 				s.rect(x*size,y*size,size,size);
 			}

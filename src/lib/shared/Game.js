@@ -261,6 +261,8 @@ export default class Game {
 				this.players[proj.player-1].damageDealtThisTurn = this.players[proj.player-1].damageDealtThisTurn + (tempHealth - obj.health);
 				}
 				else{
+			  this.players[obj.player-1].unitsLostThisTurn =	this.players[obj.player-1].unitsLostThisTurn + 1;
+				this.players[proj.player-1].unitsKilledThisTurn =	this.players[obj.player-1].unitsKilledThisTurn + 1;
 				this.players[proj.player-1].damageDealtThisTurn = this.players[proj.player-1].damageDealtThisTurn + (tempHealth - 0);
 				}
 				if (this.isObjectAlive(obj) === false) {
@@ -484,6 +486,7 @@ export default class Game {
 		for(let i = 0; i < 4; i = i + 1){
 			this.players[i].score = 0;
 			this.players[i].damageDealtThisTurn = 0;
+			this.players[i].damageDealtToBases = 0;
 			this.players[i].unitsLostThisTurn = 0;
 			this.players[i].unitsKilledThisTurn = 0;
 			this.players[i].creditsEarnedThisTurn = 0;
@@ -630,8 +633,11 @@ export default class Game {
 		// increase credits
 		for (let p = 0; p < 4; p++) {
 			this.players[p].credits = this.players[p].credits + 3 + Math.floor(this.players[p].damageDealtToBases/200);
-			this.players[p].damageDealtToBases = 0;
+		  this.players[p].creditsEarnedThisTurn = Math.floor(this.players[p].damageDealtToBases/200);
+			this.players[p].creditsEarnedTotal = this.players[p].creditsEarnedTotal + this.players[p].creditsEarnedThisTurn;
 			this.players[p].damageDealtTotal = this.players[p].damageDealtTotal + this.players[p].damageDealtThisTurn;
+			this.players[p].unitsKilledTotal = this.players[p].unitsKilledTotal + this.players[p].unitsKilledThisTurn;
+			this.players[p].unitsLostTotal = this.players[p].unitsLostTotal + this.players[p].unitsLostThisTurn;
 		}
 
 		this.currentTurnInitialState = this.createGameSnapshot();
