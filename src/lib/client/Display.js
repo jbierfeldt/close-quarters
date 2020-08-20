@@ -60,7 +60,7 @@ export default class Display {
 			let counter = 0;
 
 			let unitButtons=[]; //List of the Buttons for unit creation
-			let buttonMaker=1; //Variable so buttons only get created once
+			let buttonMaker=0; //Variable so buttons only get created once
 			let hoverX;
 			let hoverY;
 
@@ -210,10 +210,10 @@ export default class Display {
 
 					if(s.mouseIsPressed){
 
-						if (!debug.enabled) {
+					//	if (!debug.enabled) {
 							s.fullscreen(full);
 							s.resizeCanvas(window.screen.height*1.5, window.screen.height);
-						}
+					//	}
 						buttonMaker = 1;
 						this.app.setGamePhase(1);
 						s.mouseIsPressed = false;
