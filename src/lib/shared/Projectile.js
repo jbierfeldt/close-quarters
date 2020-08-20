@@ -56,6 +56,38 @@ export class RayBullet extends Projectile {
 	}
 }
 
+export class RedBullet extends Projectile {
+	constructor(player, initialOrientation = [0, 0], initialSpeed = 0, damage = 0, distance = 0, id)  {
+		super(player, initialOrientation, initialSpeed, id);
+		this.identifier = "RedProj";
+		this.damage = damage;
+		this.ableToBeDestroyed = true;
+		this.dump = false;
+		this.distance = distance;
+		this.firing=false;
+		this.player =player;
+		this.speed = initialSpeed;
+		this.orientation = initialOrientation;
+	}
+
+	static createFromSerialized (props) {
+		return new RedBullet(props.player, props.orientation, props.speed, props.damage, props.distance, props.id);
+	}
+
+	update(tick) {
+		super.update(tick);
+		if(this.distance >= 10){
+			this.damage = 75;
+		}
+		this.distance = this.distance + 1;
+	}
+
+	serialize () {
+		return super.serialize.call(this);
+	}
+}
+
+
 export class OscBullet extends Projectile {
 	constructor(player, initialOrientation = [0, 0], initialSpeed = 0, created = 0, id)  {
 		super(player, initialOrientation, initialSpeed, id);
@@ -166,7 +198,7 @@ export class BalBullet extends Projectile {
 }
 
 export class CirBullet extends Projectile {
-	constructor(player, initialOrientation = [0, 0], initialSpeed = 0, damage = 0, distance = distance = 5 + Math.floor(Math.random()*10), id)  {
+	constructor(player, initialOrientation = [0, 0], initialSpeed = 0, damage = 0, distance = 5 + Math.floor(Math.random()*10), id)  {
 		super(player, initialOrientation, initialSpeed, id);
 		//distance = 4 + Math.floor(Math.random()*5
 		this.identifier = "CirProj";

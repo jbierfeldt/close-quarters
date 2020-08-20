@@ -30,7 +30,7 @@ export default class Display {
 			let titleFont;
 			let standardFont;
 			let animate = 0; //use to decide when a new tick value occurs
-			let buttonScale;
+			let buttonScale = 1.77;
 			let playerShifter;
 			let submitShifterX;
 			let submitShifterY;
@@ -43,6 +43,7 @@ export default class Display {
 			let bPhaseThree;
 			let bBase;
 			let bRayTracer;
+			let bRedShifter;
 			let bMaglev;
 			let bJuggernode;
 			let bBallast;
@@ -50,7 +51,9 @@ export default class Display {
 			let bResonator;
 			let bOscillator;
 			let bIntegrator;
+
 			let newButtonPressed = 0;
+			let currentButtonPressed = 0;
 
 			let bSubmit;
 
@@ -67,6 +70,7 @@ export default class Display {
 			let imgFour;
 			let imgFive;
 			let imgSix;
+			let imgSeven;
 
 			let b;
 
@@ -89,6 +93,7 @@ export default class Display {
 				imgFour = s.loadImage('static/P2_Core.png');
 				imgFive = s.loadImage('static/P3_Core.png');
 				imgSix = s.loadImage('static/P4_Core.png');
+				imgSeven = s.loadImage('static/RedShifter.png');
 			}
 
 			//Create the canvas based on the size of the user window
@@ -145,22 +150,26 @@ export default class Display {
 					bBase=new Buttoned(wi/2+si-playerShifter,si*buttonScale*2,wi/2-si*2,si*buttonScale*3,"Base",this.app.sendCreateBase);
 
 					//Unit Buttons Below
-					bRayTracer=new Buttoned(wi/2+si-playerShifter,si*buttonScale*2,wi/2-si*2,si*buttonScale,"RayTracer",this.app.sendCreateUnit);
+
+					bRayTracer=new Buttoned(wi/2+si-playerShifter,si*3,wi/2-si*2,si*buttonScale,"RayTracer",this.app.sendCreateUnit);
 					unitButtons.push(bRayTracer);
-					bBallast=new Buttoned(wi/2+si-playerShifter,si*buttonScale*4,wi/2-si*2,si*buttonScale,"Ballast",this.app.sendCreateUnit);
-					unitButtons.push(bBallast);
-					bJuggernode=new Buttoned(wi/2+si-playerShifter,si*buttonScale*5,wi/2-si*2,si*buttonScale,"Juggernode",this.app.sendCreateUnit);
-					unitButtons.push(bJuggernode);
-					bTripwire=new Buttoned(wi/2+si-playerShifter,si*buttonScale*6,wi/2-si*2,si*buttonScale,"Tripwire",this.app.sendCreateUnit);
-					unitButtons.push(bTripwire);
-					bMaglev=new Buttoned(wi/2+si-playerShifter,si*buttonScale*7,wi/2-si*2,si*buttonScale,"Maglev",this.app.sendCreateUnit);
-					unitButtons.push(bMaglev);
-					bResonator=new Buttoned(wi/2+si-playerShifter,si*buttonScale*8,wi/2-si*2,si*buttonScale,"Resonator",this.app.sendCreateUnit);
-					unitButtons.push(bResonator);
-					bIntegrator=new Buttoned(wi/2+si-playerShifter,si*buttonScale*9,wi/2-si*2,si*buttonScale,"Integrator",this.app.sendCreateUnit);
-					unitButtons.push(bIntegrator);
-					bOscillator=new Buttoned(wi/2+si-playerShifter,si*buttonScale*3,wi/2-si*2,si*buttonScale,"Oscillator",this.app.sendCreateUnit);
+					bRedShifter=new Buttoned(wi/2+si-playerShifter,si*3+buttonScale*si*1,wi/2-si*2,si*buttonScale,"RedShifter",this.app.sendCreateUnit);
+					unitButtons.push(bRedShifter);
+					bOscillator=new Buttoned(wi/2+si-playerShifter,si*3+buttonScale*si*2,wi/2-si*2,si*buttonScale,"Oscillator",this.app.sendCreateUnit);
 					unitButtons.push(bOscillator);
+					bBallast=new Buttoned(wi/2+si-playerShifter,si*3+buttonScale*si*3,wi/2-si*2,si*buttonScale,"Ballast",this.app.sendCreateUnit);
+					unitButtons.push(bBallast);
+					bJuggernode=new Buttoned(wi/2+si-playerShifter,si*3+buttonScale*si*4,wi/2-si*2,si*buttonScale,"Juggernode",this.app.sendCreateUnit);
+					unitButtons.push(bJuggernode);
+					bTripwire=new Buttoned(wi/2+si-playerShifter,si*3+buttonScale*si*5,wi/2-si*2,si*buttonScale,"Tripwire",this.app.sendCreateUnit);
+					unitButtons.push(bTripwire);
+					bMaglev=new Buttoned(wi/2+si-playerShifter,si*3+buttonScale*si*6,wi/2-si*2,si*buttonScale,"Maglev",this.app.sendCreateUnit);
+					unitButtons.push(bMaglev);
+					bResonator=new Buttoned(wi/2+si-playerShifter,si*3+buttonScale*si*7,wi/2-si*2,si*buttonScale,"Resonator",this.app.sendCreateUnit);
+					unitButtons.push(bResonator);
+					bIntegrator=new Buttoned(wi/2+si-playerShifter,si*3+buttonScale*si*8,wi/2-si*2,si*buttonScale,"Integrator",this.app.sendCreateUnit);
+					unitButtons.push(bIntegrator);
+
 
 				}
 				buttonMaker=0;
@@ -197,7 +206,7 @@ export default class Display {
 					s.text("Quarters",s.width/4.45,s.height/1.6);
 
 					//buttonScale sets the size of the buttons(dependent on their overall number)
-					buttonScale=1.5;
+
 
 					if(s.mouseIsPressed){
 
@@ -333,14 +342,17 @@ export default class Display {
 								}
 							}
 							//newButtonPressed = -1;
-							//currentButtonPressed
+							currentButtonPressed = newButtonPressed;
 							for(let i = 0; i < unitButtons.length; i = i + 1){
 								if(unitButtons[i].isInRange(s.mouseX,s.mouseY)){
 									unitButtons[i].buttonHasBeenPressed();
 									newButtonPressed = i;
 									//currentButtonPressed = i;
 								}
-								else if(i != newButtonPressed){
+								else if(currentButtonPressed != newButtonPressed){
+									unitButtons[currentButtonPressed].isPressed = false;
+								}
+								if(i !=  newButtonPressed){
 									unitButtons[i].isPressed = false;
 								}
 							}
@@ -967,6 +979,9 @@ export default class Display {
 			if(displayObject.identifier == "Ray"){
 				drawRayTracer(x,y,displayObject.player,size,displayObject.health,Units["RayTracer"].maxHealth,colors);
 			}
+			if(displayObject.identifier == "Red"){
+				drawRedShifter(x,y,displayObject.player,size,displayObject.health,Units["RayTracer"].maxHealth,colors);
+			}
 			if(displayObject.identifier == "Osc"){
 				drawOscillator(x,y,displayObject.player,size,displayObject.health,Units["Oscillator"].maxHealth,colors);
 			}
@@ -993,6 +1008,9 @@ export default class Display {
 			}
 			if(displayObject.identifier == "RayProj"){
 				drawRayTracerProjectile(x, y, displayObject.player, size, colors, displayObject.orientation, a);
+			}
+			if(displayObject.identifier == "RedProj"){
+				drawRedShifterProjectile(x,y,displayObject.player,size,colors,displayObject.orientation, displayObject.damage,displayObject.distance, a);
 			}
 			if(displayObject.identifier == "OscProj"){
 				drawOscillatorProjectile(x,y,displayObject.player,size,colors,displayObject.orientation, a);
@@ -1080,7 +1098,7 @@ export default class Display {
 			//s.text("Cost",wid/2+siz*12.3,siz*2.45);
 			s.textSize(wid/37);
 			//s.textFont(standardFont);
-
+			s.translate(0, siz/6);
 			//Ray Tracer Button Decoration
 			s.fill(255);
 			s.stroke(0)
@@ -1096,50 +1114,59 @@ export default class Display {
 			s.translate(0,scale*siz*1);
 			s.stroke(0);
 			s.fill(255);
+			s.text("Red Shifter",wid/2+siz*3.75,siz*4);
+			s.text(Units["RedShifter"].maxHealth,wid/2+siz*9.9,siz*4);
+			s.text(Units["RedShifter"].cost,wid/2+siz*12.6,siz*4);
+
+
+			s.translate(0,-scale*siz*1);
+			s.translate(0,scale*siz*2);
+			s.stroke(0);
+			s.fill(255);
 			s.text("Oscillator",wid/2+siz*3.75,siz*4);
 			s.text(Units["Oscillator"].maxHealth,wid/2+siz*9.9,siz*4);
 			s.text(Units["Oscillator"].cost,wid/2+siz*12.6,siz*4);
 
 
-			s.translate(0,-scale*siz*1);
+			s.translate(0,-scale*siz*2);
 			//Ballast Button Decoration
-			s.translate(0,scale*siz*2);
+			s.translate(0,scale*siz*3);
 			s.stroke(0);
 			s.fill(255);
 			s.text("Ballast",wid/2+siz*3.75,siz*4)
 			s.text(Units["Ballast"].maxHealth,wid/2+siz*9.9,siz*4)
 			s.text(Units["Ballast"].cost,wid/2+siz*12.6,siz*4);
 
-			s.translate(0,-scale*siz*2);
+			s.translate(0,-scale*siz*3);
 			//Juggernode Button Decoration
-			s.translate(0,scale*siz*3);
+			s.translate(0,scale*siz*4);
 			s.stroke(0);
 			s.fill(255);
 			s.text("Juggernode",wid/2+siz*3.75,siz*4)
 			s.text(Units["Juggernode"].maxHealth,wid/2+siz*9.9,siz*4)
 			s.text(Units["Juggernode"].cost,wid/2+siz*12.6,siz*4);
 
-			s.translate(0,-scale*siz*3);
+			s.translate(0,-scale*siz*4);
 
-			s.translate(0,scale*siz*4);
+			s.translate(0,scale*siz*5);
 			s.stroke(0);
 			s.fill(255);
 			s.text("Tripwire",wid/2+siz*3.75,siz*4)
 			s.text(Units["Tripwire"].maxHealth,wid/2+siz*9.9,siz*4)
 			s.text(Units["Tripwire"].cost,wid/2+siz*12.6,siz*4);
 
-			s.translate(0,-scale*siz*4);
+			s.translate(0,-scale*siz*5);
 			//Maglev Button Decoration
-			s.translate(0,scale*siz*5);
+			s.translate(0,scale*siz*6);
 			s.stroke(0);
 			s.fill(255);
 			s.text("Maglev",wid/2+siz*3.75,siz*4)
 			s.text(Units["Maglev"].maxHealth,wid/2+siz*9.9,siz*4);
 			s.text(Units["Maglev"].cost,wid/2+siz*12.6,siz*4);
 			s.noFill();
-			s.translate(0,-scale*siz*5);
+			s.translate(0,-scale*siz*6);
 			//Circuit Breaker Button Decoration
-			s.translate(0,scale*siz*6);
+			s.translate(0,scale*siz*7);
 			s.stroke(0);
 			s.fill(255);
 			s.text("Resonator",wid/2+siz*3.75,siz*4);
@@ -1147,9 +1174,9 @@ export default class Display {
 			s.text(Units["Resonator"].cost,wid/2+siz*12.6,siz*4);
 			s.noFill();
 			s.stroke(255);
-			s.translate(0,-scale*siz*6);
+			s.translate(0,-scale*siz*7);
 
-			s.translate(0,scale*siz*7);
+			s.translate(0,scale*siz*8);
 			s.stroke(0);
 			s.fill(255);
 			s.text("Integrator",wid/2+siz*3.75,siz*4)
@@ -1158,8 +1185,8 @@ export default class Display {
 			s.noFill();
 			s.stroke(255);
 
-			s.translate(0,-scale*siz*7);
-
+			s.translate(0,-scale*siz*8);
+			s.translate(0, -siz/6);
 			if(player == 3 || player == 4){
 				s.translate(wid/2, 0);
 			}
@@ -1306,6 +1333,18 @@ export default class Display {
 			s.ellipse(x*size+size/2,y*size+size/2,size/5,size/5);
 		}
 
+		function drawRedShifter(x,y,player,size,health,max,pColors){
+			s.image(imgSeven, size*x+size/80, size*y+size/80, size-size/40, size-size/40);
+			/*s.stroke(0);
+			s.strokeWeight(1);
+			s.fill(0);
+			s.translate(x*size + size/2, y*size + size/2);
+			s.ellipse(0, 0, size/2, size/2);
+			s.triangle(-size/4, 0, size/4, 0, 0, -size/2.5);
+			s.translate(-(x*size + size/2), -(y*size + size/2));*/
+
+		}
+
 		function drawOscillator(x,y,player,size,health,max,pColors){
 			s.stroke(0);
 			s.strokeWeight(2);
@@ -1333,8 +1372,16 @@ export default class Display {
 		function drawResonator(x,y,player,size,health,max,pColors){
 			s.stroke(0);
 			s.strokeWeight(2);
+			s.noFill();
 			s.translate(size*x+size/2,size*y+size/2);
-			for(let i = 0; i < 360; i = i + 15){
+			let c = 0;
+			for(let r = 0; r <= size/1.3; r = r + size/6){
+				s.rotate(c*(Math.PI/4));
+				s.rect(-r/2,-r/2,r,r);
+				s.rotate(-c*(Math.PI/4));
+				c = c + 1;
+			}
+		/*	for(let i = 0; i < 360; i = i + 15){
 				s.rotate(s.radians(i));
 				s.line(0,0,size/2.5,0);
 				s.rotate(-s.radians(i));
@@ -1342,7 +1389,7 @@ export default class Display {
 			s.stroke(pColors[player-1][0],pColors[player-1][1],pColors[player-1][2],255);
 			s.strokeWeight(.5);
 			s.fill((max-health)*255/max);
-			s.ellipse(0,0,size/3,size/3);
+			s.ellipse(0,0,size/3,size/3);*/
 			s.translate(-(size*x+size/2),-(size*y+size/2));
 		}
 
@@ -1492,6 +1539,30 @@ export default class Display {
 				s.ellipse(refx+size-(a+1)*size/10,refy+size/2,projSize,projSize);
 			}
 		}
+		function drawRedShifterProjectile(x, y, displayObject, size, colors, orient, damage, distance, a){
+			let refx = x*size;
+			let refy = y*size;
+			s.stroke(0);
+			s.strokeWeight(1);
+			s.noFill();
+			s.beginShape();
+			let t = 0;
+			console.log('distance',displayObject.distance);
+			for(let angle = 0; angle < 360; angle = angle + 1){
+				let xCor = (size/3)*s.cos(s.radians(angle))*s.cos(s.radians(angle*2))-(5+distance)*s.sin(s.radians(angle*2));
+				let yCor = (size/3)*s.cos(s.radians(angle));
+
+				if(orient[1] == 0){
+					s.curveVertex(refx+xCor+orient[0]*a*size/10,refy+yCor+size/2);
+				}
+				else {
+					s.curveVertex(refx+a,refy+a);
+				}
+				t=t+1;
+			}
+			s.endShape();
+	}
+
 
 		function drawOscillatorProjectile(x,y,player,size,pColors,orient, a){
 			let refx=x*size+size/2;

@@ -55,7 +55,6 @@ export class RayTracer extends Unit {
 		this.player = player;
 		this.health = health;
 		this.firing = firing;
-		this.maxHealth = 100;
 		this.identifier = "Ray";
 		this.projArr = [];
 		this.collidedWith = collidedWith;
@@ -104,6 +103,112 @@ export class RayTracer extends Unit {
 				this.startAttack([0,-1]);
 			}
 		}
+	}
+
+	serialize () {
+		return super.serialize.call(this);
+	}
+
+}
+
+export class RedShifter extends Unit {
+
+	constructor(player, health = 50, firing = false, id, collidedWith = [false, 4])  {
+		super(id);
+		this.player = player;
+		this.health = health;
+		this.firing = firing;
+		this.identifier = "Red";
+		this.projArr = [];
+		this.collidedWith = collidedWith;
+		this.value = 1;
+		this.fullName = "Red Shifter";
+	}
+
+	static maxHealth = 50;
+	static cost = 1;
+	static description = "The Red Shifter...";
+
+	static createFromSerialized (props) {
+		return new RedShifter(props.player, props.health, props.firing, props.id, props.collidedWith)
+	}
+
+	startAttack(orientation){
+
+		//initialize a project object and pass in the direction based on the tick
+		this.firing = true;
+	  let direction = Math.floor(Math.random()*4);
+	//let direction =1;
+		if(direction === 1){
+			if(this.player == 1){
+				this.projArr[0]  = new Projectiles.RedBullet(this.player, [1,0], 1);
+				this.projArr[1]  = new Projectiles.RedBullet(this.player, [1,1], 1);
+			}
+			else if(this.player == 2){
+				this.projArr[0]  = new Projectiles.RedBullet(this.player, [1,0], 1);
+				this.projArr[1]  = new Projectiles.RedBullet(this.player, [1,-1], 1);
+			}
+			else if(this.player == 3){
+				this.projArr[0]  = new Projectiles.RedBullet(this.player, [-1,0], 1);
+				this.projArr[1]  = new Projectiles.RedBullet(this.player, [-1,1], 1);
+			}
+			else if(this.player == 4){
+				this.projArr[0]  = new Projectiles.RedBullet(this.player, [-1,0], 1);
+				this.projArr[1]  = new Projectiles.RedBullet(this.player, [-1,-1], 1);
+			}
+		}
+		else if(direction === 2){
+			if(this.player == 1){
+				this.projArr[0]  = new Projectiles.RedBullet(this.player, [0,1], 1);
+		   	this.projArr[1]  = new Projectiles.RedBullet(this.player, [1,1], 1);
+			}
+			else if(this.player == 2){
+				this.projArr[0]  = new Projectiles.RedBullet(this.player, [0,-1], 1);
+				this.projArr[1]  = new Projectiles.RedBullet(this.player, [1,-1], 1);
+			}
+			else if(this.player == 3){
+				this.projArr[0]  = new Projectiles.RedBullet(this.player, [0,1], 1);
+				this.projArr[1]  = new Projectiles.RedBullet(this.player, [-1,1], 1);
+			}
+			else if(this.player == 4){
+				this.projArr[0]  = new Projectiles.RedBullet(this.player, [0,-1], 1);
+				this.projArr[1]  = new Projectiles.RedBullet(this.player, [-1,-1], 1);
+			}
+		}
+		else if(direction === 3){
+			if(this.player == 1){
+				this.projArr[0]  = new Projectiles.RedBullet(this.player, [0,1], 1);
+		    this.projArr[1]  = new Projectiles.RedBullet(this.player, [1,0], 1);
+			}
+			else if(this.player == 2){
+				this.projArr[0]  = new Projectiles.RedBullet(this.player, [0,-1], 1);
+				this.projArr[1]  = new Projectiles.RedBullet(this.player, [1,0], 1);
+			}
+			else if(this.player == 3){
+				this.projArr[0]  = new Projectiles.RedBullet(this.player, [0,1], 1);
+				this.projArr[1]  = new Projectiles.RedBullet(this.player, [-1,0], 1);
+			}
+			else if(this.player == 4){
+				this.projArr[0]  = new Projectiles.RedBullet(this.player, [0,-1], 1);
+				this.projArr[1]  = new Projectiles.RedBullet(this.player, [-1,0], 1);
+			}
+
+		}
+
+		debug.log(0, "    Unit " + this.id + "  is firing Projectile " + this.firing.id);
+
+	}
+
+	update(tick) {
+		super.update(tick);
+		this.collidedWith = [false, 4];
+		this.projArr = [];
+		// reset firing
+		this.firing = false;
+		if(tick % 20 === 0){
+			this.startAttack(0);
+		}
+
 	}
 
 	serialize () {
@@ -226,7 +331,7 @@ export class Juggernode extends Unit {
 
 export class Maglev extends Unit {
 
-	constructor(player, health = 200, firing = false, id, collidedWith = [false, 4])  {
+	constructor(player, health = 300, firing = false, id, collidedWith = [false, 4])  {
 		super(id);
 		this.player = player;
 		this.health = health;
@@ -238,7 +343,7 @@ export class Maglev extends Unit {
 		this.fullName = "Maglev";
 	}
 
-  static maxHealth = 225;
+  static maxHealth = 300;
 	static cost = 3;
 	static description = "The Maglev is a lightweight offensive powerhouse that emits magnetic pulses. It will randomly strike either in every diagonal direction or orthogonal direction. The pulses begin with a high base damage and fade off exponentially as they travel.";
 
@@ -277,7 +382,6 @@ export class Maglev extends Unit {
 		// reset firing
 		this.firing = false;
 
-		// Ray Tracer fires every 4 ticks
 		if (tick % 13 === 0) {
 			this.startAttack();
 		}
@@ -509,7 +613,7 @@ export class Resonator extends Unit {
 
 export class Integrator extends Unit {
 
-	constructor(player, health = 200, firing = false, id, collidedWith = [false, 4], lifeSpan = 0)  {
+	constructor(player, health = 175, firing = false, id, collidedWith = [false, 4], lifeSpan = 0)  {
 		super(id);
 		//add a lifespan category and also pass in the number of projectiles present at the time
 		this.lifeSpan = lifeSpan;
