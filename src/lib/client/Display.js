@@ -217,6 +217,7 @@ export default class Display {
 						buttonMaker = 1;
 						this.app.setGamePhase(1);
 						s.mouseIsPressed = false;
+						unitButtons = [];
 					}
 					//Exit this phase and move to the Battle Phase if the mouse is pressed(button trigger to be added)
 				}
@@ -1546,11 +1547,9 @@ export default class Display {
 			s.strokeWeight(1);
 			s.noFill();
 			s.beginShape();
-			let t = 0;
-			console.log('distance',displayObject.distance);
-			for(let angle = 0; angle < 360; angle = angle + 1){
-				let xCor = (size/3)*s.cos(s.radians(angle))*s.cos(s.radians(angle*2))-(5+distance)*s.sin(s.radians(angle*2));
-				let yCor = (size/3)*s.cos(s.radians(angle));
+			for(let angle = 0; angle < 360; angle = angle + 5){
+				let xCor = (distance/20+size/60)*s.cos(s.radians(angle))/(.01+s.sin(s.radians(angle)));
+				let yCor = (size/2)*s.cos(s.radians(angle))*s.sin(s.radians(angle));
 
 				if(orient[1] == 0){
 					s.curveVertex(refx+xCor+orient[0]*a*size/10,refy+yCor+size/2);
@@ -1558,7 +1557,6 @@ export default class Display {
 				else {
 					s.curveVertex(refx+a,refy+a);
 				}
-				t=t+1;
 			}
 			s.endShape();
 	}
