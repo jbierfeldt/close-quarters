@@ -1540,25 +1540,77 @@ export default class Display {
 				s.ellipse(refx+size-(a+1)*size/10,refy+size/2,projSize,projSize);
 			}
 		}
-		function drawRedShifterProjectile(x, y, displayObject, size, colors, orient, damage, distance, a){
-			let refx = x*size;
-			let refy = y*size;
+		function drawRedShifterProjectile(x, y, player, size, pColors, orient, damage, distance, a){
+			let refx = x*size+size/2;
+			let refy = y*size+size/2;
 			s.stroke(0);
 			s.strokeWeight(1);
-			s.noFill();
-			s.beginShape();
-			for(let angle = 0; angle < 360; angle = angle + 5){
-				let xCor = (distance/20+size/60)*s.cos(s.radians(angle))/(.01+s.sin(s.radians(angle)));
-				let yCor = (size/2)*s.cos(s.radians(angle))*s.sin(s.radians(angle));
 
-				if(orient[1] == 0){
-					s.curveVertex(refx+xCor+orient[0]*a*size/10,refy+yCor+size/2);
-				}
-				else {
-					s.curveVertex(refx+a,refy+a);
-				}
+			let arrowSize = size/8;
+			let diag = s.abs(orient[1]+orient[0])-1;
+			s.translate(refx,refy);
+
+			s.translate(orient[0]*a*size/10,orient[1]*a*size/10);
+			if(orient[0]==0 && s.abs(orient[1])==1){
+				s.rotate(orient[1]*s.radians(90));
 			}
+			else if(orient[0]==-1 && orient[1]==0){
+				s.rotate(s.radians(180))
+			}
+			else if(orient[0]==1 && orient[1]==1){
+				s.rotate(s.radians(45))
+			}
+			else if(orient[0]==1 && orient[1]==-1){
+				s.rotate(-s.radians(45))
+			}
+			else if(orient[0]==-1 && orient[1]==1){
+				s.rotate(s.radians(135))
+			}
+			else if(orient[0]==-1 && orient[1]==-1){
+				s.rotate(-s.radians(135))
+			}
+			//s.rotate(s.radians(90)+orient[1]*s.radians(0)-orient[0]*s.radians(90)-diag*orient[0]*s.radians(45));
+			s.noFill();
+			for(let l = 0; l < distance; l=l+2){
+				s.arc(0-(l+1)*size/25,0,size/(5),(31-l)*size/(150),-s.PI/3,s.PI/3);
+			}
+			if(damage > 0){
+			s.fill(pColors[player-1][0],pColors[player-1][1],pColors[player-1][2],255);
+		}else{
+			s.fill(0);
+		}
+			s.beginShape();
+			s.vertex(0,0-arrowSize);
+			s.vertex(0+size/4,0);
+			s.vertex(0,0+arrowSize);
+			s.vertex(0+size/10,0);
+			s.vertex(0,0-arrowSize);
 			s.endShape();
+
+			//s.rotate(-s.radians(90)-orient[1]*s.radians(0)+orient[0]*s.radians(90)+diag*orient[0]*s.radians(45));
+			if(orient[0]==0 && s.abs(orient[1])==1){
+				s.rotate(-orient[1]*s.radians(90));
+			}
+			else if(orient[0]==-1 && orient[1]==0){
+				s.rotate(-s.radians(180))
+			}
+			else if(orient[0]==1 && orient[1]==1){
+				s.rotate(-s.radians(45))
+			}
+			else if(orient[0]==1 && orient[1]==-1){
+				s.rotate(s.radians(45))
+			}
+			else if(orient[0]==-1 && orient[1]==1){
+				s.rotate(-s.radians(135))
+			}
+			else if(orient[0]==-1 && orient[1]==-1){
+				s.rotate(s.radians(135))
+			}
+			s.translate(-(orient[0]*a*size/10),-(orient[1]*a*size/10));
+
+			s.translate(-refx,-refy);
+
+
 	}
 
 

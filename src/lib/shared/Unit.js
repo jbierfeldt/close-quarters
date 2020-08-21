@@ -137,7 +137,7 @@ export class RedShifter extends Unit {
 
 		//initialize a project object and pass in the direction based on the tick
 		this.firing = true;
-	  let direction = Math.floor(Math.random()*4);
+	  let direction = 1+Math.floor(Math.random()*3);
 	//let direction =1;
 		if(direction === 1){
 			if(this.player == 1){
@@ -175,7 +175,7 @@ export class RedShifter extends Unit {
 				this.projArr[1]  = new Projectiles.RedBullet(this.player, [-1,-1], 1);
 			}
 		}
-		else if(direction === 3){
+		else{
 			if(this.player == 1){
 				this.projArr[0]  = new Projectiles.RedBullet(this.player, [0,1], 1);
 		    this.projArr[1]  = new Projectiles.RedBullet(this.player, [1,0], 1);
