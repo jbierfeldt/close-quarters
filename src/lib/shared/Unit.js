@@ -127,7 +127,7 @@ export class RedShifter extends Unit {
 
 	static maxHealth = 50;
 	static cost = 1;
-	static description = "The Red Shifter...";
+	static description = "The Red Shifter is an offensive long-range unit that has low health and deals average damage. It randomly fires in two directions and the strikes must travel at least 10 tiles in order to have  an effect.";
 
 	static createFromSerialized (props) {
 		return new RedShifter(props.player, props.health, props.firing, props.id, props.collidedWith)
@@ -205,7 +205,7 @@ export class RedShifter extends Unit {
 		this.projArr = [];
 		// reset firing
 		this.firing = false;
-		if(tick % 20 === 0){
+		if(tick % 18 === 0){
 			this.startAttack(0);
 		}
 
