@@ -423,7 +423,11 @@ export default class Display {
 								break
 							case 3:
 								s.text("Reviewing Board", wi/35, he/1.75+(a-1)*si);
+							  break
+							default:
+								s.text("Hypothesizing", wi/35, he/1.75+(a-1)*si);
 								}
+
 					}
 					else {
 						s.text("Waiting For Player", wi/35, he/1.75+(a-1)*si);

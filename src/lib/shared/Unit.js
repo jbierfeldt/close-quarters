@@ -308,18 +308,49 @@ export class Juggernode extends Unit {
 		super.update(tick);
 		this.collidedWith = [false, 4];
 		this.firing=false;
+		let direction = 1+Math.floor(Math.random()*3);
 		if (tick%8 === 0) {
-			if(this.player==1){
-				this.startAttack([1,1]);
+			if(direction === 1){
+				if(this.player==1){
+					this.startAttack([1,1]);
+				}
+				else if(this.player==2){
+					this.startAttack([1,-1]);
+				}
+				else if(this.player==3){
+					this.startAttack([-1,1]);
+				}
+				else if(this.player==4){
+					this.startAttack([-1,-1]);
+				}
 			}
-			else if(this.player==2){
-				this.startAttack([1,-1]);
+			else if(direction === 2){
+				if(this.player==1){
+					this.startAttack([1,-1]);
+				}
+				else if(this.player==2){
+					this.startAttack([-1,-1]);
+				}
+				else if(this.player==3){
+					this.startAttack([1,1]);
+				}
+				else if(this.player==4){
+					this.startAttack([-1,1]);
+				}
 			}
-			else if(this.player==3){
-				this.startAttack([-1,1]);
-			}
-			else if(this.player==4){
-				this.startAttack([-1,-1]);
+			else if(direction === 3){
+				if(this.player==1){
+					this.startAttack([-1,1]);
+				}
+				else if(this.player==2){
+					this.startAttack([1,1]);
+				}
+				else if(this.player==3){
+					this.startAttack([-1,-1]);
+				}
+				else if(this.player==4){
+					this.startAttack([1,-1]);
+				}
 			}
 		}
 	}
