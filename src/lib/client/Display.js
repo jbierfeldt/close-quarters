@@ -342,15 +342,18 @@ export default class Display {
 									//break
 								}
 							}
-							//newButtonPressed = -1;
 							currentButtonPressed = newButtonPressed;
+
 							for(let i = 0; i < unitButtons.length; i = i + 1){
 								if(unitButtons[i].isInRange(s.mouseX,s.mouseY)){
 									unitButtons[i].buttonHasBeenPressed();
 									newButtonPressed = i;
 									//currentButtonPressed = i;
+									debug.log(3,currentButtonPressed);
+									debug.log(3,newButtonPressed);
 								}
-								else if(currentButtonPressed != newButtonPressed){
+
+								if(currentButtonPressed != newButtonPressed){
 									unitButtons[currentButtonPressed].isPressed = false;
 								}
 								if(i !=  newButtonPressed){
