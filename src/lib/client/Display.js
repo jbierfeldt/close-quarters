@@ -71,6 +71,9 @@ export default class Display {
 			let imgFive;
 			let imgSix;
 			let imgSeven;
+			let col_high;
+			let col_med;
+			let col_low;
 
 			let b;
 
@@ -94,6 +97,9 @@ export default class Display {
 				imgFive = s.loadImage('static/P3_Core.png');
 				imgSix = s.loadImage('static/P4_Core.png');
 				imgSeven = s.loadImage('static/RedShifter.png');
+				col_high = s.loadImage('static/Col_High.png');
+				col_med = s.loadImage('static/Col_Med.png');
+				col_low = s.loadImage('static/Col_Low.png');
 			}
 
 			//Create the canvas based on the size of the user window
@@ -117,7 +123,7 @@ export default class Display {
 				hoverY=s.int(s.mouseY/si);
 
 				//Delay serves as a variable that has a constant increment for animation
-				this.delay=this.delay+.19;
+				this.delay=this.delay+.19+s.deltaTime/500;
 
 
 				//playerShifter shifts the Button Menu if the player is on the right side of the screen
@@ -546,7 +552,7 @@ export default class Display {
 											if(displayObject.collidedWith.length > 0){
 											if(displayObject.collidedWith[0] == true){
 
-												drawCollision(l,k, si, displayObject.collidedWith[1], animate, this.playerColors);
+												drawCollision(l, k, si, displayObject.collidedWith[1], animate, this.playerColors);
 											}
 										}
 									 }
@@ -634,14 +640,8 @@ export default class Display {
 						}
 				}
 				//IMPORTANT - ANIMATION SPEED
-				//console.log(s.deltaTime);
-			/*	if(s.frameRate() > 30){
-					animate=animate+.5;
-			}
-			else{
-				animate=animate+1;
-			}*/
 		    animate = animate + (.65 + s.deltaTime/100);
+
 				if(this.t === Object.keys(this.simulationDisplayTurn.tick).length - 1){
 					if(gameOver == 0){
 					this.app.setGamePhase(3);
@@ -942,8 +942,9 @@ export default class Display {
 					s.textSize(si/2.3);
 					s.text(hoverObject.fullName, hoverX*si+si*1.2,hoverY*si+si*1.7);
 					s.text("Health: " + hoverObject.health, hoverX*si+si*1.2,hoverY*si+si*2.65);
-
-					//s.text("Turns Active: " + hoverObject.turnsActive, hoverX*si+si*1.2,hoverY*si+si*2.8);
+					if(hoverObject.objCategory == "Units"){
+						s.text("Rounds: " + (hoverObject.lifeSpan+1), hoverX*si+si*1.2,hoverY*si+si*3.6);
+				}
 					s.translate(si*5*transX, si*4*transY);
 					}
 				}
@@ -1009,7 +1010,7 @@ export default class Display {
 				drawResonator(x,y,displayObject.player,size,displayObject.health,Units["Resonator"].maxHealth,colors);
 			}
 			if(displayObject.identifier == "Int"){
-				drawIntegrator(x,y,displayObject.player,size,displayObject.health,Units["Integrator"].maxHealth,colors);
+				drawIntegrator(x,y,displayObject.player,size,displayObject.health,Units["Integrator"].maxHealth,colors,displayObject.lifeSpan);
 			}
 			if(displayObject.identifier == "JugProj"){
 				drawJuggernodeProjectile(x,y,displayObject.player,size,colors,displayObject.orientation, displayObject.damage, a);
@@ -1401,7 +1402,14 @@ export default class Display {
 			s.translate(-(size*x+size/2),-(size*y+size/2));
 		}
 
-		function drawIntegrator(x,y,player,size,health,max,pColors){
+		function drawIntegrator(x,y,player,size,health,max,pColors,life){
+			//s.fill(life*25);
+
+			s.noStroke();
+			for(let r = 0; r < life; r = r + .5){
+				s.fill(255,80-r*2);
+				s.ellipse(size*x+size/2,size*y+size/2-size/4,r*size/8,r*size/8)
+			}
 			s.fill(0);
 			s.stroke(0);
 			s.strokeWeight(1);
@@ -1494,6 +1502,7 @@ export default class Display {
 		}
 
 		function titleSequence(width,height,delay,scale){
+			//Add purple lightning
 			delay=delay/1.2;
 			s.background(0);
 			s.translate(width/2,height/2);
@@ -1772,12 +1781,9 @@ export default class Display {
 			}
 			else{
 				s.noStroke();
-				if(a%2 == 0){
-					s.noFill();
-				}
-				else{
-					s.fill(pColors[player-1][0],pColors[player-1][1],pColors[player-1][2],155);
-				}
+
+			  s.fill(pColors[player-1][0],pColors[player-1][1],pColors[player-1][2],155*(4.5-s.abs(4.5-a))/4.5);
+
 				s.rect(x*size,y*size,size,size);
 			}
 		}
@@ -1865,10 +1871,20 @@ function drawCreditsSymbol(x, y, size, player, a, pColors){
 	s.translate(-x,-y);
 }
 
-		function drawCollision(x, y, size, player, a, pColors){
+		function drawCollision(x, y, size, proj, a, pColors){
+			let player = proj.player;
 			let refx=x*size+size/2;
 			let refy=y*size+size/2;
-			s.noFill();
+
+			s.tint(pColors[player-1][0],pColors[player-1][1],pColors[player-1][2],s.abs(4.5-(4.5-a))*9);
+			if(proj.damage >= 25){
+			s.image(col_high,refx-size/2,refy-size/2,size,size);
+		}
+		else{
+			s.image(col_med,refx-size/2,refy-size/2,size,size);
+		}
+			s.noTint();
+		/*	s.noFill();
 			let theta=0;
 			let phase=0;
 			let meh=0;
@@ -1894,6 +1910,7 @@ function drawCreditsSymbol(x, y, size, player, a, pColors){
 				s.strokeWeight(1);
 				s.point(osx+refx,osy+refy);
 			}
+			*/
 		}
 
 		function keyPressed() {

@@ -125,7 +125,7 @@ export class MagBullet extends Projectile {
 		super(player, initialOrientation, initialSpeed, id);
 		this.identifier = "MagProj";
 		this.damage = damage;
-		this.maxDamage = 75;
+		this.maxDamage = 50;
 		this.ableToBeDestroyed = true;
 		this.distance = distance;
 	}
@@ -152,7 +152,7 @@ export class JugBullet extends Projectile {
 	constructor(player, initialOrientation = [0, 0], initialSpeed = 0, id)  {
 		super(player, initialOrientation, initialSpeed, id);
 		this.identifier = "JugProj";
-		this.damage = 4;
+		this.damage = 5;
 		this.ableToBeDestroyed = false;
 
 	}
@@ -254,7 +254,7 @@ export class IntBullet extends Projectile {
 	constructor(player, initialOrientation = [0, 0], initialSpeed = 0, projCount, lifeSpan, distance = 0, id)  {
 		super(player, initialOrientation, initialSpeed, id);
 		this.identifier = "IntProj";
-		this.damage = projCount*lifeSpan;
+		this.damage = Math.floor(75*Math.log(lifeSpan+1));
 		this.ableToBeDestroyed = true;
 		this.dump = false;
 		this.distance = distance;

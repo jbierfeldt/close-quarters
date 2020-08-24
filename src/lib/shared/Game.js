@@ -253,7 +253,7 @@ export default class Game {
 			console.log(proj.id, "( player", proj.player, ") hit ", obj.id, " ( player", obj.player, ")", obj.health);
 			if (proj.player !== obj.player) {
 				if(proj.damage > 0){
-				obj.collidedWith = [true, proj.player];
+				obj.collidedWith = [true, proj];
 			}
 
 				obj.health = obj.health - proj.damage;
@@ -282,7 +282,7 @@ export default class Game {
 			console.log(proj.id, "( player", proj.player, ") hit ", obj.id, " ( player", obj.player, ")", obj.health);
 			if (proj.player !== obj.player) {
 			if(proj.damage > 0){
-				obj.collidedWith = [true, proj.player];
+				obj.collidedWith = [true, proj];
 			}
 
 				obj.health = obj.health - proj.damage;
