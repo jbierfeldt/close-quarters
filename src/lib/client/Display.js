@@ -30,7 +30,7 @@ export default class Display {
 			let titleFont;
 			let standardFont;
 			let animate = 0; //use to decide when a new tick value occurs
-			let buttonScale = 1.77;
+			let buttonScale = 1.779;
 			let playerShifter;
 			let submitShifterX;
 			let submitShifterY;
@@ -943,7 +943,12 @@ export default class Display {
 					s.text(hoverObject.fullName, hoverX*si+si*1.2,hoverY*si+si*1.7);
 					s.text("Health: " + hoverObject.health, hoverX*si+si*1.2,hoverY*si+si*2.65);
 					if(hoverObject.objCategory == "Units"){
-						s.text("Rounds: " + (hoverObject.lifeSpan+1), hoverX*si+si*1.2,hoverY*si+si*3.6);
+						if(hoverObject.lifeSpan == 0){
+							s.text("Interval: " + 1, hoverX*si+si*1.2,hoverY*si+si*3.6);
+						}
+						else{
+						s.text("Interval: " + (hoverObject.lifeSpan), hoverX*si+si*1.2,hoverY*si+si*3.6);
+					}
 				}
 					s.translate(si*5*transX, si*4*transY);
 					}
@@ -1109,9 +1114,15 @@ export default class Display {
 			//s.textFont(standardFont);
 			s.translate(0, siz/6);
 			//Ray Tracer Button Decoration
-			s.fill(255);
-			s.stroke(0)
 			s.strokeWeight(2);
+			s.stroke(0);
+			s.fill(pColors[player-1][0],pColors[player-1][1],pColors[player-1][2],255);
+			s.rect(siz*16.9, siz*3.25, siz, siz);
+			drawRayTracer(16.9,3.25,0,siz,Units["RayTracer"].maxHealth,Units["RayTracer"].maxHealth,pColors);
+
+			s.fill(255);
+
+
 			s.text("Ray Tracer",wid/2+siz*3.75,siz*4);
 			s.text(Units["RayTracer"].maxHealth,wid/2+siz*9.9,siz*4);
 			s.stroke(0);
@@ -1122,6 +1133,10 @@ export default class Display {
 			//Oscillator Button Decoration
 			s.translate(0,scale*siz*1);
 			s.stroke(0);
+			s.fill(pColors[player-1][0],pColors[player-1][1],pColors[player-1][2],255);
+			s.rect(siz*16.9, siz*3.25, siz, siz);
+			drawRedShifter(16.9,3.25,0,siz,Units["RedShifter"].maxHealth,Units["RedShifter"].maxHealth,pColors);
+
 			s.fill(255);
 			s.text("Red Shifter",wid/2+siz*3.75,siz*4);
 			s.text(Units["RedShifter"].maxHealth,wid/2+siz*9.9,siz*4);
@@ -1131,6 +1146,11 @@ export default class Display {
 			s.translate(0,-scale*siz*1);
 			s.translate(0,scale*siz*2);
 			s.stroke(0);
+			s.fill(pColors[player-1][0],pColors[player-1][1],pColors[player-1][2],255);
+			s.rect(siz*16.9, siz*3.25, siz, siz);
+			drawOscillator(16.9,3.25,0,siz,Units["Oscillator"].maxHealth,Units["Oscillator"].maxHealth,pColors);
+
+
 			s.fill(255);
 			s.text("Oscillator",wid/2+siz*3.75,siz*4);
 			s.text(Units["Oscillator"].maxHealth,wid/2+siz*9.9,siz*4);
@@ -1141,6 +1161,10 @@ export default class Display {
 			//Ballast Button Decoration
 			s.translate(0,scale*siz*3);
 			s.stroke(0);
+			s.fill(pColors[player-1][0],pColors[player-1][1],pColors[player-1][2],255);
+			s.rect(siz*16.9, siz*3.25, siz, siz);
+			drawBallast(16.9,3.25,0,siz,Units["Ballast"].maxHealth,Units["Ballast"].maxHealth,pColors);
+
 			s.fill(255);
 			s.text("Ballast",wid/2+siz*3.75,siz*4)
 			s.text(Units["Ballast"].maxHealth,wid/2+siz*9.9,siz*4)
@@ -1149,25 +1173,34 @@ export default class Display {
 			s.translate(0,-scale*siz*3);
 			//Juggernode Button Decoration
 			s.translate(0,scale*siz*4);
+			s.strokeWeight(2);
 			s.stroke(0);
+			s.fill(pColors[player-1][0],pColors[player-1][1],pColors[player-1][2],255);
+			s.rect(siz*16.9, siz*3.25, siz, siz);
+			drawJuggernode(16.9, 3.25, 4, siz, 400, 400, pColors);
+
 			s.fill(255);
 			s.text("Juggernode",wid/2+siz*3.75,siz*4)
 			s.text(Units["Juggernode"].maxHealth,wid/2+siz*9.9,siz*4)
 			s.text(Units["Juggernode"].cost,wid/2+siz*12.6,siz*4);
 
 			s.translate(0,-scale*siz*4);
-
 			s.translate(0,scale*siz*5);
 			s.stroke(0);
+			s.fill(pColors[player-1][0],pColors[player-1][1],pColors[player-1][2],255);
+			s.rect(siz*16.9, siz*3.25, siz, siz);
+			drawTripwire(16.9, 3.25, 0, siz, 400, 400, pColors);
 			s.fill(255);
 			s.text("Tripwire",wid/2+siz*3.75,siz*4)
 			s.text(Units["Tripwire"].maxHealth,wid/2+siz*9.9,siz*4)
 			s.text(Units["Tripwire"].cost,wid/2+siz*12.6,siz*4);
-
 			s.translate(0,-scale*siz*5);
 			//Maglev Button Decoration
 			s.translate(0,scale*siz*6);
 			s.stroke(0);
+			s.fill(pColors[player-1][0],pColors[player-1][1],pColors[player-1][2],255);
+			s.rect(siz*16.9, siz*3.25, siz, siz);
+			drawMaglev(16.9, 3.25, 4, siz, 400, 400, pColors);
 			s.fill(255);
 			s.text("Maglev",wid/2+siz*3.75,siz*4)
 			s.text(Units["Maglev"].maxHealth,wid/2+siz*9.9,siz*4);
@@ -1177,6 +1210,9 @@ export default class Display {
 			//Circuit Breaker Button Decoration
 			s.translate(0,scale*siz*7);
 			s.stroke(0);
+			s.fill(pColors[player-1][0],pColors[player-1][1],pColors[player-1][2],255);
+			s.rect(siz*16.9, siz*3.25, siz, siz);
+			drawResonator(16.9, 3.25, 4, siz, 400, 400, pColors);
 			s.fill(255);
 			s.text("Resonator",wid/2+siz*3.75,siz*4);
 			s.text(Units["Resonator"].maxHealth,wid/2+siz*9.9,siz*4);
@@ -1187,6 +1223,9 @@ export default class Display {
 
 			s.translate(0,scale*siz*8);
 			s.stroke(0);
+			s.fill(pColors[player-1][0],pColors[player-1][1],pColors[player-1][2],255);
+			s.rect(siz*16.9, siz*3.25, siz, siz);
+			drawIntegrator(16.9, 3.25, 4, siz, 400, 400, pColors);
 			s.fill(255);
 			s.text("Integrator",wid/2+siz*3.75,siz*4)
 			s.text(Units["Integrator"].maxHealth,wid/2+siz*9.9,siz*4)
@@ -1344,27 +1383,30 @@ export default class Display {
 
 		function drawRedShifter(x,y,player,size,health,max,pColors){
 			s.image(imgSeven, size*x+size/80, size*y+size/80, size-size/40, size-size/40);
-			/*s.stroke(0);
-			s.strokeWeight(1);
-			s.fill(0);
-			s.translate(x*size + size/2, y*size + size/2);
-			s.ellipse(0, 0, size/2, size/2);
-			s.triangle(-size/4, 0, size/4, 0, 0, -size/2.5);
-			s.translate(-(x*size + size/2), -(y*size + size/2));*/
-
 		}
 
 		function drawOscillator(x,y,player,size,health,max,pColors){
+			//s.translate(0,size/25);
 			s.stroke(0);
-			s.strokeWeight(2);
 			s.fill((max-health)*255/max);
 			s.translate(x*size+size/2, y*size+size/2);
 			for(let angle = 0; angle < 360; angle = angle + 120){
+				s.strokeWeight(2);
 				s.rotate(s.radians(angle));
+				s.scale(1.4);
 				s.triangle(0,size/10,size/8,size/6,-size/8,size/6);
+				s.scale(1/1.4);
 				s.rotate(-s.radians(angle));
+				//s.strokeWeight(1);
+				s.rotate(s.radians(angle+30));
+				s.line(0,0,size/2.9,0);
+				//s.line(size/3.5,-size/20,size/3.5,size/20);
+				s.rotate(-s.radians(angle+30));
 			}
+			s.noFill();
+			s.ellipse(0,0,size/1.3,size/1.3);
 			s.translate(-x*size-size/2, -y*size-size/2);
+		//	s.translate(0,-size/25);
 		}
 
 		function drawMaglev(x,y,player,size,health,max,pColors){
@@ -1877,12 +1919,19 @@ function drawCreditsSymbol(x, y, size, player, a, pColors){
 			let refy=y*size+size/2;
 
 			s.tint(pColors[player-1][0],pColors[player-1][1],pColors[player-1][2],s.abs(4.5-(4.5-a))*9);
+			//s.translate(refx,refy);
+		//	for(let angle = 0; angle < 360; angle = angle + 120){
+			//	s.rotate(s.radians(angle));
 			if(proj.damage >= 25){
 			s.image(col_high,refx-size/2,refy-size/2,size,size);
 		}
 		else{
 			s.image(col_med,refx-size/2,refy-size/2,size,size);
 		}
+		//s.rotate(-s.radians(angle));
+	//}
+
+		//s.translate(-refx,-refy);
 			s.noTint();
 		/*	s.noFill();
 			let theta=0;
