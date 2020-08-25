@@ -1918,28 +1918,29 @@ function drawCreditsSymbol(x, y, size, player, a, pColors){
 			let refx=x*size+size/2;
 			let refy=y*size+size/2;
 
-			s.tint(pColors[player-1][0],pColors[player-1][1],pColors[player-1][2],s.abs(4.5-(4.5-a))*9);
-			//s.translate(refx,refy);
-		//	for(let angle = 0; angle < 360; angle = angle + 120){
-			//	s.rotate(s.radians(angle));
-			if(proj.damage >= 25){
-			s.image(col_high,refx-size/2,refy-size/2,size,size);
-		}
-		else{
-			s.image(col_med,refx-size/2,refy-size/2,size,size);
-		}
-		//s.rotate(-s.radians(angle));
-	//}
+	// 		s.tint(pColors[player-1][0],pColors[player-1][1],pColors[player-1][2],s.abs(4.5-(4.5-a))*9);
+	// 		//s.translate(refx,refy);
+	// 	//	for(let angle = 0; angle < 360; angle = angle + 120){
+	// 		//	s.rotate(s.radians(angle));
+	// 		if(proj.damage >= 25){
+	// 		s.image(col_high,refx-size/2,refy-size/2,size,size);
+	// 	}
+	// 	else{
+	// 		s.image(col_med,refx-size/2,refy-size/2,size,size);
+	// 	}
+	// 	//s.rotate(-s.radians(angle));
+	// //}
 
 		//s.translate(-refx,-refy);
 			s.noTint();
-		/*	s.noFill();
+			s.noFill();
 			let theta=0;
 			let phase=0;
 			let meh=0;
 			let osx=0;
 			let osy=0;
-			let wave = 4+(x*y)%15;
+			let wave = proj.damage;
+			// 4+(x*y)%15;
 			let rad = 360;
 			let radius=size/25;
 			for (let i = 0; i < rad; i = i + 20){
@@ -1959,7 +1960,6 @@ function drawCreditsSymbol(x, y, size, player, a, pColors){
 				s.strokeWeight(1);
 				s.point(osx+refx,osy+refy);
 			}
-			*/
 		}
 
 		function keyPressed() {
