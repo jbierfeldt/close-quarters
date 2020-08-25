@@ -140,7 +140,7 @@ export default class Game {
 
 	placeInitialRandomBases () {
 		for (let i = 1; i <= 4; i++) {
-			let randCoord = this.getRandomCoordInPlayerRegion(i, 2);
+			let randCoord = this.getRandomCoordInPlayerRegion(i, 3);
 			this.createNewBaseAtCoord("Base", String(i), randCoord[0], randCoord[1]);
 		}
 	}
