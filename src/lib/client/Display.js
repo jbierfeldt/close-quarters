@@ -490,8 +490,24 @@ export default class Display {
 					}
 				}
 
+
 					s.fill(255,100);
 					s.noStroke();
+					if(this.app.game.players[this.app.playerNumber-1].baseCount < 2 && gameStart == 0 && this.app.game.turnNumber < 2){
+						if(this.app.playerNumber == 1 && hoverX <= 14 && hoverY < 10 && hoverX < 30 && hoverY < 20){
+							s.rect(hoverX*si,hoverY*si,si*2,si*2);
+						}
+						else if(this.app.playerNumber == 2 && hoverX<=14 && hoverY >= 10 && hoverX < 30 && hoverY < 20){
+							s.rect(hoverX*si,hoverY*si,si*2,si*2);
+						}
+						else if(this.app.playerNumber == 3 && hoverX>14 && hoverY < 10 && hoverX < 30 && hoverY < 20){
+							s.rect(hoverX*si,hoverY*si,si*2,si*2);
+						}
+						else if(this.app.playerNumber == 4 && hoverX>14 && hoverY >= 10 && hoverX < 30 && hoverY < 20){
+							s.rect(hoverX*si,hoverY*si,si*2,si*2);
+						}
+					}
+					else{
 					if(this.app.playerNumber == 1 && hoverX <= 14 && hoverY < 10 && hoverX < 30 && hoverY < 20){
 						s.rect(hoverX*si,hoverY*si,si,si);
 					}
@@ -504,6 +520,9 @@ export default class Display {
 					else if(this.app.playerNumber == 4 && hoverX>14 && hoverY >= 10 && hoverX < 30 && hoverY < 20){
 						s.rect(hoverX*si,hoverY*si,si,si);
 					}
+}
+
+
 				}
 
 				else if(this.app.gamePhase==2 || this.app.clientState === 'SPECTATOR' || this.app.clientState === 'DEFEATED_PLAYER'){

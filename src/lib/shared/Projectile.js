@@ -32,6 +32,7 @@ export default class Projectile {
 			distance: this.distance,
 			created: this.created,
 			projCount: this.projCount
+
 		}
 	}
 }
