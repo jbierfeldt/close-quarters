@@ -254,7 +254,7 @@ export class IntBullet extends Projectile {
 	constructor(player, initialOrientation = [0, 0], initialSpeed = 0, projCount, lifeSpan, distance = 0, id)  {
 		super(player, initialOrientation, initialSpeed, id);
 		this.identifier = "IntProj";
-		this.damage = Math.floor(75*Math.log(lifeSpan+1));
+		this.damage = Math.floor(10*Math.sqrt(lifeSpan));
 		this.ableToBeDestroyed = true;
 		this.dump = false;
 		this.distance = distance;

@@ -227,6 +227,9 @@ export default class Display {
 					}
 					//Exit this phase and move to the Battle Phase if the mouse is pressed(button trigger to be added)
 				}
+				else if(this.app.gamePhase === 0.5){
+					instructionSheet(si, this.app.playerNumber, this.playerColors);
+				}
 				else if(this.app.gamePhase === 1 && this.app.clientState !== 'SPECTATOR' && this.app.clientState !== 'DEFEATED_PLAYER'){
 					justTriggered = 1;
 					this.t = 1;
@@ -909,7 +912,16 @@ export default class Display {
 				}
 			}
 		}
-
+		function instructionSheet(size, player, pColors){
+			s.background(0);
+			s.textFont(titleFont);
+			s.strokeWeight(2);
+			s.stroke(0);
+			s.fill(pColors[player-1][0],pColors[player-1][1],pColors[player-1][2],255);
+			s.textAlign(s.CENTER);
+			s.text("As A Master Machine Maker, You Are Ready To ", width/2,height/2);
+			s.textAlign(s.LEFT);
+		}
 		function tooltip(hoverX,hoverY, b, tick, wi, he, si, pColors, sdt, app){
 			if(b[hoverY][hoverX].length != 0){
 				if(app.gamePhase != 1){
