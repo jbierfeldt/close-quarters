@@ -582,9 +582,9 @@ export class Ballast extends Unit {
 	static maxHealth = 300;
 	static cost = 2;
 	//Methodology is player then x then y in each subArray
-	static orientations = {
-		1: [[coordOne,coordTwo],[coordOne,-coordTwo],[coordTwo,coordOne],[-coordTwo,coordOne],[coordOne,coordTwo],[coordOne,coordTwo]]
-	}
+	// static orientations = {
+	// 	1: [[coordOne,coordTwo],[coordOne,-coordTwo],[coordTwo,coordOne],[-coordTwo,coordOne],[coordOne,coordTwo],[coordOne,coordTwo]]
+	// }
 	static description = "The Ballast is an advanced, bulky machine that can be used to block key channels while hitting a limited set of targets with significant force. It strikes for five consecutive seconds, delivering irreparable damage. The attacks rotate between 6 possible target locations that are a distance of either 6 or 3 tiles away horizontally and the opposite number vertically.";
 
 	static createFromSerialized (props) {
