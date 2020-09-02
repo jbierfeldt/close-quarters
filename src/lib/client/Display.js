@@ -2001,7 +2001,7 @@ function drawCreditsSymbol(x, y, size, player, a, pColors){
 			// 4+(x*y)%15;
 			let rad = 360;
 			let radius=size/25;
-			for (let i = 0; i < rad; i = i + 20){
+			for (let i = 0; i < rad; i = i + 18){
 				s.stroke(pColors[player-1][0],pColors[player-1][1],pColors[player-1][2], 23-a);
 				theta = i*(360/rad);
 				phase=((Math.PI)/rad);
