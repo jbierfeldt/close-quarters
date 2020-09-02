@@ -677,7 +677,7 @@ export default class Display {
 			///REVIEW BOARD PHASE
 			else if(this.app.gamePhase ==  3 && this.app.game.players[this.app.playerNumber-1].victoryCondition != -1){
 				if(sideBarGrowth > 0.8){
-					sideBarGrowth = sideBarGrowth - .001;
+					sideBarGrowth = sideBarGrowth - .003;
 				}
 				else{
 					sideBarMenu = true;
@@ -972,14 +972,41 @@ export default class Display {
 					s.textFont(standardFont);
 					s.textSize(si/2.3);
 					s.text(hoverObject.fullName, hoverX*si+si*1.2,hoverY*si+si*1.7);
-					s.text("Health: " + hoverObject.health, hoverX*si+si*1.2,hoverY*si+si*2.65);
+
+
+					s.fill(120,255);
+					s.rect(hoverX*si+si*1.2, hoverY*si+si*2.05, si*3.6, si/2);
+					s.noStroke();
+					s.fill(pColors[hoverObject.player-1][0], pColors[hoverObject.player-1][1], pColors[hoverObject.player-1][2], pColors[hoverObject.player-1][3]);
+
+					s.rect(hoverX*si+si*1.2, hoverY*si+si*2.05, si*3.6*(hoverObject.health/hoverObject.constructor.maxHealth), si/2);
+					//s.fill(155,255);
+					s.stroke(0);
+					s.noFill();
+					s.rect(hoverX*si+si*1.2, hoverY*si+si*2.05, si*3.6, si/2);
+
+					s.noFill();
+
+					s.fill(0);
+					s.textAlign(s.CENTER);
+					s.textSize(si/3);
+					s.noStroke();
+					s.text("Health: " + hoverObject.health, hoverX*si+si*3,hoverY*si+si*2.43);
+					s.textAlign(s.LEFT);
+					s.fill(pColors[hoverObject.player-1][0], pColors[hoverObject.player-1][1], pColors[hoverObject.player-1][2], pColors[hoverObject.player-1][3]);
+
 					if(hoverObject.objCategory == "Units"){
-						/*if(hoverObject.lifeSpan == 0){
-							s.text("Interval: " + 1, hoverX*si+si*1.2,hoverY*si+si*3.6);
+
+						s.textSize(si/3.8);
+						s.stroke(0);
+
+						s.text("Damage Dealt: " + (hoverObject.damageDealt), hoverX*si+si*1.3,hoverY*si+si*3.1);
+						if(hoverObject.lifeSpan == 0){
+							s.text("Turns Active: " + 1, hoverX*si+si*1.3,hoverY*si+si*3.6);
 						}
-						else{*/
-						s.text("Damage Dealt: " + (hoverObject.damageDealt), hoverX*si+si*1.2,hoverY*si+si*3.6);
-					//}
+						else{
+						s.text("Turns Active: " + hoverObject.lifeSpan, hoverX*si+si*1.3,hoverY*si+si*3.6);
+					}
 				}
 					s.translate(si*5*transX, si*4*transY);
 					}
