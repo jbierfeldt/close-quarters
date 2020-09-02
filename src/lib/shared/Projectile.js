@@ -4,7 +4,7 @@ import {DEBUG} from './utilities.js';
 const debug = new DEBUG(true, 5);
 
 export default class Projectile {
-	constructor(player, initialOrientation = [0, 0], initialSpeed = 0, id) {
+	constructor(player, initialOrientation = [0, 0], initialSpeed = 0, unitID, id) {
 		this.id = id || 'proj'+createID();
 		this.player = player;
 		this.orientation = initialOrientation;
@@ -13,7 +13,8 @@ export default class Projectile {
 		this.updatedThisTick = true;
 		this.ableToBeDestroyed = true; //Determines whether to destroy this projectile upon contact with a base or unit
 		this.objCategory = "Projectiles";
-		this.dump=false;
+		this.dump = false;
+		this.unit = unitID || 234;
 	}
 
 	update(tick) {
@@ -31,21 +32,22 @@ export default class Projectile {
 			damage: this.damage,
 			distance: this.distance,
 			created: this.created,
-			projCount: this.projCount
+			projCount: this.projCount,
+			unit: this.unit
 
 		}
 	}
 }
 
 export class RayBullet extends Projectile {
-	constructor(player, initialOrientation = [0, 0], initialSpeed = 0, id)  {
-		super(player, initialOrientation, initialSpeed, id);
+	constructor(player, initialOrientation = [0, 0], initialSpeed = 0, unit, id)  {
+		super(player, initialOrientation, initialSpeed, unit, id);
 		this.identifier = "RayProj";
 		this.damage = 10;
 	}
 
 	static createFromSerialized (props) {
-		return new RayBullet(props.player, props.orientation, props.speed, props.id);
+		return new RayBullet(props.player, props.orientation, props.speed, props.unit, props.id);
 	}
 
 	update(tick) {
@@ -58,8 +60,8 @@ export class RayBullet extends Projectile {
 }
 
 export class RedBullet extends Projectile {
-	constructor(player, initialOrientation = [0, 0], initialSpeed = 0, damage = 0, distance = 0, id)  {
-		super(player, initialOrientation, initialSpeed, id);
+	constructor(player, initialOrientation = [0, 0], initialSpeed = 0, unit, damage = 0, distance = 0, id)  {
+		super(player, initialOrientation, initialSpeed, unit, id);
 		this.identifier = "RedProj";
 		this.damage = damage;
 		this.ableToBeDestroyed = true;
@@ -72,7 +74,7 @@ export class RedBullet extends Projectile {
 	}
 
 	static createFromSerialized (props) {
-		return new RedBullet(props.player, props.orientation, props.speed, props.damage, props.distance, props.id);
+		return new RedBullet(props.player, props.orientation, props.speed, props.unit, props.damage, props.distance, props.id);
 	}
 
 	update(tick) {
@@ -90,8 +92,8 @@ export class RedBullet extends Projectile {
 
 
 export class OscBullet extends Projectile {
-	constructor(player, initialOrientation = [0, 0], initialSpeed = 0, created = 0, id)  {
-		super(player, initialOrientation, initialSpeed, id);
+	constructor(player, initialOrientation = [0, 0], initialSpeed = 0, unit, created = 0, id)  {
+		super(player, initialOrientation, initialSpeed, unit, id);
 		this.identifier = "OscProj";
 		this.damage = 60;
 		this.orientation = initialOrientation;
@@ -99,7 +101,7 @@ export class OscBullet extends Projectile {
 	}
 
 	static createFromSerialized (props) {
-		return new OscBullet(props.player, props.orientation, props.speed, props.created, props.id);
+		return new OscBullet(props.player, props.orientation, props.speed, props.unit, props.created, props.id);
 	}
 
 	update(tick) {
@@ -122,8 +124,8 @@ export class OscBullet extends Projectile {
 }
 
 export class MagBullet extends Projectile {
-	constructor(player, initialOrientation = [0, 0], initialSpeed = 0, damage = 80, distance = 0, id)  {
-		super(player, initialOrientation, initialSpeed, id);
+	constructor(player, initialOrientation = [0, 0], initialSpeed = 0, unit, damage = 80, distance = 0, id)  {
+		super(player, initialOrientation, initialSpeed, unit, id);
 		this.identifier = "MagProj";
 		this.damage = damage;
 		this.maxDamage = 50;
@@ -132,7 +134,7 @@ export class MagBullet extends Projectile {
 	}
 
 	static createFromSerialized (props) {
-		return new MagBullet(props.player, props.orientation, props.speed, props.damage, props.distance, props.id);
+		return new MagBullet(props.player, props.orientation, props.speed, props.unit, props.damage, props.distance, props.id);
 	}
 
 	update(tick) {
@@ -150,8 +152,8 @@ export class MagBullet extends Projectile {
 }
 
 export class JugBullet extends Projectile {
-	constructor(player, initialOrientation = [0, 0], initialSpeed = 0, id)  {
-		super(player, initialOrientation, initialSpeed, id);
+	constructor(player, initialOrientation = [0, 0], initialSpeed = 0, unit, id)  {
+		super(player, initialOrientation, initialSpeed, unit, id);
 		this.identifier = "JugProj";
 		this.damage = 5;
 		this.ableToBeDestroyed = false;
@@ -159,7 +161,7 @@ export class JugBullet extends Projectile {
 	}
 
 	static createFromSerialized (props) {
-		return new JugBullet(props.player, props.orientation, props.speed, props.id);
+		return new JugBullet(props.player, props.orientation, props.speed, props.unit, props.id);
 	}
 
 	update(tick) {
@@ -172,8 +174,8 @@ export class JugBullet extends Projectile {
 }
 
 export class BalBullet extends Projectile {
-	constructor(player, initialOrientation = [0, 0], initialSpeed = 0, created = 5, id)  {
-		super(player, initialOrientation, initialSpeed, id);
+	constructor(player, initialOrientation = [0, 0], initialSpeed = 0, unit, created = 5, id)  {
+		super(player, initialOrientation, initialSpeed, unit, id);
 		this.identifier = "BalProj";
 		this.damage = 12;
 		this.created = created;
@@ -182,7 +184,7 @@ export class BalBullet extends Projectile {
 	}
 
 	static createFromSerialized (props) {
-		return new BalBullet(props.player, props.orientation, props.speed, props.created, props.id);
+		return new BalBullet(props.player, props.orientation, props.speed, props.unit, props.created, props.id);
 	}
 
 	update(tick) {
@@ -199,8 +201,8 @@ export class BalBullet extends Projectile {
 }
 
 export class CirBullet extends Projectile {
-	constructor(player, initialOrientation = [0, 0], initialSpeed = 0, damage = 0, distance = 5 + Math.floor(Math.random()*11), id)  {
-		super(player, initialOrientation, initialSpeed, id);
+	constructor(player, initialOrientation = [0, 0], initialSpeed = 0, unit, damage = 0, distance = 5 + Math.floor(Math.random()*11), id)  {
+		super(player, initialOrientation, initialSpeed, unit, id);
 		//distance = 4 + Math.floor(Math.random()*5
 		this.identifier = "CirProj";
 		this.damage = damage;
@@ -212,30 +214,32 @@ export class CirBullet extends Projectile {
 		this.player =player;
 		this.speed = initialSpeed;
 		this.orientation = initialOrientation;
+		this.unit = unit;
 	}
 
 	static createFromSerialized (props) {
-		return new CirBullet(props.player, props.orientation, props.speed, props.damage, props.distance, props.id);
+		return new CirBullet(props.player, props.orientation, props.speed, props.unit, props.damage, props.distance, props.id);
 	}
 
 	update(tick) {
+		///COME BACK TO 
 		super.update(tick);
 		this.firing=false;
 		if(this.distance === 1){
-			this.damage = 70;
+			this.damage = 35;
 			this.firing=true;
 			for(let i = 0; i < 4; i = i + 1){
 				if(i == 0){
-					this.projArr[i] = new CirBullet(this.player, [1+1*this.orientation[0],0+1*this.orientation[1]], 0,this.damage/4, 0);
+					this.projArr[i] = new CirBullet(this.player, [1+1*this.orientation[0],0+1*this.orientation[1]], 0, this.unit, this.damage/2, 0);
 				}
 				else if(i == 1){
-					this.projArr[i] = new CirBullet(this.player, [0+1*this.orientation[0],1+1*this.orientation[1]], 0,this.damage/4, 0);
+					this.projArr[i] = new CirBullet(this.player, [0+1*this.orientation[0],1+1*this.orientation[1]], 0, this.unit, this.damage/2, 0);
 				}
 				else if(i == 2){
-					this.projArr[i] = new CirBullet(this.player, [0+1*this.orientation[0],-1+1*this.orientation[1]], 0,this.damage/4, 0);
+					this.projArr[i] = new CirBullet(this.player, [0+1*this.orientation[0],-1+1*this.orientation[1]], 0, this.unit, this.damage/2, 0);
 				}
 				else if(i == 3){
-					this.projArr[i] = new CirBullet(this.player, [-1+1*this.orientation[0],0+1*this.orientation[1]], 0,this.damage/4, 0);
+					this.projArr[i] = new CirBullet(this.player, [-1+1*this.orientation[0],0+1*this.orientation[1]], 0, this.unit, this.damage/2, 0);
 				}
 			}
 		}
@@ -252,8 +256,8 @@ export class CirBullet extends Projectile {
 }
 
 export class IntBullet extends Projectile {
-	constructor(player, initialOrientation = [0, 0], initialSpeed = 0, projCount, lifeSpan, distance = 0, id)  {
-		super(player, initialOrientation, initialSpeed, id);
+	constructor(player, initialOrientation = [0, 0], initialSpeed = 0, projCount, lifeSpan, unit, distance = 0, id)  {
+		super(player, initialOrientation, initialSpeed, unit, id);
 		this.identifier = "IntProj";
 		this.damage = Math.floor(10*Math.sqrt(lifeSpan));
 		this.ableToBeDestroyed = true;
@@ -265,7 +269,7 @@ export class IntBullet extends Projectile {
 	}
 
 	static createFromSerialized (props) {
-		return new IntBullet(props.player, props.orientation, props.speed, props.projCount, props.lifeSpan, props.distance, props.id);
+		return new IntBullet(props.player, props.orientation, props.speed, props.projCount, props.lifeSpan, props.unit, props.distance, props.id);
 	}
 
 	update(tick) {
@@ -278,8 +282,8 @@ export class IntBullet extends Projectile {
 }
 
 export class TriBullet extends Projectile {
-	constructor(player, initialOrientation = [0, 0], initialSpeed = 0, damage = 0, distance = 3, id)  {
-		super(player, initialOrientation, initialSpeed, id);
+	constructor(player, initialOrientation = [0, 0], initialSpeed = 0, unit, damage = 0, distance = 3, id)  {
+		super(player, initialOrientation, initialSpeed, unit, id);
 		this.identifier = "TriProj";
 		this.damage = damage;
 		this.ableToBeDestroyed = false;
@@ -291,7 +295,7 @@ export class TriBullet extends Projectile {
 	}
 
 	static createFromSerialized (props) {
-		return new TriBullet(props.player, props.orientation, props.speed, props.damage, props.distance, props.id);
+		return new TriBullet(props.player, props.orientation, props.speed, props.unit, props.damage, props.distance, props.id);
 	}
 
 	update(tick) {

@@ -974,12 +974,12 @@ export default class Display {
 					s.text(hoverObject.fullName, hoverX*si+si*1.2,hoverY*si+si*1.7);
 					s.text("Health: " + hoverObject.health, hoverX*si+si*1.2,hoverY*si+si*2.65);
 					if(hoverObject.objCategory == "Units"){
-						if(hoverObject.lifeSpan == 0){
+						/*if(hoverObject.lifeSpan == 0){
 							s.text("Interval: " + 1, hoverX*si+si*1.2,hoverY*si+si*3.6);
 						}
-						else{
-						s.text("Interval: " + (hoverObject.lifeSpan), hoverX*si+si*1.2,hoverY*si+si*3.6);
-					}
+						else{*/
+						s.text("Damage Dealt: " + (hoverObject.damageDealt), hoverX*si+si*1.2,hoverY*si+si*3.6);
+					//}
 				}
 					s.translate(si*5*transX, si*4*transY);
 					}

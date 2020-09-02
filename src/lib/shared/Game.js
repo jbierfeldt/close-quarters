@@ -259,11 +259,15 @@ export default class Game {
 				obj.health = obj.health - proj.damage;
 				if(obj.health > 0){
 				this.players[proj.player-1].damageDealtThisTurn = this.players[proj.player-1].damageDealtThisTurn + (tempHealth - obj.health);
+				console.log("proj.unit", proj.unit);
+				this.gameObjects.get(proj.unit).damageDealt = this.gameObjects.get(proj.unit).damageDealt + (tempHealth - obj.health);
 				}
 				else{
 			  this.players[obj.player-1].unitsLostThisTurn =	this.players[obj.player-1].unitsLostThisTurn + 1;
 				this.players[proj.player-1].unitsKilledThisTurn =	this.players[obj.player-1].unitsKilledThisTurn + 1;
 				this.players[proj.player-1].damageDealtThisTurn = this.players[proj.player-1].damageDealtThisTurn + (tempHealth - 0);
+				this.gameObjects.get(proj.unit).damageDealt =this.gameObjects.get(proj.unit).damageDealt + (tempHealth - 0);
+
 				}
 				if (this.isObjectAlive(obj) === false) {
 					this.cleanUpArray.push(obj.id);
@@ -289,10 +293,14 @@ export default class Game {
 				if(obj.health > 0){
 				this.players[proj.player-1].damageDealtToBases = this.players[proj.player-1].damageDealtToBases + (tempHealth - obj.health);
 				this.players[proj.player-1].damageDealtThisTurn = this.players[proj.player-1].damageDealtThisTurn + (tempHealth - obj.health);
+			  this.gameObjects.get(proj.unit).damageDealt =this.gameObjects.get(proj.unit).damageDealt + (tempHealth - obj.health);
+
 				}
 				else{
 					this.players[proj.player-1].damageDealtToBases = this.players[proj.player-1].damageDealtToBases + (tempHealth - 0);
 					this.players[proj.player-1].damageDealtThisTurn = this.players[proj.player-1].damageDealtThisTurn + (tempHealth - 0);
+					this.gameObjects.get(proj.unit).damageDealt =this.gameObjects.get(proj.unit).damageDealt + (tempHealth - 0);
+
 				}
 				if (this.isObjectAlive(obj) === false) {
 					this.cleanUpArray.push(obj.id);

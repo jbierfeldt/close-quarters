@@ -17,6 +17,7 @@ export default class Unit {
 		this.objCategory = "Units";
 		this.collidedWith = [];
 		this.turnsActive = 0;
+		this.damageDealt = 0;
 		//this.lifeSpan = 0;
 	}
 
@@ -42,7 +43,8 @@ export default class Unit {
 			lifeSpan: this.lifeSpan,
 			ticksSinceDamage: this.ticksSinceDamage,
 			tripDamage: this.tripDamage,
-			turnsActive: this.turnsActive
+			turnsActive: this.turnsActive,
+			damageDealt: this.damageDealt
 			//ADD ALL OTHER VARIABLES
 	}
 
@@ -50,7 +52,7 @@ export default class Unit {
 }
 export class RayTracer extends Unit {
 
-	constructor(player, health = 100, firing = false, id, collidedWith = [false, 4], lifeSpan = 0)  {
+	constructor(player, health = 100, firing = false, id, collidedWith = [false, 4], lifeSpan = 0, damageDealt=0)  {
 		super(id);
 		this.lifeSpan = lifeSpan;
 		this.player = player;
@@ -61,6 +63,7 @@ export class RayTracer extends Unit {
 		this.collidedWith = collidedWith;
 		this.value = 1;
 		this.fullName = "Ray Tracer";
+		this.damageDealt = damageDealt;
 	}
 
 	static maxHealth = 100;
@@ -68,14 +71,14 @@ export class RayTracer extends Unit {
 	static description = "The Ray Tracer is a precise offensive machine used for reliable multifrontal attacks. It alternates firing horizontally and vertically, dealing 10 damage with each blast.";
 
 	static createFromSerialized (props) {
-		return new RayTracer(props.player, props.health, props.firing, props.id, props.collidedWith,props.lifeSpan)
+		return new RayTracer(props.player, props.health, props.firing, props.id, props.collidedWith,props.lifeSpan,props.damageDealt)
 	}
 
 	startAttack(orientation){
 
 		//initialize a project object and pass in the direction based on the tick
 		this.firing = true;
-		this.projArr[0]  = new Projectiles.RayBullet(this.player, orientation, 1);
+		this.projArr[0]  = new Projectiles.RayBullet(this.player, orientation, 1, this.id);
 
 		debug.log(0, "    Unit " + this.id + "  is firing Projectile " + this.firing.id);
 
@@ -117,7 +120,7 @@ export class RayTracer extends Unit {
 
 export class RedShifter extends Unit {
 
-	constructor(player, health = 50, firing = false, id, collidedWith = [false, 4],lifeSpan = 0)  {
+	constructor(player, health = 50, firing = false, id, collidedWith = [false, 4],lifeSpan = 0,damageDealt=0)  {
 		super(id);
 		this.lifeSpan = lifeSpan;
 		this.player = player;
@@ -128,6 +131,7 @@ export class RedShifter extends Unit {
 		this.collidedWith = collidedWith;
 		this.value = 1;
 		this.fullName = "Red Shifter";
+		this.damageDealt = damageDealt;
 	}
 
 	static maxHealth = 50;
@@ -135,7 +139,7 @@ export class RedShifter extends Unit {
 	static description = "The Red Shifter is an offensive long-range unit that has low health and deals average damage. It randomly fires in two directions and the strikes must travel at least 10 tiles in order to have  an effect.";
 
 	static createFromSerialized (props) {
-		return new RedShifter(props.player, props.health, props.firing, props.id, props.collidedWith, props.lifeSpan)
+		return new RedShifter(props.player, props.health, props.firing, props.id, props.collidedWith, props.lifeSpan,props.damageDealt)
 	}
 
 	startAttack(orientation){
@@ -146,56 +150,56 @@ export class RedShifter extends Unit {
 	//let direction =1;
 		if(direction === 1){
 			if(this.player == 1){
-				this.projArr[0]  = new Projectiles.RedBullet(this.player, [1,0], 1);
-				this.projArr[1]  = new Projectiles.RedBullet(this.player, [1,1], 1);
+				this.projArr[0]  = new Projectiles.RedBullet(this.player, [1,0], 1, this.id);
+				this.projArr[1]  = new Projectiles.RedBullet(this.player, [1,1], 1, this.id);
 			}
 			else if(this.player == 2){
-				this.projArr[0]  = new Projectiles.RedBullet(this.player, [1,0], 1);
-				this.projArr[1]  = new Projectiles.RedBullet(this.player, [1,-1], 1);
+				this.projArr[0]  = new Projectiles.RedBullet(this.player, [1,0], 1, this.id);
+				this.projArr[1]  = new Projectiles.RedBullet(this.player, [1,-1], 1, this.id);
 			}
 			else if(this.player == 3){
-				this.projArr[0]  = new Projectiles.RedBullet(this.player, [-1,0], 1);
-				this.projArr[1]  = new Projectiles.RedBullet(this.player, [-1,1], 1);
+				this.projArr[0]  = new Projectiles.RedBullet(this.player, [-1,0], 1, this.id);
+				this.projArr[1]  = new Projectiles.RedBullet(this.player, [-1,1], 1, this.id);
 			}
 			else if(this.player == 4){
-				this.projArr[0]  = new Projectiles.RedBullet(this.player, [-1,0], 1);
-				this.projArr[1]  = new Projectiles.RedBullet(this.player, [-1,-1], 1);
+				this.projArr[0]  = new Projectiles.RedBullet(this.player, [-1,0], 1, this.id);
+				this.projArr[1]  = new Projectiles.RedBullet(this.player, [-1,-1], 1, this.id);
 			}
 		}
 		else if(direction === 2){
 			if(this.player == 1){
-				this.projArr[0]  = new Projectiles.RedBullet(this.player, [0,1], 1);
-		   	this.projArr[1]  = new Projectiles.RedBullet(this.player, [1,1], 1);
+				this.projArr[0]  = new Projectiles.RedBullet(this.player, [0,1], 1, this.id);
+		   	this.projArr[1]  = new Projectiles.RedBullet(this.player, [1,1], 1, this.id);
 			}
 			else if(this.player == 2){
-				this.projArr[0]  = new Projectiles.RedBullet(this.player, [0,-1], 1);
-				this.projArr[1]  = new Projectiles.RedBullet(this.player, [1,-1], 1);
+				this.projArr[0]  = new Projectiles.RedBullet(this.player, [0,-1], 1, this.id);
+				this.projArr[1]  = new Projectiles.RedBullet(this.player, [1,-1], 1, this.id);
 			}
 			else if(this.player == 3){
-				this.projArr[0]  = new Projectiles.RedBullet(this.player, [0,1], 1);
-				this.projArr[1]  = new Projectiles.RedBullet(this.player, [-1,1], 1);
+				this.projArr[0]  = new Projectiles.RedBullet(this.player, [0,1], 1, this.id);
+				this.projArr[1]  = new Projectiles.RedBullet(this.player, [-1,1], 1, this.id);
 			}
 			else if(this.player == 4){
-				this.projArr[0]  = new Projectiles.RedBullet(this.player, [0,-1], 1);
-				this.projArr[1]  = new Projectiles.RedBullet(this.player, [-1,-1], 1);
+				this.projArr[0]  = new Projectiles.RedBullet(this.player, [0,-1], 1, this.id);
+				this.projArr[1]  = new Projectiles.RedBullet(this.player, [-1,-1], 1, this.id);
 			}
 		}
 		else{
 			if(this.player == 1){
-				this.projArr[0]  = new Projectiles.RedBullet(this.player, [0,1], 1);
-		    this.projArr[1]  = new Projectiles.RedBullet(this.player, [1,0], 1);
+				this.projArr[0]  = new Projectiles.RedBullet(this.player, [0,1], 1, this.id);
+		    this.projArr[1]  = new Projectiles.RedBullet(this.player, [1,0], 1, this.id);
 			}
 			else if(this.player == 2){
-				this.projArr[0]  = new Projectiles.RedBullet(this.player, [0,-1], 1);
-				this.projArr[1]  = new Projectiles.RedBullet(this.player, [1,0], 1);
+				this.projArr[0]  = new Projectiles.RedBullet(this.player, [0,-1], 1, this.id);
+				this.projArr[1]  = new Projectiles.RedBullet(this.player, [1,0], 1, this.id);
 			}
 			else if(this.player == 3){
-				this.projArr[0]  = new Projectiles.RedBullet(this.player, [0,1], 1);
-				this.projArr[1]  = new Projectiles.RedBullet(this.player, [-1,0], 1);
+				this.projArr[0]  = new Projectiles.RedBullet(this.player, [0,1], 1, this.id);
+				this.projArr[1]  = new Projectiles.RedBullet(this.player, [-1,0], 1, this.id);
 			}
 			else if(this.player == 4){
-				this.projArr[0]  = new Projectiles.RedBullet(this.player, [0,-1], 1);
-				this.projArr[1]  = new Projectiles.RedBullet(this.player, [-1,0], 1);
+				this.projArr[0]  = new Projectiles.RedBullet(this.player, [0,-1], 1, this.id);
+				this.projArr[1]  = new Projectiles.RedBullet(this.player, [-1,0], 1, this.id);
 			}
 
 		}
@@ -227,7 +231,7 @@ export class RedShifter extends Unit {
 
 export class Oscillator extends Unit {
 
-	constructor(player, health = 250, firing = false, id, collidedWith = [false, 4], lifeSpan = 0)  {
+	constructor(player, health = 250, firing = false, id, collidedWith = [false, 4], lifeSpan = 0, damageDealt = 0)  {
 		super(id);
 		this.lifeSpan = lifeSpan;
 		this.player = player;
@@ -238,6 +242,7 @@ export class Oscillator extends Unit {
 		this.collidedWith = collidedWith;
 		this.value = 1;
 		this.fullName = "Oscillator";
+		this.damageDealt = damageDealt;
 	}
 
 	static maxHealth = 250;
@@ -245,14 +250,14 @@ export class Oscillator extends Unit {
 	static description = "The Oscillator is an inexpensive defensive unit that generates a single, powerful projectile at the start of each round. The beam begins diagonally and then acts as a random mover until hitting a target, where it deals 60 damage.";
 
 	static createFromSerialized (props) {
-		return new Oscillator(props.player, props.health, props.firing, props.id, props.collidedWith, props.lifeSpan)
+		return new Oscillator(props.player, props.health, props.firing, props.id, props.collidedWith, props.lifeSpan, props.damageDealt)
 	}
 
 	startAttack(orientation){
 
 		//initialize a project object and pass in the direction based on the tick
 		this.firing = true;
-		this.projArr[0]  = new Projectiles.OscBullet(this.player, orientation, 1);
+		this.projArr[0]  = new Projectiles.OscBullet(this.player, orientation, 1, this.id);
 
 		debug.log(0, "    Unit " + this.id + "  is firing Projectile " + this.firing.id);
 
@@ -291,7 +296,7 @@ export class Oscillator extends Unit {
 
 export class Juggernode extends Unit {
 
-	constructor(player, health = 400, firing = false, id,  collidedWith = [false, 4], lifeSpan = 0)  {
+	constructor(player, health = 400, firing = false, id,  collidedWith = [false, 4], lifeSpan = 0, damageDealt = 0)  {
 		super(id);
 		this.lifeSpan = lifeSpan;
 		this.player = player;
@@ -302,6 +307,7 @@ export class Juggernode extends Unit {
 		this.collidedWith = collidedWith;
 		this.value = 2;
 		this.fullName = "Juggernode";
+		this.damageDealt = damageDealt;
 	}
 
 	static maxHealth = 400;
@@ -309,12 +315,12 @@ export class Juggernode extends Unit {
 	static description = "The Juggernode is a standard defensive unit that also delivers diagonal strikes. Its photon beam fires toward the opposite corner of the player, dealing a small amount of damage to everything within the path.";
 
 	static createFromSerialized (props) {
-		return new Juggernode(props.player, props.health, props.firing, props.id, props.collidedWith, props.lifeSpan)
+		return new Juggernode(props.player, props.health, props.firing, props.id, props.collidedWith, props.lifeSpan, props.damageDealt)
 	}
 
 	startAttack (orientation){
 		this.firing = true;
-		this.projArr[0]  = new Projectiles.JugBullet(this.player, orientation, 1);
+		this.projArr[0]  = new Projectiles.JugBullet(this.player, orientation, 1, this.id);
 	}
 
 	update (tick) {
@@ -378,7 +384,7 @@ export class Juggernode extends Unit {
 
 export class Maglev extends Unit {
 
-	constructor(player, health = 300, firing = false, id, collidedWith = [false, 4], lifeSpan = 0)  {
+	constructor(player, health = 300, firing = false, id, collidedWith = [false, 4], lifeSpan = 0, damageDealt = 0)  {
 		super(id);
 		this.lifeSpan = lifeSpan;
 		this.player = player;
@@ -389,6 +395,7 @@ export class Maglev extends Unit {
 		this.collidedWith = collidedWith;
 		this.value = 3;
 		this.fullName = "Maglev";
+		this.damageDealt = damageDealt;
 	}
 
   static maxHealth = 300;
@@ -396,7 +403,7 @@ export class Maglev extends Unit {
 	static description = "The Maglev is a lightweight offensive powerhouse that emits magnetic pulses. It will randomly strike either in every diagonal direction or orthogonal direction. The pulses begin with a high base damage and fade off exponentially as they travel.";
 
 	static createFromSerialized (props) {
-		return new Maglev(props.player, props.health, props.firing, props.id, props.collidedWith, props.lifeSpan);
+		return new Maglev(props.player, props.health, props.firing, props.id, props.collidedWith, props.lifeSpan, props.damageDealt);
 	}
 
 	startAttack(tick){
@@ -408,13 +415,13 @@ export class Maglev extends Unit {
 				if(a !== 0 || b !== 0){
 					if(firingChoice == 0){
 						if(a === 0 || b === 0){
-							this.projArr[i] = new Projectiles.MagBullet(this.player, [a,b], 1);
+							this.projArr[i] = new Projectiles.MagBullet(this.player, [a,b], 1, this.id);
 							i = i + 1;
 						}
 					}
 					if(firingChoice == 1){
 						if(a !== 0  && b !== 0){
-							this.projArr[i] = new Projectiles.MagBullet(this.player, [a,b], 1);
+							this.projArr[i] = new Projectiles.MagBullet(this.player, [a,b], 1, this.id);
 							i = i + 1;
 						}
 					}
@@ -445,7 +452,7 @@ export class Maglev extends Unit {
 }
 export class Tripwire extends Unit {
 
-	constructor(player, health = 250, firing = false, id, collidedWith = [false, 4], ticksSinceDamage = 0,tripped = false, tripDamage = 0, lifeSpan = 0)  {
+	constructor(player, health = 250, firing = false, id, collidedWith = [false, 4], ticksSinceDamage = 0,tripped = false, tripDamage = 0, lifeSpan = 0, damageDealt = 0)  {
 		super(id);
 		this.lifeSpan =lifeSpan;
 		this.player = player;
@@ -459,6 +466,7 @@ export class Tripwire extends Unit {
 		this.tripped = tripped;
 		this.value = 2;
 		this.fullName = "Tripwire";
+		this.damageDealt = damageDealt;
 	}
 
 	static maxHealth = 250;
@@ -466,7 +474,7 @@ export class Tripwire extends Unit {
 	static description = "The Tripwire is a retaliatory machine that returns magnified energy at a higher frequency. It requires an initial stimulus to activate or become 'tripped' and then a second stimulus in quick succession which is reflected in all diagonal and orthogonal directions with three times the destructive power. These pulses cover a short distance and cannot be blocked by other machines or cores.";
 
 	static createFromSerialized (props) {
-		return new Tripwire(props.player, props.health, props.firing, props.id, props.collidedWith, props.ticksSinceDamage, props.tripped, props.tripDamage, props.lifeSpan);
+		return new Tripwire(props.player, props.health, props.firing, props.id, props.collidedWith, props.ticksSinceDamage, props.tripped, props.tripDamage, props.lifeSpan, props.damageDealt);
 	}
 
 	startAttack (damage){
@@ -475,7 +483,7 @@ export class Tripwire extends Unit {
 		for(let a = -1; a < 2; a = a + 1){
 			for(let b = -1; b < 2; b = b + 1){
 				if(a !== 0 || b !== 0){
-							this.projArr[i] = new Projectiles.TriBullet(this.player, [a,b], 1, damage);
+							this.projArr[i] = new Projectiles.TriBullet(this.player, [a,b], 1, damage, this.id);
 							i = i + 1;
 				}
 			}
@@ -518,7 +526,7 @@ export class Tripwire extends Unit {
 
 export class Ballast extends Unit {
 
-	constructor(player, health = 300, firing = false, id, collidedWith = [false, 4], lifeSpan = 0)  {
+	constructor(player, health = 300, firing = false, id, collidedWith = [false, 4], lifeSpan = 0, damageDealt = 0)  {
 		super(id);
 		this.lifeSpan = lifeSpan;
 		this.player = player;
@@ -529,6 +537,7 @@ export class Ballast extends Unit {
 		this.collidedWith = collidedWith;
 		this.value = 2;
 		this.fullName = "Ballast";
+		this.damageDealt = damageDealt;
 	}
 
 	static maxHealth = 300;
@@ -536,12 +545,12 @@ export class Ballast extends Unit {
 	static description = "The Ballast is an advanced, bulky machine that can be used to block key channels while hitting a limited set of targets with significant force. It strikes for five consecutive seconds, delivering irreparable damage. The attacks rotate between 6 possible target locations that are a distance of either 6 or 3 tiles away horizontally and the opposite number vertically.";
 
 	static createFromSerialized (props) {
-		return new Ballast(props.player, props.health, props.firing, props.id, props.collidedWith, props.lifeSpan)
+		return new Ballast(props.player, props.health, props.firing, props.id, props.collidedWith, props.lifeSpan, props.damageDealt)
 	}
 
 	startAttack (orientation){
 		this.firing = true;
-		this.projArr[0]  = new Projectiles.BalBullet(this.player, orientation, 0);
+		this.projArr[0]  = new Projectiles.BalBullet(this.player, orientation, 0, this.id);
 	}
 
 	update (tick) {
@@ -601,7 +610,7 @@ export class Ballast extends Unit {
 
 export class Resonator extends Unit {
 
-	constructor(player, health = 225, firing = false, id, collidedWith = [false, 4], lifeSpan = 0)  {
+	constructor(player, health = 225, firing = false, id, collidedWith = [false, 4], lifeSpan = 0, damageDealt = 0)  {
 		super(id);
 		this.lifeSpan = lifeSpan;
 		this.player = player;
@@ -612,6 +621,7 @@ export class Resonator extends Unit {
 		this.collidedWith = collidedWith;
 		this.value = 3;
 		this.fullName = "Resonator";
+		this.damageDealt = damageDealt;
 	}
 
 	static maxHealth = 225;
@@ -619,12 +629,12 @@ export class Resonator extends Unit {
 	static description = "The Resonator is a resiliant, catapult-style machine that delivers damage in a cross shape encompassing a five-tile area. The center of its strike deals significant damage and fades to half the amount in the adjacent tiles. The sheer power of its attack causes erratic projectile fire that hits a random number of spaces away. It will either strike vertically, horizontally or diagonally and does not do damage prior to reaching its destination.";
 
 	static createFromSerialized (props) {
-		return new Resonator(props.player, props.health, props.firing, props.id, props.collidedWith, props.lifeSpan)
+		return new Resonator(props.player, props.health, props.firing, props.id, props.collidedWith, props.lifeSpan, props.damageDealt)
 	}
 
 	startAttack (orientation){
 		this.firing = true;
-		this.projArr[0]  = new Projectiles.CirBullet(this.player, orientation, 1);
+		this.projArr[0]  = new Projectiles.CirBullet(this.player, orientation, 1, this.id);
 	}
 
 	update (tick) {
@@ -676,7 +686,7 @@ export class Resonator extends Unit {
 
 export class Integrator extends Unit {
 
-	constructor(player, health = 175, firing = false, id, collidedWith = [false, 4], lifeSpan = 0)  {
+	constructor(player, health = 175, firing = false, id, collidedWith = [false, 4], lifeSpan = 0, damageDealt = 0)  {
 		super(id);
 		//add a lifespan category and also pass in the number of projectiles present at the time
 		this.lifeSpan = lifeSpan;
@@ -689,6 +699,7 @@ export class Integrator extends Unit {
 		this.collidedWith = collidedWith;
 		this.value = 3;
 		this.fullName = "Integrator";
+		this.damageDealt = damageDealt;
 	}
 
 	static maxHealth = 175;
@@ -696,7 +707,7 @@ export class Integrator extends Unit {
 	static description = "The Integrator is a high-potential machine that gains strength with each turn it remains aactive. It fires less frequently than other units, but covers four paths that are a ratio of 2:1 or 1:2 from its origin.";
 
 	static createFromSerialized (props) {
-		return new Integrator(props.player, props.health, props.firing, props.id, props.collidedWith, props.lifeSpan);
+		return new Integrator(props.player, props.health, props.firing, props.id, props.collidedWith, props.lifeSpan, props.damageDealt);
 	}
 
 	startAttack (pC){
@@ -759,7 +770,7 @@ export class Integrator extends Unit {
 							orient = [-2,1];
 						}
 					}
-		this.projArr[i]  = new Projectiles.IntBullet(this.player, orient, 1, pC, this.lifeSpan);
+		this.projArr[i]  = new Projectiles.IntBullet(this.player, orient, 1, pC, this.lifeSpan, this.id);
 	 }
 	}
 
