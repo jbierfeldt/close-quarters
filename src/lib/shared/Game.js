@@ -486,6 +486,12 @@ export default class Game {
 		}
 	}
 
+	getPossibleTargets(id, x, y){
+		let targetArray = [];
+		
+
+	}
+
 	runSimulation(ticksPerTurn = tempConfig.ticksPerTurn) {
 		// updates game state based on ticks. Sweeps board and updates
 		// any game object on the board
