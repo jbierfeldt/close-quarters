@@ -549,7 +549,7 @@ export default class Game {
 										this.players[gameObj.player-1].score = this.players[gameObj.player-1].score + Math.floor(50*gameObj.value*(gameObj.health/gameObj.constructor.maxHealth));
 									}
 									if(gameObj.objCategory == "Bases"){
-										this.players[gameObj.player-1].score = this.players[gameObj.player-1].score + Math.floor(1000*(gameObj.health/gameObj.maxHealth));
+										this.players[gameObj.player-1].score = this.players[gameObj.player-1].score + Math.floor(1000*(gameObj.health/gameObj.constructor.maxHealth));
 									}
 								}
 
