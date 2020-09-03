@@ -76,7 +76,7 @@ export default class Display {
 			let col_low;
 
 			let b;
-
+			let possibleTargets = [];
 			let hoverObject;
 			//let flag = [0,0,0,0];
 
@@ -326,6 +326,14 @@ export default class Display {
 							unitButtons[i].drawButton();
 							if(unitButtons[i].isPressed == true){
 								showUnitDescription(unitButtons[i].text,this.app.playerNumber, wi, he, si);
+								possibleTargets = getPossibleTargets(unitButtons[i].text, hoverX, hoverY, this.app.playerNumber);
+
+							/*	for(let i = 0; i < possibleTargets.length; i++){
+									s.fill(255,240,0,205);
+									s.noStroke();
+									s.rect(possibleTargets[i][0]*si,possibleTargets[i][1]*si,si);
+									//let tarX = possibleTargets[i][0];
+								}*/
 							}
 						}
 						//drawUnitMenu(this.playerColors,this.app.playerNumber, buttonScale);
@@ -374,18 +382,22 @@ export default class Display {
 										if(this.app.playerNumber == 1 && hoverX <= 14 && hoverY < 10 && hoverX < 30 && hoverY < 20){
 											unitButtons[newButtonPressed].func.call(this.app,unitButtons[newButtonPressed].text, this.app.playerNumber, hoverX, hoverY);
 											unitButtons[newButtonPressed].isPressed=false;
+											possibleTargets = [];
 										}
 										else if(this.app.playerNumber == 2 && hoverX <= 14 && hoverY >= 10 && hoverX < 30 && hoverY < 20){
 											unitButtons[newButtonPressed].func.call(this.app,unitButtons[newButtonPressed].text, this.app.playerNumber, hoverX, hoverY);
 											unitButtons[newButtonPressed].isPressed=false;
+											possibleTargets = [];
 										}
 										else if(this.app.playerNumber == 3 && hoverX > 14 && hoverY < 10 && hoverX < 30 && hoverY < 20){
 											unitButtons[newButtonPressed].func.call(this.app,unitButtons[newButtonPressed].text, this.app.playerNumber, hoverX, hoverY);
 											unitButtons[newButtonPressed].isPressed=false;
+											possibleTargets = [];
 										}
 										else if(this.app.playerNumber == 4 && hoverX > 14 && hoverY >= 10 && hoverX < 30 && hoverY < 20){
 											unitButtons[newButtonPressed].func.call(this.app,unitButtons[newButtonPressed].text, this.app.playerNumber, hoverX, hoverY);
 											unitButtons[newButtonPressed].isPressed=false;
+											possibleTargets = [];
 										}
 									}
 								}
@@ -468,6 +480,10 @@ export default class Display {
 							}
 						}
 					}
+					//Target path hovering
+
+
+
 
 
 					//Calculate which cell the mouse is currently hovering over and highlight it
@@ -510,15 +526,39 @@ export default class Display {
 					else{
 					if(this.app.playerNumber == 1 && hoverX <= 14 && hoverY < 10 && hoverX < 30 && hoverY < 20){
 						s.rect(hoverX*si,hoverY*si,si,si);
+						for(let i = 0; i < possibleTargets.length; i++){
+								s.fill(255,240,0,85);
+								s.noStroke();
+								s.rect(possibleTargets[i][0]*si,possibleTargets[i][1]*si,si);
+								//let tarX = possibleTargets[i][0];
+							}
 					}
 					else if(this.app.playerNumber == 2 && hoverX<=14 && hoverY >= 10 && hoverX < 30 && hoverY < 20){
 						s.rect(hoverX*si,hoverY*si,si,si);
+						for(let i = 0; i < possibleTargets.length; i++){
+								s.fill(255,240,0,105);
+								s.noStroke();
+								s.rect(possibleTargets[i][0]*si,possibleTargets[i][1]*si,si);
+								//let tarX = possibleTargets[i][0];
+							}
 					}
 					else if(this.app.playerNumber == 3 && hoverX>14 && hoverY < 10 && hoverX < 30 && hoverY < 20){
 						s.rect(hoverX*si,hoverY*si,si,si);
+						for(let i = 0; i < possibleTargets.length; i++){
+								s.fill(255,240,0,105);
+								s.noStroke();
+								s.rect(possibleTargets[i][0]*si,possibleTargets[i][1]*si,si);
+								//let tarX = possibleTargets[i][0];
+							}
 					}
 					else if(this.app.playerNumber == 4 && hoverX>14 && hoverY >= 10 && hoverX < 30 && hoverY < 20){
 						s.rect(hoverX*si,hoverY*si,si,si);
+						for(let i = 0; i < possibleTargets.length; i++){
+								s.fill(255,240,0,105);
+								s.noStroke();
+								s.rect(possibleTargets[i][0]*si,possibleTargets[i][1]*si,si);
+								//let tarX = possibleTargets[i][0];
+							}
 					}
 }
 
@@ -931,6 +971,47 @@ export default class Display {
 				}
 			}
 		}
+		function getPossibleTargets(unitName, x, y, player){
+			if(unitName == "Ballast"){
+				console.log(Units[unitName].orientations[player]);
+			}
+			//let gameObj = this.gameObjects.get(id);
+			let tempArray = Units[unitName].orientations[player];
+			let finalArray = [];
+			let counter = 0;
+			let upperDistance = 30;
+			let lowerDistance = 1;
+			if(unitName == "Oscillator"){
+				upperDistance = 2;
+			}
+			else if(unitName == "Resonator"){
+				lowerDistance = 5;
+				upperDistance = 16;
+			}
+			else if(unitName == "Tripwire"){
+				//lowerDistance = 5;
+				upperDistance = 6;
+			}
+			else if(unitName == "Ballast"){
+				//lowerDistance = 5;
+				upperDistance = 2;
+			}
+			else if(unitName == "RedShifter"){
+				lowerDistance = 11;
+				//upperDistance = 2;
+			}
+			for(let i = 0; i < tempArray.length; i = i + 1){
+				let xx = lowerDistance;
+				while((tempArray[i][0]*xx+x) < 30 && (tempArray[i][0]*xx+x) >= 0 && xx < upperDistance){
+						let yy = 1;
+						finalArray[counter] =  [(tempArray[i][0]*xx+x),(tempArray[i][1]*xx+y)]
+						counter = counter + 1;
+						xx = xx + 1;
+				}
+			}
+		  return finalArray;
+		}
+
 		function instructionSheet(size, player, pColors){
 			s.background(0);
 			s.textFont(titleFont);

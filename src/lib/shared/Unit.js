@@ -542,6 +542,17 @@ export class Ballast extends Unit {
 
 	static maxHealth = 300;
 	static cost = 2;
+<<<<<<< Updated upstream
+=======
+	//Methodology is player then x then y in each subArray
+	static orientations = {
+		// 1: [[coordOne,coordTwo],[coordOne,-coordTwo],[coordTwo,coordOne],[-coordTwo,coordOne],[coordOne,coordTwo],[coordOne,coordTwo]]
+		1: [[Ballast.coordOne,Ballast.coordTwo],[Ballast.coordOne,-Ballast.coordTwo],[-Ballast.coordOne,Ballast.coordTwo],[Ballast.coordTwo,Ballast.coordOne],[Ballast.coordTwo,-Ballast.coordOne],[-Ballast.coordTwo,Ballast.coordOne]],
+		2: [[Ballast.coordOne,Ballast.coordTwo],[Ballast.coordOne,-Ballast.coordTwo],[-Ballast.coordOne,-Ballast.coordTwo],[Ballast.coordTwo,Ballast.coordOne],[Ballast.coordTwo,-Ballast.coordOne],[-Ballast.coordTwo,-Ballast.coordOne]],
+		3: [[-Ballast.coordOne,Ballast.coordTwo],[-Ballast.coordOne,-Ballast.coordTwo],[Ballast.coordOne,Ballast.coordTwo],[-Ballast.coordTwo,Ballast.coordOne],[-Ballast.coordTwo,-Ballast.coordOne],[Ballast.coordTwo,Ballast.coordOne]],
+		4: [[-Ballast.coordOne,-Ballast.coordTwo],[-Ballast.coordOne,Ballast.coordTwo],[Ballast.coordOne,-Ballast.coordTwo],[-Ballast.coordTwo,-Ballast.coordOne],[-Ballast.coordTwo,Ballast.coordOne],[Ballast.coordTwo,-Ballast.coordOne]]
+	}
+>>>>>>> Stashed changes
 	static description = "The Ballast is an advanced, bulky machine that can be used to block key channels while hitting a limited set of targets with significant force. It strikes for five consecutive seconds, delivering irreparable damage. The attacks rotate between 6 possible target locations that are a distance of either 6 or 3 tiles away horizontally and the opposite number vertically.";
 
 	static createFromSerialized (props) {
@@ -626,6 +637,16 @@ export class Resonator extends Unit {
 
 	static maxHealth = 225;
 	static cost = 3;
+<<<<<<< Updated upstream
+=======
+	//Methodology is player then x then y in each subArray
+	static orientations = {
+		1: [[1,0],[0,1],[1,1]],
+		2: [[1,0],[0,-1],[1,-1]],
+		3: [[-1,0],[0,1],[-1,1]],
+		4: [[-1,0],[0,-1],[-1,-1]]
+	}
+>>>>>>> Stashed changes
 	static description = "The Resonator is a resiliant, catapult-style machine that delivers damage in a cross shape encompassing a five-tile area. The center of its strike deals significant damage and fades to half the amount in the adjacent tiles. The sheer power of its attack causes erratic projectile fire that hits a random number of spaces away. It will either strike vertically, horizontally or diagonally and does not do damage prior to reaching its destination.";
 
 	static createFromSerialized (props) {
@@ -704,6 +725,16 @@ export class Integrator extends Unit {
 
 	static maxHealth = 175;
 	static cost = 3;
+<<<<<<< Updated upstream
+=======
+	//Methodology is player then x then y in each subArray
+	static orientations = {
+		1: [[2,1],[1,2],[-1,2],[2,-1]],
+		2: [[2,-1],[1,-2],[-1,-2],[2,1]],
+		3: [[-2,-1],[1,2],[-1,2][-2,1]],
+		4: [[-2,-1],[1,-2],[-1,-2],[-2,1]]
+	}
+>>>>>>> Stashed changes
 	static description = "The Integrator is a high-potential machine that gains strength with each turn it remains aactive. It fires less frequently than other units, but covers four paths that are a ratio of 2:1 or 1:2 from its origin.";
 
 	static createFromSerialized (props) {
@@ -781,7 +812,7 @@ export class Integrator extends Unit {
 		super.update(tick);
 		this.collidedWith = [false, 4];
 		this.firing=false;
-		if(tick % 18 === 0){
+		if(tick % 15 === 0){
 			this.startAttack(projCount);
 			//let rando = Math.random()*3;
 		  }
