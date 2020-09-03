@@ -23,20 +23,47 @@ export default class BasicAI {
   }
 
   createRandomUnit () {
-    let newUnitCoord =  this.game.getRandomCoordInPlayerRegion(this.playerNumber, 0);
+		let credits = this.game.players[this.playerNumber-1].credits;
+		let creditCost = 0;
+		let saveCredits = 0
+		let unitName = " ";
 
-    if (this.game.isEmptyCoord(newUnitCoord[0], newUnitCoord[1])) {
-      this.createOrder('createUnit', {
-        unitType: "RayTracer",
-        player: this.playerNumber,
-        x: newUnitCoord[0],
-        y: newUnitCoord[1]
-      });
-      return true;
-    } else {
-      this.createRandomUnit();
-      return false;
-    }
+		while(credits > 0){
+			console.log(this.playerNumber, credits);
+
+			if(credits >= 3){
+				unitName = "Maglev";
+				creditCost = 3;
+
+			}
+			else{
+				unitName = "RayTracer"
+				creditCost = 1;
+			}
+			let zone = 3;
+	    let newUnitCoord =  this.game.getRandomCoordInPlayerRegion(this.playerNumber, 0, zone);
+
+
+	    if (this.game.isEmptyCoord(newUnitCoord[0], newUnitCoord[1])) {
+	      this.createOrder('createUnit', {
+	        unitType: unitName,
+	        player: this.playerNumber,
+	        x: newUnitCoord[0],
+	        y: newUnitCoord[1]
+	      });
+				credits = credits - creditCost;
+	    } else {
+	      this.createRandomUnit();
+	      return false;
+	    }
+			if(credits == 1){
+				saveCredits = Math.floor(Math.random()*2);
+				if(saveCredits == 1){
+					break;
+				}
+			}
+		}
+		return true;
   }
 
   createSecondBase () {

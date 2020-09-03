@@ -140,7 +140,9 @@ export default class Game {
 
 	placeInitialRandomBases () {
 		for (let i = 1; i <= 4; i++) {
-			let randCoord = this.getRandomCoordInPlayerRegion(i, 3);
+			let baseZones = [0,0,0,1,1];
+			let zone = baseZones[Math.floor(Math.random() * baseZones.length)];
+			let randCoord = this.getRandomCoordInPlayerRegion(i, 3, zone);
 			this.createNewBaseAtCoord("Base", String(i), randCoord[0], randCoord[1]);
 		}
 	}
@@ -334,11 +336,179 @@ collideProjWithObject(proj, obj, x, y) {
 	}
 }
 
-getRandomCoordInPlayerRegion(playerNumber, margin = 0)  {
+getRandomCoordInPlayerRegion(playerNumber, margin = 0, zone)  {
+	//Six Possible Zones
+	//Zone 0 is the players back corner
+	//Zone 1 takes a step horizontally toward the other side of the board
+	let halfBoardX = (tempConfig.boardDimensions[1]/2);
+	let halfBoardY = (tempConfig.boardDimensions[0]/2);
+	let minY = 0;
+	let minX = 0;
+	let maxY = halfBoardY;
+	let maxX = halfBoardX;
 
-	let min = 0 + margin;
-	let randX = Math.floor(Math.random() * (((tempConfig.boardDimensions[1]/2) - margin) - min)) + min;
-	let randY = Math.floor(Math.random() * (((tempConfig.boardDimensions[0]/2) - margin) - min)) + min;
+	if(zone == 0){
+		if(playerNumber == 1){
+			minX = 0;
+			minY = 0;
+			maxX = halfBoardX/3;
+			maxY = halfBoardY/2;
+		}
+		if(playerNumber == 2){
+			minX = 0;
+			minY = halfBoardY/2;
+			maxX = halfBoardX/3;
+			maxY = halfBoardY;
+		}
+		if(playerNumber == 3){
+			minX = halfBoardX*2/3;
+			minY = 0;
+			maxX = halfBoardX;
+			maxY = halfBoardY/2;
+		}
+		if(playerNumber == 4){
+			minX = halfBoardX*2/3;
+			minY = halfBoardY/2;
+			maxX = halfBoardX;
+			maxY = halfBoardY;
+		}
+}
+else if (zone == 1){
+	if(playerNumber == 1){
+		minX = halfBoardX/3;
+		minY = 0;
+		maxX = halfBoardX*2/3;
+		maxY = halfBoardY/2;
+	}
+	if(playerNumber == 2){
+		minX = halfBoardX/3;
+		minY = halfBoardY/2;
+		maxX = halfBoardX*2/3;
+		maxY = halfBoardY;
+	}
+	if(playerNumber == 3){
+		minX = halfBoardX/3;
+		minY = 0;
+		maxX = halfBoardX*2/3;
+		maxY = halfBoardY/2;
+	}
+	if(playerNumber == 4){
+		minX = halfBoardX/3;
+		minY = halfBoardY/2;
+		maxX = halfBoardX*2/3;
+		maxY = halfBoardY;
+	}
+}
+	else if (zone == 2){
+		if(playerNumber == 1){
+			minX = halfBoardX*2/3;
+			minY = 0;
+			maxX = halfBoardX;
+			maxY = halfBoardY/2;
+		}
+		if(playerNumber == 2){
+			minX = halfBoardX*2/3;
+			minY = halfBoardY/2;
+			maxX = halfBoardX;
+			maxY = halfBoardY;
+		}
+		if(playerNumber == 3){
+			minX = 0;
+			minY = 0;
+			maxX = halfBoardX/3;
+			maxY = halfBoardY/2;
+		}
+		if(playerNumber == 4){
+			minX = 0;
+			minY = halfBoardY/2;
+			maxX = halfBoardX/3;
+			maxY = halfBoardY;
+		}
+}
+else if (zone == 3){
+	if(playerNumber == 1){
+		minX = halfBoardX*2/3;
+		minY = halfBoardY/2;
+		maxX = halfBoardX;
+		maxY = halfBoardY;
+	}
+	if(playerNumber == 2){
+		minX = halfBoardX*2/3;
+		minY = 0;
+		maxX = halfBoardX;
+		maxY = halfBoardY/2;
+	}
+	if(playerNumber == 3){
+		minX = 0;
+		minY = halfBoardY/2;
+		maxX = halfBoardX/3;
+		maxY = halfBoardY;
+	}
+	if(playerNumber == 4){
+		minX = 0;
+		minY = 0;
+		maxX = halfBoardX/3;
+		maxY = halfBoardY/2;
+	}
+}
+else if (zone == 4){
+	if(playerNumber == 1){
+		minX = halfBoardX/3;
+		minY = halfBoardY/2;
+		maxX = halfBoardX*2/3;
+		maxY = halfBoardY;
+	}
+	if(playerNumber == 2){
+		minX = halfBoardX/3;
+		minY = 0;
+		maxX = halfBoardX*2/3;
+		maxY = halfBoardY/2;
+	}
+	if(playerNumber == 3){
+		minX = halfBoardX/3;
+		minY = halfBoardY/2;
+		maxX = halfBoardX*2/3;
+		maxY = halfBoardY;
+	}
+	if(playerNumber == 4){
+		minX = halfBoardX/3;
+		minY = 0;
+		maxX = halfBoardX*2/3;
+		maxY = halfBoardY/2;
+	}
+}
+else if (zone == 5){
+	if(playerNumber == 1){
+		minX = 0;
+		minY = halfBoardY/2;
+		maxX = halfBoardX/3;
+		maxY = halfBoardY;
+	}
+	if(playerNumber == 2){
+		minX = 0;
+		minY = 0;
+		maxX = halfBoardX/3;
+		maxY = halfBoardY/2;
+	}
+	if(playerNumber == 3){
+		minX = halfBoardX*2/3;
+		minY = halfBoardY/2;
+		maxX = halfBoardX;
+		maxY = halfBoardY;
+	}
+	if(playerNumber == 4){
+		minX = halfBoardX*2/3;
+		minY = 0;
+		maxX = halfBoardX;
+		maxY = halfBoardY/2;
+	}
+}
+
+	let randX = Math.floor(Math.random() * ((maxX - margin) - minX)) + minX;
+	let randY = Math.floor(Math.random() * ((maxY - margin) - minY)) + minY;
+	if(zone == 0){
+		console.log(playerNumber, randX);
+	}
 
 	switch (playerNumber) {
 		case 1:
