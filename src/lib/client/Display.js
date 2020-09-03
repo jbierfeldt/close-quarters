@@ -530,6 +530,15 @@ export default class Display {
 								s.fill(255,240,0,85);
 								s.noStroke();
 								s.rect(possibleTargets[i][0]*si,possibleTargets[i][1]*si,si);
+								if(possibleTargets.length == 1){
+									s.fill(255,85);
+									s.stroke(0,85);
+									s.textSize(wi/40);
+									s.textFont(titleFont);
+									s.textAlign(s.CENTER);
+									s.text("?",possibleTargets[i][0]*si+si/2,possibleTargets[i][1]*si+si/1.4);
+									s.textAlign(s.LEFT);
+								}
 								//let tarX = possibleTargets[i][0];
 								fullBoardTrigger = 1;
 							}
@@ -540,6 +549,15 @@ export default class Display {
 								s.fill(255,240,0,105);
 								s.noStroke();
 								s.rect(possibleTargets[i][0]*si,possibleTargets[i][1]*si,si);
+								if(possibleTargets.length == 1){
+									s.fill(255,85);
+									s.stroke(0,85);
+									s.textSize(wi/40);
+									s.textFont(titleFont);
+									s.textAlign(s.CENTER);
+									s.text("?",possibleTargets[i][0]*si+si/2,possibleTargets[i][1]*si+si/1.4);
+									s.textAlign(s.LEFT);
+								}
 								fullBoardTrigger = 1;
 								//let tarX = possibleTargets[i][0];
 							}
@@ -550,6 +568,15 @@ export default class Display {
 								s.fill(255,240,0,105);
 								s.noStroke();
 								s.rect(possibleTargets[i][0]*si,possibleTargets[i][1]*si,si);
+								if(possibleTargets.length == 1){
+									s.fill(255,85);
+									s.stroke(0,85);
+									s.textSize(wi/40);
+									s.textFont(titleFont);
+									s.textAlign(s.CENTER);
+									s.text("?",possibleTargets[i][0]*si+si/2,possibleTargets[i][1]*si+si/1.4);
+									s.textAlign(s.LEFT);
+								}
 								fullBoardTrigger = 1;
 								//let tarX = possibleTargets[i][0];
 							}
@@ -560,6 +587,15 @@ export default class Display {
 								s.fill(255,240,0,105);
 								s.noStroke();
 								s.rect(possibleTargets[i][0]*si,possibleTargets[i][1]*si,si);
+								if(possibleTargets.length == 1){
+									s.fill(255,85);
+									s.stroke(0,85);
+									s.textSize(wi/40);
+									s.textFont(titleFont);
+									s.textAlign(s.CENTER);
+									s.text("?",possibleTargets[i][0]*si+si/2,possibleTargets[i][1]*si+si/1.4);
+									s.textAlign(s.LEFT);
+								}
 								fullBoardTrigger = 1;
 								//let tarX = possibleTargets[i][0];
 							}
