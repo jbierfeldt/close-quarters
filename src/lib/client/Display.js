@@ -78,6 +78,7 @@ export default class Display {
 			let b;
 			let possibleTargets = [];
 			let hoverObject;
+			let fullBoardTrigger = 0;
 			//let flag = [0,0,0,0];
 
 			let full = true;
@@ -328,12 +329,6 @@ export default class Display {
 								showUnitDescription(unitButtons[i].text,this.app.playerNumber, wi, he, si);
 								possibleTargets = getPossibleTargets(unitButtons[i].text, hoverX, hoverY, this.app.playerNumber);
 
-							/*	for(let i = 0; i < possibleTargets.length; i++){
-									s.fill(255,240,0,205);
-									s.noStroke();
-									s.rect(possibleTargets[i][0]*si,possibleTargets[i][1]*si,si);
-									//let tarX = possibleTargets[i][0];
-								}*/
 							}
 						}
 						//drawUnitMenu(this.playerColors,this.app.playerNumber, buttonScale);
@@ -464,7 +459,12 @@ export default class Display {
 						s.translate(-wi/2,he/2);
 					}
 					//Run the functions for drawing the players quadrant and the unit menu
-					drawQuarterGrid(this.stage.grid,this.playerColors,this.app.playerNumber);
+					if(fullBoardTrigger == 0){
+						drawQuarterGrid(this.stage.grid,this.playerColors,this.app.playerNumber);
+					}
+					else{
+						drawGrid(wi, he, si, this.playerColors);
+					}
 					let board = this.app.game.board;
 					for(var k=0; k<board.length; k=k+1){
 						for(var l=0; l<board[k].length; l=l+1){
@@ -472,7 +472,7 @@ export default class Display {
 								for(var m=0; m<board[k][l].length;m=m+1){
 									let displayObject = this.app.game.gameObjects.get(board[k][l][m]);
 									if(displayObject !== undefined){
-										if(displayObject.player == this.app.playerNumber){
+										if(displayObject.player == this.app.playerNumber || fullBoardTrigger != 0){
 											drawDisplayObject(displayObject, l, k, si, this.playerColors, animate);
 										}
 									}
@@ -531,6 +531,7 @@ export default class Display {
 								s.noStroke();
 								s.rect(possibleTargets[i][0]*si,possibleTargets[i][1]*si,si);
 								//let tarX = possibleTargets[i][0];
+								fullBoardTrigger = 1;
 							}
 					}
 					else if(this.app.playerNumber == 2 && hoverX<=14 && hoverY >= 10 && hoverX < 30 && hoverY < 20){
@@ -539,6 +540,7 @@ export default class Display {
 								s.fill(255,240,0,105);
 								s.noStroke();
 								s.rect(possibleTargets[i][0]*si,possibleTargets[i][1]*si,si);
+								fullBoardTrigger = 1;
 								//let tarX = possibleTargets[i][0];
 							}
 					}
@@ -548,6 +550,7 @@ export default class Display {
 								s.fill(255,240,0,105);
 								s.noStroke();
 								s.rect(possibleTargets[i][0]*si,possibleTargets[i][1]*si,si);
+								fullBoardTrigger = 1;
 								//let tarX = possibleTargets[i][0];
 							}
 					}
@@ -557,8 +560,12 @@ export default class Display {
 								s.fill(255,240,0,105);
 								s.noStroke();
 								s.rect(possibleTargets[i][0]*si,possibleTargets[i][1]*si,si);
+								fullBoardTrigger = 1;
 								//let tarX = possibleTargets[i][0];
 							}
+					}
+					else{
+						fullBoardTrigger = 0;
 					}
 }
 
@@ -866,23 +873,16 @@ export default class Display {
 					s.text(":  "+this.app.game.players[this.app.playerNumber-1].credits, wi+si/.25, si*15.4);
 					//Scrolling Bar;
 					s.textSize(si*1.7);
-
 					s.textFont(standardFont);
 					let scroller = this.delay/250;
 					s.text("Damage Dealt: "+ this.app.game.players[this.app.playerNumber-1].damageDealtThisTurn, -s.width+3*s.width*(scroller-Math.floor(scroller)), s.height-si*1.7);
-					//s.translate(-s.width/1.5, 0);
-					//scroller = (this.delay+300)/230;
 					scroller = (this.delay+ 60)/250;
 					s.text("Machines Lost: "+ this.app.game.players[this.app.playerNumber-1].unitsLostThisTurn, -s.width+3*s.width*(scroller-Math.floor(scroller)), s.height-si*1.7);
-					//scroller = (this.delay+600)/230;
-					//s.translate(-s.width/1.5, 0);
 					scroller = (this.delay + 120)/250;
 					s.text("Machines Destroyed: "+ this.app.game.players[this.app.playerNumber-1].unitsKilledThisTurn, -s.width+3*s.width*(scroller-Math.floor(scroller)), s.height-si*1.7);
-				//	scroller = (this.delay+150)/230;
-				 // s.translate(-s.width/1.5, 0);
 				 scroller = (this.delay - 60)/250;
 					s.text("Credits Earned: "+ this.app.game.players[this.app.playerNumber-1].creditsEarnedThisTurn, -s.width+3*s.width*(scroller-Math.floor(scroller)), s.height-si*1.7);
-					//s.translate(3*s.width/1.5 , 0);
+
 					if(s.mouseIsPressed && bPhaseOne.isInRange(s.mouseX,s.mouseY)){
 						bPhaseOne.func.call(this.app,1);
 					}
