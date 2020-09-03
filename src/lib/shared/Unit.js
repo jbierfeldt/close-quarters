@@ -574,8 +574,7 @@ export class Ballast extends Unit {
 		this.value = 2;
 		this.fullName = "Ballast";
 		this.damageDealt = damageDealt;
-		this.targOne = 6;
-		this.targTwo = 3;
+
 	}
 	static coordOne = 6;
 	static coordTwo = 3;
@@ -613,8 +612,8 @@ export class Ballast extends Unit {
 			let rando = Math.random()*6;
 			let multx = 1;
 			let multy = 1;
-			targOne = this.targOne;
-			targTwo = this.targTwo;
+			targOne = 6;
+			targTwo = 3;
 			if(this.player == 1){
 				multx = 1;
 				multy = 1;
