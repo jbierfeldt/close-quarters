@@ -612,8 +612,8 @@ export class Ballast extends Unit {
 			let rando = Math.random()*6;
 			let multx = 1;
 			let multy = 1;
-			targOne = 6;
-			targTwo = 3;
+			let targOne = 6;
+			let targTwo = 3;
 			if(this.player == 1){
 				multx = 1;
 				multy = 1;
