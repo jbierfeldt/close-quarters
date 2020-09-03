@@ -2,6 +2,7 @@ import {DEBUG, createID} from './lib/shared/utilities.js';
 import Game from './lib/shared/Game.js';
 import * as Units from './lib/shared/Unit.js';
 import Base from './lib/shared/Base.js';
+import BasicAI from './lib/shared/AI.js';
 
 const debug = new DEBUG(process.env.DEBUG, 0);
 
@@ -103,6 +104,12 @@ class GameController {
 		let newGame = new Game();
 		this.game = newGame;
 		this.game.init();
+
+		for (let i = 1; i <= 4; i++) {
+			if (this.playerSpots[i] instanceof BasicAI) {
+				this.playerSpots[i] = null;
+			}
+		}
 
 		this.setGamePhaseForAll(0);
 		this.sendGameStateToAll();
@@ -255,7 +262,7 @@ class GameController {
 		let playerSpots = {};
 
 		for (let i = 1; i <= 4; i++) {
-			if (this.playerSpots[i] !== null) {
+			if (this.playerSpots[i] && this.playerSpots[i].isConnected) {
 				playerSpots[i] = {
 					gamePhase: this.playerSpots[i].clientGamePhase,
 					ordersSubmitted: this.playerSpots[i].ordersSubmitted
@@ -284,7 +291,7 @@ class GameController {
 		// checks if players have been defeated/victorious
 
 		for (let i = 1; i <= 4; i++) {
-			if (this.playerSpots[i] !== null) {
+			if (this.playerSpots[i].isConnected) {
 				this.playerSpots[i].setClientStateFromVictoryCondition(this.game.players[i-1].victoryCondition);
 			}
 		}
@@ -303,52 +310,81 @@ class GameController {
 		// check if all the seated players have submitted their orders
 		// if not, return false and don't execute
 		for (let i = 1; i <= 4; i++) {
-			if (this.playerSpots[i] !== null) {
+			if (this.playerSpots[i] && this.playerSpots[i].isConnected) {
 				if (this.playerSpots[i].clientState === 'ACTIVE_PLAYER' && !this.playerSpots[i].ordersSubmitted) {
 					return false;
 				}
 			}
 		}
 
+		// all human players have submitted their turns, fill the rest of the spots
+		// with AI
+
+		for (let i = 1; i <= 4; i++) {
+			if (this.playerSpots[i] == null) {
+				let basicAI = new BasicAI(this.game, i);
+
+				basicAI.createSecondBase(); // run createSecondBase for now
+				// because this only happens after the first turn
+				basicAI.createRandomUnit();
+
+				this.playerSpots[i] = basicAI;
+			}
+		}
+
 		// send turnsSubmitted event to clients
 		this.sendTurnsSubmittedToAll();
 
-		//if all online players have submitted their orders, execute orders
+		// if all human players have submitted their orders, execute orders
 		// execute orders
-		for (let i = 0; i < this.playersOnline.length; i++) {
-			if (this.playersOnline[i].ordersToExecute.length > 0) {
-				for (let j = 0; j < this.playersOnline[i].ordersToExecute.length; j++) {
-					this.executeOrder(this.playersOnline[i].ordersToExecute[j]);
+
+		for (let i = 1; i <= 4; i++) {
+			if (this.playerSpots[i].ordersToExecute.length > 0) {
+				for (let j = 0; j < this.playerSpots[i].ordersToExecute.length; j++) {
+					this.executeOrder(this.playerSpots[i].ordersToExecute[j]);
 				}
 			}
 
 			// after orders executed, reset ClientController
-			this.playersOnline[i].ordersSubmitted = false;
-			this.playersOnline[i].ordersToExecute = [];
+			this.playerSpots[i].ordersSubmitted = false;
+			this.playerSpots[i].ordersToExecute = [];
 		}
 
 		// once all orders have been executed, run simulation
 		this.runSimulation();
 
+		// AI generate orders for next turn
+		for (let i = 1; i <= 4; i++) {
+			if (this.playerSpots[i] instanceof BasicAI) {
+				this.playerSpots[i].createRandomUnit();
+			}
+		}
 	}
 
 	forceOrders () {
 		//if all online players have submitted their orders, execute orders
 		// execute orders
-		for (let i = 0; i < this.playersOnline.length; i++) {
-			if (this.playersOnline[i].ordersToExecute.length > 0) {
-				for (let j = 0; j < this.playersOnline[i].ordersToExecute.length; j++) {
-					this.executeOrder(this.playersOnline[i].ordersToExecute[j]);
+		for (let i = 1; i <= 4; i++) {
+			if (this.playerSpots[i].ordersToExecute.length > 0) {
+				for (let j = 0; j < this.playerSpots[i].ordersToExecute.length; j++) {
+					this.executeOrder(this.playerSpots[i].ordersToExecute[j]);
 				}
 			}
 
 			// after orders executed, reset ClientController
-			this.playersOnline[i].ordersSubmitted = false;
-			this.playersOnline[i].ordersToExecute = [];
+			this.playerSpots[i].ordersSubmitted = false;
+			this.playerSpots[i].ordersToExecute = [];
 		}
 
 		// once all orders have been executed, run simulation
 		this.runSimulation();
+
+		// AI generate orders for next turn
+		for (let i = 1; i <= 4; i++) {
+			if (this.playerSpots[i] instanceof BasicAI) {
+				this.playerSpots[i].createRandomUnit();
+			}
+		}
 	}
 
 	printServerData () {
@@ -360,6 +396,10 @@ class GameController {
 		console.log("Client Controllers:")
 		for (let i =  0; i < this.clientControllers.length; i++) {
 			console.log(this.clientControllers[i].id, this.clientControllers[i].playerNumber, this.clientControllers[i].clientState);
+		}
+		console.log("PlayerSpots")
+		for (let i =  1; i <= 4; i++) {
+			console.log(i, this.playerSpots[i]);
 		}
 	}
 

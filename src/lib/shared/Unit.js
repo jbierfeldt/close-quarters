@@ -68,6 +68,12 @@ export class RayTracer extends Unit {
 
 	static maxHealth = 100;
 	static cost = 1;
+	static orientations = {
+		1: [[1,0],[0,1]],
+		2: [[1,0],[0,-1]],
+		3: [[-1,0],[0,1]],
+		4: [[-1,0],[0,-1]]
+	}
 	static description = "The Ray Tracer is a precise offensive machine used for reliable multifrontal attacks. It alternates firing horizontally and vertically, dealing 10 damage with each blast.";
 
 	static createFromSerialized (props) {
@@ -136,6 +142,12 @@ export class RedShifter extends Unit {
 
 	static maxHealth = 50;
 	static cost = 1;
+	static orientations = {
+		1: [[1,0],[0,1],[1,1]],
+		2: [[1,0],[0,-1],[1,-1]],
+		3: [[-1,0],[0,1],[-1,1]],
+		4: [[-1,0],[0,-1],[-1,-1]]
+	}
 	static description = "The Red Shifter is an offensive long-range unit that has low health and deals average damage. It randomly fires in two directions and the strikes must travel at least 10 tiles in order to have  an effect.";
 
 	static createFromSerialized (props) {
@@ -247,6 +259,12 @@ export class Oscillator extends Unit {
 
 	static maxHealth = 250;
 	static cost = 1;
+	static orientations = {
+		1: [[1,1]],
+		2: [[1,-1]],
+		3: [[-1,1]],
+		4: [[-1,-1]]
+	}
 	static description = "The Oscillator is an inexpensive defensive unit that generates a single, powerful projectile at the start of each round. The beam begins diagonally and then acts as a random mover until hitting a target, where it deals 60 damage.";
 
 	static createFromSerialized (props) {
@@ -312,6 +330,12 @@ export class Juggernode extends Unit {
 
 	static maxHealth = 400;
 	static cost = 2;
+	static orientations = {
+		1: [[1,1],[-1,1],[1,-1]],
+		2: [[-1,-1],[1,-1],[1,1]],
+		3: [[-1,-1],[-1,1],[1,1]],
+		4: [[-1,-1],[-1,1],[1,-1]]
+	}
 	static description = "The Juggernode is a standard defensive unit that also delivers diagonal strikes. Its photon beam fires toward the opposite corner of the player, dealing a small amount of damage to everything within the path.";
 
 	static createFromSerialized (props) {
@@ -400,6 +424,12 @@ export class Maglev extends Unit {
 
   static maxHealth = 300;
 	static cost = 3;
+	static orientations = {
+		1: [[-1,-1],[-1,0],[-1,1],[0,-1],[0,1],[1,0],[1,1],[1,-1]],
+		2: [[-1,-1],[-1,0],[-1,1],[0,-1],[0,1],[1,0],[1,1],[1,-1]],
+		3: [[-1,-1],[-1,0],[-1,1],[0,-1],[0,1],[1,0],[1,1],[1,-1]],
+		4: [[-1,-1],[-1,0],[-1,1],[0,-1],[0,1],[1,0],[1,1],[1,-1]]
+	}
 	static description = "The Maglev is a lightweight offensive powerhouse that emits magnetic pulses. It will randomly strike either in every diagonal direction or orthogonal direction. The pulses begin with a high base damage and fade off exponentially as they travel.";
 
 	static createFromSerialized (props) {
@@ -471,6 +501,12 @@ export class Tripwire extends Unit {
 
 	static maxHealth = 250;
 	static cost = 2;
+	static orientations = {
+		1: [[-1,-1],[-1,0],[-1,1],[0,-1],[0,1],[1,0],[1,1],[1,-1]],
+		2: [[-1,-1],[-1,0],[-1,1],[0,-1],[0,1],[1,0],[1,1],[1,-1]],
+		3: [[-1,-1],[-1,0],[-1,1],[0,-1],[0,1],[1,0],[1,1],[1,-1]],
+		4: [[-1,-1],[-1,0],[-1,1],[0,-1],[0,1],[1,0],[1,1],[1,-1]]
+	}
 	static description = "The Tripwire is a retaliatory machine that returns magnified energy at a higher frequency. It requires an initial stimulus to activate or become 'tripped' and then a second stimulus in quick succession which is reflected in all diagonal and orthogonal directions with three times the destructive power. These pulses cover a short distance and cannot be blocked by other machines or cores.";
 
 	static createFromSerialized (props) {
@@ -538,8 +574,11 @@ export class Ballast extends Unit {
 		this.value = 2;
 		this.fullName = "Ballast";
 		this.damageDealt = damageDealt;
+		this.targOne = 6;
+		this.targTwo = 3;
 	}
-
+	static coordOne = 6;
+	static coordTwo = 3;
 	static maxHealth = 300;
 	static cost = 2;
 
@@ -574,8 +613,8 @@ export class Ballast extends Unit {
 			let rando = Math.random()*6;
 			let multx = 1;
 			let multy = 1;
-			let targOne = 6;
-			let targTwo = 3;
+			targOne = this.targOne;
+			targTwo = this.targTwo;
 			if(this.player == 1){
 				multx = 1;
 				multy = 1;
@@ -612,7 +651,6 @@ export class Ballast extends Unit {
 			}
 		}
 	}
-
 	serialize () {
 		return super.serialize.call(this);
 	}
