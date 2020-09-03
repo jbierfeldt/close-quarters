@@ -472,7 +472,7 @@ export default class Display {
 								for(var m=0; m<board[k][l].length;m=m+1){
 									let displayObject = this.app.game.gameObjects.get(board[k][l][m]);
 									if(displayObject !== undefined){
-										if(displayObject.player == this.app.playerNumber || fullBoardTrigger != 0){
+										if(displayObject.player == this.app.playerNumber || (fullBoardTrigger != 0 && this.app.turnNumber > 1)){
 											drawDisplayObject(displayObject, l, k, si, this.playerColors, animate);
 										}
 									}
