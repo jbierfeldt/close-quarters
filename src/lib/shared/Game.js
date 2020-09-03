@@ -501,6 +501,16 @@ cleanUpByID (idToClean) {
 		}
 	}
 }
+/*getPossibleTargets(id, x, y){
+	let gameObj = this.gameObjects.get(id);
+	let p = this.gameObjects.get(id).player;
+	let tempArray = Units[gameObj.fullName].constructor.orientations[p];
+//	let temp
+	//let targetArray = [];
+//	Units[""]
+	return tempArray;
+
+}*/
 
 runSimulation(ticksPerTurn = tempConfig.ticksPerTurn) {
 	// updates game state based on ticks. Sweeps board and updates
@@ -520,6 +530,12 @@ runSimulation(ticksPerTurn = tempConfig.ticksPerTurn) {
 		'tick': {}
 	};
 
+<<<<<<< Updated upstream
+=======
+
+
+
+>>>>>>> Stashed changes
 	for (let tick = 1; tick <= ticksPerTurn; tick++) {
 		this.numberOfProjectiles = this.tempNumberOfProjectiles;
 		this.tempNumberOfProjectiles = 0;
