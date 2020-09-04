@@ -48,7 +48,7 @@ export default class Game {
 		this.board = create2DArray(tempConfig.boardDimensions[0],tempConfig.boardDimensions[1]);
 
 		this.placeInitialRandomBases();
-
+	//this.placeAllInitialBases();
 		this.currentTurnInitialState = this.createGameSnapshot();
 
 		// creates history (temp)
@@ -140,13 +140,18 @@ export default class Game {
 
 	placeInitialRandomBases () {
 		for (let i = 1; i <= 4; i++) {
+			let randCoord = this.getRandomCoordInPlayerRegion(i, 3, 10);
+			this.createNewBaseAtCoord("Base", String(i), randCoord[0], randCoord[1]);
+		}
+	}
+		/*for (let i = 1; i <= 4; i++) {
 			let baseZones = [0,0,0,1,1];
 			let zone = baseZones[Math.floor(Math.random() * baseZones.length)];
 			let randCoord = this.getRandomCoordInPlayerRegion(i, 3, zone);
 			console.log(i,randCoord[0], randCoord[1]);
 			this.createNewBaseAtCoord("Base", String(i), randCoord[0], randCoord[1]);
 		}
-	}
+	}*/
 
 	// creates new unit using type, player, and coordinates
 	createNewUnitAtCoord(unitType, player, x, y) {
@@ -342,7 +347,7 @@ getRandomCoordInPlayerRegion(playerNumber, margin = 0, zone)  {
 	//Zone 0 is the players back corner
 	//Zone 1 takes a step horizontally toward the other side of the board
 	let halfBoardX = (tempConfig.boardDimensions[1]/2);
-	let halfBoardY = (tempConfig.boardDimensions[0]/2)+1;
+	let halfBoardY = (tempConfig.boardDimensions[0]/2);
 	let minY = 0;
 	let minX = 0;
 	let maxY = halfBoardY;
