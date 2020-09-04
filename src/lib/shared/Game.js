@@ -346,10 +346,11 @@ getRandomCoordInPlayerRegion(playerNumber, margin = 0, zone)  {
 	//Six Possible Zones
 	//Zone 0 is the players back corner
 	//Zone 1 takes a step horizontally toward the other side of the board
+	let minY = margin;
+	let minX = margin;
 	let halfBoardX = (tempConfig.boardDimensions[1]/2);
 	let halfBoardY = (tempConfig.boardDimensions[0]/2);
-	let minY = 0;
-	let minX = 0;
+
 	let maxY = halfBoardY;
 	let maxX = halfBoardX;
 

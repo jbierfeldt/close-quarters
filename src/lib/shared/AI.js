@@ -128,7 +128,7 @@ export default class BasicAI {
   createSecondBase () {
 		let baseZones = [0,0,0,1,1];
 		let zone = baseZones[Math.floor(Math.random() * baseZones.length)];
-    let secondBaseCoord = this.game.getRandomCoordInPlayerRegion(this.playerNumber, 1, zone);
+    let secondBaseCoord = this.game.getRandomCoordInPlayerRegion(this.playerNumber, 0, zone);
 
     if (this.game.isCoordInPlayerRegion(secondBaseCoord[0], secondBaseCoord[1], this.playerNumber) &&
 				this.game.isCoordInPlayerRegion(secondBaseCoord[0]+1, secondBaseCoord[1], this.playerNumber) &&
