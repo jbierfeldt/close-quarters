@@ -321,7 +321,7 @@ class GameController {
 		// with AI
 
 		for (let i = 1; i <= 4; i++) {
-			if (this.playerSpots[i] == null) {
+			if (this.playerSpots[i] == null && this.game.turnNumber == 1) {
 				let basicAI = new BasicAI(this.game, i);
 
 				basicAI.createSecondBase(); // run createSecondBase for now

@@ -143,6 +143,7 @@ export default class Game {
 			let baseZones = [0,0,0,1,1];
 			let zone = baseZones[Math.floor(Math.random() * baseZones.length)];
 			let randCoord = this.getRandomCoordInPlayerRegion(i, 3, zone);
+			console.log(i,randCoord[0], randCoord[1]);
 			this.createNewBaseAtCoord("Base", String(i), randCoord[0], randCoord[1]);
 		}
 	}
@@ -341,7 +342,7 @@ getRandomCoordInPlayerRegion(playerNumber, margin = 0, zone)  {
 	//Zone 0 is the players back corner
 	//Zone 1 takes a step horizontally toward the other side of the board
 	let halfBoardX = (tempConfig.boardDimensions[1]/2);
-	let halfBoardY = (tempConfig.boardDimensions[0]/2);
+	let halfBoardY = (tempConfig.boardDimensions[0]/2)+1;
 	let minY = 0;
 	let minX = 0;
 	let maxY = halfBoardY;
@@ -506,9 +507,7 @@ else if (zone == 5){
 
 	let randX = Math.floor(Math.random() * ((maxX - margin) - minX)) + minX;
 	let randY = Math.floor(Math.random() * ((maxY - margin) - minY)) + minY;
-	if(zone == 0){
-		console.log(playerNumber, randX);
-	}
+
 
 	switch (playerNumber) {
 		case 1:

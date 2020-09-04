@@ -115,12 +115,12 @@ export default class BasicAI {
 	      this.createRandomUnit();
 	      return false;
 	    }
-			if(credits == 1){
+			/*if(credits == 1){
 				saveCredits = Math.floor(Math.random()*2);
 				if(saveCredits == 1){
 					break;
 				}
-			}
+			}*/
 		}
 		return true;
   }

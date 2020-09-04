@@ -1008,9 +1008,7 @@ export default class Display {
 			}
 		}
 		function getPossibleTargets(unitName, x, y, player){
-			if(unitName == "Ballast"){
-				console.log(Units[unitName].orientations[player]);
-			}
+
 			//let gameObj = this.gameObjects.get(id);
 			let tempArray = Units[unitName].orientations[player];
 			let finalArray = [];
