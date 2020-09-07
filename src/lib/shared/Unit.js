@@ -74,7 +74,7 @@ export class RayTracer extends Unit {
 		3: [[-1,0],[0,1]],
 		4: [[-1,0],[0,-1]]
 	}
-	static description = "The Ray Tracer is a precise offensive machine used for reliable multifrontal attacks. It alternates firing horizontally and vertically, dealing 10 damage with each blast.";
+	static description = "The Ray Tracer is a precise offensive machine used for reliable multifrontal attacks. It alternates firing horizontally and vertically, dealing low damage with each blast.";
 
 	static createFromSerialized (props) {
 		return new RayTracer(props.player, props.health, props.firing, props.id, props.collidedWith,props.lifeSpan,props.damageDealt)
@@ -148,7 +148,7 @@ export class RedShifter extends Unit {
 		3: [[-1,0],[0,1],[-1,1]],
 		4: [[-1,0],[0,-1],[-1,-1]]
 	}
-	static description = "The Red Shifter is an offensive long-range unit that has low health and deals average damage. It randomly fires in two directions and the strikes must travel at least 10 tiles in order to have  an effect.";
+	static description = "The Red Shifter is a long-range offensive unit. It randomly fires in two directions simultaneously and the strikes must travel at least 10 tiles in order to have an effect.";
 
 	static createFromSerialized (props) {
 		return new RedShifter(props.player, props.health, props.firing, props.id, props.collidedWith, props.lifeSpan,props.damageDealt)
@@ -265,7 +265,7 @@ export class Oscillator extends Unit {
 		3: [[-1,1]],
 		4: [[-1,-1]]
 	}
-	static description = "The Oscillator is an inexpensive defensive unit that generates a single, powerful projectile at the start of each round. The beam begins diagonally and then acts as a random mover until hitting a target, where it deals 60 damage.";
+	static description = "The Oscillator is an inexpensive defensive unit that generates a single, powerful projectile at the start of each round. The charge begins diagonally and then acts as a random mover until hitting a target.";
 
 	static createFromSerialized (props) {
 		return new Oscillator(props.player, props.health, props.firing, props.id, props.collidedWith, props.lifeSpan, props.damageDealt)
@@ -336,7 +336,7 @@ export class Juggernode extends Unit {
 		3: [[-1,-1],[-1,1],[1,1]],
 		4: [[-1,-1],[-1,1],[1,-1]]
 	}
-	static description = "The Juggernode is a standard defensive unit that also delivers diagonal strikes. Its photon beam fires toward the opposite corner of the player, dealing a small amount of damage to everything within the path.";
+	static description = "The Juggernode is a defensive unit that also delivers diagonal strikes. Its photon beam deals a small amount of damage to everything in its path.";
 
 	static createFromSerialized (props) {
 		return new Juggernode(props.player, props.health, props.firing, props.id, props.collidedWith, props.lifeSpan, props.damageDealt)
@@ -408,7 +408,7 @@ export class Juggernode extends Unit {
 
 export class Maglev extends Unit {
 
-	constructor(player, health = 300, firing = false, id, collidedWith = [false, 4], lifeSpan = 0, damageDealt = 0)  {
+	constructor(player, health = 275, firing = false, id, collidedWith = [false, 4], lifeSpan = 0, damageDealt = 0)  {
 		super(id);
 		this.lifeSpan = lifeSpan;
 		this.player = player;
@@ -422,7 +422,7 @@ export class Maglev extends Unit {
 		this.damageDealt = damageDealt;
 	}
 
-  static maxHealth = 300;
+  static maxHealth = 275;
 	static cost = 3;
 	static orientations = {
 		1: [[-1,-1],[-1,0],[-1,1],[0,-1],[0,1],[1,0],[1,1],[1,-1]],
@@ -430,7 +430,7 @@ export class Maglev extends Unit {
 		3: [[-1,-1],[-1,0],[-1,1],[0,-1],[0,1],[1,0],[1,1],[1,-1]],
 		4: [[-1,-1],[-1,0],[-1,1],[0,-1],[0,1],[1,0],[1,1],[1,-1]]
 	}
-	static description = "The Maglev is a lightweight offensive powerhouse that emits magnetic pulses. It will randomly strike either in every diagonal direction or orthogonal direction. The pulses begin with a high base damage and fade off exponentially as they travel.";
+	static description = "The Maglev is an offensive powerhouse that emits magnetic pulses in all directions. These strikes begin with a high base damage and fade off exponentially as they travel.";
 
 	static createFromSerialized (props) {
 		return new Maglev(props.player, props.health, props.firing, props.id, props.collidedWith, props.lifeSpan, props.damageDealt);
@@ -507,7 +507,7 @@ export class Tripwire extends Unit {
 		3: [[-1,-1],[-1,0],[-1,1],[0,-1],[0,1],[1,0],[1,1],[1,-1]],
 		4: [[-1,-1],[-1,0],[-1,1],[0,-1],[0,1],[1,0],[1,1],[1,-1]]
 	}
-	static description = "The Tripwire is a retaliatory machine that returns magnified energy at a higher frequency. It requires an initial stimulus to activate or become 'tripped' and then a second stimulus in quick succession which is reflected in all diagonal and orthogonal directions with three times the destructive power. These pulses cover a short distance and cannot be blocked by other machines or cores.";
+	static description = "The Tripwire is a retaliatory machine that returns energy at a higher frequency. It requires an initial stimulus to activate or become 'tripped' and then a second stimulus in quick succession to fire. The powerful pulses cover a short distance and cannot be blocked by other machines or cores.";
 
 	static createFromSerialized (props) {
 		return new Tripwire(props.player, props.health, props.firing, props.id, props.collidedWith, props.ticksSinceDamage, props.tripped, props.tripDamage, props.lifeSpan, props.damageDealt);
@@ -590,7 +590,7 @@ export class Ballast extends Unit {
 		4: [[-Ballast.coordOne,-Ballast.coordTwo],[-Ballast.coordOne,Ballast.coordTwo],[Ballast.coordOne,-Ballast.coordTwo],[-Ballast.coordTwo,-Ballast.coordOne],[-Ballast.coordTwo,Ballast.coordOne],[Ballast.coordTwo,-Ballast.coordOne]]
 	}
 
-	static description = "The Ballast is an advanced, bulky machine that can be used to block key channels while hitting a limited set of targets with significant force. It strikes for five consecutive seconds, delivering irreparable damage. The attacks rotate between 6 possible target locations that are a distance of either 6 or 3 tiles away horizontally and the opposite number vertically.";
+	static description = "The Ballast is an advanced machine used for precise strikes on a limited set of targets. Its electric field rotates between locations, delivering sustained damage.";
 
 	static createFromSerialized (props) {
 		return new Ballast(props.player, props.health, props.firing, props.id, props.collidedWith, props.lifeSpan, props.damageDealt)
@@ -682,7 +682,7 @@ export class Resonator extends Unit {
 		4: [[-1,0],[0,-1],[-1,-1]]
 	}
 
-	static description = "The Resonator is a resiliant, catapult-style machine that delivers damage in a cross shape encompassing a five-tile area. The center of its strike deals significant damage and fades to half the amount in the adjacent tiles. The sheer power of its attack causes erratic projectile fire that hits a random number of spaces away. It will either strike vertically, horizontally or diagonally and does not do damage prior to reaching its destination.";
+	static description = "The Resonator is a resiliant, catapult-style machine that delivers severe damage in an area once reaching its destination. The sheer power of the attack causes erratic projectile fire that travels in a random direction and hits a random number of spaces away.";
 
 	static createFromSerialized (props) {
 		return new Resonator(props.player, props.health, props.firing, props.id, props.collidedWith, props.lifeSpan, props.damageDealt)
@@ -769,7 +769,7 @@ export class Integrator extends Unit {
 		4: [[-2,-1],[1,-2],[-1,-2],[-2,1]]
 	}
 
-	static description = "The Integrator is a high-potential machine that gains strength with each turn it remains aactive. It fires less frequently than other units, but covers four paths that are a ratio of 2:1 or 1:2 from its origin.";
+	static description = "The Integrator is a high-potential machine that gains strength with each turn it remains active. Its beams fires less frequently than other units, but cover four paths with total certainty.";
 
 	static createFromSerialized (props) {
 		return new Integrator(props.player, props.health, props.firing, props.id, props.collidedWith, props.lifeSpan, props.damageDealt);

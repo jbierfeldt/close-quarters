@@ -323,12 +323,24 @@ class GameController {
 		for (let i = 1; i <= 4; i++) {
 			if (this.playerSpots[i] == null && this.game.turnNumber == 1) {
 				let basicAI = new BasicAI(this.game, i);
+				//let array =  [-5,-5];
+			//	basicAI.createSecondBase([]);
+				// Create Both AI Bases
 
-				basicAI.createSecondBase(); // run createSecondBase for now
+
 				// because this only happens after the first turn
-				basicAI.createRandomUnit();
+
 
 				this.playerSpots[i] = basicAI;
+
+				//Major Hack for AI first turn placements ******
+				basicAI.createAIBase();
+				this.executeOrder(this.playerSpots[i].ordersToExecute[0]);
+				basicAI.createAIBase();
+				this.executeOrder(this.playerSpots[i].ordersToExecute[1]);
+				this.playerSpots[i].ordersToExecute = [];
+				basicAI.generateOrders();
+
 			}
 		}
 
@@ -356,7 +368,7 @@ class GameController {
 		// AI generate orders for next turn
 		for (let i = 1; i <= 4; i++) {
 			if (this.playerSpots[i] instanceof BasicAI && this.game.players[i-1].victoryCondition !== -1) {
-				this.playerSpots[i].createRandomUnit();
+				this.playerSpots[i].generateOrders();
 			}
 		}
 	}

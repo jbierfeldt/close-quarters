@@ -267,7 +267,7 @@ export default class Display {
 						s.fill(255);
 						s.stroke(0);
 						s.textSize(wi/26.5);
-						s.text("Place Second Core", wi/2+si*2-playerShifter,si*buttonScale*3.7);
+						s.text("Place Core", wi/2+si*3-playerShifter,si*buttonScale*3.7);
 						if(s.mouseIsPressed){
 							if(bBase.isInRange(s.mouseX,s.mouseY)){
 								bBase.buttonHasBeenPressed();
@@ -2112,12 +2112,11 @@ function drawCreditsSymbol(x, y, size, player, a, pColors){
 			let meh=0;
 			let osx=0;
 			let osy=0;
-			let wave = proj.damage;
-			// 4+(x*y)%15;
+			let wave = Math.floor(proj.damage);
 			let rad = 360;
 			let radius=size/25;
 			for (let i = 0; i < rad; i = i + 18){
-				s.stroke(pColors[player-1][0],pColors[player-1][1],pColors[player-1][2], 23-a);
+				s.stroke(pColors[player-1][0],pColors[player-1][1],pColors[player-1][2], 25+2*s.abs(a-4.5));
 				theta = i*(360/rad);
 				phase=((Math.PI)/rad);
 				meh = (radius*1.8+11.5)*s.sin(wave*theta+phase)*s.cos(phase);
@@ -2129,7 +2128,7 @@ function drawCreditsSymbol(x, y, size, player, a, pColors){
 				s.point(osx+refx,osy+refy);
 				s.strokeWeight(3);
 				s.point(osx+refx,osy+refy);
-				s.stroke(255,150-17*s.abs(a-4.5));
+				s.stroke(255,160-17*s.abs(a-4.5));
 				s.strokeWeight(1);
 				s.point(osx+refx,osy+refy);
 			}

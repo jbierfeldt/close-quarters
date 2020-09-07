@@ -47,7 +47,7 @@ export default class Game {
 		// create empty grid
 		this.board = create2DArray(tempConfig.boardDimensions[0],tempConfig.boardDimensions[1]);
 
-		this.placeInitialRandomBases();
+		//this.placeInitialRandomBases();
 	//this.placeAllInitialBases();
 		this.currentTurnInitialState = this.createGameSnapshot();
 

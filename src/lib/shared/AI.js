@@ -22,7 +22,7 @@ export default class BasicAI {
 		this.ordersToExecute.push(order);
   }
 
-  createRandomUnit () {
+  generateOrders () {
 		let credits = this.game.players[this.playerNumber-1].credits;
 		let creditCost = 0;
 		let saveCredits = 0
@@ -112,7 +112,7 @@ export default class BasicAI {
 	      });
 				credits = credits - creditCost;
 	    } else {
-	      this.createRandomUnit();
+	      this.generateOrders();
 	      return false;
 	    }
 			/*if(credits == 1){
@@ -125,7 +125,7 @@ export default class BasicAI {
 		return true;
   }
 
-  createSecondBase () {
+  createAIBase () {
 		let baseZones = [0,0,0,1,1];
 		let zone = baseZones[Math.floor(Math.random() * baseZones.length)];
     let secondBaseCoord = this.game.getRandomCoordInPlayerRegion(this.playerNumber, 0, zone);
@@ -145,9 +145,10 @@ export default class BasicAI {
           x: secondBaseCoord[0],
           y: secondBaseCoord[1]
         });
+				let coords = [secondBaseCoord[0],secondBaseCoord[1]]
         return true;
       } else {
-        this.createSecondBase();
+        this.createAIBase();
         return false;
       }
 
