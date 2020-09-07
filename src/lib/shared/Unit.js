@@ -18,7 +18,7 @@ export default class Unit {
 		this.collidedWith = [];
 		this.turnsActive = 0;
 		this.damageDealt = 0;
-		//this.lifeSpan = 0;
+		
 	}
 
 	static createFromSerialized (serializedObject) {

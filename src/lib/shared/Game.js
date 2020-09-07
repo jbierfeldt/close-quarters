@@ -342,6 +342,44 @@ collideProjWithObject(proj, obj, x, y) {
 	}
 }
 
+getPossibleTargets(unitName, x, y, player) {
+
+	let tempArray = Units[unitName].orientations[player];
+	let finalArray = [];
+	let counter = 0;
+	let upperDistance = 30;
+	let lowerDistance = 1;
+	if(unitName == "Oscillator"){
+		upperDistance = 2;
+	}
+	else if(unitName == "Resonator"){
+		lowerDistance = 6;
+		upperDistance = 19;
+	}
+	else if(unitName == "Tripwire"){
+		//lowerDistance = 5;
+		upperDistance = 6;
+	}
+	else if(unitName == "Ballast"){
+		//lowerDistance = 5;
+		upperDistance = 2;
+	}
+	else if(unitName == "RedShifter"){
+		lowerDistance = 12;
+		//upperDistance = 2;
+	}
+	for(let i = 0; i < tempArray.length; i = i + 1){
+		let xx = lowerDistance;
+		while((tempArray[i][0]*xx+x) < 30 && (tempArray[i][0]*xx+x) >= 0 && xx < upperDistance){
+				let yy = 1;
+				finalArray[counter] =  [(tempArray[i][0]*xx+x),(tempArray[i][1]*xx+y)]
+				counter = counter + 1;
+				xx = xx + 1;
+		}
+	}
+	return finalArray;
+}
+
 getRandomCoordInPlayerRegion(playerNumber, margin = 0, zone)  {
 	//Six Possible Zones
 	//Zone 0 is the players back corner
@@ -676,16 +714,6 @@ cleanUpByID (idToClean) {
 		}
 	}
 }
-/*getPossibleTargets(id, x, y){
-	let gameObj = this.gameObjects.get(id);
-	let p = this.gameObjects.get(id).player;
-	let tempArray = Units[gameObj.fullName].constructor.orientations[p];
-//	let temp
-	//let targetArray = [];
-//	Units[""]
-	return tempArray;
-
-}*/
 
 runSimulation(ticksPerTurn = tempConfig.ticksPerTurn) {
 	// updates game state based on ticks. Sweeps board and updates

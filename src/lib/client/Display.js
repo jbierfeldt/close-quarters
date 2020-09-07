@@ -883,7 +883,7 @@ export default class Display {
 					s.text("Deploy Machines", wi+si/1.3, si*4.5);
 					s.textSize(si*1.25);
 					s.textAlign(s.CENTER);
-					s.text("Score" , wi+wi*.125, si*7.5);
+					s.text("Score" , wi+wi*.125, si*8.5);
 					s.line(wi+wi*.1,si*8.5,s.width-wi*.1,si*8.5)
 					s.stroke(255);
 					s.fill(255,100);
@@ -894,19 +894,19 @@ export default class Display {
 					for(let a = 0; a < 4; a = a + 1){
 						s.fill(this.playerColors[a][0], this.playerColors[a][1], this.playerColors[a][2], this.playerColors[a][3]);
 						if(this.app.game.players[a].victoryCondition == - 1){
-							s.text("Defeated" , wi+wi*.125, si*9+a*si);
+							s.text("Defeated" , wi+wi*.125, si*10+a*si);
 						}
 						else{
-						s.text("- " + this.app.game.players[a].score+ " -", wi+wi*.125, si*9+a*si);
+						s.text("- " + this.app.game.players[a].score+ " -", wi+wi*.125, si*10+a*si);
 						}
 					}
 					s.textFont(titleFont);
 					s.textAlign(s.LEFT);
 					s.textSize(si*1.1);
-					drawCreditsSymbol(wi+si/.42, si*15, si*1.3, this.app.playerNumber, 10, this.playerColors);
+					drawCreditsSymbol(wi+si/.42, si*16, si*1.3, this.app.playerNumber, 10, this.playerColors);
 					s.stroke(0);
 					s.strokeWeight(2);
-					s.text(":  "+this.app.game.players[this.app.playerNumber-1].credits, wi+si/.25, si*15.4);
+					s.text(":  "+this.app.game.players[this.app.playerNumber-1].credits, wi+si/.25, si*16.4);
 					//Scrolling Bar;
 					s.textSize(si*1.7);
 					s.textFont(standardFont);
@@ -1007,9 +1007,8 @@ export default class Display {
 				}
 			}
 		}
-		function getPossibleTargets(unitName, x, y, player){
+		function getPossibleTargets(unitName, x, y, player) {
 
-			//let gameObj = this.gameObjects.get(id);
 			let tempArray = Units[unitName].orientations[player];
 			let finalArray = [];
 			let counter = 0;
@@ -1019,8 +1018,8 @@ export default class Display {
 				upperDistance = 2;
 			}
 			else if(unitName == "Resonator"){
-				lowerDistance = 5;
-				upperDistance = 16;
+				lowerDistance = 6;
+				upperDistance = 19;
 			}
 			else if(unitName == "Tripwire"){
 				//lowerDistance = 5;
@@ -1031,7 +1030,7 @@ export default class Display {
 				upperDistance = 2;
 			}
 			else if(unitName == "RedShifter"){
-				lowerDistance = 11;
+				lowerDistance = 12;
 				//upperDistance = 2;
 			}
 			for(let i = 0; i < tempArray.length; i = i + 1){

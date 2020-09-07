@@ -102,8 +102,30 @@ export default class BasicAI {
 
 	    let newUnitCoord =  this.game.getRandomCoordInPlayerRegion(this.playerNumber, 0, zone);
 
-
 	    if (this.game.isEmptyCoord(newUnitCoord[0], newUnitCoord[1])) {
+				if(this.game.turnNumber > 1){
+					let targetSpots = this.game.getPossibleTargets(unitName,newUnitCoord[0],newUnitCoord[1],this.playerNumber);
+					for(let i = 0; i < targetSpots.length; i = i + 1){
+						let objID = this.game.getObjectsAtCoord(targetSpots[i][0], targetSpots[i][1])[0];
+						if(objID) {
+						let gameObj = this.game.gameObjects.get(objID);
+
+						if(gameObj.player !== this.playerNumber){
+							console.log(unitName,this.playerNumber,gameObj,gameObj.player)
+							this.createOrder('createUnit', {
+				        unitType: unitName,
+				        player: this.playerNumber,
+				        x: newUnitCoord[0],
+				        y: newUnitCoord[1]
+				      });
+							credits = credits - creditCost;
+							i = targetSpots.length;
+						}
+					}
+				}
+			}
+				else{
+					credits = credits - 1;
 	      this.createOrder('createUnit', {
 	        unitType: unitName,
 	        player: this.playerNumber,
@@ -111,7 +133,7 @@ export default class BasicAI {
 	        y: newUnitCoord[1]
 	      });
 				credits = credits - creditCost;
-	    } else {
+	    }} else {
 	      this.generateOrders();
 	      return false;
 	    }
