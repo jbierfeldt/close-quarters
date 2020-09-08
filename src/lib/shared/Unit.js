@@ -18,7 +18,7 @@ export default class Unit {
 		this.collidedWith = [];
 		this.turnsActive = 0;
 		this.damageDealt = 0;
-		
+
 	}
 
 	static createFromSerialized (serializedObject) {
@@ -355,7 +355,7 @@ export class Juggernode extends Unit {
 		this.collidedWith = [false, 4];
 		this.firing=false;
 		let direction = 1+Math.floor(Math.random()*3);
-		if (tick%9 === 0) {
+		if (tick%10 === 0) {
 			if(direction === 1){
 				if(this.player==1){
 					this.startAttack([1,1]);
@@ -470,7 +470,7 @@ export class Maglev extends Unit {
 		// reset firing
 		this.firing = false;
 
-		if (tick % 13 === 0) {
+		if (tick % 14 === 0) {
 			this.startAttack();
 		}
 	}

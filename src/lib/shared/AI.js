@@ -22,13 +22,13 @@ export default class BasicAI {
 		this.ordersToExecute.push(order);
   }
 
-  generateOrders () {
+  generateOrders (breakPoint) {
 		let credits = this.game.players[this.playerNumber-1].credits;
 		let creditCost = 0;
 		let saveCredits = 0
 		let unitName = " ";
-		let allUnits = [1,1,1,1,2,2,3,3,3,4,4,5,5,5,5,6,7,7,7,7,7,7,7,8,8,8,8,8,9,9,9,9,9];
-		let twoCreditsAndBelowUnits = [1,1,1,1,2,2,3,3,3,4,4,5,5,5,5,6];
+		let allUnits = [1,1,1,1,1,2,2,3,3,3,4,4,4,4,4,5,5,5,5,5,6,7,7,7,7,7,7,8,8,8,8,8,8,9,9,9,9,9,9];
+		let twoCreditsAndBelowUnits = [1,1,1,1,2,2,3,3,3,4,4,4,5,5,5,5,5,6];
 		let oneCreditUnits = [1,1,1,1,2,2,3,3,3];
 		let rayZones = [1,2,3,4,5];
 		let redZones = [0,0,1,1,5];
@@ -36,10 +36,10 @@ export default class BasicAI {
 		let balZones = [3,3,4];
 		let jugZones = [2,3,3,3,4,4,5];
 		let triZones = [3,3,3,4,4];
-		let magZones = [2,3,3,3,4,4];
-		let resZones = [0,0,1,1,1,2,4,5];
+		let magZones = [2,3,3,3,4,4,5];
+		let resZones = [0,0,1,1,1,2,4,4,5];
 		let intZones = [1,1,1,3,3,4,4,5];
-		let zone =0;
+		let zone = 0;
 		let unitSelected = 0;
 
 		while(credits > 0){
@@ -105,27 +105,43 @@ export default class BasicAI {
 	    if (this.game.isEmptyCoord(newUnitCoord[0], newUnitCoord[1])) {
 				if(this.game.turnNumber > 1){
 					let targetSpots = this.game.getPossibleTargets(unitName,newUnitCoord[0],newUnitCoord[1],this.playerNumber);
+					if(breakPoint < 10000){
 					for(let i = 0; i < targetSpots.length; i = i + 1){
 						let objID = this.game.getObjectsAtCoord(targetSpots[i][0], targetSpots[i][1])[0];
 						if(objID) {
-						let gameObj = this.game.gameObjects.get(objID);
-
-						if(gameObj.player !== this.playerNumber){
-							console.log(unitName,this.playerNumber,gameObj,gameObj.player)
-							this.createOrder('createUnit', {
-				        unitType: unitName,
-				        player: this.playerNumber,
-				        x: newUnitCoord[0],
-				        y: newUnitCoord[1]
-				      });
-							credits = credits - creditCost;
-							i = targetSpots.length;
-						}
+							let gameObj = this.game.gameObjects.get(objID);
+							if(gameObj.player !== this.playerNumber && gameObj.objCategory === "Bases"){
+								this.createOrder('createUnit', {
+					        unitType: unitName,
+					        player: this.playerNumber,
+					        x: newUnitCoord[0],
+					        y: newUnitCoord[1]
+					      });
+								credits = credits - creditCost;
+								i = targetSpots.length;
+								breakPoint = 0;
+							}
+					}
+					else{
+						breakPoint = breakPoint + 1;
 					}
 				}
+
 			}
 				else{
-					credits = credits - 1;
+					this.createOrder('createUnit', {
+						unitType: unitName,
+						player: this.playerNumber,
+						x: newUnitCoord[0],
+						y: newUnitCoord[1]
+					});
+					credits = credits - creditCost;
+					breakPoint = 0;
+				}
+
+			}
+				else{
+
 	      this.createOrder('createUnit', {
 	        unitType: unitName,
 	        player: this.playerNumber,

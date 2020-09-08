@@ -155,7 +155,7 @@ export class JugBullet extends Projectile {
 	constructor(player, initialOrientation = [0, 0], initialSpeed = 0, unit, id)  {
 		super(player, initialOrientation, initialSpeed, unit, id);
 		this.identifier = "JugProj";
-		this.damage = 5;
+		this.damage = 3;
 		this.ableToBeDestroyed = false;
 
 	}
