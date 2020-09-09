@@ -1,4 +1,4 @@
-import {DEBUG, createID} from '../shared/utilities.js';
+import { DEBUG, createID } from '../shared/utilities.js';
 const debug = new DEBUG(process.env.DEBUG, 0);
 import ClientController from './ClientController.js';
 import GameController from './GameController.js';
@@ -7,61 +7,61 @@ const jwt = require('jsonwebtoken');
 
 class PubSub {
 
-  constructor () {
-    this.subscribers = {};
-  }
+	constructor() {
+		this.subscribers = {};
+	}
 
-  subscribe (event, callback) {
-    let index;
-    const that = this;
+	subscribe(event, callback) {
+		let index;
+		const that = this;
 
-    if (!this.subscribers[event]) {
-      this.subscribers[event] = [];
-    }
+		if (!this.subscribers[event]) {
+			this.subscribers[event] = [];
+		}
 
-    index = this.subscribers[event].push(callback) - 1;
+		index = this.subscribers[event].push(callback) - 1;
 
-    return {
-      unsubscribe () {
-        that.subscribers[event].splice(index, 1);
-      }
-    }
-  }
+		return {
+			unsubscribe() {
+				that.subscribers[event].splice(index, 1);
+			}
+		}
+	}
 
-  publish (event, data) {
-    if (!this.subscribers[event]) return;
+	publish(event, data) {
+		if (!this.subscribers[event]) return;
 
-    this.subscribers[event].forEach(subscriberCallback => {
-      subscriberCallback(data);
-    });
-  }
+		this.subscribers[event].forEach(subscriberCallback => {
+			subscriberCallback(data);
+		});
+	}
 
- }
+}
 
 export default class ConnectionHandler {
 
-	constructor (IO_INSTANCE, SECRET_KEY) {
+	constructor(IO_INSTANCE, SECRET_KEY) {
 		this.io = IO_INSTANCE;
 		this.SECRET_KEY = SECRET_KEY;
-    this.events = new PubSub();
+		this.events = new PubSub();
 
-    // current open game (temp)
-    this.openGame = null;
+		// current open game (temp)
+		this.openGame = null;
 
 		this.clientControllers = new Map();
 		this.gameControllers = new Map();
 	}
 
-	init () {
+	init() {
 
 		this.registerMiddleware();
 
-    let newGame = new GameController(this.io);
-    newGame.init();
+		let newGame = new GameController(this.io);
+		newGame.init();
 
-    this.gameControllers.set(newGame.id, newGame);
+		this.gameControllers.set(newGame.id, newGame);
 
-    this.openGame = newGame;
+		this.openGame = newGame;
 
 		this.io.on('connection', (socket) => {
 
@@ -85,7 +85,7 @@ export default class ConnectionHandler {
 
 	}
 
-	registerMiddleware () {
+	registerMiddleware() {
 
 		// decode authToken using session specific secret, if set
 		// put decoded authToken in socket.sessionID
@@ -104,52 +104,52 @@ export default class ConnectionHandler {
 
 	}
 
-	signClientToken (clientUUID) {
+	signClientToken(clientUUID) {
 		const token = jwt.sign(clientUUID, this.SECRET_KEY);
 		return token;
 	}
 
-  bindGameControllerListeners (clientController, gameController) {
-    this.events.subscribe('turnSubmitted', (data) => {
-      console.log(`${clientController.id} has submitted turn with data ${data}`);
-    });
+	bindGameControllerListeners(clientController, gameController) {
+		this.events.subscribe('turnSubmitted', (data) => {
+			console.log(`${clientController.id} has submitted turn with data ${data}`);
+		});
 
-    this.events.subscribe('printServerData', () => {
-      console.log(`${clientController.id} wants to print server data`);
-    });
+		this.events.subscribe('printServerData', () => {
+			console.log(`${clientController.id} wants to print server data`);
+		});
 
-    this.events.subscribe('resetGame', () => {
-      console.log(`${clientController.id} wants to reset the game`);
-    });
+		this.events.subscribe('resetGame', () => {
+			console.log(`${clientController.id} wants to reset the game`);
+		});
 
-    this.events.subscribe('loadSnapshot', (data) => {
-      console.log(`${clientController.id} wants to load the snapshot ${data}`);
-    });
+		this.events.subscribe('loadSnapshot', (data) => {
+			console.log(`${clientController.id} wants to load the snapshot ${data}`);
+		});
 
-    this.events.subscribe('updateClientPhase', (data) => {
-      console.log(`${clientController.id} has updated its clientPhase to be ${data}`);
-    });
+		this.events.subscribe('updateClientPhase', (data) => {
+			console.log(`${clientController.id} has updated its clientPhase to be ${data}`);
+		});
 
-    this.events.subscribe('disconnected', (data) => {
-      console.log(`${clientController.id} has disconnected for reason: ${data}`);
-    });
-  }
+		this.events.subscribe('disconnected', (data) => {
+			console.log(`${clientController.id} has disconnected for reason: ${data}`);
+		});
+	}
 
 	// create new clientController with information from socket
-	createClientController (socket) {
+	createClientController(socket) {
 
 		let newClientController = new ClientController({
 			id: socket.id,
 			token: this.signClientToken(socket.id)
 		})
 
-    newClientController.eventHandler = this.events;
+		newClientController.eventHandler = this.events;
 
 		newClientController.setSocket(socket);
 
-    newClientController.setGameController(this.openGame);
-    this.bindGameControllerListeners(newClientController, this.openGame);
-    newClientController.playerNumber = 1;
+		newClientController.setGameController(this.openGame);
+		this.bindGameControllerListeners(newClientController, this.openGame);
+		newClientController.playerNumber = 1;
 
 		socket.clientController = newClientController;
 
@@ -159,7 +159,7 @@ export default class ConnectionHandler {
 
 	}
 
-	reconnectClientController (clientController, socket) {
+	reconnectClientController(clientController, socket) {
 
 		clientController.setSocket(socket);
 

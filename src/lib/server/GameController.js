@@ -1,4 +1,4 @@
-import {DEBUG, createID} from '../shared/utilities.js';
+import { DEBUG, createID } from '../shared/utilities.js';
 const debug = new DEBUG(process.env.DEBUG, 0);
 import Game from '../shared/Game.js';
 
@@ -57,12 +57,12 @@ export default class GameController {
 
 	}
 
-	generatePlayerToken (token_seed) {
+	generatePlayerToken(token_seed) {
 		const token = jwt.sign(token_seed, SECRET_KEY);
 		return token;
 	}
 
-	resetGame () {
+	resetGame() {
 		let newGame = new Game();
 		this.game = newGame;
 		this.game.init();
@@ -78,7 +78,7 @@ export default class GameController {
 		this.sendLastTurnHistoryToAll();
 	}
 
-	loadSnapshot (snapshot)  {
+	loadSnapshot(snapshot) {
 
 		console.log('loading snapshot');
 
@@ -100,7 +100,7 @@ export default class GameController {
 		// this.sendLastTurnHistoryToAll();
 	}
 
-	getOpenPlayerSpot () {
+	getOpenPlayerSpot() {
 		// returns the id of next open player spot or false if all spots are filled
 		for (let idx in this.playerSpots) {
 			if (this.playerSpots[idx] === null) { return idx };
@@ -109,7 +109,7 @@ export default class GameController {
 		return false;
 	}
 
-	newClientController (playerSpot) {
+	newClientController(playerSpot) {
 		// create new token with unique id
 		let id = createID();
 		let token = this.generatePlayerToken(id);
@@ -125,13 +125,13 @@ export default class GameController {
 		return pc;
 	}
 
-	clientControllerConnect (clientController, newSocket) {
+	clientControllerConnect(clientController, newSocket) {
 
 		clientController.setSocket(newSocket);
 		clientController.isConnected = true;
 
 		if (clientController.playerNumber) {
-			clientController.setClientStateFromVictoryCondition(this.game.players[clientController.playerNumber-1].victoryCondition);
+			clientController.setClientStateFromVictoryCondition(this.game.players[clientController.playerNumber - 1].victoryCondition);
 		} else {
 			clientController.clientState = 'SPECTATOR';
 			clientController.sendClientState();
@@ -148,7 +148,7 @@ export default class GameController {
 
 	}
 
-	clientControllerDisconnect (clientController) {
+	clientControllerDisconnect(clientController) {
 		clientController.isConnected = false;
 		clientController.clientState = "DISCONNECTED";
 
@@ -162,11 +162,11 @@ export default class GameController {
 		// console.log('disconnect', clientController.playerNumber, clientController.id);
 	}
 
-	clientControllerReconnect (clientController, newSocket) {
+	clientControllerReconnect(clientController, newSocket) {
 
 		// if client already has a playerNumber and that playerSpot is free, reclaim it
 		if (clientController.playerNumber
-		&& this.playerSpots[clientController.playerNumber] === null) {
+			&& this.playerSpots[clientController.playerNumber] === null) {
 			this.playerSpots[clientController.playerNumber] = clientController;
 		}
 
@@ -176,50 +176,50 @@ export default class GameController {
 
 	}
 
-	setGamePhaseForAll (phase) {
+	setGamePhaseForAll(phase) {
 		this.io.emit('updateClientGamePhase', {
 			newPhase: phase
 		});
 	}
 
-	sendTurnsSubmittedToAll () {
+	sendTurnsSubmittedToAll() {
 		// tells all clients that the turns have been subitted
 		this.io.emit('turnsSubmitted');
 	}
 
-	sendSuccessfulSimulationToAll () {
+	sendSuccessfulSimulationToAll() {
 		this.io.emit('simulationSuccessful', {
 			s_lastTurnHistory: JSON.stringify(this.game.getLastTurnHistory())
 		});
 	}
 
-	sendLastTurnHistoryToAll () {
+	sendLastTurnHistoryToAll() {
 		this.io.emit('updateLastTurnHistory', {
 			s_lastTurnHistory: JSON.stringify(this.game.getLastTurnHistory())
 		});
 	}
 
-	sendLastTurnHistoryToClient (socket) {
+	sendLastTurnHistoryToClient(socket) {
 		socket.emit('updateLastTurnHistory', {
 			s_lastTurnHistory: JSON.stringify(this.game.getLastTurnHistory())
 		});
 	}
 
-	sendGameStateToAll () {
-		this.io.emit('updateGameState',  {
+	sendGameStateToAll() {
+		this.io.emit('updateGameState', {
 			turnNumber: this.game.turnNumber,
 			currentTurnInitialState: JSON.stringify(this.game.createGameSnapshot())
 		});
 	}
 
-	sendGameStateToClient (socket) {
-		socket.emit('updateGameState',  {
+	sendGameStateToClient(socket) {
+		socket.emit('updateGameState', {
 			turnNumber: this.game.turnNumber,
 			currentTurnInitialState: JSON.stringify(this.game.currentTurnInitialState)
 		});
 	}
 
-	sendServerStateToAll () {
+	sendServerStateToAll() {
 
 		let playerSpots = {};
 
@@ -227,6 +227,11 @@ export default class GameController {
 			if (this.playerSpots[i] && this.playerSpots[i].isConnected) {
 				playerSpots[i] = {
 					gamePhase: this.playerSpots[i].clientGamePhase,
+					ordersSubmitted: this.playerSpots[i].ordersSubmitted
+				}
+			} else if (this.playerSpots[i] && this.playerSpots[i].isAI) {
+				playerSpots[i] = {
+					gamePhase: 'AI',
 					ordersSubmitted: this.playerSpots[i].ordersSubmitted
 				}
 			} else {
@@ -249,18 +254,18 @@ export default class GameController {
 		// console.log("Made", args.unitType, "at", args.x, args.y);
 	}
 
-	checkPlayerStateChanges () {
+	checkPlayerStateChanges() {
 		// checks if players have been defeated/victorious
 
 		for (let i = 1; i <= 4; i++) {
 			if (this.playerSpots[i].isConnected) {
-				this.playerSpots[i].setClientStateFromVictoryCondition(this.game.players[i-1].victoryCondition);
+				this.playerSpots[i].setClientStateFromVictoryCondition(this.game.players[i - 1].victoryCondition);
 			}
 		}
 
 	}
 
-	checkAllOrdersSubmitted () {
+	checkAllOrdersSubmitted() {
 		// update all clients on who has submitted orders
 		this.sendServerStateToAll();
 
@@ -323,7 +328,7 @@ export default class GameController {
 		}
 	}
 
-	forceOrders () {
+	forceOrders() {
 		//if all online players have submitted their orders, execute orders
 		// execute orders
 		for (let i = 1; i <= 4; i++) {
@@ -349,23 +354,23 @@ export default class GameController {
 		}
 	}
 
-	printServerData () {
+	printServerData() {
 		console.log("Players Online:")
-		for (let i =  0; i < this.playersOnline.length; i++) {
+		for (let i = 0; i < this.playersOnline.length; i++) {
 			console.log(this.playersOnline[i].id, this.playersOnline[i].playerNumber, this.playersOnline[i].ordersSubmitted, this.playersOnline[i].ordersToExecute);
 			// console.log(this.game.players[this.playersOnline[i].playerNumber - 1]);
 		}
 		console.log("Client Controllers:")
-		for (let i =  0; i < this.clientControllers.length; i++) {
+		for (let i = 0; i < this.clientControllers.length; i++) {
 			console.log(this.clientControllers[i].id, this.clientControllers[i].playerNumber, this.clientControllers[i].clientState);
 		}
 		console.log("PlayerSpots")
-		for (let i =  1; i <= 4; i++) {
+		for (let i = 1; i <= 4; i++) {
 			console.log(i, this.playerSpots[i]);
 		}
 	}
 
-	executeOrder (order) {
+	executeOrder(order) {
 		try {
 			this[order.orderType](order.args);
 		} catch (e) {
