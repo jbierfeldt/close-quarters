@@ -18,7 +18,7 @@ class App {
 		this.display = null;
 		this.gameState = undefined;
 		this.socket = undefined;
-		
+
 		this.gamePhase = undefined;
 		this.currentTurnOrders = [];
 
@@ -348,6 +348,9 @@ class App {
 				let newPlayerSpan = document.createElement("span");
 				if (this.playersOnServer[i] !== null) {
 					switch (this.playersOnServer[i].gamePhase) {
+						case 'AI':
+						newPlayerSpan.innerHTML = "Orders submitted (AI)."
+						break
 						case 0:
 						newPlayerSpan.innerHTML = "Loading...";
 						break
