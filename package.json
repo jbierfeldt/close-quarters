@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "rimraf dist/ && babel ./src --out-dir dist/ --copy-files",
+    "build": "rimraf dist/ && babel ./src --out-dir dist/ --copy-files --source-maps",
     "production-build": "export NODE_ENV=production && export DEBUG=false && npm run build && browserify -t [ envify --DEBUG false ] src/client.js | uglifyjs -c > dist/static/bundle.js",
     "start-dev": "export NODE_ENV=development && export DEBUG=true && npm run build && node dist/server.js & watchify src/client.js -t [ envify --DEBUG true ] -o dist/static/bundle.js -v",
     "start": "npm run build && node dist/server.js",

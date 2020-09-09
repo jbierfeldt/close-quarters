@@ -47,8 +47,8 @@ export default class Game {
 		// create empty grid
 		this.board = create2DArray(tempConfig.boardDimensions[0],tempConfig.boardDimensions[1]);
 
-		this.placeInitialRandomBases();
-
+		//this.placeInitialRandomBases();
+	//this.placeAllInitialBases();
 		this.currentTurnInitialState = this.createGameSnapshot();
 
 		// creates history (temp)
@@ -140,10 +140,18 @@ export default class Game {
 
 	placeInitialRandomBases () {
 		for (let i = 1; i <= 4; i++) {
-			let randCoord = this.getRandomCoordInPlayerRegion(i, 3);
+			let randCoord = this.getRandomCoordInPlayerRegion(i, 3, 10);
 			this.createNewBaseAtCoord("Base", String(i), randCoord[0], randCoord[1]);
 		}
 	}
+		/*for (let i = 1; i <= 4; i++) {
+			let baseZones = [0,0,0,1,1];
+			let zone = baseZones[Math.floor(Math.random() * baseZones.length)];
+			let randCoord = this.getRandomCoordInPlayerRegion(i, 3, zone);
+			console.log(i,randCoord[0], randCoord[1]);
+			this.createNewBaseAtCoord("Base", String(i), randCoord[0], randCoord[1]);
+		}
+	}*/
 
 	// creates new unit using type, player, and coordinates
 	createNewUnitAtCoord(unitType, player, x, y) {
@@ -334,11 +342,216 @@ collideProjWithObject(proj, obj, x, y) {
 	}
 }
 
-getRandomCoordInPlayerRegion(playerNumber, margin = 0)  {
+getPossibleTargets(unitName, x, y, player) {
 
-	let min = 0 + margin;
-	let randX = Math.floor(Math.random() * (((tempConfig.boardDimensions[1]/2) - margin) - min)) + min;
-	let randY = Math.floor(Math.random() * (((tempConfig.boardDimensions[0]/2) - margin) - min)) + min;
+	let tempArray = Units[unitName].orientations[player];
+	let finalArray = [];
+	let counter = 0;
+	let upperDistance = 30;
+	let lowerDistance = 1;
+	if(unitName == "Oscillator"){
+		upperDistance = 2;
+	}
+	else if(unitName == "Resonator"){
+		lowerDistance = 6;
+		upperDistance = 19;
+	}
+	else if(unitName == "Tripwire"){
+		//lowerDistance = 5;
+		upperDistance = 6;
+	}
+	else if(unitName == "Ballast"){
+		//lowerDistance = 5;
+		upperDistance = 2;
+	}
+	else if(unitName == "RedShifter"){
+		lowerDistance = 12;
+		//upperDistance = 2;
+	}
+	for(let i = 0; i < tempArray.length; i = i + 1){
+		let xx = lowerDistance;
+		while((tempArray[i][0]*xx+x) < 30 && (tempArray[i][0]*xx+x) >= 0 && xx < upperDistance){
+				let yy = 1;
+				finalArray[counter] =  [(tempArray[i][0]*xx+x),(tempArray[i][1]*xx+y)]
+				counter = counter + 1;
+				xx = xx + 1;
+		}
+	}
+	return finalArray;
+}
+
+getRandomCoordInPlayerRegion(playerNumber, margin = 0, zone)  {
+	//Six Possible Zones
+	//Zone 0 is the players back corner
+	//Zone 1 takes a step horizontally toward the other side of the board
+	let minY = margin;
+	let minX = margin;
+	let halfBoardX = (tempConfig.boardDimensions[1]/2);
+	let halfBoardY = (tempConfig.boardDimensions[0]/2);
+
+	let maxY = halfBoardY;
+	let maxX = halfBoardX;
+
+	if(zone == 0){
+		if(playerNumber == 1){
+			minX = 0;
+			minY = 0;
+			maxX = halfBoardX/3;
+			maxY = halfBoardY/2;
+		}
+		if(playerNumber == 2){
+			minX = 0;
+			minY = halfBoardY/2;
+			maxX = halfBoardX/3;
+			maxY = halfBoardY;
+		}
+		if(playerNumber == 3){
+			minX = halfBoardX*2/3;
+			minY = 0;
+			maxX = halfBoardX;
+			maxY = halfBoardY/2;
+		}
+		if(playerNumber == 4){
+			minX = halfBoardX*2/3;
+			minY = halfBoardY/2;
+			maxX = halfBoardX;
+			maxY = halfBoardY;
+		}
+}
+else if (zone == 1){
+	if(playerNumber == 1){
+		minX = halfBoardX/3;
+		minY = 0;
+		maxX = halfBoardX*2/3;
+		maxY = halfBoardY/2;
+	}
+	if(playerNumber == 2){
+		minX = halfBoardX/3;
+		minY = halfBoardY/2;
+		maxX = halfBoardX*2/3;
+		maxY = halfBoardY;
+	}
+	if(playerNumber == 3){
+		minX = halfBoardX/3;
+		minY = 0;
+		maxX = halfBoardX*2/3;
+		maxY = halfBoardY/2;
+	}
+	if(playerNumber == 4){
+		minX = halfBoardX/3;
+		minY = halfBoardY/2;
+		maxX = halfBoardX*2/3;
+		maxY = halfBoardY;
+	}
+}
+	else if (zone == 2){
+		if(playerNumber == 1){
+			minX = halfBoardX*2/3;
+			minY = 0;
+			maxX = halfBoardX;
+			maxY = halfBoardY/2;
+		}
+		if(playerNumber == 2){
+			minX = halfBoardX*2/3;
+			minY = halfBoardY/2;
+			maxX = halfBoardX;
+			maxY = halfBoardY;
+		}
+		if(playerNumber == 3){
+			minX = 0;
+			minY = 0;
+			maxX = halfBoardX/3;
+			maxY = halfBoardY/2;
+		}
+		if(playerNumber == 4){
+			minX = 0;
+			minY = halfBoardY/2;
+			maxX = halfBoardX/3;
+			maxY = halfBoardY;
+		}
+}
+else if (zone == 3){
+	if(playerNumber == 1){
+		minX = halfBoardX*2/3;
+		minY = halfBoardY/2;
+		maxX = halfBoardX;
+		maxY = halfBoardY;
+	}
+	if(playerNumber == 2){
+		minX = halfBoardX*2/3;
+		minY = 0;
+		maxX = halfBoardX;
+		maxY = halfBoardY/2;
+	}
+	if(playerNumber == 3){
+		minX = 0;
+		minY = halfBoardY/2;
+		maxX = halfBoardX/3;
+		maxY = halfBoardY;
+	}
+	if(playerNumber == 4){
+		minX = 0;
+		minY = 0;
+		maxX = halfBoardX/3;
+		maxY = halfBoardY/2;
+	}
+}
+else if (zone == 4){
+	if(playerNumber == 1){
+		minX = halfBoardX/3;
+		minY = halfBoardY/2;
+		maxX = halfBoardX*2/3;
+		maxY = halfBoardY;
+	}
+	if(playerNumber == 2){
+		minX = halfBoardX/3;
+		minY = 0;
+		maxX = halfBoardX*2/3;
+		maxY = halfBoardY/2;
+	}
+	if(playerNumber == 3){
+		minX = halfBoardX/3;
+		minY = halfBoardY/2;
+		maxX = halfBoardX*2/3;
+		maxY = halfBoardY;
+	}
+	if(playerNumber == 4){
+		minX = halfBoardX/3;
+		minY = 0;
+		maxX = halfBoardX*2/3;
+		maxY = halfBoardY/2;
+	}
+}
+else if (zone == 5){
+	if(playerNumber == 1){
+		minX = 0;
+		minY = halfBoardY/2;
+		maxX = halfBoardX/3;
+		maxY = halfBoardY;
+	}
+	if(playerNumber == 2){
+		minX = 0;
+		minY = 0;
+		maxX = halfBoardX/3;
+		maxY = halfBoardY/2;
+	}
+	if(playerNumber == 3){
+		minX = halfBoardX*2/3;
+		minY = halfBoardY/2;
+		maxX = halfBoardX;
+		maxY = halfBoardY;
+	}
+	if(playerNumber == 4){
+		minX = halfBoardX*2/3;
+		minY = 0;
+		maxX = halfBoardX;
+		maxY = halfBoardY/2;
+	}
+}
+
+	let randX = Math.floor(Math.random() * ((maxX - margin) - minX)) + minX;
+	let randY = Math.floor(Math.random() * ((maxY - margin) - minY)) + minY;
+
 
 	switch (playerNumber) {
 		case 1:
@@ -519,6 +732,7 @@ runSimulation(ticksPerTurn = tempConfig.ticksPerTurn) {
 	this.history.turn[this.turnNumber] = {
 		'tick': {}
 	};
+
 
 	for (let tick = 1; tick <= ticksPerTurn; tick++) {
 		this.numberOfProjectiles = this.tempNumberOfProjectiles;

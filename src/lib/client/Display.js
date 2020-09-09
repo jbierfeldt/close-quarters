@@ -22,6 +22,16 @@ export default class Display {
 		this.t = 1;
 	}
 
+	runLoadScreen (alpha) {
+		s.noStroke();
+		s.fill(0,alpha)
+		s.rect(0,0,s.width,s.height);
+		s.fill(255);
+		s.textFont(titleFont);
+		s.textAlign(s.CENTER);
+		s.text("LOADING", s.width/2,s.height/1.8);
+	}
+
 	init() {
 
 		let sketch = (s) => {
@@ -76,8 +86,9 @@ export default class Display {
 			let col_low;
 
 			let b;
-
+			let possibleTargets = [];
 			let hoverObject;
+			let fullBoardTrigger = 0;
 			//let flag = [0,0,0,0];
 
 			let full = true;
@@ -230,7 +241,7 @@ export default class Display {
 				else if(this.app.gamePhase === 0.5){
 					instructionSheet(si, this.app.playerNumber, this.playerColors);
 				}
-				else if(this.app.gamePhase === 1 && this.app.clientState !== 'SPECTATOR' && this.app.clientState !== 'DEFEATED_PLAYER'){
+				else if(this.app.gamePhase === 1 && this.app.clientState !== 'SPECTATOR' && this.app.clientState !== 'DEFEATED_PLAYER' && this.app.turnIsIn !== true){
 					justTriggered = 1;
 					this.t = 1;
 					animate = 0;
@@ -266,7 +277,7 @@ export default class Display {
 						s.fill(255);
 						s.stroke(0);
 						s.textSize(wi/26.5);
-						s.text("Place Second Core", wi/2+si*2-playerShifter,si*buttonScale*3.7);
+						s.text("Place Core", wi/2+si*3-playerShifter,si*buttonScale*3.7);
 						if(s.mouseIsPressed){
 							if(bBase.isInRange(s.mouseX,s.mouseY)){
 								bBase.buttonHasBeenPressed();
@@ -326,6 +337,8 @@ export default class Display {
 							unitButtons[i].drawButton();
 							if(unitButtons[i].isPressed == true){
 								showUnitDescription(unitButtons[i].text,this.app.playerNumber, wi, he, si);
+								possibleTargets = getPossibleTargets(unitButtons[i].text, hoverX, hoverY, this.app.playerNumber);
+
 							}
 						}
 						//drawUnitMenu(this.playerColors,this.app.playerNumber, buttonScale);
@@ -374,18 +387,22 @@ export default class Display {
 										if(this.app.playerNumber == 1 && hoverX <= 14 && hoverY < 10 && hoverX < 30 && hoverY < 20){
 											unitButtons[newButtonPressed].func.call(this.app,unitButtons[newButtonPressed].text, this.app.playerNumber, hoverX, hoverY);
 											unitButtons[newButtonPressed].isPressed=false;
+											possibleTargets = [];
 										}
 										else if(this.app.playerNumber == 2 && hoverX <= 14 && hoverY >= 10 && hoverX < 30 && hoverY < 20){
 											unitButtons[newButtonPressed].func.call(this.app,unitButtons[newButtonPressed].text, this.app.playerNumber, hoverX, hoverY);
 											unitButtons[newButtonPressed].isPressed=false;
+											possibleTargets = [];
 										}
 										else if(this.app.playerNumber == 3 && hoverX > 14 && hoverY < 10 && hoverX < 30 && hoverY < 20){
 											unitButtons[newButtonPressed].func.call(this.app,unitButtons[newButtonPressed].text, this.app.playerNumber, hoverX, hoverY);
 											unitButtons[newButtonPressed].isPressed=false;
+											possibleTargets = [];
 										}
 										else if(this.app.playerNumber == 4 && hoverX > 14 && hoverY >= 10 && hoverX < 30 && hoverY < 20){
 											unitButtons[newButtonPressed].func.call(this.app,unitButtons[newButtonPressed].text, this.app.playerNumber, hoverX, hoverY);
 											unitButtons[newButtonPressed].isPressed=false;
+											possibleTargets = [];
 										}
 									}
 								}
@@ -420,6 +437,9 @@ export default class Display {
 						s.fill(this.playerColors[a-1][0], this.playerColors[a-1][1], this.playerColors[a-1][2], this.playerColors[a-1][3]);
 						if (this.app.playersOnServer[a] !== null) {
 						switch (this.app.playersOnServer[a].gamePhase) {
+							case 'AI':
+								s.text("Orders Submitted", wi/35, he/1.75+(a-1)*si);
+								break
 							case 0:
 								s.text("Loading", wi/35, he/1.75+(a-1)*si);
 								break
@@ -431,7 +451,11 @@ export default class Display {
 								}
 								break
 							case 3:
-								s.text("Reviewing Board", wi/35, he/1.75+(a-1)*si);
+								if (this.app.playersOnServer[a].ordersSubmitted) {
+									s.text("Orders Submitted", wi/35, he/1.75+(a-1)*si);
+								} else {
+									s.text("Reviewing Board", wi/35, he/1.75+(a-1)*si);
+								}
 							  break
 							default:
 								s.text("Hypothesizing", wi/35, he/1.75+(a-1)*si);
@@ -452,7 +476,12 @@ export default class Display {
 						s.translate(-wi/2,he/2);
 					}
 					//Run the functions for drawing the players quadrant and the unit menu
-					drawQuarterGrid(this.stage.grid,this.playerColors,this.app.playerNumber);
+					if(fullBoardTrigger == 0){
+						drawQuarterGrid(this.stage.grid,this.playerColors,this.app.playerNumber);
+					}
+					else{
+						drawGrid(wi, he, si, this.playerColors);
+					}
 					let board = this.app.game.board;
 					for(var k=0; k<board.length; k=k+1){
 						for(var l=0; l<board[k].length; l=l+1){
@@ -460,7 +489,7 @@ export default class Display {
 								for(var m=0; m<board[k][l].length;m=m+1){
 									let displayObject = this.app.game.gameObjects.get(board[k][l][m]);
 									if(displayObject !== undefined){
-										if(displayObject.player == this.app.playerNumber){
+										if(displayObject.player == this.app.playerNumber || (fullBoardTrigger != 0 && this.app.turnNumber > 1)){
 											drawDisplayObject(displayObject, l, k, si, this.playerColors, animate);
 										}
 									}
@@ -468,6 +497,10 @@ export default class Display {
 							}
 						}
 					}
+					//Target path hovering
+
+
+
 
 
 					//Calculate which cell the mouse is currently hovering over and highlight it
@@ -510,15 +543,82 @@ export default class Display {
 					else{
 					if(this.app.playerNumber == 1 && hoverX <= 14 && hoverY < 10 && hoverX < 30 && hoverY < 20){
 						s.rect(hoverX*si,hoverY*si,si,si);
+						for(let i = 0; i < possibleTargets.length; i++){
+								s.fill(255,240,0,85);
+								s.noStroke();
+								s.rect(possibleTargets[i][0]*si,possibleTargets[i][1]*si,si);
+								if(possibleTargets.length == 1){
+									s.fill(255,85);
+									s.stroke(0,85);
+									s.textSize(wi/40);
+									s.textFont(titleFont);
+									s.textAlign(s.CENTER);
+									s.text("?",possibleTargets[i][0]*si+si/2,possibleTargets[i][1]*si+si/1.4);
+									s.textAlign(s.LEFT);
+								}
+								//let tarX = possibleTargets[i][0];
+								fullBoardTrigger = 1;
+							}
 					}
 					else if(this.app.playerNumber == 2 && hoverX<=14 && hoverY >= 10 && hoverX < 30 && hoverY < 20){
 						s.rect(hoverX*si,hoverY*si,si,si);
+						for(let i = 0; i < possibleTargets.length; i++){
+								s.fill(255,240,0,105);
+								s.noStroke();
+								s.rect(possibleTargets[i][0]*si,possibleTargets[i][1]*si,si);
+								if(possibleTargets.length == 1){
+									s.fill(255,85);
+									s.stroke(0,85);
+									s.textSize(wi/40);
+									s.textFont(titleFont);
+									s.textAlign(s.CENTER);
+									s.text("?",possibleTargets[i][0]*si+si/2,possibleTargets[i][1]*si+si/1.4);
+									s.textAlign(s.LEFT);
+								}
+								fullBoardTrigger = 1;
+								//let tarX = possibleTargets[i][0];
+							}
 					}
 					else if(this.app.playerNumber == 3 && hoverX>14 && hoverY < 10 && hoverX < 30 && hoverY < 20){
 						s.rect(hoverX*si,hoverY*si,si,si);
+						for(let i = 0; i < possibleTargets.length; i++){
+								s.fill(255,240,0,105);
+								s.noStroke();
+								s.rect(possibleTargets[i][0]*si,possibleTargets[i][1]*si,si);
+								if(possibleTargets.length == 1){
+									s.fill(255,85);
+									s.stroke(0,85);
+									s.textSize(wi/40);
+									s.textFont(titleFont);
+									s.textAlign(s.CENTER);
+									s.text("?",possibleTargets[i][0]*si+si/2,possibleTargets[i][1]*si+si/1.4);
+									s.textAlign(s.LEFT);
+								}
+								fullBoardTrigger = 1;
+								//let tarX = possibleTargets[i][0];
+							}
 					}
 					else if(this.app.playerNumber == 4 && hoverX>14 && hoverY >= 10 && hoverX < 30 && hoverY < 20){
 						s.rect(hoverX*si,hoverY*si,si,si);
+						for(let i = 0; i < possibleTargets.length; i++){
+								s.fill(255,240,0,105);
+								s.noStroke();
+								s.rect(possibleTargets[i][0]*si,possibleTargets[i][1]*si,si);
+								if(possibleTargets.length == 1){
+									s.fill(255,85);
+									s.stroke(0,85);
+									s.textSize(wi/40);
+									s.textFont(titleFont);
+									s.textAlign(s.CENTER);
+									s.text("?",possibleTargets[i][0]*si+si/2,possibleTargets[i][1]*si+si/1.4);
+									s.textAlign(s.LEFT);
+								}
+								fullBoardTrigger = 1;
+								//let tarX = possibleTargets[i][0];
+							}
+					}
+					else{
+						fullBoardTrigger = 0;
 					}
 }
 
@@ -800,7 +900,7 @@ export default class Display {
 					s.text("Deploy Machines", wi+si/1.3, si*4.5);
 					s.textSize(si*1.25);
 					s.textAlign(s.CENTER);
-					s.text("Score" , wi+wi*.125, si*7.5);
+					s.text("Score" , wi+wi*.125, si*8.5);
 					s.line(wi+wi*.1,si*8.5,s.width-wi*.1,si*8.5)
 					s.stroke(255);
 					s.fill(255,100);
@@ -811,38 +911,31 @@ export default class Display {
 					for(let a = 0; a < 4; a = a + 1){
 						s.fill(this.playerColors[a][0], this.playerColors[a][1], this.playerColors[a][2], this.playerColors[a][3]);
 						if(this.app.game.players[a].victoryCondition == - 1){
-							s.text("Defeated" , wi+wi*.125, si*9+a*si);
+							s.text("Defeated" , wi+wi*.125, si*10+a*si);
 						}
 						else{
-						s.text("- " + this.app.game.players[a].score+ " -", wi+wi*.125, si*9+a*si);
+						s.text("- " + this.app.game.players[a].score+ " -", wi+wi*.125, si*10+a*si);
 						}
 					}
 					s.textFont(titleFont);
 					s.textAlign(s.LEFT);
 					s.textSize(si*1.1);
-					drawCreditsSymbol(wi+si/.42, si*15, si*1.3, this.app.playerNumber, 10, this.playerColors);
+					drawCreditsSymbol(wi+si/.42, si*16, si*1.3, this.app.playerNumber, 10, this.playerColors);
 					s.stroke(0);
 					s.strokeWeight(2);
-					s.text(":  "+this.app.game.players[this.app.playerNumber-1].credits, wi+si/.25, si*15.4);
+					s.text(":  "+this.app.game.players[this.app.playerNumber-1].credits, wi+si/.25, si*16.4);
 					//Scrolling Bar;
 					s.textSize(si*1.7);
-
 					s.textFont(standardFont);
 					let scroller = this.delay/250;
 					s.text("Damage Dealt: "+ this.app.game.players[this.app.playerNumber-1].damageDealtThisTurn, -s.width+3*s.width*(scroller-Math.floor(scroller)), s.height-si*1.7);
-					//s.translate(-s.width/1.5, 0);
-					//scroller = (this.delay+300)/230;
 					scroller = (this.delay+ 60)/250;
 					s.text("Machines Lost: "+ this.app.game.players[this.app.playerNumber-1].unitsLostThisTurn, -s.width+3*s.width*(scroller-Math.floor(scroller)), s.height-si*1.7);
-					//scroller = (this.delay+600)/230;
-					//s.translate(-s.width/1.5, 0);
 					scroller = (this.delay + 120)/250;
 					s.text("Machines Destroyed: "+ this.app.game.players[this.app.playerNumber-1].unitsKilledThisTurn, -s.width+3*s.width*(scroller-Math.floor(scroller)), s.height-si*1.7);
-				//	scroller = (this.delay+150)/230;
-				 // s.translate(-s.width/1.5, 0);
 				 scroller = (this.delay - 60)/250;
 					s.text("Credits Earned: "+ this.app.game.players[this.app.playerNumber-1].creditsEarnedThisTurn, -s.width+3*s.width*(scroller-Math.floor(scroller)), s.height-si*1.7);
-					//s.translate(3*s.width/1.5 , 0);
+
 					if(s.mouseIsPressed && bPhaseOne.isInRange(s.mouseX,s.mouseY)){
 						bPhaseOne.func.call(this.app,1);
 					}
@@ -864,13 +957,14 @@ export default class Display {
 				s.textAlign(s.LEFT);
 			}
 			//Load Screen Logic Below
-			if(this.app.turnIsIn == true){
+		  if(this.app.turnIsIn == true){
+
 				if(justTriggered = 1){
-					alpha = 155;
+					alpha = 255;
 					justTriggered = 0;
 				}
 				else{
-					//alpha = alpha + .1;
+					alpha = alpha + 1;
 				}
 				runLoadScreen(alpha);
 			}
@@ -931,6 +1025,44 @@ export default class Display {
 				}
 			}
 		}
+		function getPossibleTargets(unitName, x, y, player) {
+
+			let tempArray = Units[unitName].orientations[player];
+			let finalArray = [];
+			let counter = 0;
+			let upperDistance = 30;
+			let lowerDistance = 1;
+			if(unitName == "Oscillator"){
+				upperDistance = 2;
+			}
+			else if(unitName == "Resonator"){
+				lowerDistance = 6;
+				upperDistance = 19;
+			}
+			else if(unitName == "Tripwire"){
+				//lowerDistance = 5;
+				upperDistance = 6;
+			}
+			else if(unitName == "Ballast"){
+				//lowerDistance = 5;
+				upperDistance = 2;
+			}
+			else if(unitName == "RedShifter"){
+				lowerDistance = 12;
+				//upperDistance = 2;
+			}
+			for(let i = 0; i < tempArray.length; i = i + 1){
+				let xx = lowerDistance;
+				while((tempArray[i][0]*xx+x) < 30 && (tempArray[i][0]*xx+x) >= 0 && xx < upperDistance){
+						let yy = 1;
+						finalArray[counter] =  [(tempArray[i][0]*xx+x),(tempArray[i][1]*xx+y)]
+						counter = counter + 1;
+						xx = xx + 1;
+				}
+			}
+		  return finalArray;
+		}
+
 		function instructionSheet(size, player, pColors){
 			s.background(0);
 			s.textFont(titleFont);
@@ -1014,11 +1146,16 @@ export default class Display {
 		}
 
 		function runLoadScreen(alpha){
-			s.stroke(255);
+			s.noStroke();
 			s.fill(0,alpha)
 			s.rect(0,0,s.width,s.height);
-
+			s.fill(255);
+			s.textFont(titleFont);
+			s.textAlign(s.CENTER);
+			s.text("LOADING", s.width/2,s.height/1.8);
+			console.log(alpha);
 		}
+
 		function showUnitDescription(unitType, player, wid, hei, siz){
 			let tranX = 0;
 			let tranY = 0;
@@ -1997,12 +2134,11 @@ function drawCreditsSymbol(x, y, size, player, a, pColors){
 			let meh=0;
 			let osx=0;
 			let osy=0;
-			let wave = proj.damage;
-			// 4+(x*y)%15;
+			let wave = Math.floor(proj.damage);
 			let rad = 360;
 			let radius=size/25;
 			for (let i = 0; i < rad; i = i + 18){
-				s.stroke(pColors[player-1][0],pColors[player-1][1],pColors[player-1][2], 23-a);
+				s.stroke(pColors[player-1][0],pColors[player-1][1],pColors[player-1][2], 25+2*s.abs(a-4.5));
 				theta = i*(360/rad);
 				phase=((Math.PI)/rad);
 				meh = (radius*1.8+11.5)*s.sin(wave*theta+phase)*s.cos(phase);
@@ -2014,7 +2150,7 @@ function drawCreditsSymbol(x, y, size, player, a, pColors){
 				s.point(osx+refx,osy+refy);
 				s.strokeWeight(3);
 				s.point(osx+refx,osy+refy);
-				s.stroke(255,150-17*s.abs(a-4.5));
+				s.stroke(255,160-17*s.abs(a-4.5));
 				s.strokeWeight(1);
 				s.point(osx+refx,osy+refy);
 			}
@@ -2038,5 +2174,6 @@ function drawCreditsSymbol(x, y, size, player, a, pColors){
 
 
 }
+
 
 }

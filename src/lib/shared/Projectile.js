@@ -124,7 +124,7 @@ export class OscBullet extends Projectile {
 }
 
 export class MagBullet extends Projectile {
-	constructor(player, initialOrientation = [0, 0], initialSpeed = 0, unit, damage = 80, distance = 0, id)  {
+	constructor(player, initialOrientation = [0, 0], initialSpeed = 0, unit, damage = 50, distance = 0, id)  {
 		super(player, initialOrientation, initialSpeed, unit, id);
 		this.identifier = "MagProj";
 		this.damage = damage;
@@ -155,7 +155,7 @@ export class JugBullet extends Projectile {
 	constructor(player, initialOrientation = [0, 0], initialSpeed = 0, unit, id)  {
 		super(player, initialOrientation, initialSpeed, unit, id);
 		this.identifier = "JugProj";
-		this.damage = 5;
+		this.damage = 3;
 		this.ableToBeDestroyed = false;
 
 	}
@@ -201,7 +201,7 @@ export class BalBullet extends Projectile {
 }
 
 export class CirBullet extends Projectile {
-	constructor(player, initialOrientation = [0, 0], initialSpeed = 0, unit, damage = 0, distance = 5 + Math.floor(Math.random()*11), id)  {
+	constructor(player, initialOrientation = [0, 0], initialSpeed = 0, unit, damage = 0, distance = 6 + Math.floor(Math.random()*11), id)  {
 		super(player, initialOrientation, initialSpeed, unit, id);
 		//distance = 4 + Math.floor(Math.random()*5
 		this.identifier = "CirProj";
@@ -222,7 +222,7 @@ export class CirBullet extends Projectile {
 	}
 
 	update(tick) {
-		///COME BACK TO 
+		///COME BACK TO
 		super.update(tick);
 		this.firing=false;
 		if(this.distance === 1){
