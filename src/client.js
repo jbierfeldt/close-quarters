@@ -94,6 +94,7 @@ class App {
 		this.socket.on('turnsSubmitted', () => {
 			debug.log(0, 'all turns submitted');
 			this.turnIsIn = true;
+
 		});
 
 		this.socket.on('simulationSuccessful', (data) => {
