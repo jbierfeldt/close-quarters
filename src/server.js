@@ -393,9 +393,8 @@ class GameController {
 
 		// AI generate orders for next turn
 		for (let i = 1; i <= 4; i++) {
-			if (this.playerSpots[i] instanceof BasicAI) {
-				if (this.game)
-				this.playerSpots[i].createRandomUnit();
+			if (this.playerSpots[i] instanceof BasicAI && this.game.players[i-1].victoryCondition !== -1) {
+				this.playerSpots[i].generateOrders(0);
 			}
 		}
 	}
