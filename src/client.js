@@ -18,7 +18,7 @@ class App {
 		this.display = null;
 		this.gameState = undefined;
 		this.socket = undefined;
-		
+
 		this.gamePhase = undefined;
 		this.currentTurnOrders = [];
 
@@ -94,6 +94,7 @@ class App {
 		this.socket.on('turnsSubmitted', () => {
 			debug.log(0, 'all turns submitted');
 			this.turnIsIn = true;
+
 		});
 
 		this.socket.on('simulationSuccessful', (data) => {

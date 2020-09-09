@@ -22,6 +22,16 @@ export default class Display {
 		this.t = 1;
 	}
 
+	runLoadScreen (alpha) {
+		s.noStroke();
+		s.fill(0,alpha)
+		s.rect(0,0,s.width,s.height);
+		s.fill(255);
+		s.textFont(titleFont);
+		s.textAlign(s.CENTER);
+		s.text("LOADING", s.width/2,s.height/1.8);
+	}
+
 	init() {
 
 		let sketch = (s) => {
@@ -231,7 +241,7 @@ export default class Display {
 				else if(this.app.gamePhase === 0.5){
 					instructionSheet(si, this.app.playerNumber, this.playerColors);
 				}
-				else if(this.app.gamePhase === 1 && this.app.clientState !== 'SPECTATOR' && this.app.clientState !== 'DEFEATED_PLAYER'){
+				else if(this.app.gamePhase === 1 && this.app.clientState !== 'SPECTATOR' && this.app.clientState !== 'DEFEATED_PLAYER' && this.app.turnIsIn !== true){
 					justTriggered = 1;
 					this.t = 1;
 					animate = 0;
@@ -940,13 +950,14 @@ export default class Display {
 				s.textAlign(s.LEFT);
 			}
 			//Load Screen Logic Below
-			if(this.app.turnIsIn == true){
+		  if(this.app.turnIsIn == true){
+
 				if(justTriggered = 1){
-					alpha = 155;
+					alpha = 255;
 					justTriggered = 0;
 				}
 				else{
-					//alpha = alpha + .1;
+					alpha = alpha + 1;
 				}
 				runLoadScreen(alpha);
 			}
@@ -1128,11 +1139,16 @@ export default class Display {
 		}
 
 		function runLoadScreen(alpha){
-			s.stroke(255);
+			s.noStroke();
 			s.fill(0,alpha)
 			s.rect(0,0,s.width,s.height);
-
+			s.fill(255);
+			s.textFont(titleFont);
+			s.textAlign(s.CENTER);
+			s.text("LOADING", s.width/2,s.height/1.8);
+			console.log(alpha);
 		}
+
 		function showUnitDescription(unitType, player, wid, hei, siz){
 			let tranX = 0;
 			let tranY = 0;
@@ -2151,5 +2167,6 @@ function drawCreditsSymbol(x, y, size, player, a, pColors){
 
 
 }
+
 
 }
