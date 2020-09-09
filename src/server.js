@@ -277,8 +277,6 @@ class GameController {
 			}
 		}
 
-		console.log(playerSpots);
-
 		this.io.emit('updateServerState', {
 			players: JSON.stringify(playerSpots)
 		});
