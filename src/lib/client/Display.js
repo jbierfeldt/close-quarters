@@ -451,7 +451,11 @@ export default class Display {
 								}
 								break
 							case 3:
-								s.text("Reviewing Board", wi/35, he/1.75+(a-1)*si);
+								if (this.app.playersOnServer[a].ordersSubmitted) {
+									s.text("Orders Submitted", wi/35, he/1.75+(a-1)*si);
+								} else {
+									s.text("Reviewing Board", wi/35, he/1.75+(a-1)*si);
+								}
 							  break
 							default:
 								s.text("Hypothesizing", wi/35, he/1.75+(a-1)*si);
