@@ -3,9 +3,10 @@ const debug = new DEBUG(process.env.DEBUG, 0);
 
 export default class ClientController {
 
-	constructor({ id, token }) {
+	constructor({ id, token, connectionHandler }) {
 		this.id = id; // UUID for client, using UUID from first socket
 		this.token = token; // signed auth token
+		this.connectionHandler = connectionHandler; // reference to connectionHandler
 
 		this.socket = null;
 		this.gameController = null;
@@ -20,34 +21,25 @@ export default class ClientController {
 		this.clientState = null; // null, SPECTATOR, ACTIVE_PLAYER, DEFEATED_PLAYER
 	}
 
-	init() {
-	}
-
 	onConnect() {
 		this.sendClientInfo();
 		this.socket.emit("debugInfoUpdate");
 	}
 
-	setSocket(socket) {
-		if (this.socket !== null) {
-			this.removeListeners();
-			this.socket.disconnect();
-		};
+	// setSocket(socket) {
+	// 	// if the clientController already has a socket,
+	// 	// remove its listeners and disconnect it
+	// 	if (this.socket !== null) {
+	// 		this.removeListeners();
+	// 		this.socket.disconnect();
+	// 	};
 
-		this.socket = socket;
+	// 	// store reference to the new socket
+	// 	this.socket = socket;
 
-		this.bindListeners();
-	}
-
-	setGameController(gameController) {
-		if (this.gameController !== null) {
-			this.removeListeners();
-			// this.gameController.unsubscribe(this) ? something like this?
-		}
-
-		this.gameController = gameController;
-		this.bindGameListeners();
-	}
+	// 	// bind new listeners to socket
+	// 	this.bindListeners();
+	// }
 
 	removeListeners() {
 		this.socket.removeAllListeners();
@@ -57,9 +49,34 @@ export default class ClientController {
 		this.socket.on('connection', () => {
 			console.log('client ' + this.id + 'connect');
 		})
+
+		this.socket.on('printServerData', () => {
+			this.connectionHandler.printConnectionInformation();
+		})
+
+		this.socket.on('joinGame', (data) => {
+			this.connectionHandler.attemptClientJoinGameRoom(this, data.gameID);
+		})
 	}
 
-	bindGameListeners() {
+	bindGameListeners () {
+
+		// (re-)bind regular listeners as well
+		this.removeListeners();
+		this.bindListeners();
+
+		this.socket.on('getOpenPlayerSpot', () => {
+			console.log(this.gameController.id, this.gameController.playerSpots);
+			this.gameController.getOpenPlayerSpot();
+		})
+
+
+	}
+
+	oldbindGameListeners() {
+
+		// bind regular listeners as well
+		this.bindListeners();
 
 		this.socket.on('connection', () => {
 			console.log('client ' + this.id + 'connect');
@@ -76,7 +93,6 @@ export default class ClientController {
 
 		this.socket.on('submitTurn', (data) => {
 			debug.log(0, `Received submit turn with ${data}`);
-			this.eventHandler.publish('turnSubmitted', data);
 			// will update game controller saying that this player has submitted their turn
 			// for now, just forcing runSimulation
 			this.ordersToExecute = JSON.parse(data);
@@ -96,20 +112,17 @@ export default class ClientController {
 			this.gameController.forceOrders();
 		});
 
-		this.socket.on('printServerData', () => {
-			this.eventHandler.publish('printServerData');
-			this.gameController.printServerData();
-		});
+		// this.socket.on('printServerData', () => {
+		// 	this.gameController.printServerData();
+		// });
 
 		this.socket.on('resetGame', (data) => {
 			// reset Game
-			this.eventHandler.publish('resetGame', data);
 			this.gameController.resetGame();
 		});
 
 		this.socket.on('loadSnapshot', (data) => {
 			debug.log(0, `Got loadSnapshot`);
-			this.eventHandler.publish('loadSnapshot', data);
 
 			try {
 				let snapshot = JSON.parse(data);
@@ -126,13 +139,11 @@ export default class ClientController {
 
 		this.socket.on('updateClientPhase', (data) => {
 			this.clientGamePhase = data.newPhase;
-			this.eventHandler.publish('updateClientPhase', data);
 			this.gameController.sendServerStateToAll();
 		})
 
 		this.socket.on('disconnect', (reason) => {
 			console.log("disconnected", this.id, this.socket.id, reason);
-			this.eventHandler.publish('disconnected', reason);
 			this.gameController.clientControllerDisconnect(this);
 			this.gameController.sendServerStateToAll();
 
@@ -171,9 +182,10 @@ export default class ClientController {
 	sendClientInfo() {
 		this.socket.emit("updateClientInfo", {
 			'clientID': this.id,
-			'token': this.token,
-			'clientState': this.clientState,
-			'playerNumber': this.playerNumber
+			// 'gameID': this.gameController.game.id,
+			'token': this.token
+			// 'clientState': this.clientState,
+			// 'playerNumber': this.playerNumber
 		});
 	}
 

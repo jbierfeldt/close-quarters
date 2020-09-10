@@ -25,13 +25,8 @@ const CONFIG = {
 	maxPlayers: 4
 }
 
-const game1 = new GameController(IO);
-game1.init();
-
 const connectionHandler = new ConnectionHandler(IO, SERVER_SECRET_KEY);
 connectionHandler.init();
-
-
 
 app.set('port', port);
 app.use('/static', express.static(__dirname + '/static'));

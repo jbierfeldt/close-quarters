@@ -6,7 +6,7 @@ const debug = new DEBUG(true, 5);
 export class Base {
 
 	constructor(player, health = 1000, id, collidedWith = [false, 4]) {
-		this.id = id || 'base'+createID();
+		this.id = id || 'base_'+createID();
 		this.player = player;
 		//this.maxHealth = 1000;
 		this.health = health;

@@ -132,11 +132,12 @@ class App {
 			this.updateTokenInfo(data.token);
 
 			this.clientID = data.clientID;
+			this.gameID = data.gameID;
 			this.playerNumber = data.playerNumber;
 			this.clientState = data.clientState;
 
 			// if first time getting clientInfo, start Display
-			if (this.loadedClientInfoFromServer === false) {
+			if (this.loadedClientInfoFromServer === false && this.gameID) {
 				this.onFinishedLoading();
 				this.loadedClientInfoFromServer = true;
 			}
@@ -213,6 +214,7 @@ class App {
 	}
 
 	sendPrintServerData () {
+		debug.log(1, 'requesting server print connection info');
 		this.socket.emit('printServerData');
 	}
 
@@ -220,6 +222,12 @@ class App {
 		debug.log(1, "Resetting game!");
 		this.setGamePhase(0);
 		this.socket.emit('resetGame');
+	}
+
+	sendJoinGame () {
+		let gameID = document.getElementById("join-game-id").value;
+		debug.log(1, `Attempting to join game ${gameID}`);
+		this.socket.emit('joinGame', {gameID:  gameID});
 	}
 
 	setGamePhase (phase) {
@@ -293,6 +301,7 @@ class App {
 		document.getElementById("authdump").addEventListener("click", function(){ localStorage.authToken = ''; window.open(window.location.href,'_blank'); });
 		document.getElementById("save-snapshot").addEventListener("click", this.saveSnapshot.bind(this));
 		document.getElementById("load-snapshot").addEventListener("click", this.loadSnapshot.bind(this));
+		document.getElementById("join-game").addEventListener("click", this.sendJoinGame.bind(this));
 	}
 
 	saveSnapshot () {
@@ -317,6 +326,7 @@ class App {
 
 		const debugData = {
 			'clientID': this.clientID,
+			'gameID': this.gameID,
 			'clientState': this.clientState,
 			'playerNumber': this.playerNumber,
 			'turnNumber': this.turnNumber,

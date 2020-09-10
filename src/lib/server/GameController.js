@@ -1,14 +1,14 @@
 import { DEBUG, createID } from '../shared/utilities.js';
 const debug = new DEBUG(process.env.DEBUG, 0);
 import Game from '../shared/Game.js';
+import BasicAI from '../shared/AI.js';
 
 export default class GameController {
 
-	constructor(IO_INSTANCE, game = new Game()) {
-		this.game = game;
+	constructor({ id, IO_INSTANCE }) {
+		this.id = id;
+		this.game = new Game();
 		this.io = IO_INSTANCE;
-
-		this.playersOnline = [];
 
 		this.clientControllers = [];
 
@@ -25,41 +25,25 @@ export default class GameController {
 
 		this.game.init();
 
-		// if authToken matches that of extant clientController, reconnect player to clientController
-
-		// this.io.on('connection', (socket) => {
-		// 	// debug.log(0, `a new client ${socket.id} connected`);
-		//
-		// 	// check for already existing token and if so, don't make new player controller
-		// 	if (socket.sessionID) {
-		// 		for (let i = 0; i < this.clientControllers.length; i++) {
-		// 			if (socket.sessionID === this.clientControllers[i].id) {
-		// 				this.clientControllerReconnect(this.clientControllers[i], socket);
-		// 			}
-		// 		}
-		// 	} else {
-		// 		// get player spot if available
-		// 		let playerSpot = this.getOpenPlayerSpot(); // returns playerSpot or false
-		//
-		// 		if (playerSpot === false) {
-		// 			// don't allow new player to enter game, create spectator
-		// 			debug.log(1, "Game full.");
-		// 		}
-		//
-		// 		let newClientController = this.newClientController(playerSpot);
-		// 		this.clientControllerConnect(newClientController, socket);
-		// 		console.log('connected', newClientController.playerNumber, newClientController.id, newClientController.socket.id);
-		// 	}
-		//
-		// 	this.sendServerStateToAll();
-		//
-		// });
-
 	}
 
-	generatePlayerToken(token_seed) {
-		const token = jwt.sign(token_seed, SECRET_KEY);
-		return token;
+	sendMessage () {
+		this.io.to(this.id).emit('message', this.id);
+	}
+
+	// function to be run when a clientController disconnects
+	disconnectClientController (clientController) {
+
+		this.clientControllers = this.clientControllers.filter( (member) => {
+			if (member === clientController) {
+				return false;
+			}
+			return true
+		});
+		
+		// remove clientController from this.clientControllers
+		// check if any existing clientControllers, if not, destruct
+		// (likely achieved through telling the connectionHandler to delete)
 	}
 
 	resetGame() {
@@ -82,22 +66,12 @@ export default class GameController {
 
 		console.log('loading snapshot');
 
-		// // reset game just in case
-		// let newGame = new Game();
-		// this.game = newGame;
-		// this.game.init();
-
 		this.game.turnNumber = snapshot.turnNumber;
 		let gameState = JSON.parse(snapshot.currentTurnInitialState);
 		gameState = this.game.rebuildGameSnapshot(gameState);
-		// this.game.currentTurnInitialState = gameState;
 		this.game.loadGameSnapshot(gameState);
 
-		// console.log(JSON.stringify(this.game.createGameSnapshot()));
-		//
-		// this.setGamePhaseForAll(0);
 		this.sendGameStateToAll();
-		// this.sendLastTurnHistoryToAll();
 	}
 
 	getOpenPlayerSpot() {
@@ -109,72 +83,56 @@ export default class GameController {
 		return false;
 	}
 
-	newClientController(playerSpot) {
-		// create new token with unique id
-		let id = createID();
-		let token = this.generatePlayerToken(id);
+	// clientControllerConnect(clientController, newSocket) {
 
-		let pc = new ClientController(this, id, token, playerSpot);
+	// 	clientController.setSocket(newSocket);
+	// 	clientController.isConnected = true;
 
-		if (playerSpot !== false) {
-			this.playerSpots[playerSpot] = pc;
-		}
+	// 	if (clientController.playerNumber) {
+	// 		clientController.setClientStateFromVictoryCondition(this.game.players[clientController.playerNumber - 1].victoryCondition);
+	// 	} else {
+	// 		clientController.clientState = 'SPECTATOR';
+	// 		clientController.sendClientState();
+	// 	}
 
-		this.clientControllers.push(pc);
+	// 	clientController.onConnect();
 
-		return pc;
-	}
+	// 	this.playersOnline.push(clientController);
 
-	clientControllerConnect(clientController, newSocket) {
+	// 	this.sendGameStateToClient(clientController.socket);
+	// 	this.sendLastTurnHistoryToClient(clientController.socket);
 
-		clientController.setSocket(newSocket);
-		clientController.isConnected = true;
+	// 	// console.log('connected', clientController.playerNumber, clientController.id, clientController.socket.id);
 
-		if (clientController.playerNumber) {
-			clientController.setClientStateFromVictoryCondition(this.game.players[clientController.playerNumber - 1].victoryCondition);
-		} else {
-			clientController.clientState = 'SPECTATOR';
-			clientController.sendClientState();
-		}
+	// }
 
-		clientController.onConnect();
+	// clientControllerDisconnect(clientController) {
+	// 	clientController.isConnected = false;
+	// 	clientController.clientState = "DISCONNECTED";
 
-		this.playersOnline.push(clientController);
+	// 	if (clientController.playerNumber) {
+	// 		this.playerSpots[clientController.playerNumber] = null;
+	// 	}
 
-		this.sendGameStateToClient(clientController.socket);
-		this.sendLastTurnHistoryToClient(clientController.socket);
+	// 	const idx = this.playersOnline.indexOf(clientController);
+	// 	this.playersOnline.splice(idx, 1);
 
-		// console.log('connected', clientController.playerNumber, clientController.id, clientController.socket.id);
+	// 	// console.log('disconnect', clientController.playerNumber, clientController.id);
+	// }
 
-	}
+	// clientControllerReconnect(clientController, newSocket) {
 
-	clientControllerDisconnect(clientController) {
-		clientController.isConnected = false;
-		clientController.clientState = "DISCONNECTED";
+	// 	// if client already has a playerNumber and that playerSpot is free, reclaim it
+	// 	if (clientController.playerNumber
+	// 		&& this.playerSpots[clientController.playerNumber] === null) {
+	// 		this.playerSpots[clientController.playerNumber] = clientController;
+	// 	}
 
-		if (clientController.playerNumber) {
-			this.playerSpots[clientController.playerNumber] = null;
-		}
+	// 	this.clientControllerConnect(clientController, newSocket);
 
-		const idx = this.playersOnline.indexOf(clientController);
-		this.playersOnline.splice(idx, 1);
+	// 	console.log('reconnected', clientController.playerNumber, clientController.id, clientController.socket.id);
 
-		// console.log('disconnect', clientController.playerNumber, clientController.id);
-	}
-
-	clientControllerReconnect(clientController, newSocket) {
-
-		// if client already has a playerNumber and that playerSpot is free, reclaim it
-		if (clientController.playerNumber
-			&& this.playerSpots[clientController.playerNumber] === null) {
-			this.playerSpots[clientController.playerNumber] = clientController;
-		}
-
-		this.clientControllerConnect(clientController, newSocket);
-
-		console.log('reconnected', clientController.playerNumber, clientController.id, clientController.socket.id);
-
-	}
+	// }
 
 	setGamePhaseForAll(phase) {
 		this.io.emit('updateClientGamePhase', {

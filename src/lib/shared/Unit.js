@@ -11,7 +11,7 @@ const debug = new DEBUG(true, 5);
 export default class Unit {
 
 	constructor(id = undefined)  {
-		this.id = id || 'unit'+createID();
+		this.id = id || 'unit_'+createID();
 		this.health = 0;
 		this.invulnerable=false;
 		this.objCategory = "Units";
