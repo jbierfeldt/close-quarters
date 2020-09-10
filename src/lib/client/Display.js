@@ -18,6 +18,7 @@ export default class Display {
 		this.playerColors = [[255,0,128,255],[176,196,243,255],[152, 255, 152,255],[210,130,240,255]];
 		this.unitList = [];
 		this.delay = 0;
+		this.integerRising = 0;
 		this.board = [[]];
 		this.t = 1;
 	}
@@ -134,7 +135,8 @@ export default class Display {
 				hoverY=s.int(s.mouseY/si);
 
 				//Delay serves as a variable that has a constant increment for animation
-				this.delay=this.delay+.19+s.deltaTime/500;
+				this.delay=this.delay+.19+s.deltaTime/450;
+				this.integerRising = this.integerRising + 1;
 
 
 				//playerShifter shifts the Button Menu if the player is on the right side of the screen
@@ -219,15 +221,26 @@ export default class Display {
 					}
 
 					s.strokeWeight(4);
-					s.text("Close",s.width/3.05,s.height/2.4);
-					s.text("Quarters",s.width/4.45,s.height/1.6);
-
+					s.textAlign(s.CENTER);
+					s.text("Close",s.width/2,s.height/2.4);
+					s.text("Quarters",s.width/2,s.height/1.6);
+					if(this.delay > 100){
+						s.textSize(wi/15);
+						if(s.sin(s.radians(3*this.integerRising)) > -0.45){
+							s.fill(210,130,240,201);
+							s.text("Click To Begin",s.width/2,s.height/1.15);
+						}
+					}
+					s.textAlign(s.LEFT);
+					s.textSize(wi/9);
 					//buttonScale sets the size of the buttons(dependent on their overall number)
 
 
 					if(s.mouseIsPressed){
 
 					//	if (!debug.enabled) {
+							//runLoadScreen(this.delay);
+
 							s.fullscreen(full);
 							s.resizeCanvas(window.screen.height*1.5, window.screen.height);
 					//	}
@@ -239,7 +252,7 @@ export default class Display {
 					//Exit this phase and move to the Battle Phase if the mouse is pressed(button trigger to be added)
 				}
 				else if(this.app.gamePhase === 0.5){
-					instructionSheet(si, this.app.playerNumber, this.playerColors);
+					displayMatchmaking(si, this.app.playerNumber, this.playerColors);
 				}
 				else if(this.app.gamePhase === 1 && this.app.clientState !== 'SPECTATOR' && this.app.clientState !== 'DEFEATED_PLAYER' && this.app.turnIsIn !== true){
 					justTriggered = 1;
@@ -1056,16 +1069,22 @@ export default class Display {
 		  return finalArray;
 		}
 
-		function instructionSheet(size, player, pColors){
+		function displayMatchmaking(size, player, pColors){
+
 			s.background(0);
 			s.textFont(titleFont);
+			s.textSize(size);
 			s.strokeWeight(2);
 			s.stroke(0);
-			s.fill(pColors[player-1][0],pColors[player-1][1],pColors[player-1][2],255);
+			s.fill(255,0,128,255);
 			s.textAlign(s.CENTER);
-			s.text("As A Master Machine Maker, You Are Ready To ", width/2,height/2);
+			s.text("Join Game",width/4,height/4);
+			s.text("Create New Game",3*width/4,height/4);
+			s.fill(176,196,243,255);
+			s.text("As a master tactition, you are ready to command electromagnetic machines in a war of ", width/2,height/2);
 			s.textAlign(s.LEFT);
 		}
+
 		function tooltip(hoverX,hoverY, b, tick, wi, he, si, pColors, sdt, app){
 			if(b[hoverY][hoverX].length != 0){
 				if(app.gamePhase != 1){
@@ -1146,7 +1165,7 @@ export default class Display {
 			s.textFont(titleFont);
 			s.textAlign(s.CENTER);
 			s.text("LOADING", s.width/2,s.height/1.8);
-			console.log(alpha);
+			s.textAlign(s.LEFT);
 		}
 
 		function showUnitDescription(unitType, player, wid, hei, siz){
