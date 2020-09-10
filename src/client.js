@@ -349,6 +349,9 @@ class App {
 				let newPlayerSpan = document.createElement("span");
 				if (this.playersOnServer[i] !== null) {
 					switch (this.playersOnServer[i].gamePhase) {
+						case 'AI':
+						newPlayerSpan.innerHTML = "Orders submitted (AI)."
+						break
 						case 0:
 						newPlayerSpan.innerHTML = "Loading...";
 						break

@@ -7,8 +7,10 @@ export default class BasicAI {
 	constructor (game, playerNumber) {
     this.game = game;
     this.playerNumber = playerNumber;
+		this.isAI = true;
 
     this.ordersToExecute = [];
+		this.ordersSubmitted = null;
   }
 
   createOrder (orderType, args) {

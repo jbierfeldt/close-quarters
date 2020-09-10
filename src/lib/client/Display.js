@@ -450,6 +450,9 @@ export default class Display {
 						s.fill(this.playerColors[a-1][0], this.playerColors[a-1][1], this.playerColors[a-1][2], this.playerColors[a-1][3]);
 						if (this.app.playersOnServer[a] !== null) {
 						switch (this.app.playersOnServer[a].gamePhase) {
+							case 'AI':
+								s.text("Orders Submitted", wi/35, he/1.75+(a-1)*si);
+								break
 							case 0:
 								s.text("Loading", wi/35, he/1.75+(a-1)*si);
 								break
@@ -461,7 +464,11 @@ export default class Display {
 								}
 								break
 							case 3:
-								s.text("Reviewing Board", wi/35, he/1.75+(a-1)*si);
+								if (this.app.playersOnServer[a].ordersSubmitted) {
+									s.text("Orders Submitted", wi/35, he/1.75+(a-1)*si);
+								} else {
+									s.text("Reviewing Board", wi/35, he/1.75+(a-1)*si);
+								}
 							  break
 							default:
 								s.text("Hypothesizing", wi/35, he/1.75+(a-1)*si);

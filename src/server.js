@@ -267,6 +267,11 @@ class GameController {
 					gamePhase: this.playerSpots[i].clientGamePhase,
 					ordersSubmitted: this.playerSpots[i].ordersSubmitted
 				}
+			} else if (this.playerSpots[i] && this.playerSpots[i].isAI) {
+				playerSpots[i] = {
+					gamePhase: 'AI',
+					ordersSubmitted: this.playerSpots[i].ordersSubmitted
+				}
 			} else {
 				playerSpots[i] = null;
 			}
@@ -341,6 +346,8 @@ class GameController {
 				this.playerSpots[i].ordersToExecute = [];
 				basicAI.generateOrders(0);
 
+				basicAI.ordersSubmitted = true;
+
 			}
 		}
 
@@ -369,11 +376,39 @@ class GameController {
 		for (let i = 1; i <= 4; i++) {
 			if (this.playerSpots[i] instanceof BasicAI && this.game.players[i-1].victoryCondition !== -1) {
 				this.playerSpots[i].generateOrders(0);
+				this.playerSpots[i].ordersSubmitted = true;
 			}
 		}
 	}
 
 	forceOrders () {
+		// all human players have submitted their turns, fill the rest of the spots
+		// with AI
+
+		for (let i = 1; i <= 4; i++) {
+			if (this.playerSpots[i] == null && this.game.turnNumber == 1) {
+				let basicAI = new BasicAI(this.game, i);
+				//let array =  [-5,-5];
+			//	basicAI.createSecondBase([]);
+				// Create Both AI Bases
+
+
+				// because this only happens after the first turn
+
+
+				this.playerSpots[i] = basicAI;
+
+				//Major Hack for AI first turn placements ******
+				basicAI.createAIBase();
+				this.executeOrder(this.playerSpots[i].ordersToExecute[0]);
+				basicAI.createAIBase();
+				this.executeOrder(this.playerSpots[i].ordersToExecute[1]);
+				this.playerSpots[i].ordersToExecute = [];
+				basicAI.generateOrders(0);
+
+			}
+		}
+
 		//if all online players have submitted their orders, execute orders
 		// execute orders
 		for (let i = 1; i <= 4; i++) {
