@@ -290,7 +290,7 @@ export default class Display {
 						s.fill(255);
 						s.stroke(0);
 						s.textSize(wi/26.5);
-						s.text("Place Core", wi/2+si*3-playerShifter,si*buttonScale*3.7);
+						s.text("Place Core", wi/2+si*4.4-playerShifter,si*buttonScale*3.7);
 						if(s.mouseIsPressed){
 							if(bBase.isInRange(s.mouseX,s.mouseY)){
 								bBase.buttonHasBeenPressed();

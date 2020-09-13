@@ -856,3 +856,60 @@ export class Integrator extends Unit {
 		return super.serialize.call(this);
 	}
 }
+
+export class BeamSplitter extends Unit {
+
+	constructor(player, health = 75, firing = false, id, collidedWith = [false, 4], lifeSpan = 0, damageDealt = 0)  {
+		super(id);
+		this.lifeSpan = lifeSpan;
+		this.player = player;
+		this.health = health;
+		this.firing = firing;
+		this.identifier="Bea";
+		this.projArr = [];
+		this.collidedWith = collidedWith;
+		this.value = 3;
+		this.fullName = "Beam Splitter";
+		this.damageDealt = damageDealt;
+	}
+
+	static maxHealth = 75;
+	static cost = 3;
+
+	//Methodology is player then x then y in each subArray
+	static orientations = {
+		1: [[1,1]],
+		2: [[1,-1]],
+		3: [[-1,1]],
+		4: [[-1,-1]]
+	}
+
+	static description = "The Beam Splitter....";
+
+	static createFromSerialized (props) {
+		return new Resonator(props.player, props.health, props.firing, props.id, props.collidedWith, props.lifeSpan, props.damageDealt)
+	}
+
+	startAttack (orientation){
+		this.firing = true;
+		this.projArr[0]  = new Projectiles.BeaBullet(this.player, orientation, 1, this.id);
+	}
+
+	update (tick) {
+		super.update(tick);
+		if(tick == 1){
+			this.lifeSpan = this.lifeSpan + 1;
+		}
+		this.collidedWith = [false, 4];
+		this.firing=false;
+		if(tick % 9 === 0){
+
+					this.startAttack([1,1]);
+
+		}
+	}
+
+	serialize () {
+		return super.serialize.call(this);
+	}
+}
