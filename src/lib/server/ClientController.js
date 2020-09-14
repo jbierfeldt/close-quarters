@@ -182,7 +182,7 @@ export default class ClientController {
 	sendClientInfo() {
 		this.socket.emit("updateClientInfo", {
 			'clientID': this.id,
-			// 'gameID': this.gameController.game.id,
+			'gameRoom': this.gameController.id,
 			'token': this.token
 			// 'clientState': this.clientState,
 			// 'playerNumber': this.playerNumber

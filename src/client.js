@@ -132,7 +132,7 @@ class App {
 			this.updateTokenInfo(data.token);
 
 			this.clientID = data.clientID;
-			this.gameID = data.gameID;
+			this.gameRoom = data.gameRoom;
 			this.playerNumber = data.playerNumber;
 			this.clientState = data.clientState;
 
@@ -326,7 +326,7 @@ class App {
 
 		const debugData = {
 			'clientID': this.clientID,
-			'gameID': this.gameID,
+			'gameRoom': this.gameRoom,
 			'clientState': this.clientState,
 			'playerNumber': this.playerNumber,
 			'turnNumber': this.turnNumber,
