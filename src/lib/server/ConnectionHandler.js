@@ -62,7 +62,35 @@ export default class ConnectionHandler {
 			// once the socket has a client Controller, run its onConnect setup method
 			if (socket.clientController) socket.clientController.onConnect();
 
-			debug.log(0, `new socket connected as ${socket.clientController.id}`);
+			//set connect timer to 20 seconds
+			socket._connectTimer = setTimeout(function() {
+				socket.disconnect(true);
+			}, 20000);
+
+			// should receive a ping packet every 15 seconds, reset _connectTimer
+			socket.conn.on('packet', function (packet) {
+				if (packet.type === 'ping') {
+					clearTimeout(socket._connectTimer);
+
+					// set again
+					socket._connectTimer = setTimeout(function() {
+					
+						if (socket.clientController) {
+							socket.clientController.connectionState = 'OFFLINE';
+						}
+
+						socket.disconnect(true);
+
+						console.log(`disconnecting ${socket.id} because of timeout`);
+					}, 20000);
+				}
+			});
+
+			socket.on('disconnect', (reason) => {
+				debug.log(0, `socket ${socket.id} disconnected because: ${reason}`);
+			})
+
+			debug.log(0, `new socket ${socket.id} connected as ${socket.clientController.id}`);
 		});
 
 	}
@@ -103,7 +131,8 @@ export default class ConnectionHandler {
 		this.connectSocketToClient(socket, newClientController);
 
 		// TEMP — This will actually be handled elsewhere
-		this.connectClientToGameRoom(newClientController, this.openGame);
+		// this.connectClientToGameRoom(newClientController, this.openGame);
+		newClientController.sendLobbyInfo();
 
 		// make socket aware of its clientController
 		socket.clientController = newClientController;
@@ -121,8 +150,20 @@ export default class ConnectionHandler {
 		// if clientController is already connected to a Game,
 		// re-bind its events and join its socket.io room
 		if (clientController.gameController !== null) {
-			clientController.socket.join(clientController.gameController.id);
-			clientController.bindGameListeners();
+
+			if (clientController._reconnectTimer) {
+				debug.log(1, `clearing reconnectTimer for ${clientController.id}`);
+				clearTimeout(clientController._reconnectTimer);
+			}
+
+			clientController.socket.join(clientController.gameController.id, () => {
+				clientController.gameController.sendServerStateToAll();
+				clientController.gameController.sendGameStateToClient(clientController.socket);
+				clientController.gameController.sendLastTurnHistoryToClient(clientController.socket);
+
+				// might be deprecated...
+				clientController.bindGameListeners();
+			});
 		}
 
 	}
@@ -137,6 +178,9 @@ export default class ConnectionHandler {
 
 		// store reference to the new socket
 		clientController.socket = socket;
+
+		// set client connectionState
+		clientController.connectionState = 'ONLINE';
 
 		// bind new listeners to socket
 		clientController.bindListeners();
@@ -160,20 +204,24 @@ export default class ConnectionHandler {
 		clientController.gameController = gameController;
 
 		// join socket.io room for new GameRoom
-		clientController.socket.join(gameController.id);
+		// because join is async, rest of implementation is in callback
+		clientController.socket.join(gameController.id, () => {
 
-		clientController.bindGameListeners();
+			// add player to open player spot
+			let openSpot;
+			if (openSpot = gameController.getOpenPlayerSpot()) {
+				gameController.assignClientToSpot(clientController, openSpot);
+				clientController.setClientState('ACTIVE_PLAYER');
+			}
 
-		gameController.clientControllers.push(clientController);
+			gameController.registerClientController(clientController);
 
-		// add player to open player spot
-		let openSpot;
-		if (openSpot = gameController.getOpenPlayerSpot()) {
-			gameController.assignClientToSpot(clientController, openSpot);
-		}
+			clientController.bindGameListeners();
+
+			this.io.to(gameController.id).emit('message', `Successfully connected Client ${clientController.id} to GameRoom ${gameController.id}`);
+		});
 
 		debug.log(0, `Successfully connected Client ${clientController.id} to GameRoom ${gameController.id}`);
-		this.io.to(gameController.id).emit('message', `Successfully connected Client ${clientController.id} to GameRoom ${gameController.id}`);
 	}
 
 	attemptClientJoinGameRoom(clientController, gameID) {
@@ -191,7 +239,7 @@ export default class ConnectionHandler {
 	printConnectionInformation () {
 		console.log(`\n\n Client Controllers (${this.clientControllers.size}): `)
 		this.clientControllers.forEach( (value, key)  => {
-			console.log(`${key} -> ${value.gameController.id}`);
+			console.log(`${key} (${value.connectionState}) -> ${(value.gameController ? value.gameController.id : '')}`);
 		})
 		console.log(`Game Controllers (${this.gameControllers.size}): `)
 		this.gameControllers.forEach( (value, key)  => {

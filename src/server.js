@@ -17,7 +17,9 @@ const port = 3000;
 
 const app = express();
 const server = http.Server(app);
-const IO = socketIO(server);
+const IO = socketIO(server,  {
+	pingInterval: 15000
+});
 
 const SERVER_SECRET_KEY = 'abc123test';
 

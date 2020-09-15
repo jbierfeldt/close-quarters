@@ -29,13 +29,28 @@ export default class GameController {
 
 	}
 
-	sendMessage () {
-		this.io.to(this.id).emit('message', this.id);
+	sendMessage (data) {
+		this.io.to(this.id).emit('message', data);
+	}
+
+	registerClientController (clientController) {
+		this.clientControllers.push(clientController);
+		this.sendGameStateToAll();
+		this.sendServerStateToAll();
 	}
 
 	// function to be run when a clientController disconnects
 	disconnectClientController (clientController) {
 
+		// if the client was a player, check if now all the orders have been submitted
+		// ...
+
+		// remove outgoing client from playerSpot
+		if (this.playerSpots[clientController.playerNumber] === clientController) {
+			this.playerSpots[clientController.playerNumber] = null;
+		}
+		
+		// remove outgoing client from clientControllers list
 		this.clientControllers = this.clientControllers.filter( (member) => {
 			if (member === clientController) {
 				return false;
@@ -60,6 +75,7 @@ export default class GameController {
 			this.playerSpots[playerSpot] = clientController;
 			// give client new playerNumber
 			clientController.setPlayerNumber(playerSpot);
+			this.sendMessage(`${clientController.id} joined the room as player ${playerSpot}`);
 		} else {
 			debug.log(1, `Spot ${playerSpot} is already taken.`);
 		}
@@ -102,25 +118,33 @@ export default class GameController {
 		return false;
 	}
 
+	getOpenSpotsCount () {
+		let count = 0;
+		for (let idx in this.playerSpots) {
+			if (this.playerSpots[idx] === null) { count++ };
+		}
+		return count;
+	}
+
 	setGamePhaseForAll(phase) {
-		this.io.emit('updateClientGamePhase', {
+		this.io.to(this.id).emit('updateClientGamePhase', {
 			newPhase: phase
 		});
 	}
 
 	sendTurnsSubmittedToAll() {
 		// tells all clients that the turns have been subitted
-		this.io.emit('turnsSubmitted');
+		this.io.to(this.id).emit('turnsSubmitted');
 	}
 
 	sendSuccessfulSimulationToAll() {
-		this.io.emit('simulationSuccessful', {
+		this.io.to(this.id).emit('simulationSuccessful', {
 			s_lastTurnHistory: JSON.stringify(this.game.getLastTurnHistory())
 		});
 	}
 
 	sendLastTurnHistoryToAll() {
-		this.io.emit('updateLastTurnHistory', {
+		this.io.to(this.id).emit('updateLastTurnHistory', {
 			s_lastTurnHistory: JSON.stringify(this.game.getLastTurnHistory())
 		});
 	}
@@ -132,7 +156,7 @@ export default class GameController {
 	}
 
 	sendGameStateToAll() {
-		this.io.emit('updateGameState', {
+		this.io.to(this.id).emit('updateGameState', {
 			turnNumber: this.game.turnNumber,
 			currentTurnInitialState: JSON.stringify(this.game.createGameSnapshot())
 		});
@@ -150,7 +174,7 @@ export default class GameController {
 		let playerSpots = {};
 
 		for (let i = 1; i <= 4; i++) {
-			if (this.playerSpots[i] && this.playerSpots[i].isConnected) {
+			if (this.playerSpots[i] && !this.playerSpots[i].isAI) {
 				playerSpots[i] = {
 					gamePhase: this.playerSpots[i].clientGamePhase,
 					ordersSubmitted: this.playerSpots[i].ordersSubmitted
@@ -165,7 +189,7 @@ export default class GameController {
 			}
 		}
 
-		this.io.emit('updateServerState', {
+		this.io.to(this.id).emit('updateServerState', {
 			players: JSON.stringify(playerSpots)
 		});
 	}
@@ -288,7 +312,7 @@ export default class GameController {
 		console.log("PlayerSpots")
 		for (let i = 1; i <= 4; i++) {
 			if (this.playerSpots[i]) {
-				console.log(i, this.playerSpots[i].id)
+				console.log(i, `${this.playerSpots[i].id} - ${this.playerSpots[i].connectionState}`);
 			} else {
 				console.log(i, this.playerSpots[i])
 			};

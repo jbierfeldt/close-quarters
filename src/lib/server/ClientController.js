@@ -12,7 +12,7 @@ export default class ClientController {
 		this.gameController = null;
 		this.playerNumber = null;
 
-		this.isConnected = false;
+		this.connectionState = 'ONLINE'; // ONLINE, OFFLINE, RECONNECTING
 
 		this.ordersToExecute = [];
 		this.ordersSubmitted = false;
@@ -26,6 +26,25 @@ export default class ClientController {
 		this.socket.emit("debugInfoUpdate");
 	}
 
+	disconnectFromGame() {
+		this.connectionState = 'OFFLINE';
+
+		if (this.gameController !== null) {
+
+			this.gameController.disconnectClientController(this);
+
+			// leave socket.io room
+			this.socket.leave(this.gameController.id)
+
+			this.gameController = null;
+			this.playerNumber = null;
+			this.ordersToExecute = [];
+			this.ordersSubmitted = false;
+			this.clientGamePhase = null;
+			this.clientState = null;
+		}			
+	}
+
 	removeListeners() {
 		this.socket.removeAllListeners();
 	}
@@ -37,7 +56,7 @@ export default class ClientController {
 
 		this.socket.on('printServerData', () => {
 			this.connectionHandler.printConnectionInformation();
-			this.gameController.printGameRoomInformation();
+			if (this.gameController) this.gameController.printGameRoomInformation();
 		})
 
 		this.socket.on('joinGame', (data) => {
@@ -48,13 +67,30 @@ export default class ClientController {
 	bindGameListeners () {
 
 		// (re-)bind regular listeners as well
-		this.removeListeners();
-		this.bindListeners();
+		// this.removeListeners();
+		// this.bindListeners();
 
-		this.socket.on('getOpenPlayerSpot', () => {
-			console.log(this.gameController.id, this.gameController.playerSpots);
-			this.gameController.getOpenPlayerSpot();
+		this.socket.on('updateClientPhase', (data) => {
+			debug.log(0, 'got updateClientPhase');
+			this.clientGamePhase = data.newPhase;
+			this.gameController.sendServerStateToAll();
 		})
+
+		this.socket.on('disconnect', (reason) => {
+			if (reason === 'transport close') {
+				this.connectionState = 'RECONNECTING';
+
+				this._reconnectTimer = setTimeout( () => {
+
+					debug.log(1, `ten seconds elapsed, removing client ${this.id} from game ${this.gameController.id}`);
+
+					this.disconnectFromGame();
+
+				}, 10000);
+			}
+
+			this.gameController.sendServerStateToAll();
+		});
 
 
 	}
@@ -141,7 +177,12 @@ export default class ClientController {
 
 	setPlayerNumber (playerNumber) {
 		this.playerNumber = playerNumber;
-		// send client info
+		this.sendClientInfo();
+	}
+
+	setClientState (state) {
+		this.clientState = state;
+		this.sendClientInfo();
 	}
 
 	setClientStateFromVictoryCondition(victoryCondition) {
@@ -163,6 +204,18 @@ export default class ClientController {
 		}
 	}
 
+	sendLobbyInfo() {
+		let gameRooms = {};
+		this.connectionHandler.gameControllers.forEach( (value, key)  => {
+			gameRooms[key] = {
+				openSpots: value.getOpenSpotsCount()
+			}
+		});
+		this.socket.emit("updateLobbyInfo", JSON.stringify({
+			'gameRooms': gameRooms
+		}));
+	}
+
 	sendClientState() {
 		console.log("sending client state", this.id, this.clientState);
 		this.socket.emit("updateClientState", {
@@ -173,10 +226,10 @@ export default class ClientController {
 	sendClientInfo() {
 		this.socket.emit("updateClientInfo", {
 			'clientID': this.id,
-			'gameRoom': this.gameController.id,
-			'token': this.token
-			// 'clientState': this.clientState,
-			// 'playerNumber': this.playerNumber
+			'gameRoom': (this.gameController ? this.gameController.id : null),
+			'token': this.token,
+			'clientState': this.clientState,
+			'playerNumber': this.playerNumber
 		});
 	}
 

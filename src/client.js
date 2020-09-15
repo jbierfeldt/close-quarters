@@ -104,6 +104,8 @@ class App {
 		})
 
 		this.socket.on('updateServerState', (data) => {
+			debug.log(0, `got update server state`, data);
+
 			let players = JSON.parse(data.players);
 			this.playersOnServer = players;
 			this.updateDebugInfo();
@@ -121,11 +123,13 @@ class App {
 		this.socket.on('updateClientGamePhase', (data) => {
 			debug.log(0, 'got new phase from server', data.newPhase);
 			this.setGamePhase(data.newPhase);
+			this.updateDebugInfo();
 		})
 
 		this.socket.on('updateClientState', (data) => {
 			debug.log(0, "got new client state");
 			this.clientState = data.clientState;
+			this.updateDebugInfo();
 		})
 
 		this.socket.on('updateClientInfo', (data) => {
@@ -137,12 +141,18 @@ class App {
 			this.clientState = data.clientState;
 
 			// if first time getting clientInfo, start Display
-			if (this.loadedClientInfoFromServer === false && this.gameID) {
+			if (this.loadedClientInfoFromServer === false && this.gameRoom && this.playerNumber) {
 				this.onFinishedLoading();
 				this.loadedClientInfoFromServer = true;
 			}
 
+			this.updateDebugInfo();
 			debug.log(1, "Got Client Info");
+		})
+
+		this.socket.on('updateLobbyInfo', (data) => {
+			debug.log(1, "Got Lobby Info", JSON.parse(data));
+			this.updateLobbyInfo(JSON.parse(data));
 		})
 
 	}
@@ -224,8 +234,13 @@ class App {
 		this.socket.emit('resetGame');
 	}
 
-	sendJoinGame () {
-		let gameID = document.getElementById("join-game-id").value;
+	sendJoinGame (id) {
+		let gameID;
+		if (id) {
+			gameID = id;
+		} else {
+			gameID = document.getElementById("join-game-id").value;
+		}
 		debug.log(1, `Attempting to join game ${gameID}`);
 		this.socket.emit('joinGame', {gameID:  gameID});
 	}
@@ -319,6 +334,23 @@ class App {
 		let snapshot = localStorage['snapshot_'+name];
 		if (snapshot) {
 			this.socket.emit('loadSnapshot', snapshot);
+		}
+	}
+
+	updateLobbyInfo (data) {
+		const lobbyPane = document.getElementById("lobby-pane");
+		lobbyPane.innerHTML = '';
+		for (let el in data.gameRooms) {
+			let newEl = document.createElement("div");
+			newEl.innerHTML = `${el} (${4 - data.gameRooms[el].openSpots} / 4)`;
+			let newButton =  document.createElement("button");
+			newButton.innerHTML = 'Join Game';
+			newButton.addEventListener("click", () => {
+				this.sendJoinGame(el);
+				lobbyPane.style.display = 'none';
+			});
+			lobbyPane.append(newEl);
+			lobbyPane.append(newButton);
 		}
 	}
 
