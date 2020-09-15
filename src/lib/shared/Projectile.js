@@ -230,16 +230,16 @@ export class CirBullet extends Projectile {
 			this.firing=true;
 			for(let i = 0; i < 4; i = i + 1){
 				if(i == 0){
-					this.projArr[i] = new CirBullet(this.player, [1+1*this.orientation[0],0+1*this.orientation[1]], 0, this.unit, this.damage/2, 0);
+					this.projArr[i] = new CirBullet(this.player, [1+1*this.orientation[0],0+1*this.orientation[1]], 0, this.unit, Math.floor(this.damage/2), 0);
 				}
 				else if(i == 1){
-					this.projArr[i] = new CirBullet(this.player, [0+1*this.orientation[0],1+1*this.orientation[1]], 0, this.unit, this.damage/2, 0);
+					this.projArr[i] = new CirBullet(this.player, [0+1*this.orientation[0],1+1*this.orientation[1]], 0, this.unit, Math.floor(this.damage/2), 0);
 				}
 				else if(i == 2){
-					this.projArr[i] = new CirBullet(this.player, [0+1*this.orientation[0],-1+1*this.orientation[1]], 0, this.unit, this.damage/2, 0);
+					this.projArr[i] = new CirBullet(this.player, [0+1*this.orientation[0],-1+1*this.orientation[1]], 0, this.unit, Math.floor(this.damage/2), 0);
 				}
 				else if(i == 3){
-					this.projArr[i] = new CirBullet(this.player, [-1+1*this.orientation[0],0+1*this.orientation[1]], 0, this.unit, this.damage/2, 0);
+					this.projArr[i] = new CirBullet(this.player, [-1+1*this.orientation[0],0+1*this.orientation[1]], 0, this.unit, Math.floor(this.damage/2), 0);
 				}
 			}
 		}
@@ -305,6 +305,39 @@ export class TriBullet extends Projectile {
 			this.speed = 0;
 		}
 		this.distance = this.distance - 1;
+	}
+
+	serialize () {
+		return super.serialize.call(this);
+	}
+}
+
+
+
+export class BeaBullet extends Projectile {
+	constructor(player, initialOrientation = [0, 0], initialSpeed = 0, projCount, lifeSpan, unit, distance = 0, id)  {
+		super(player, initialOrientation, initialSpeed, unit, id);
+		this.identifier = "BeaProj";
+		this.damage = 35;
+		this.ableToBeDestroyed = true;
+		this.dump = false;
+		this.distance = distance;
+		this.player = player;
+		this.speed = initialSpeed;
+		this.orientation = initialOrientation;
+	}
+
+	static createFromSerialized (props) {
+		return new BeaBullet(props.player, props.orientation, props.speed, props.projCount, props.lifeSpan, props.unit, props.distance, props.id);
+	}
+
+	update(tick) {
+		super.update(tick);
+		if(this.distance == 7){
+			let rando = Math.floor(Math.random()*2);
+			this.orientation[rando] = 0;
+		}
+		this.distance = this.distance + 1;
 	}
 
 	serialize () {

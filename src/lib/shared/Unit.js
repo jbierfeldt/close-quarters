@@ -868,13 +868,13 @@ export class BeamSplitter extends Unit {
 		this.identifier="Bea";
 		this.projArr = [];
 		this.collidedWith = collidedWith;
-		this.value = 3;
+		this.value = 2;
 		this.fullName = "Beam Splitter";
 		this.damageDealt = damageDealt;
 	}
 
 	static maxHealth = 75;
-	static cost = 3;
+	static cost = 2;
 
 	//Methodology is player then x then y in each subArray
 	static orientations = {
@@ -884,10 +884,10 @@ export class BeamSplitter extends Unit {
 		4: [[-1,-1]]
 	}
 
-	static description = "The Beam Splitter....";
+	static description = "The Beam Splitter is an offensive ...";
 
 	static createFromSerialized (props) {
-		return new Resonator(props.player, props.health, props.firing, props.id, props.collidedWith, props.lifeSpan, props.damageDealt)
+		return new BeamSplitter(props.player, props.health, props.firing, props.id, props.collidedWith, props.lifeSpan, props.damageDealt);
 	}
 
 	startAttack (orientation){
@@ -902,10 +902,19 @@ export class BeamSplitter extends Unit {
 		}
 		this.collidedWith = [false, 4];
 		this.firing=false;
-		if(tick % 9 === 0){
-
+		if(tick % 12 === 0){
+			if(this.player == 1){
 					this.startAttack([1,1]);
-
+				}
+			else if(this.player == 2){
+					this.startAttack([1,-1]);
+				}
+			else if(this.player == 3){
+					this.startAttack([-1,1]);
+				}
+			else if(this.player == 4){
+					this.startAttack([-1,-1]);
+				}
 		}
 	}
 
