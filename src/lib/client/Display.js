@@ -1191,7 +1191,7 @@ export default class Display {
 					}
 				}
 					s.translate(si*5*transX, si*4*transY);
-					if(hoverObject.objCategory != "Bases"){
+					if(hoverObject.objCategory != "Bases" && app.gamePhase != 2){
 				 	let pt = getPossibleTargets(hoverObject.constructor.name, hoverX, hoverY, hoverObject.player);
 					for(let i = 0; i < pt.length; i++){
 							s.fill(255,240,0,85);
