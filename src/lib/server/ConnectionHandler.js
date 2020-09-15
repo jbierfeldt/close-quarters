@@ -104,7 +104,6 @@ export default class ConnectionHandler {
 
 		// TEMP — This will actually be handled elsewhere
 		this.connectClientToGameRoom(newClientController, this.openGame);
-		newClientController.playerNumber = 1;
 
 		// make socket aware of its clientController
 		socket.clientController = newClientController;
@@ -144,6 +143,7 @@ export default class ConnectionHandler {
 	}
 
 	connectClientToGameRoom(clientController, gameController) {
+		// if the client already is in a GameRoom, leave that one
 		if (clientController.gameController !== null) {
 			clientController.removeListeners();
 
@@ -166,6 +166,12 @@ export default class ConnectionHandler {
 
 		gameController.clientControllers.push(clientController);
 
+		// add player to open player spot
+		let openSpot;
+		if (openSpot = gameController.getOpenPlayerSpot()) {
+			gameController.assignClientToSpot(clientController, openSpot);
+		}
+
 		debug.log(0, `Successfully connected Client ${clientController.id} to GameRoom ${gameController.id}`);
 		this.io.to(gameController.id).emit('message', `Successfully connected Client ${clientController.id} to GameRoom ${gameController.id}`);
 	}
@@ -183,7 +189,7 @@ export default class ConnectionHandler {
 	// DEBUG
 
 	printConnectionInformation () {
-		console.log(`Client Controllers (${this.clientControllers.size}): `)
+		console.log(`\n\n Client Controllers (${this.clientControllers.size}): `)
 		this.clientControllers.forEach( (value, key)  => {
 			console.log(`${key} -> ${value.gameController.id}`);
 		})

@@ -18,28 +18,13 @@ export default class ClientController {
 		this.ordersSubmitted = false;
 
 		this.clientGamePhase = null;
-		this.clientState = null; // null, SPECTATOR, ACTIVE_PLAYER, DEFEATED_PLAYER
+		this.clientState = 'SPECTATOR'; // null, SPECTATOR, ACTIVE_PLAYER, DEFEATED_PLAYER
 	}
 
 	onConnect() {
 		this.sendClientInfo();
 		this.socket.emit("debugInfoUpdate");
 	}
-
-	// setSocket(socket) {
-	// 	// if the clientController already has a socket,
-	// 	// remove its listeners and disconnect it
-	// 	if (this.socket !== null) {
-	// 		this.removeListeners();
-	// 		this.socket.disconnect();
-	// 	};
-
-	// 	// store reference to the new socket
-	// 	this.socket = socket;
-
-	// 	// bind new listeners to socket
-	// 	this.bindListeners();
-	// }
 
 	removeListeners() {
 		this.socket.removeAllListeners();
@@ -52,6 +37,7 @@ export default class ClientController {
 
 		this.socket.on('printServerData', () => {
 			this.connectionHandler.printConnectionInformation();
+			this.gameController.printGameRoomInformation();
 		})
 
 		this.socket.on('joinGame', (data) => {
@@ -151,6 +137,11 @@ export default class ClientController {
 			this.gameController.checkAllOrdersSubmitted();
 		});
 
+	}
+
+	setPlayerNumber (playerNumber) {
+		this.playerNumber = playerNumber;
+		// send client info
 	}
 
 	setClientStateFromVictoryCondition(victoryCondition) {

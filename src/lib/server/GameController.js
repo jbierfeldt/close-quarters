@@ -19,6 +19,8 @@ export default class GameController {
 			3: null,
 			4: null
 		};
+
+		this.gameStatus = 'LOBBY'; // LOBBY, IN_PROGRESS, COMPLETED
 	}
 
 	init() {
@@ -40,10 +42,27 @@ export default class GameController {
 			}
 			return true
 		});
-		
+
 		// remove clientController from this.clientControllers
 		// check if any existing clientControllers, if not, destruct
 		// (likely achieved through telling the connectionHandler to delete)
+	}
+
+	assignClientToSpot (clientController, playerSpot) {
+		// if spot is empty, assign player
+		if (!this.playerSpots[playerSpot]) {
+			// remove client from previous spot, if it's already in one
+			if (this.playerSpots[clientController.playerNumber] === clientController) {
+				this.playerSpots[clientController.playerNumber] = null;
+			}
+
+			// add client to desired spot
+			this.playerSpots[playerSpot] = clientController;
+			// give client new playerNumber
+			clientController.setPlayerNumber(playerSpot);
+		} else {
+			debug.log(1, `Spot ${playerSpot} is already taken.`);
+		}
 	}
 
 	resetGame() {
@@ -82,57 +101,6 @@ export default class GameController {
 		// if all filled
 		return false;
 	}
-
-	// clientControllerConnect(clientController, newSocket) {
-
-	// 	clientController.setSocket(newSocket);
-	// 	clientController.isConnected = true;
-
-	// 	if (clientController.playerNumber) {
-	// 		clientController.setClientStateFromVictoryCondition(this.game.players[clientController.playerNumber - 1].victoryCondition);
-	// 	} else {
-	// 		clientController.clientState = 'SPECTATOR';
-	// 		clientController.sendClientState();
-	// 	}
-
-	// 	clientController.onConnect();
-
-	// 	this.playersOnline.push(clientController);
-
-	// 	this.sendGameStateToClient(clientController.socket);
-	// 	this.sendLastTurnHistoryToClient(clientController.socket);
-
-	// 	// console.log('connected', clientController.playerNumber, clientController.id, clientController.socket.id);
-
-	// }
-
-	// clientControllerDisconnect(clientController) {
-	// 	clientController.isConnected = false;
-	// 	clientController.clientState = "DISCONNECTED";
-
-	// 	if (clientController.playerNumber) {
-	// 		this.playerSpots[clientController.playerNumber] = null;
-	// 	}
-
-	// 	const idx = this.playersOnline.indexOf(clientController);
-	// 	this.playersOnline.splice(idx, 1);
-
-	// 	// console.log('disconnect', clientController.playerNumber, clientController.id);
-	// }
-
-	// clientControllerReconnect(clientController, newSocket) {
-
-	// 	// if client already has a playerNumber and that playerSpot is free, reclaim it
-	// 	if (clientController.playerNumber
-	// 		&& this.playerSpots[clientController.playerNumber] === null) {
-	// 		this.playerSpots[clientController.playerNumber] = clientController;
-	// 	}
-
-	// 	this.clientControllerConnect(clientController, newSocket);
-
-	// 	console.log('reconnected', clientController.playerNumber, clientController.id, clientController.socket.id);
-
-	// }
 
 	setGamePhaseForAll(phase) {
 		this.io.emit('updateClientGamePhase', {
@@ -312,19 +280,18 @@ export default class GameController {
 		}
 	}
 
-	printServerData() {
-		console.log("Players Online:")
-		for (let i = 0; i < this.playersOnline.length; i++) {
-			console.log(this.playersOnline[i].id, this.playersOnline[i].playerNumber, this.playersOnline[i].ordersSubmitted, this.playersOnline[i].ordersToExecute);
-			// console.log(this.game.players[this.playersOnline[i].playerNumber - 1]);
-		}
-		console.log("Client Controllers:")
+	printGameRoomInformation() {
+		console.log("\n\n Client Controllers:")
 		for (let i = 0; i < this.clientControllers.length; i++) {
 			console.log(this.clientControllers[i].id, this.clientControllers[i].playerNumber, this.clientControllers[i].clientState);
 		}
 		console.log("PlayerSpots")
 		for (let i = 1; i <= 4; i++) {
-			console.log(i, this.playerSpots[i]);
+			if (this.playerSpots[i]) {
+				console.log(i, this.playerSpots[i].id)
+			} else {
+				console.log(i, this.playerSpots[i])
+			};
 		}
 	}
 
