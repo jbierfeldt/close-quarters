@@ -220,9 +220,9 @@ export default class GameController {
 		this.sendServerStateToAll();
 
 		//  check if players Online
-		if (this.playersOnline.length == 0) {
-			return false;
-		}
+		// if (this.playersOnline.length == 0) {
+		// 	return false;
+		// }
 
 		// check if all the seated players have submitted their orders
 		// if not, return false and don't execute
@@ -241,11 +241,17 @@ export default class GameController {
 			if (this.playerSpots[i] == null) {
 				let basicAI = new BasicAI(this.game, i);
 
-				basicAI.createSecondBase(); // run createSecondBase for now
-				// because this only happens after the first turn
-				basicAI.createRandomUnit();
-
 				this.playerSpots[i] = basicAI;
+
+				//Major Hack for AI first turn placements ******
+				basicAI.createAIBase();
+				this.executeOrder(this.playerSpots[i].ordersToExecute[0]);
+				basicAI.createAIBase();
+				this.executeOrder(this.playerSpots[i].ordersToExecute[1]);
+				this.playerSpots[i].ordersToExecute = [];
+				basicAI.generateOrders(0);
+
+				basicAI.ordersSubmitted = true;
 			}
 		}
 
@@ -272,8 +278,9 @@ export default class GameController {
 
 		// AI generate orders for next turn
 		for (let i = 1; i <= 4; i++) {
-			if (this.playerSpots[i] instanceof BasicAI) {
-				this.playerSpots[i].createRandomUnit();
+			if (this.playerSpots[i] instanceof BasicAI && this.game.players[i-1].victoryCondition !== -1) {
+				this.playerSpots[i].generateOrders(0);
+				this.playerSpots[i].ordersSubmitted = true;
 			}
 		}
 	}

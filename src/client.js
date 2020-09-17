@@ -347,7 +347,6 @@ class App {
 			newButton.innerHTML = 'Join Game';
 			newButton.addEventListener("click", () => {
 				this.sendJoinGame(el);
-				lobbyPane.style.display = 'none';
 			});
 			lobbyPane.append(newEl);
 			lobbyPane.append(newButton);
