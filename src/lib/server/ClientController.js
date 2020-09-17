@@ -71,7 +71,6 @@ export default class ClientController {
 		// this.bindListeners();
 
 		this.socket.on('updateClientPhase', (data) => {
-			debug.log(0, 'got updateClientPhase');
 			this.clientGamePhase = data.newPhase;
 			this.gameController.sendServerStateToAll();
 		})
@@ -92,27 +91,6 @@ export default class ClientController {
 			this.gameController.sendServerStateToAll();
 		});
 
-
-	}
-
-	oldbindGameListeners() {
-
-		// bind regular listeners as well
-		this.bindListeners();
-
-		this.socket.on('connection', () => {
-			console.log('client ' + this.id + 'connect');
-		})
-
-		this.socket.on('createUnit', (data) => {
-			debug.log(0, `Received createUnit from ${this.socket.id}`);
-			this.gameController.createUnit(data.unitType, data.player, data.x, data.y);
-		});
-
-		this.socket.on('createBase', (data) => {
-			this.gameController.createBase(data.baseType, data.player, data.x, data.y);
-		});
-
 		this.socket.on('submitTurn', (data) => {
 			debug.log(0, `Received submit turn with ${data}`);
 			// will update game controller saying that this player has submitted their turn
@@ -123,20 +101,6 @@ export default class ClientController {
 			// try to execute orders
 			this.gameController.checkAllOrdersSubmitted();
 		});
-
-		this.socket.on('forcesubmitTurn', (data) => {
-			// will update game controller saying that this player has submitted their turn
-			// for now, just forcing runSimulation
-			this.ordersToExecute = JSON.parse(data);
-			this.ordersSubmitted = true;
-
-			// try to execute orders
-			this.gameController.forceOrders();
-		});
-
-		// this.socket.on('printServerData', () => {
-		// 	this.gameController.printServerData();
-		// });
 
 		this.socket.on('resetGame', (data) => {
 			// reset Game
@@ -157,23 +121,90 @@ export default class ClientController {
 				return false;
 			}
 
-		})
-
-		this.socket.on('updateClientPhase', (data) => {
-			this.clientGamePhase = data.newPhase;
-			this.gameController.sendServerStateToAll();
-		})
-
-		this.socket.on('disconnect', (reason) => {
-			console.log("disconnected", this.id, this.socket.id, reason);
-			this.gameController.clientControllerDisconnect(this);
-			this.gameController.sendServerStateToAll();
-
-			// check if all orders have now been submitted
-			this.gameController.checkAllOrdersSubmitted();
 		});
 
+
 	}
+
+	// oldbindGameListeners() {
+
+	// 	// bind regular listeners as well
+	// 	this.bindListeners();
+
+	// 	this.socket.on('connection', () => {
+	// 		console.log('client ' + this.id + 'connect');
+	// 	})
+
+	// 	this.socket.on('createUnit', (data) => {
+	// 		debug.log(0, `Received createUnit from ${this.socket.id}`);
+	// 		this.gameController.createUnit(data.unitType, data.player, data.x, data.y);
+	// 	});
+
+	// 	this.socket.on('createBase', (data) => {
+	// 		this.gameController.createBase(data.baseType, data.player, data.x, data.y);
+	// 	});
+
+	// 	this.socket.on('submitTurn', (data) => {
+	// 		debug.log(0, `Received submit turn with ${data}`);
+	// 		// will update game controller saying that this player has submitted their turn
+	// 		// for now, just forcing runSimulation
+	// 		this.ordersToExecute = JSON.parse(data);
+	// 		this.ordersSubmitted = true;
+
+	// 		// try to execute orders
+	// 		this.gameController.checkAllOrdersSubmitted();
+	// 	});
+
+	// 	this.socket.on('forcesubmitTurn', (data) => {
+	// 		// will update game controller saying that this player has submitted their turn
+	// 		// for now, just forcing runSimulation
+	// 		this.ordersToExecute = JSON.parse(data);
+	// 		this.ordersSubmitted = true;
+
+	// 		// try to execute orders
+	// 		this.gameController.forceOrders();
+	// 	});
+
+	// 	// this.socket.on('printServerData', () => {
+	// 	// 	this.gameController.printServerData();
+	// 	// });
+
+	// 	this.socket.on('resetGame', (data) => {
+	// 		// reset Game
+	// 		this.gameController.resetGame();
+	// 	});
+
+	// 	this.socket.on('loadSnapshot', (data) => {
+	// 		debug.log(0, `Got loadSnapshot`);
+
+	// 		try {
+	// 			let snapshot = JSON.parse(data);
+	// 			if (snapshot.turnNumber && snapshot.currentTurnInitialState) {
+	// 				this.gameController.loadSnapshot(snapshot);
+	// 			}
+	// 			return true;
+	// 		} catch (e) {
+	// 			debug.log(0, e);
+	// 			return false;
+	// 		}
+
+	// 	});
+
+	// 	this.socket.on('updateClientPhase', (data) => {
+	// 		this.clientGamePhase = data.newPhase;
+	// 		this.gameController.sendServerStateToAll();
+	// 	})
+
+	// 	this.socket.on('disconnect', (reason) => {
+	// 		console.log("disconnected", this.id, this.socket.id, reason);
+	// 		this.gameController.clientControllerDisconnect(this);
+	// 		this.gameController.sendServerStateToAll();
+
+	// 		// check if all orders have now been submitted
+	// 		this.gameController.checkAllOrdersSubmitted();
+	// 	});
+
+	// }
 
 	setPlayerNumber (playerNumber) {
 		this.playerNumber = playerNumber;
