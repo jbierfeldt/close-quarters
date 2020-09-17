@@ -141,11 +141,11 @@ export default class Display {
 				playerShifter = 0;
 				submitShifterX = 0;
 				submitShifterY = 0;
-				if(this.app.playerNumber>2){
+			/*	if(this.app.playerNumber>2){
 					playerShifter=s.width/2;
-				}
+				}*/
 				if(buttonMaker === 1){
-
+/*
 					if(this.app.playerNumber == 2){
 						submitShifterX = 0;
 						submitShifterY = he/2;;
@@ -157,7 +157,8 @@ export default class Display {
 					else if(this.app.playerNumber == 4){
 						submitShifterX = wi/2;
 						submitShifterY = he/2;
-					}
+					}*/
+
 
 					bPhaseOne = new Buttoned(wi-si*5.55, si*2.9, si*5.1, si*1.1, "Deploy Machines", this.app.setGamePhase);
 					bPhaseThree = new Buttoned(wi/3.2 + submitShifterX, he/1.65 - submitShifterY,si*6.1,si*1.1,"Review Board",this.app.setGamePhase);
@@ -204,7 +205,13 @@ export default class Display {
 					gameStart=0;
 					//The below function displays the title sequence
 					// Add bar magnet field lines
-					titleSequence(wi,he,this.delay,si/2);
+
+					displayMatchmaking(this.app.matchmakingData, wi, he, si);
+					//this.app.sendJoinGame;
+
+
+					//titleSequence(wi,he,this.delay,si/2);
+
 					//Display the game title on top of the title sequence
 					if(this.delay>25){
 						s.stroke(0,(this.delay-25)*2.9);
@@ -238,9 +245,11 @@ export default class Display {
 					}
 					//Exit this phase and move to the Battle Phase if the mouse is pressed(button trigger to be added)
 				}
+
 				else if(this.app.gamePhase === 0.5){
 					instructionSheet(si, this.app.playerNumber, this.playerColors);
 				}
+
 				else if(this.app.gamePhase === 1 && this.app.clientState !== 'SPECTATOR' && this.app.clientState !== 'DEFEATED_PLAYER' && this.app.turnIsIn !== true){
 					justTriggered = 1;
 					this.t = 1;
@@ -1073,6 +1082,29 @@ export default class Display {
 			s.text("As A Master Machine Maker, You Are Ready To ", width/2,height/2);
 			s.textAlign(s.LEFT);
 		}
+
+		function displayMatchmaking(data, width, height, size){
+			s.background(0);
+			s.textFont(titleFont);
+			s.strokeWeight(1);
+			s.stroke(0);
+			s.fill(255,255);
+			s.textAlign(s.CENTER);
+			s.textSize(size*2);
+			s.text("Matchmaking", width/2,height/12);
+			s.textAlign(s.LEFT);
+			s.textSize(size);
+			s.text("Open Games", width/15,height/4);
+			let count = 1;
+			//let dif = size/data.gameRooms.length;
+			for (let el in data.gameRooms) {
+				let room = `${el} (${4 - data.gameRooms[el].openSpots} / 4)`;
+				s.text(room, width/15,height/4+size*count);
+				console.log(room);
+				count=count+1;
+			}
+		}
+
 		function tooltip(hoverX,hoverY, b, tick, wi, he, si, pColors, sdt, app){
 			if(b[hoverY][hoverX].length != 0){
 				if(app.gamePhase != 1){
