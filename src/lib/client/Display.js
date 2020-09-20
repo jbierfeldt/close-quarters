@@ -37,6 +37,7 @@ export default class Display {
 		let sketch = (s) => {
 
 			//Declarations prior to the draw loop & setup
+			let lineFlame = [];
 			let titleFont;
 			let standardFont;
 			let animate = 0; //use to decide when a new tick value occurs
@@ -47,6 +48,7 @@ export default class Display {
 			let gameStart;
 			let sideBarGrowth = 1;
 			let sideBarMenu = false;
+			let successfulJoinedGame = null;
 
 			//Button Declarations
 			let bPhaseOne;
@@ -118,6 +120,9 @@ export default class Display {
 			//Create the canvas based on the size of the user window
 			s.setup = () =>{
 				s.createCanvas(tempConfig.canvasX, tempConfig.canvasY);
+				for (let i = 0; i < 25; i++) {
+			    lineFlame[i] = new Flame(Math.floor(Math.random()*tempConfig.canvasX),Math.floor(Math.random()*tempConfig.canvasY));
+			  }
 				s.frameRate(60);
 				input = s.createInput();
 
@@ -270,23 +275,26 @@ export default class Display {
 					input.style('font-family', "Monaco");
 
 					displayMatchmaking(this.app.matchmakingData, wi, he, si);
+
 					s.fill(155,100);
 					s.stroke(255);
 					//s.rect(wi/9+si*4,he/3-si/4,wi/9,he/15);
+					//let allowJoinGame =0; RIG THIS UP SO IT ONLY SENDS ONCE
 					let gameID = input.value();
 					//console.log(input.value());
 					if(gameID.length == 5){
-						try {
-							this.app.sendJoinGame(gameID);
-						} catch (e) {
-							// debug.log(0, "Edge of map");
-							s.text("Room Not Found",wi/9+si*2,he/3+si*5)
-						}
+						this.app.sendJoinGame(gameID);
+					}
+					if(successfulJoinedGame === false){
+
+						s.fill(255,0,128,255)
+						s.text("Room Not Found",wi/9+si*2,he/3+si*5);
 					}
 					//instructionSheet(si, this.app.playerNumber, this.playerColors);
 				}
 
 				else if(this.app.gamePhase === 1 && this.app.clientState !== 'SPECTATOR' && this.app.clientState !== 'DEFEATED_PLAYER' && this.app.turnIsIn !== true){
+					input.remove();
 					justTriggered = 1;
 					this.t = 1;
 					animate = 0;
@@ -1119,9 +1127,53 @@ export default class Display {
 			s.textAlign(s.LEFT);
 		}
 
+		class Flame {
+
+		  constructor(x,y) {
+		    this.length = 0;
+				this.x = x;
+				this.y = y;
+
+		    this.orientationOne = Math.floor(Math.random()*3)-1;
+				this.orientationTwo = Math.floor(Math.random()*3)-1;
+				if(this.orientationOne ==  0 && this.orientationTwo == 0){
+					this.orientationOne = 1;
+				}
+				//if()
+		    //this.secondpriorx=0;
+		  }
+		  checkCoordinates(x,y,width,height) {
+				if(x < 0 || x > width || y < 0 || y > height){
+					this.orientationOne = Math.floor(Math.random()*3)-1;
+					this.orientationTwo = Math.floor(Math.random()*3)-1;
+					if(this.orientationOne ==  0 && this.orientationTwo == 0){
+						this.orientationTwo = 1;
+					}
+					this.x = Math.floor(Math.random()*width);
+					this.y = Math.floor(Math.random()*height);
+					}
+		    }
+		  render(size, speed, width, height) {
+
+		    //Make sure the asteroids have a lot less mass so they don't fall in as easily
+		    this.length = size*3;
+		    this.speed = speed;
+				this.x = this.x + this.orientationOne*speed;
+				this.y = this.y + this.orientationTwo*speed;
+				for(let l = 0; l < this.length; l = l + 1){
+					s.stroke(255,0,128,255-255*l/this.length);
+				  s.point(this.x-l*this.orientationOne,this.y-l*this.orientationTwo);
+			}
+				this.checkCoordinates(this.x, this.y, width,height);
+
+		  }
+		}
 		function displayMatchmaking(data, width, height, size){
 //[255,0,128,255],[176,196,243,255],[152, 255, 152,255],[210,130,240,255]
 			s.background(0);
+			for(let i = 0; i < lineFlame.length; i = i+1){
+				lineFlame[i].render(size/5, .5, width, height);
+			}
 			s.textFont(titleFont);
 			s.strokeWeight(1);
 			s.stroke(0);
@@ -1140,14 +1192,7 @@ export default class Display {
 			s.fill(210,130,240,255);
 			s.text("Hot Seat", 9*width/10,height/4);
 			s.textAlign(s.LEFT);
-			let count = 1;
-			//let dif = size/data.gameRooms.length;
-			for (let el in data.gameRooms) {
-				let room = `${el} (${4 - data.gameRooms[el].openSpots} / 4)`;
-			//	s.text(room, width/15,height/4+size*count);
-			//	console.log(room);
-				count=count+1;
-			}
+
 		}
 
 		function tooltip(hoverX,hoverY, b, tick, wi, he, si, pColors, sdt, app){

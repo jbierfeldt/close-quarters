@@ -160,6 +160,13 @@ class App {
 
 		this.socket.on('joinGameResult', (data) => {
 			debug.log(1, `Joined the game? ${data.joinedGame}`);
+			if(data.joinedGame === true){
+				this.setGamePhase(1);
+				this.display.successfulJoinedGame = true;
+			}
+			else{
+				this.display.successfulJoinedGame = false;
+			}
 			// data.joinedGame will be either true or false
 			// do stuff to display or whatever
 		})
