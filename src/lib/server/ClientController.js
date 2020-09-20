@@ -28,10 +28,12 @@ export default class ClientController {
 
 	onSuccessfulJoinGame() {
 		this.sendClientInfo();
+		this.gameController.sendLastTurnHistoryToClient(this.socket);
 	}
 
 	disconnectFromGame() {
 		this.connectionState = 'OFFLINE';
+		this.removeListeners();
 
 		if (this.gameController !== null) {
 
@@ -54,6 +56,11 @@ export default class ClientController {
 	}
 
 	bindListeners() {
+
+		// clear old listeners, to prevent doubling when a player connects
+		// and then joins a game
+		this.removeListeners();
+
 		this.socket.on('connection', () => {
 			console.log('client ' + this.id + 'connect');
 		})
@@ -91,8 +98,6 @@ export default class ClientController {
 
 				}, 10000);
 			}
-
-			this.gameController.sendServerStateToAll();
 		});
 
 		this.socket.on('submitTurn', (data) => {
@@ -211,7 +216,7 @@ export default class ClientController {
 	// }
 
 	setPlayerNumber (playerNumber) {
-		debug.log(1, `setting ${this.id} player number to ${playerNumber}`);
+		debug.log(2, `setting ${this.id} player number to ${playerNumber}`);
 		this.playerNumber = playerNumber;
 		this.sendClientInfo();
 	}
