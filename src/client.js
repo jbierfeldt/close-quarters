@@ -22,6 +22,7 @@ class App {
 		this.gamePhase = undefined;
 		this.currentTurnOrders = [];
 
+		this.matchmakingData = undefined;
 		// info from server
 		this.turnNumber = 1;
 		this.currentTurnInitialState = {};
@@ -142,7 +143,8 @@ class App {
 			this.clientState = data.clientState;
 
 			// if first time getting clientInfo, start Display
-			if (this.loadedClientInfoFromServer === false && this.gameRoom && this.playerNumber) {
+		//	if (this.loadedClientInfoFromServer === false && this.gameRoom && this.playerNumber) {
+		if (this.loadedClientInfoFromServer === false) {
 				this.onFinishedLoading();
 				this.loadedClientInfoFromServer = true;
 			}
@@ -345,6 +347,8 @@ class App {
 	}
 
 	updateLobbyInfo (data) {
+		this.matchmakingData = data;
+		console.log(this.matchmakingData);
 		const lobbyPane = document.getElementById("lobby-pane");
 		lobbyPane.innerHTML = '';
 		for (let el in data.gameRooms) {

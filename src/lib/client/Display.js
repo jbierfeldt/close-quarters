@@ -96,6 +96,8 @@ export default class Display {
 			let gameOver = 0;
 			let alpha = 0;
 
+			let input;
+
 			p5.disableFriendlyErrors = true;
 			//Preload the fonts and other assets below
 			s.preload = () =>{
@@ -117,6 +119,12 @@ export default class Display {
 			s.setup = () =>{
 				s.createCanvas(tempConfig.canvasX, tempConfig.canvasY);
 				s.frameRate(60);
+				input = s.createInput();
+
+			//	input.size(width/6,height/9);
+				//input.style('font-size', '48px');
+				//input.style('background-color', '#ffffa1');
+				//input.style('font-family', "Impact");
 			}
 
 			//The draw function loops continuously while the sketch is active
@@ -134,18 +142,18 @@ export default class Display {
 				hoverY=s.int(s.mouseY/si);
 
 				//Delay serves as a variable that has a constant increment for animation
-				this.delay=this.delay+.19+s.deltaTime/500;
+				this.delay=this.delay+.19+s.deltaTime/450;
 
 
 				//playerShifter shifts the Button Menu if the player is on the right side of the screen
 				playerShifter = 0;
 				submitShifterX = 0;
 				submitShifterY = 0;
-				if(this.app.playerNumber>2){
+			/*	if(this.app.playerNumber>2){
 					playerShifter=s.width/2;
-				}
+				}*/
 				if(buttonMaker === 1){
-
+/*
 					if(this.app.playerNumber == 2){
 						submitShifterX = 0;
 						submitShifterY = he/2;;
@@ -157,7 +165,8 @@ export default class Display {
 					else if(this.app.playerNumber == 4){
 						submitShifterX = wi/2;
 						submitShifterY = he/2;
-					}
+					}*/
+
 
 					bPhaseOne = new Buttoned(wi-si*5.55, si*2.9, si*5.1, si*1.1, "Deploy Machines", this.app.setGamePhase);
 					bPhaseThree = new Buttoned(wi/3.2 + submitShifterX, he/1.65 - submitShifterY,si*6.1,si*1.1,"Review Board",this.app.setGamePhase);
@@ -204,7 +213,19 @@ export default class Display {
 					gameStart=0;
 					//The below function displays the title sequence
 					// Add bar magnet field lines
+
+
+
+				/*	for (let el in data.gameRooms) {
+						let room = `${el} (${4 - data.gameRooms[el].openSpots} / 4)`;
+					//	s.text(room, width/15,height/4+size*count);
+					//	console.log(room);
+						count=count+1;
+					}*/
+
+					//this.app.sendJoinGame;
 					titleSequence(wi,he,this.delay,si/2);
+
 					//Display the game title on top of the title sequence
 					if(this.delay>25){
 						s.stroke(0,(this.delay-25)*2.9);
@@ -227,20 +248,44 @@ export default class Display {
 
 					if(s.mouseIsPressed){
 
-						if (!debug.enabled) {
+						//if (!debug.enabled) {
 							s.fullscreen(full);
 							s.resizeCanvas(window.screen.height*1.5, window.screen.height);
-						}
+						//}
 						buttonMaker = 1;
-						this.app.setGamePhase(1);
+						this.app.setGamePhase(0.5);
 						s.mouseIsPressed = false;
 						unitButtons = [];
 					}
 					//Exit this phase and move to the Battle Phase if the mouse is pressed(button trigger to be added)
 				}
+
 				else if(this.app.gamePhase === 0.5){
-					instructionSheet(si, this.app.playerNumber, this.playerColors);
+
+					input.position(wi/9, he/3);
+					input.size(wi/9,he/15);
+					input.style('font-size', '28px');
+					input.style('background-color', '#ffffff');
+					input.style('text-transform', 'uppercase');
+					input.style('font-family', "Monaco");
+
+					displayMatchmaking(this.app.matchmakingData, wi, he, si);
+					s.fill(155,100);
+					s.stroke(255);
+					//s.rect(wi/9+si*4,he/3-si/4,wi/9,he/15);
+					let gameID = input.value();
+					//console.log(input.value());
+					if(gameID.length == 5){
+						try {
+							this.app.sendJoinGame(gameID);
+						} catch (e) {
+							// debug.log(0, "Edge of map");
+							s.text("Room Not Found",wi/9+si*2,he/3+si*5)
+						}
+					}
+					//instructionSheet(si, this.app.playerNumber, this.playerColors);
 				}
+
 				else if(this.app.gamePhase === 1 && this.app.clientState !== 'SPECTATOR' && this.app.clientState !== 'DEFEATED_PLAYER' && this.app.turnIsIn !== true){
 					justTriggered = 1;
 					this.t = 1;
@@ -1073,6 +1118,38 @@ export default class Display {
 			s.text("As A Master Machine Maker, You Are Ready To ", width/2,height/2);
 			s.textAlign(s.LEFT);
 		}
+
+		function displayMatchmaking(data, width, height, size){
+//[255,0,128,255],[176,196,243,255],[152, 255, 152,255],[210,130,240,255]
+			s.background(0);
+			s.textFont(titleFont);
+			s.strokeWeight(1);
+			s.stroke(0);
+			s.fill(255,255);
+			s.textAlign(s.CENTER);
+			s.textSize(size*2);
+			s.text("Matchmaking", width/2,height/12);
+			s.stroke(255);
+			s.line(width/4,height/10,3*width/4,height/10);
+			s.stroke(0);
+			s.textSize(size);
+			s.fill(176,196,243,255);
+			s.text("Enter Game Code", width/10,height/4);
+			s.fill(152, 255, 152,255);
+			s.text("Create New Lobby", width/2,height/4);
+			s.fill(210,130,240,255);
+			s.text("Hot Seat", 9*width/10,height/4);
+			s.textAlign(s.LEFT);
+			let count = 1;
+			//let dif = size/data.gameRooms.length;
+			for (let el in data.gameRooms) {
+				let room = `${el} (${4 - data.gameRooms[el].openSpots} / 4)`;
+			//	s.text(room, width/15,height/4+size*count);
+			//	console.log(room);
+				count=count+1;
+			}
+		}
+
 		function tooltip(hoverX,hoverY, b, tick, wi, he, si, pColors, sdt, app){
 			if(b[hoverY][hoverX].length != 0){
 				if(app.gamePhase != 1){
