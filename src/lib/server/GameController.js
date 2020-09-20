@@ -58,6 +58,8 @@ export default class GameController {
 			return true
 		});
 
+		this.checkAllOrdersSubmitted();
+
 		// remove clientController from this.clientControllers
 		// check if any existing clientControllers, if not, destruct
 		// (likely achieved through telling the connectionHandler to delete)
@@ -76,8 +78,11 @@ export default class GameController {
 			// give client new playerNumber
 			clientController.setPlayerNumber(playerSpot);
 			this.sendMessage(`${clientController.id} joined the room as player ${playerSpot}`);
+
+			return true;
 		} else {
 			debug.log(1, `Spot ${playerSpot} is already taken.`);
+			return false;
 		}
 	}
 
@@ -219,21 +224,19 @@ export default class GameController {
 		// update all clients on who has submitted orders
 		this.sendServerStateToAll();
 
-		//  check if players Online
-		// if (this.playersOnline.length == 0) {
-		// 	return false;
-		// }
-
 		// check if all the seated players have submitted their orders
 		// if not, return false and don't execute
 		for (let i = 1; i <= 4; i++) {
-			if (this.playerSpots[i] && this.playerSpots[i].isConnected) {
+			if (this.playerSpots[i] && this.playerSpots[i].connectionState === 'ONLINE') {
+
+				// if player isn't defeated and hasn't submitted orders, stop checking
 				if (this.playerSpots[i].clientState === 'ACTIVE_PLAYER' && !this.playerSpots[i].ordersSubmitted) {
 					return false;
 				}
 			}
 		}
 
+		// TEMP
 		// all human players have submitted their turns, fill the rest of the spots
 		// with AI
 
@@ -268,7 +271,7 @@ export default class GameController {
 				}
 			}
 
-			// after orders executed, reset ClientController
+			// after orders executed, reset ClientController state
 			this.playerSpots[i].ordersSubmitted = false;
 			this.playerSpots[i].ordersToExecute = [];
 		}
@@ -312,11 +315,14 @@ export default class GameController {
 	}
 
 	printGameRoomInformation() {
-		console.log("\n\n Client Controllers:")
+		console.log("\n Client Controllers:")
 		for (let i = 0; i < this.clientControllers.length; i++) {
 			console.log(this.clientControllers[i].id, this.clientControllers[i].playerNumber, this.clientControllers[i].clientState);
+			for (let j = 0; j < this.clientControllers[i].socket.eventNames().length; j++) {
+				console.log('\u21B3', this.clientControllers[i].socket.eventNames()[j]);
+			}
 		}
-		console.log("PlayerSpots")
+		console.log("\nPlayerSpots")
 		for (let i = 1; i <= 4; i++) {
 			if (this.playerSpots[i]) {
 				console.log(i, `${this.playerSpots[i].id} - ${this.playerSpots[i].connectionState}`);

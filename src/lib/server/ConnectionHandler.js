@@ -214,10 +214,17 @@ export default class ConnectionHandler {
 		clientController.socket.join(gameController.id, () => {
 
 			// add player to open player spot
-			let openSpot;
-			if (openSpot = gameController.getOpenPlayerSpot()) {
+			let openSpot = gameController.getOpenPlayerSpot();
+			if (openSpot) {
+
 				gameController.assignClientToSpot(clientController, openSpot);
 				clientController.setClientState('ACTIVE_PLAYER');
+
+			} else {
+
+				clientController.setPlayerNumber(null);
+				clientController.setClientState('SPECTATOR');
+
 			}
 
 			gameController.registerClientController(clientController);
