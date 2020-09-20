@@ -26,6 +26,10 @@ export default class ClientController {
 		this.socket.emit("debugInfoUpdate");
 	}
 
+	onSuccessfulJoinGame() {
+		this.sendClientInfo();
+	}
+
 	disconnectFromGame() {
 		this.connectionState = 'OFFLINE';
 
@@ -207,6 +211,7 @@ export default class ClientController {
 	// }
 
 	setPlayerNumber (playerNumber) {
+		debug.log(1, `setting ${this.id} player number to ${playerNumber}`);
 		this.playerNumber = playerNumber;
 		this.sendClientInfo();
 	}
@@ -257,6 +262,7 @@ export default class ClientController {
 	sendClientInfo() {
 		this.socket.emit("updateClientInfo", {
 			'clientID': this.id,
+			'socketID': this.socket.id,
 			'gameRoom': (this.gameController ? this.gameController.id : null),
 			'token': this.token,
 			'clientState': this.clientState,

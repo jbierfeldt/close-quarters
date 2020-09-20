@@ -136,6 +136,7 @@ class App {
 			this.updateTokenInfo(data.token);
 
 			this.clientID = data.clientID;
+			this.socketID = data.socketID;
 			this.gameRoom = data.gameRoom;
 			this.playerNumber = data.playerNumber;
 			this.clientState = data.clientState;
@@ -153,6 +154,12 @@ class App {
 		this.socket.on('updateLobbyInfo', (data) => {
 			debug.log(1, "Got Lobby Info", JSON.parse(data));
 			this.updateLobbyInfo(JSON.parse(data));
+		})
+
+		this.socket.on('joinGameResult', (data) => {
+			debug.log(1, `Joined the game? ${data.joinedGame}`);
+			// data.joinedGame will be either true or false
+			// do stuff to display or whatever
 		})
 
 	}
@@ -316,7 +323,7 @@ class App {
 		document.getElementById("authdump").addEventListener("click", function(){ localStorage.authToken = ''; window.open(window.location.href,'_blank'); });
 		document.getElementById("save-snapshot").addEventListener("click", this.saveSnapshot.bind(this));
 		document.getElementById("load-snapshot").addEventListener("click", this.loadSnapshot.bind(this));
-		document.getElementById("join-game").addEventListener("click", this.sendJoinGame.bind(this));
+		document.getElementById("join-game").addEventListener("click", this.sendJoinGame.bind(this, undefined));
 	}
 
 	saveSnapshot () {
@@ -357,6 +364,7 @@ class App {
 
 		const debugData = {
 			'clientID': this.clientID,
+			'socketID': this.socketID,
 			'gameRoom': this.gameRoom,
 			'clientState': this.clientState,
 			'playerNumber': this.playerNumber,

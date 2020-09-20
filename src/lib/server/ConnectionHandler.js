@@ -222,8 +222,10 @@ export default class ConnectionHandler {
 
 			gameController.registerClientController(clientController);
 
+			clientController.bindListeners();
 			clientController.bindGameListeners();
 
+			clientController.onSuccessfulJoinGame(); // also sends clientinfo
 			clientController.sendLobbyInfo();
 
 			this.io.to(gameController.id).emit('message', `Successfully connected Client ${clientController.id} to GameRoom ${gameController.id}`);
@@ -237,7 +239,9 @@ export default class ConnectionHandler {
 
 		if (gameController) {
 			this.connectClientToGameRoom(clientController, gameController);
+			clientController.socket.emit('joinGameResult', {joinedGame: true});
 		} else {
+			clientController.socket.emit('joinGameResult', {joinedGame: false});
 			debug.log(0, `No GameRoom with id ${gameID} found.`)
 		}
 	}
