@@ -160,15 +160,13 @@ class App {
 
 		this.socket.on('joinGameResult', (data) => {
 			debug.log(1, `Joined the game? ${data.joinedGame}`);
-			if(data.joinedGame === true){
-				this.setGamePhase(1);
+			if (data.joinedGame === true) {
+				// this.setGamePhase(1);
 				this.display.successfulJoinedGame = true;
 			}
-			else{
+			else {
 				this.display.successfulJoinedGame = false;
 			}
-			// data.joinedGame will be either true or false
-			// do stuff to display or whatever
 		})
 
 	}
@@ -302,7 +300,7 @@ class App {
 		let lastTurnHistory = this.loadSerializedLastTurnHistory(data.s_lastTurnHistory);
 		this.display.t = 1;
 		this.display.simulationDisplayTurn = lastTurnHistory;
-		debug.log(0, "sent to Display", this.display.simulationDisplayTurn);
+		debug.log(0, "last turn info sent to Display", this.display.simulationDisplayTurn);
 	}
 
 	updateTokenInfo (token) {

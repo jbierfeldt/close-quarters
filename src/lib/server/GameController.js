@@ -226,8 +226,11 @@ export default class GameController {
 
 		// check if all the seated players have submitted their orders
 		// if not, return false and don't execute
+		let onlinePlayers = 0;
 		for (let i = 1; i <= 4; i++) {
 			if (this.playerSpots[i] && this.playerSpots[i].connectionState === 'ONLINE') {
+
+				onlinePlayers++;
 
 				// if player isn't defeated and hasn't submitted orders, stop checking
 				if (this.playerSpots[i].clientState === 'ACTIVE_PLAYER' && !this.playerSpots[i].ordersSubmitted) {
@@ -236,25 +239,30 @@ export default class GameController {
 			}
 		}
 
+		if (onlinePlayers < 1) {
+			return false;
+		}
+
 		// TEMP
 		// all human players have submitted their turns, fill the rest of the spots
 		// with AI
-
-		for (let i = 1; i <= 4; i++) {
-			if (this.playerSpots[i] == null) {
-				let basicAI = new BasicAI(this.game, i);
-
-				this.playerSpots[i] = basicAI;
-
-				//Major Hack for AI first turn placements ******
-				basicAI.createAIBase();
-				this.executeOrder(this.playerSpots[i].ordersToExecute[0]);
-				basicAI.createAIBase();
-				this.executeOrder(this.playerSpots[i].ordersToExecute[1]);
-				this.playerSpots[i].ordersToExecute = [];
-				basicAI.generateOrders(0);
-
-				basicAI.ordersSubmitted = true;
+		if (this.game.turnNumber === 1) {
+			for (let i = 1; i <= 4; i++) {
+				if (this.playerSpots[i] == null) {
+					let basicAI = new BasicAI(this.game, i);
+	
+					this.playerSpots[i] = basicAI;
+	
+					//Major Hack for AI first turn placements ******
+					basicAI.createAIBase();
+					this.executeOrder(this.playerSpots[i].ordersToExecute[0]);
+					basicAI.createAIBase();
+					this.executeOrder(this.playerSpots[i].ordersToExecute[1]);
+					this.playerSpots[i].ordersToExecute = [];
+					basicAI.generateOrders(0);
+	
+					basicAI.ordersSubmitted = true;
+				}
 			}
 		}
 
