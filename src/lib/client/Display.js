@@ -96,6 +96,8 @@ export default class Display {
 			let gameOver = 0;
 			let alpha = 0;
 
+			let input;
+
 			p5.disableFriendlyErrors = true;
 			//Preload the fonts and other assets below
 			s.preload = () =>{
@@ -117,6 +119,12 @@ export default class Display {
 			s.setup = () =>{
 				s.createCanvas(tempConfig.canvasX, tempConfig.canvasY);
 				s.frameRate(60);
+				input = s.createInput();
+
+			//	input.size(width/6,height/9);
+				//input.style('font-size', '48px');
+				//input.style('background-color', '#ffffa1');
+				//input.style('font-family', "Impact");
 			}
 
 			//The draw function loops continuously while the sketch is active
@@ -134,7 +142,7 @@ export default class Display {
 				hoverY=s.int(s.mouseY/si);
 
 				//Delay serves as a variable that has a constant increment for animation
-				this.delay=this.delay+.19+s.deltaTime/500;
+				this.delay=this.delay+.19+s.deltaTime/450;
 
 
 				//playerShifter shifts the Button Menu if the player is on the right side of the screen
@@ -206,11 +214,17 @@ export default class Display {
 					//The below function displays the title sequence
 					// Add bar magnet field lines
 
-					displayMatchmaking(this.app.matchmakingData, wi, he, si);
+
+
+				/*	for (let el in data.gameRooms) {
+						let room = `${el} (${4 - data.gameRooms[el].openSpots} / 4)`;
+					//	s.text(room, width/15,height/4+size*count);
+					//	console.log(room);
+						count=count+1;
+					}*/
+
 					//this.app.sendJoinGame;
-
-
-					//titleSequence(wi,he,this.delay,si/2);
+					titleSequence(wi,he,this.delay,si/2);
 
 					//Display the game title on top of the title sequence
 					if(this.delay>25){
@@ -234,12 +248,12 @@ export default class Display {
 
 					if(s.mouseIsPressed){
 
-						if (!debug.enabled) {
+						//if (!debug.enabled) {
 							s.fullscreen(full);
 							s.resizeCanvas(window.screen.height*1.5, window.screen.height);
-						}
+						//}
 						buttonMaker = 1;
-						this.app.setGamePhase(1);
+						this.app.setGamePhase(0.5);
 						s.mouseIsPressed = false;
 						unitButtons = [];
 					}
@@ -247,7 +261,29 @@ export default class Display {
 				}
 
 				else if(this.app.gamePhase === 0.5){
-					instructionSheet(si, this.app.playerNumber, this.playerColors);
+
+					input.position(wi/9, he/3);
+					input.size(wi/9,he/15);
+					input.style('font-size', '28px');
+					input.style('background-color', '#ffffff');
+					input.style('text-transform', 'uppercase');
+					input.style('font-family', "Monaco");
+
+					displayMatchmaking(this.app.matchmakingData, wi, he, si);
+					s.fill(155,100);
+					s.stroke(255);
+					//s.rect(wi/9+si*4,he/3-si/4,wi/9,he/15);
+					let gameID = input.value();
+					//console.log(input.value());
+					if(gameID.length == 5){
+						try {
+							this.app.sendJoinGame(gameID);
+						} catch (e) {
+							// debug.log(0, "Edge of map");
+							s.text("Room Not Found",wi/9+si*2,he/3+si*5)
+						}
+					}
+					//instructionSheet(si, this.app.playerNumber, this.playerColors);
 				}
 
 				else if(this.app.gamePhase === 1 && this.app.clientState !== 'SPECTATOR' && this.app.clientState !== 'DEFEATED_PLAYER' && this.app.turnIsIn !== true){
@@ -1084,6 +1120,7 @@ export default class Display {
 		}
 
 		function displayMatchmaking(data, width, height, size){
+//[255,0,128,255],[176,196,243,255],[152, 255, 152,255],[210,130,240,255]
 			s.background(0);
 			s.textFont(titleFont);
 			s.strokeWeight(1);
@@ -1092,15 +1129,23 @@ export default class Display {
 			s.textAlign(s.CENTER);
 			s.textSize(size*2);
 			s.text("Matchmaking", width/2,height/12);
-			s.textAlign(s.LEFT);
+			s.stroke(255);
+			s.line(width/4,height/10,3*width/4,height/10);
+			s.stroke(0);
 			s.textSize(size);
-			s.text("Open Games", width/15,height/4);
+			s.fill(176,196,243,255);
+			s.text("Enter Game Code", width/10,height/4);
+			s.fill(152, 255, 152,255);
+			s.text("Create New Lobby", width/2,height/4);
+			s.fill(210,130,240,255);
+			s.text("Hot Seat", 9*width/10,height/4);
+			s.textAlign(s.LEFT);
 			let count = 1;
 			//let dif = size/data.gameRooms.length;
 			for (let el in data.gameRooms) {
 				let room = `${el} (${4 - data.gameRooms[el].openSpots} / 4)`;
-				s.text(room, width/15,height/4+size*count);
-				console.log(room);
+			//	s.text(room, width/15,height/4+size*count);
+			//	console.log(room);
 				count=count+1;
 			}
 		}
