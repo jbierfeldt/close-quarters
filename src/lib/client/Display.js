@@ -99,6 +99,7 @@ export default class Display {
 			let alpha = 0;
 
 			let input;
+			let allowNewID = 1;
 
 			p5.disableFriendlyErrors = true;
 			//Preload the fonts and other assets below
@@ -261,8 +262,10 @@ export default class Display {
 						this.app.setGamePhase(0.5);
 						s.mouseIsPressed = false;
 						unitButtons = [];
+
 					}
 					//Exit this phase and move to the Battle Phase if the mouse is pressed(button trigger to be added)
+
 				}
 
 				else if(this.app.gamePhase === 0.5){
@@ -281,17 +284,26 @@ export default class Display {
 					//s.rect(wi/9+si*4,he/3-si/4,wi/9,he/15);
 					//let allowJoinGame =0; RIG THIS UP SO IT ONLY SENDS ONCE
 					let gameID = input.value();
-					//console.log(input.value());
+
 					if(gameID.length == 5){
-						this.app.sendJoinGame(gameID);
+						if(allowNewID == 1){
+							this.app.sendJoinGame(gameID);
+							allowNewID = 0;
+
 					}
+
 					if(successfulJoinedGame === false){
 
-						s.fill(255,0,128,255)
+						s.fill(255,0,128,255);
 						s.text("Room Not Found",wi/9+si*2,he/3+si*5);
 					}
 					//instructionSheet(si, this.app.playerNumber, this.playerColors);
 				}
+				else{
+					allowNewID = 1;
+
+				}
+			}
 
 				else if(this.app.gamePhase === 1 && this.app.clientState !== 'SPECTATOR' && this.app.clientState !== 'DEFEATED_PLAYER' && this.app.turnIsIn !== true){
 					input.remove();
