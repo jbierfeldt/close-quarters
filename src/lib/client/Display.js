@@ -298,6 +298,9 @@ export default class Display {
 						s.stroke(0);
 						s.text("Room Not Found",wi/9-si/2,he/3+si*1.7);
 					}
+					else if(this.successfulJoinedGame === true){
+						this.app.setGamePhase(1);
+					}
 					//instructionSheet(si, this.app.playerNumber, this.playerColors);
 				}
 				else{
