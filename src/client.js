@@ -258,6 +258,10 @@ class App {
 		debug.log(1, `Attempting to join game ${gameID}`);
 		this.socket.emit('joinGame', {gameID:  gameID});
 	}
+	createRoom () {
+		debug.log(1, `Creating New Room`);
+		this.socket.emit('createGameRoom');
+	}
 
 	setGamePhase (phase) {
 		this.gamePhase = phase;

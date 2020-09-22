@@ -48,7 +48,7 @@ export default class ClientController {
 			this.ordersSubmitted = false;
 			this.clientGamePhase = null;
 			this.clientState = null;
-		}			
+		}
 	}
 
 	removeListeners() {
@@ -72,6 +72,10 @@ export default class ClientController {
 
 		this.socket.on('joinGame', (data) => {
 			this.connectionHandler.attemptClientJoinGameRoom(this, data.gameID);
+		})
+
+		this.socket.on('createGameRoom', () => {
+			this.connectionHandler.createGameRoom();
 		})
 	}
 

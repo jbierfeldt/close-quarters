@@ -270,17 +270,28 @@ export default class Display {
 				}
 
 				else if(this.app.gamePhase === 0.5){
-
+				
 					input.position(wi/9, he/3);
 					input.size(wi/9,he/20);
 					input.style('font-size', '28px');
-					input.style('background-color', '#ffffff');
+					input.style('background-color', '#000000');
+					input.style('border-color', 'white');
+					input.style('color', '#B0C4F3');
+
 					input.style('text-transform', 'uppercase');
 					input.style('font-family', "Monaco");
 
 					displayMatchmaking(this.app.matchmakingData, wi, he, si, this.delay);
-
-					//s.rect(wi/9+si*4,he/3-si/4,wi/9,he/15);
+					s.stroke(0);
+					s.textSize(si*.8);
+					s.fill(152, 255, 152,255);
+					s.text("Create",wi/2-si*1.5,he/3+si*.75);
+					s.fill(230,100);
+					s.stroke(255);
+					s.rect(wi/2-si*2,he/3-si/10,si*4,si*1.1);
+					if(s.mouseIsPressed && s.mouseX < wi/2+si*2 && s.mouseX > wi/2-si*2 && s.mouseY < he/3+si*1.1-si/10 && s.mouseY > he/3-si/10){
+						this.app.createRoom();
+					}
 					//let allowJoinGame =0; RIG THIS UP SO IT ONLY SENDS ONCE
 					let gameID = input.value();
 
@@ -307,6 +318,7 @@ export default class Display {
 					allowNewID = 1;
 
 				}
+
 			}
 
 				else if(this.app.gamePhase === 1 && this.app.clientState !== 'SPECTATOR' && this.app.clientState !== 'DEFEATED_PLAYER' && this.app.turnIsIn !== true){
