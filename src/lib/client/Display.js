@@ -20,6 +20,7 @@ export default class Display {
 		this.delay = 0;
 		this.board = [[]];
 		this.t = 1;
+		this.successfulJoinedGame = null;
 	}
 
 	runLoadScreen (alpha) {
@@ -48,7 +49,7 @@ export default class Display {
 			let gameStart;
 			let sideBarGrowth = 1;
 			let sideBarMenu = false;
-			let successfulJoinedGame = null;
+			//let successfulJoinedGame = null;
 
 			//Button Declarations
 			let bPhaseOne;
@@ -271,16 +272,14 @@ export default class Display {
 				else if(this.app.gamePhase === 0.5){
 
 					input.position(wi/9, he/3);
-					input.size(wi/9,he/15);
+					input.size(wi/9,he/20);
 					input.style('font-size', '28px');
 					input.style('background-color', '#ffffff');
 					input.style('text-transform', 'uppercase');
 					input.style('font-family', "Monaco");
 
-					displayMatchmaking(this.app.matchmakingData, wi, he, si);
+					displayMatchmaking(this.app.matchmakingData, wi, he, si, this.delay);
 
-					s.fill(155,100);
-					s.stroke(255);
 					//s.rect(wi/9+si*4,he/3-si/4,wi/9,he/15);
 					//let allowJoinGame =0; RIG THIS UP SO IT ONLY SENDS ONCE
 					let gameID = input.value();
@@ -292,10 +291,12 @@ export default class Display {
 
 					}
 
-					if(successfulJoinedGame === false){
+					if(this.successfulJoinedGame === false){
 
 						s.fill(255,0,128,255);
-						s.text("Room Not Found",wi/9+si*2,he/3+si*5);
+					  s.textSize(si/2);
+						s.stroke(0);
+						s.text("Room Not Found",wi/9-si/2,he/3+si*1.7);
 					}
 					//instructionSheet(si, this.app.playerNumber, this.playerColors);
 				}
@@ -1180,12 +1181,15 @@ export default class Display {
 
 		  }
 		}
-		function displayMatchmaking(data, width, height, size){
+		function displayMatchmaking(data, width, height, size,delay){
 //[255,0,128,255],[176,196,243,255],[152, 255, 152,255],[210,130,240,255]
 			s.background(0);
+			//s.rotate(delay*PI);
 			for(let i = 0; i < lineFlame.length; i = i+1){
-				lineFlame[i].render(size/5, .5, width, height);
+				lineFlame[i].render(size/4, .6, width, height);
 			}
+			//s.rotate(-delay*PI);
+
 			s.textFont(titleFont);
 			s.strokeWeight(1);
 			s.stroke(0);
@@ -1198,11 +1202,11 @@ export default class Display {
 			s.stroke(0);
 			s.textSize(size);
 			s.fill(176,196,243,255);
-			s.text("Enter Game Code", width/10,height/4);
+			s.text("Enter Game Code", width/6,height/4);
 			s.fill(152, 255, 152,255);
-			s.text("Create New Lobby", width/2,height/4);
+			s.text("New Lobby", width/2,height/4);
 			s.fill(210,130,240,255);
-			s.text("Hot Seat", 9*width/10,height/4);
+			s.text("Hot Seat", 7*width/8,height/4);
 			s.textAlign(s.LEFT);
 
 		}

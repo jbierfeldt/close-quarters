@@ -22,8 +22,8 @@ export default class ConnectionHandler {
 	init() {
 
 		this.registerMiddleware();
-
-		for (let i = 0; i < 5; i++) {
+		this.createGameRoom();
+	/*	for (let i = 0; i < 5; i++) {
 			let newGameID = createID(5);
 			// let IO_ROOM = this.io.to(newGameID);
 
@@ -32,12 +32,12 @@ export default class ConnectionHandler {
 				IO_INSTANCE: this.io
 			});
 			newGame.init();
-	
+
 			this.gameControllers.set(newGame.id, newGame);
-	
+
 			this.openGame = newGame;
 		}
-
+*/
 		this.io.on('connection', (socket) => {
 
 			// check for already existing token and if so, don't make new player controller
@@ -93,6 +93,22 @@ export default class ConnectionHandler {
 			debug.log(0, `new socket ${socket.id} connected as ${socket.clientController.id}`);
 		});
 
+	}
+	createGameRoom(){
+		for (let i = 0; i < 1; i++) {
+				let newGameID = createID(5);
+				// let IO_ROOM = this.io.to(newGameID);
+
+				let newGame = new GameController({
+					id: newGameID,
+					IO_INSTANCE: this.io
+				});
+				newGame.init();
+
+				this.gameControllers.set(newGame.id, newGame);
+
+				this.openGame = newGame;
+			}
 	}
 
 	registerMiddleware() {
@@ -174,7 +190,7 @@ export default class ConnectionHandler {
 		if (clientController.socket !== null) {
 
 			// remove clientController reference from old socket
-			clientController.socket.clientController = null; 
+			clientController.socket.clientController = null;
 			clientController.removeListeners();
 			clientController.socket.disconnect();
 		};
