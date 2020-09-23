@@ -163,7 +163,7 @@ class App {
 			if (data.joinedGame === true) {
 				// this.setGamePhase(1);
 				this.display.successfulJoinedGame = true;
-				this.setGamePhase(1);
+				this.setGamePhase(0.75);
 			}
 			else {
 				this.display.successfulJoinedGame = false;

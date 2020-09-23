@@ -23,21 +23,14 @@ export default class Display {
 		this.successfulJoinedGame = null;
 	}
 
-	runLoadScreen (alpha) {
-		s.noStroke();
-		s.fill(0,alpha)
-		s.rect(0,0,s.width,s.height);
-		s.fill(255);
-		s.textFont(titleFont);
-		s.textAlign(s.CENTER);
-		s.text("LOADING", s.width/2,s.height/1.8);
-	}
+
 
 	init() {
 
 		let sketch = (s) => {
 
 			//Declarations prior to the draw loop & setup
+			let scroller = 0;
 			let lineFlame = [];
 			let titleFont;
 			let standardFont;
@@ -53,6 +46,7 @@ export default class Display {
 
 			//Button Declarations
 			let bPhaseOne;
+			let bStartMatch;
 			let bPhaseThree;
 			let bBase;
 			let bRayTracer;
@@ -156,11 +150,11 @@ export default class Display {
 				playerShifter = 0;
 				submitShifterX = 0;
 				submitShifterY = 0;
-			/*	if(this.app.playerNumber>2){
-					playerShifter=s.width/2;
-				}*/
+				/*if(this.app.playerNumber>2){
+						playerShifter=s.width/2;
+					}*/
 				if(buttonMaker === 1){
-/*
+					/*
 					if(this.app.playerNumber == 2){
 						submitShifterX = 0;
 						submitShifterY = he/2;;
@@ -176,6 +170,8 @@ export default class Display {
 
 
 					bPhaseOne = new Buttoned(wi-si*5.55, si*2.9, si*5.1, si*1.1, "Deploy Machines", this.app.setGamePhase);
+					bStartMatch = new Buttoned(wi-si*5.55, si*11.5, si*5.1, si*1.1, "Start Match", this.app.setGamePhase);
+
 					bPhaseThree = new Buttoned(wi/3.2 + submitShifterX, he/1.65 - submitShifterY,si*6.1,si*1.1,"Review Board",this.app.setGamePhase);
 
 					bSubmit = new Buttoned(wi/3.2 + submitShifterX, he/1.85 - submitShifterY,si*5,si*1.1,"Submit Turn",this.app.sendSubmitTurn);
@@ -263,7 +259,6 @@ export default class Display {
 						this.app.setGamePhase(0.5);
 						s.mouseIsPressed = false;
 						unitButtons = [];
-
 					}
 					//Exit this phase and move to the Battle Phase if the mouse is pressed(button trigger to be added)
 
@@ -299,7 +294,7 @@ export default class Display {
 					if(s.mouseIsPressed && s.mouseX < wi/2+9.25*si+si*4 && s.mouseX > wi/2+9.25*si && s.mouseY < he/3+si*1.1-si/10 && s.mouseY > he/3-si/10){
 						for (let el in this.app.matchmakingData.gameRooms) {
 							if(this.app.matchmakingData.gameRooms[el].openSpots > 1){
-							 //`${el} (${4 - data.gameRooms[el].openSpots} / 4)`;
+							 //${el} (${4 - data.gameRooms[el].openSpots} / 4)`;
 								this.app.sendJoinGame(el);
 							}
 						}
@@ -333,8 +328,144 @@ export default class Display {
 					}*/
 
 			}
+			else if(this.app.gamePhase === 0.75 && this.app.clientState !== 'SPECTATOR'){
+				  input.remove();
+					sideBarGrowth = 0.8;
+					sideBarMenu = true;
+					wi = s.width * sideBarGrowth;
+					si = wi/30;
+					he = si*20;
 
-				else if(this.app.gamePhase === 1 && this.app.clientState !== 'SPECTATOR' && this.app.clientState !== 'DEFEATED_PLAYER' && this.app.turnIsIn !== true){
+
+					drawGrid(wi, he, si, this.playerColors);
+					for(let p = 0; p < 4; p = p + 1){
+						if(this.app.game.players[p].victoryCondition == -1){
+							if(p == 1){
+								s.translate(0,he/2);
+							}
+							else if(p == 2){
+								s.translate(wi/2,0);
+							}
+							else if(p == 3){
+								s.translate(wi/2,he/2);
+							}
+								s.fill(0,220);
+								s.noStroke();
+								s.rect(0,0,wi/2,he/2);
+								if(p == 1){
+									s.translate(0,-he/2);
+								}
+								else if(p == 2){
+									s.translate(-wi/2,0);
+								}
+								else if(p == 3){
+									s.translate(-wi/2,-he/2);
+								}
+						}
+					}
+
+					//Tooltip Section
+					hoverX=s.int(s.mouseX/si);
+					hoverY=s.int(s.mouseY/si);
+
+					for(let p = 0; p < 4; p = p + 1){
+						if(this.app.game.players[p].victoryCondition == -1){
+							s.textFont(titleFont);
+							if(p == 1){
+								s.translate(0,he/2);
+							}
+							else if(p == 2){
+								s.translate(wi/2,0);
+							}
+							else if(p == 3){
+								s.translate(wi/2,he/2);
+							}
+							s.textSize(si*1.6);
+							s.fill(this.playerColors[p][0], this.playerColors[p][1], this.playerColors[p][2], 255);
+							s.stroke(0);
+							s.text("Defeated",wi/8,he/4);
+							if(this.app.game.players[p].victoryCondition == -1){
+								s.textFont(titleFont);
+								if(p == 1){
+									s.translate(0,-he/2);
+								}
+								else if(p == 2){
+									s.translate(-wi/2,0);
+								}
+								else if(p == 3){
+									s.translate(-wi/2,-he/2);
+								}
+							}
+						}
+					}
+					//HoverSquares
+					s.fill(255,100);
+					s.noStroke();
+					s.rect(hoverX*si,hoverY*si,si,si);
+
+///SIDE BAR FOR REVIEW MODE
+					s.textFont(titleFont);
+					s.fill(0,150);
+					s.noStroke();
+					s.rect(wi,0,s.width - wi,he);
+					s.rect(0,he,s.width,s.width-he);
+				if(sideBarMenu == true){
+					s.textSize(si*1.2);
+					s.fill(this.playerColors[this.app.playerNumber-1][0], this.playerColors[this.app.playerNumber-1][1], this.playerColors[this.app.playerNumber-1][2], 255);
+					s.stroke(0);
+					s.text("Lobby", wi+si*2, si*1.5);
+					s.stroke(255);
+					s.line(wi+si/4,si*2,s.width-si/4,si*2);
+					s.noFill();
+					s.rect(wi+si*1.2,si*3.5,si*5,si*1.5);
+					s.fill(255);
+					s.stroke(0);
+				  s.textSize(si*.7);
+					s.text("Leave Room", wi+si*1.5, si*4.5);
+					bStartMatch.drawButton();
+					if(s.mouseIsPressed && bStartMatch.isInRange(s.mouseX,s.mouseY)){
+						bStartMatch.func.call(this.app,1);
+					}
+					s.fill(255);
+					s.stroke(0);
+					s.textSize(si*0.9);
+					s.text("Start Match", wi+si*.71, si*15.35);
+
+					s.fill(255);
+					s.stroke(0);
+					s.textSize(si*1.25);
+					s.textAlign(s.CENTER);
+					s.text("Join Code" , wi+wi*.125, si*8.5);
+					s.line(wi+wi*.1,si*8.5,s.width-wi*.1,si*8.5)
+					s.stroke(255);
+					s.fill(this.playerColors[this.app.playerNumber-1][0], this.playerColors[this.app.playerNumber-1][1], this.playerColors[this.app.playerNumber-1][2], 255);
+
+					s.stroke(0);
+					s.textFont(standardFont);
+          s.textSize(si*.89);
+					let upperCase = this.app.gameRoom.toUpperCase();
+          s.text(upperCase , wi+wi*.125, si*10);
+
+					s.textFont(titleFont);
+					s.textAlign(s.LEFT);
+					s.textSize(si*1.1);
+					s.stroke(0);
+					s.strokeWeight(2);
+					//Scrolling Bar;
+					s.textSize(si*1.7);
+					s.textFont(standardFont);
+					scroller = this.delay/250;
+					s.text("Common Unit: ", -s.width+3*s.width*(scroller-Math.floor(scroller)), s.height-si*1.7);
+					scroller = (this.delay+ 60)/250;
+					s.text("Starting Cores: 2", -s.width+3*s.width*(scroller-Math.floor(scroller)), s.height-si*1.7);
+					scroller = (this.delay + 120)/250;
+					s.text("Games Active: ", -s.width+3*s.width*(scroller-Math.floor(scroller)), s.height-si*1.7);
+				  scroller = (this.delay - 60)/250;
+					s.text("Starting Credits: 7", -s.width+3*s.width*(scroller-Math.floor(scroller)), s.height-si*1.7);
+				}
+			}
+
+			else if(this.app.gamePhase === 1 && this.app.clientState !== 'SPECTATOR' && this.app.clientState !== 'DEFEATED_PLAYER' && this.app.turnIsIn !== true){
 					input.remove();
 					justTriggered = 1;
 					this.t = 1;
@@ -371,7 +502,7 @@ export default class Display {
 						s.fill(255);
 						s.stroke(0);
 						s.textSize(wi/26.5);
-						s.text("Place Core", wi/2+si*3-playerShifter,si*buttonScale*3.7);
+						s.text("Place Core", wi/2+si*4.25-playerShifter,si*buttonScale*3.7);
 						if(s.mouseIsPressed){
 							if(bBase.isInRange(s.mouseX,s.mouseY)){
 								bBase.buttonHasBeenPressed();
@@ -555,11 +686,11 @@ export default class Display {
 								s.text("Hypothesizing", wi/35, he/1.75+(a-1)*si);
 								}
 
+							}
+						else {
+							s.text("Waiting For Player", wi/35, he/1.75+(a-1)*si);
+						}
 					}
-					else {
-						s.text("Waiting For Player", wi/35, he/1.75+(a-1)*si);
-					}
-				}
 					if(this.app.playerNumber == 2){
 						s.translate(-0,he/2);
 					}
@@ -592,16 +723,11 @@ export default class Display {
 						}
 					}
 					//Target path hovering
-
-
-
-
-
 					//Calculate which cell the mouse is currently hovering over and highlight it
 
 					if(hoverX >= 0 && hoverX < 30 && hoverY >= 0 && hoverY < 20) {
 				  if(board[hoverY][hoverX].length != 0){
-						//hoverObject = false;
+
 						if(this.app.playerNumber == 1 && hoverX <= 14 && hoverY < 10 && hoverX < 30 && hoverY < 20){
 							tooltip(hoverX, hoverY, board, this.t, wi, he, si, this.playerColors,this.simulationDisplayTurn,this.app);
 						}
@@ -616,8 +742,6 @@ export default class Display {
 						}
 					}
 				}
-
-
 					s.fill(255,100);
 					s.noStroke();
 					if(this.app.game.players[this.app.playerNumber-1].baseCount < 2 && gameStart == 0 && this.app.game.turnNumber < 2){
@@ -708,14 +832,12 @@ export default class Display {
 									s.textAlign(s.LEFT);
 								}
 								fullBoardTrigger = 1;
-								//let tarX = possibleTargets[i][0];
 							}
 					}
 					else{
 						fullBoardTrigger = 0;
 					}
-}
-
+			 	}
 
 				}
 
@@ -854,7 +976,7 @@ export default class Display {
 								s.text("Is Victorious",wi/13,he/1.5);
 							}
 						}
-				}
+					}
 				//IMPORTANT - ANIMATION SPEED
 		    animate = animate + (.65 + s.deltaTime/100);
 
@@ -863,7 +985,7 @@ export default class Display {
 					this.app.setGamePhase(3);
 					sideBarGrowth = 1;
 					sideBarMenu = false;
-				}
+					}
 				}
 
 			}
@@ -876,11 +998,10 @@ export default class Display {
 				else{
 					sideBarMenu = true;
 				}
-				wi = s.width * sideBarGrowth;
-				si = wi/30;
-				he = si*20;
-				//
-				this.t = Object.keys(this.simulationDisplayTurn.tick).length;
+					wi = s.width * sideBarGrowth;
+					si = wi/30;
+					he = si*20;
+					this.t = Object.keys(this.simulationDisplayTurn.tick).length;
 					drawGrid(wi, he, si, this.playerColors);
 					for(let p = 0; p < 4; p = p + 1){
 						if(this.app.game.players[p].victoryCondition == -1){
@@ -1021,7 +1142,7 @@ export default class Display {
 					//Scrolling Bar;
 					s.textSize(si*1.7);
 					s.textFont(standardFont);
-					let scroller = this.delay/250;
+					scroller = this.delay/250;
 					s.text("Damage Dealt: "+ this.app.game.players[this.app.playerNumber-1].damageDealtThisTurn, -s.width+3*s.width*(scroller-Math.floor(scroller)), s.height-si*1.7);
 					scroller = (this.delay+ 60)/250;
 					s.text("Machines Lost: "+ this.app.game.players[this.app.playerNumber-1].unitsLostThisTurn, -s.width+3*s.width*(scroller-Math.floor(scroller)), s.height-si*1.7);
@@ -1052,14 +1173,7 @@ export default class Display {
 			}
 			//Load Screen Logic Below
 		  if(this.app.turnIsIn == true){
-
-				if(justTriggered = 1){
-					alpha = 255;
-					justTriggered = 0;
-				}
-				else{
-					alpha = alpha + 1;
-				}
+				alpha = 255;
 				runLoadScreen(alpha);
 			}
 			if(this.app.simulationRun == true){
@@ -1069,7 +1183,6 @@ export default class Display {
 			//EXPERIMENT
 			s.mouseIsPressed = false;
 		}
-
 
 
 
@@ -1242,7 +1355,7 @@ export default class Display {
 			s.text("New Lobby", width/2,height/4);
 			s.fill(210,130,240,255);
 			s.text("Hot Seat", 7*width/8,height/4);
-			s.textAlign(s.LEFT);
+			//s.textAlign(s.LEFT);
 
 		}
 
