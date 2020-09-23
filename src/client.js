@@ -18,6 +18,7 @@ class App {
 		this.display = null;
 		this.gameState = undefined;
 		this.socket = undefined;
+		this.gameRoom = undefined;
 
 		this.gamePhase = undefined;
 		this.currentTurnOrders = [];
@@ -34,8 +35,11 @@ class App {
 		this.spectatorMode = false;
 		this.clientState = null;
 		this.loadedClientInfoFromServer = false;
+		this.loadedServerStateFromServer = false;
 		this.turnIsIn = false; //Use this for the transition
 		this.simulationRun = false;
+
+		this.waitOnInfoCallback = undefined;
 	}
 
 	init() {
@@ -107,9 +111,17 @@ class App {
 		this.socket.on('updateServerState', (data) => {
 			debug.log(0, `got update server state`, data);
 
+			if (this.loadedServerStateFromServer === false) {
+				this.loadedServerStateFromServer = true;
+			}
+
 			let players = JSON.parse(data.players);
 			this.playersOnServer = players;
 			this.updateDebugInfo();
+
+			if (this.waitOnInfoCallback) {
+				this.waitOnInfoCallback();
+			}
 		});
 
 		this.socket.on('updateLastTurnHistory', (data) => {
@@ -134,6 +146,7 @@ class App {
 		})
 
 		this.socket.on('updateClientInfo', (data) => {
+			debug.log(1, "Got Client Info");
 			this.updateTokenInfo(data.token);
 
 			this.clientID = data.clientID;
@@ -143,14 +156,17 @@ class App {
 			this.clientState = data.clientState;
 
 			// if first time getting clientInfo, start Display
-		//	if (this.loadedClientInfoFromServer === false && this.gameRoom && this.playerNumber) {
-		if (this.loadedClientInfoFromServer === false) {
+			//	if (this.loadedClientInfoFromServer === false && this.gameRoom && this.playerNumber) {
+			if (this.loadedClientInfoFromServer === false) {
 				this.onFinishedLoading();
 				this.loadedClientInfoFromServer = true;
 			}
 
 			this.updateDebugInfo();
-			debug.log(1, "Got Client Info");
+
+			if (this.waitOnInfoCallback) {
+				this.waitOnInfoCallback();
+			}
 		})
 
 		this.socket.on('updateLobbyInfo', (data) => {
@@ -158,17 +174,17 @@ class App {
 			this.updateLobbyInfo(JSON.parse(data));
 		})
 
-		this.socket.on('joinGameResult', (data) => {
-			debug.log(1, `Joined the game? ${data.joinedGame}`);
-			if (data.joinedGame === true) {
-				// this.setGamePhase(1);
-				this.display.successfulJoinedGame = true;
-				this.setGamePhase(1);
-			}
-			else {
-				this.display.successfulJoinedGame = false;
-			}
-		})
+		// this.socket.on('joinGameResult', (data) => {
+		// 	debug.log(1, `Joined the game? ${data.joinedGame}`);
+		// 	if (data.joinedGame === true) {
+		// 		// this.setGamePhase(1);
+		// 		this.display.successfulJoinedGame = true;
+		// 		this.setGamePhase(1);
+		// 	}
+		// 	else {
+		// 		this.display.successfulJoinedGame = false;
+		// 	}
+		// })
 
 	}
 
@@ -257,14 +273,53 @@ class App {
 			gameID = document.getElementById("join-game-id").value;
 		}
 		debug.log(1, `Attempting to join game ${gameID}`);
-		this.socket.emit('joinGame', {gameID:  gameID});
+		this.socket.emit('joinGame', {gameID:  gameID}, (result) => {
+			debug.log(1, `Joined the game? ${result}`);
+			if (result === true) {
+				this.display.successfulJoinedGame = true;
+				this.setGamePhase('LOADING');
+
+				// callback to be called once ClientInfo is received from server
+				this.waitOnInfoCallback = () => {
+					if (this.loadedServerStateFromServer && this.loadedClientInfoFromServer) {
+						this.setGamePhase(1);
+						this.waitOnInfoCallback = undefined;
+					}
+				}
+			}
+			else {
+				this.display.successfulJoinedGame = false;
+			}
+		});
 	}
+
 	sendCreateRoom () {
 		debug.log(1, `Creating New Room`);
-		this.socket.emit('createGameRoom');
+		this.socket.emit('createGameRoom', (result, game) => {
+			debug.log(1, `New game ${game} returned ${result}`);
+			if (result === true)  {
+				this.display.successfulJoinedGame = true;
+				this.setGamePhase('LOADING');
+
+				// callback to be called once ClientInfo is received from server
+				this.waitOnInfoCallback = () => {
+					if (this.loadedServerStateFromServer && this.loadedClientInfoFromServer) {
+						this.setGamePhase(1);
+						this.waitOnInfoCallback = undefined;
+					}
+					else {
+						console.log(`this.loadedServerStateFromServer: ${this.loadedServerStateFromServer} \n this.loadedClientInfoFromServer: ${this.loadedClientInfoFromServer}`)
+					}
+				}
+			}
+			else {
+				this.display.successfulJoinedGame =  false;
+			}
+		});
 	}
 
 	setGamePhase (phase) {
+		console.log(`setting game phase ${phase}`);
 		this.gamePhase = phase;
 		this.socket.emit('updateClientPhase', {
 			newPhase: this.gamePhase
@@ -358,7 +413,6 @@ class App {
 
 	updateLobbyInfo (data) {
 		this.matchmakingData = data;
-		console.log(this.matchmakingData);
 		const lobbyPane = document.getElementById("lobby-pane");
 		lobbyPane.innerHTML = '';
 		for (let el in data.gameRooms) {

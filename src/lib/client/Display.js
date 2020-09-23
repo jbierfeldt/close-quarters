@@ -23,16 +23,6 @@ export default class Display {
 		this.successfulJoinedGame = null;
 	}
 
-	runLoadScreen (alpha) {
-		s.noStroke();
-		s.fill(0,alpha)
-		s.rect(0,0,s.width,s.height);
-		s.fill(255);
-		s.textFont(titleFont);
-		s.textAlign(s.CENTER);
-		s.text("LOADING", s.width/2,s.height/1.8);
-	}
-
 	init() {
 
 		let sketch = (s) => {
@@ -101,6 +91,8 @@ export default class Display {
 
 			let input;
 			let allowNewID = 1;
+
+			let loading = false;
 
 			p5.disableFriendlyErrors = true;
 			//Preload the fonts and other assets below
@@ -255,10 +247,10 @@ export default class Display {
 
 					if(s.mouseIsPressed){
 
-						//if (!debug.enabled) {
+						if (!debug.enabled) {
 							s.fullscreen(full);
 							s.resizeCanvas(window.screen.height*1.5, window.screen.height);
-						//}
+						}
 						buttonMaker = 1;
 						this.app.setGamePhase(0.5);
 						s.mouseIsPressed = false;
@@ -1053,18 +1045,16 @@ export default class Display {
 			//Load Screen Logic Below
 		  if(this.app.turnIsIn == true){
 
-				if(justTriggered = 1){
-					alpha = 255;
-					justTriggered = 0;
-				}
-				else{
-					alpha = alpha + 1;
-				}
-				runLoadScreen(alpha);
+				runLoadScreen(255);
+
 			}
 			if(this.app.simulationRun == true){
 				this.app.turnIsIn = false;
 				this.app.simulationRun = false;
+			}
+
+			if (this.app.gamePhase === 'LOADING') {
+				runLoadScreen(255);
 			}
 			//EXPERIMENT
 			s.mouseIsPressed = false;
@@ -1326,7 +1316,6 @@ export default class Display {
 			s.textFont(titleFont);
 			s.textAlign(s.CENTER);
 			s.text("LOADING", s.width/2,s.height/1.8);
-			console.log(alpha);
 		}
 
 		function showUnitDescription(unitType, player, wid, hei, siz){
