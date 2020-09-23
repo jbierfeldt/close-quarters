@@ -163,6 +163,7 @@ class App {
 			if (data.joinedGame === true) {
 				// this.setGamePhase(1);
 				this.display.successfulJoinedGame = true;
+				this.setGamePhase(1);
 			}
 			else {
 				this.display.successfulJoinedGame = false;
@@ -258,7 +259,7 @@ class App {
 		debug.log(1, `Attempting to join game ${gameID}`);
 		this.socket.emit('joinGame', {gameID:  gameID});
 	}
-	createRoom () {
+	sendCreateRoom () {
 		debug.log(1, `Creating New Room`);
 		this.socket.emit('createGameRoom');
 	}

@@ -128,7 +128,7 @@ export default class Display {
 				s.frameRate(60);
 				input = s.createInput();
 
-			//	input.size(width/6,height/9);
+			  //input.size(width/6,height/9);
 				//input.style('font-size', '48px');
 				//input.style('background-color', '#ffffa1');
 				//input.style('font-family', "Impact");
@@ -270,7 +270,7 @@ export default class Display {
 				}
 
 				else if(this.app.gamePhase === 0.5){
-				
+
 					input.position(wi/9, he/3);
 					input.size(wi/9,he/20);
 					input.style('font-size', '28px');
@@ -286,12 +286,25 @@ export default class Display {
 					s.textSize(si*.8);
 					s.fill(152, 255, 152,255);
 					s.text("Create",wi/2-si*1.5,he/3+si*.75);
+					s.fill(210,130,240,255);
+					s.text("Join",wi/2+si*10.35,he/3+si*.75);
 					s.fill(230,100);
+					s.noFill();
 					s.stroke(255);
 					s.rect(wi/2-si*2,he/3-si/10,si*4,si*1.1);
 					if(s.mouseIsPressed && s.mouseX < wi/2+si*2 && s.mouseX > wi/2-si*2 && s.mouseY < he/3+si*1.1-si/10 && s.mouseY > he/3-si/10){
-						this.app.createRoom();
+						this.app.sendCreateRoom();
 					}
+					s.rect(wi/2+si*9.25,he/3-si/10,si*4,si*1.1);
+					if(s.mouseIsPressed && s.mouseX < wi/2+9.25*si+si*4 && s.mouseX > wi/2+9.25*si && s.mouseY < he/3+si*1.1-si/10 && s.mouseY > he/3-si/10){
+						for (let el in this.app.matchmakingData.gameRooms) {
+							if(this.app.matchmakingData.gameRooms[el].openSpots > 1){
+							 //`${el} (${4 - data.gameRooms[el].openSpots} / 4)`;
+								this.app.sendJoinGame(el);
+							}
+						}
+					}
+
 					//let allowJoinGame =0; RIG THIS UP SO IT ONLY SENDS ONCE
 					let gameID = input.value();
 
@@ -301,23 +314,23 @@ export default class Display {
 							allowNewID = 0;
 
 					}
-
 					if(this.successfulJoinedGame === false){
-
 						s.fill(255,0,128,255);
 					  s.textSize(si/2);
 						s.stroke(0);
 						s.text("Room Not Found",wi/9-si/2,he/3+si*1.7);
 					}
-					else if(this.successfulJoinedGame === true){
+				/*	else if(this.successfulJoinedGame === true){
 						this.app.setGamePhase(1);
-					}
+					}*/
 					//instructionSheet(si, this.app.playerNumber, this.playerColors);
 				}
 				else{
 					allowNewID = 1;
-
 				}
+			/*	if(this.successfulJoinedGame === true){
+						this.app.setGamePhase(1);
+					}*/
 
 			}
 
@@ -1189,21 +1202,28 @@ export default class Display {
 				this.x = this.x + this.orientationOne*speed;
 				this.y = this.y + this.orientationTwo*speed;
 				for(let l = 0; l < this.length; l = l + 1){
-					s.stroke(255,0,128,255-255*l/this.length);
-				  s.point(this.x-l*this.orientationOne,this.y-l*this.orientationTwo);
+					s.fill(255,0,128,255-255*l/this.length);
+					s.strokeWeight(1);
+					s.stroke(0);
+					s.noStroke();
+				  s.ellipse(this.x-l*this.orientationOne,this.y-l*this.orientationTwo,3-l/20,3-l/20);
 			}
 				this.checkCoordinates(this.x, this.y, width,height);
 
 		  }
 		}
+		function displayLobby(gameRoom, data, width, height, size, delay){
+			s.textSize(si);
+			for(let p = 0; p < 4; p = p + 1){
+
+			}
+		}
 		function displayMatchmaking(data, width, height, size,delay){
-//[255,0,128,255],[176,196,243,255],[152, 255, 152,255],[210,130,240,255]
 			s.background(0);
-			//s.rotate(delay*PI);
+
 			for(let i = 0; i < lineFlame.length; i = i+1){
 				lineFlame[i].render(size/4, .6, width, height);
 			}
-			//s.rotate(-delay*PI);
 
 			s.textFont(titleFont);
 			s.strokeWeight(1);

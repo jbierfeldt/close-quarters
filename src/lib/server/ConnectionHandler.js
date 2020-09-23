@@ -94,6 +94,7 @@ export default class ConnectionHandler {
 		});
 
 	}
+
 	createGameRoom(){
 		for (let i = 0; i < 1; i++) {
 				let newGameID = createID(5);
@@ -108,7 +109,9 @@ export default class ConnectionHandler {
 				this.gameControllers.set(newGame.id, newGame);
 
 				this.openGame = newGame;
+				return newGameID;
 			}
+
 	}
 
 	registerMiddleware() {

@@ -18,7 +18,7 @@ export default class ClientController {
 		this.ordersSubmitted = false;
 
 		this.clientGamePhase = null;
-		this.clientState = 'SPECTATOR'; // null, SPECTATOR, ACTIVE_PLAYER, DEFEATED_PLAYER
+		this.clientState = 'LOBBY'; // Prior to player assignment - fix for null, SPECTATOR, ACTIVE_PLAYER, DEFEATED_PLAYER
 	}
 
 	onConnect() {
@@ -75,7 +75,8 @@ export default class ClientController {
 		})
 
 		this.socket.on('createGameRoom', () => {
-			this.connectionHandler.createGameRoom();
+			let newGame = this.connectionHandler.createGameRoom();
+			this.connectionHandler.attemptClientJoinGameRoom(this, newGame);
 		})
 	}
 
