@@ -70,13 +70,15 @@ export default class ClientController {
 			if (this.gameController) this.gameController.printGameRoomInformation();
 		})
 
-		this.socket.on('joinGame', (data) => {
-			this.connectionHandler.attemptClientJoinGameRoom(this, data.gameID);
+		this.socket.on('joinGame', (data, callback) => {
+			let joinedGameResult = this.connectionHandler.attemptClientJoinGameRoom(this, data.gameID);
+			callback(joinedGameResult);
 		})
 
-		this.socket.on('createGameRoom', () => {
+		this.socket.on('createGameRoom', (callback) => {
 			let newGame = this.connectionHandler.createGameRoom();
-			this.connectionHandler.attemptClientJoinGameRoom(this, newGame);
+			let joinGameResult = this.connectionHandler.attemptClientJoinGameRoom(this, newGame);
+			callback(joinGameResult, newGame);
 		})
 	}
 

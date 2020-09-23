@@ -109,6 +109,7 @@ export default class ConnectionHandler {
 				this.gameControllers.set(newGame.id, newGame);
 
 				this.openGame = newGame;
+				
 				return newGameID;
 			}
 
@@ -265,10 +266,12 @@ export default class ConnectionHandler {
 
 		if (gameController) {
 			this.connectClientToGameRoom(clientController, gameController);
-			clientController.socket.emit('joinGameResult', {joinedGame: true});
+			// clientController.socket.emit('joinGameResult', {joinedGame: true});
+			return true;
 		} else {
-			clientController.socket.emit('joinGameResult', {joinedGame: false});
+			// clientController.socket.emit('joinGameResult', {joinedGame: false});
 			debug.log(0, `No GameRoom with id ${gameID} found.`)
+			return false;
 		}
 	}
 

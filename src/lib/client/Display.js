@@ -96,6 +96,8 @@ export default class Display {
 			let input;
 			let allowNewID = 1;
 
+			let loading = false;
+
 			p5.disableFriendlyErrors = true;
 			//Preload the fonts and other assets below
 			s.preload = () =>{
@@ -251,10 +253,10 @@ export default class Display {
 
 					if(s.mouseIsPressed){
 
-						//if (!debug.enabled) {
+						if (!debug.enabled) {
 							s.fullscreen(full);
 							s.resizeCanvas(window.screen.height*1.5, window.screen.height);
-						//}
+						}
 						buttonMaker = 1;
 						this.app.setGamePhase(0.5);
 						s.mouseIsPressed = false;
@@ -1173,12 +1175,17 @@ export default class Display {
 			}
 			//Load Screen Logic Below
 		  if(this.app.turnIsIn == true){
-				alpha = 255;
-				runLoadScreen(alpha);
+
+				runLoadScreen(255);
+
 			}
 			if(this.app.simulationRun == true){
 				this.app.turnIsIn = false;
 				this.app.simulationRun = false;
+			}
+
+			if (this.app.gamePhase === 'LOADING') {
+				runLoadScreen(255);
 			}
 			//EXPERIMENT
 			s.mouseIsPressed = false;
@@ -1439,7 +1446,6 @@ export default class Display {
 			s.textFont(titleFont);
 			s.textAlign(s.CENTER);
 			s.text("LOADING", s.width/2,s.height/1.8);
-			console.log(alpha);
 		}
 
 		function showUnitDescription(unitType, player, wid, hei, siz){
