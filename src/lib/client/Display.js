@@ -253,10 +253,10 @@ export default class Display {
 
 					if(s.mouseIsPressed){
 
-						if (!debug.enabled) {
+					//	if (!debug.enabled) {
 							s.fullscreen(full);
 							s.resizeCanvas(window.screen.height*1.5, window.screen.height);
-						}
+					//	}
 						buttonMaker = 1;
 						this.app.setGamePhase(0.5);
 						s.mouseIsPressed = false;
@@ -279,6 +279,7 @@ export default class Display {
 					input.style('font-family', "Monaco");
 
 					displayMatchmaking(this.app.matchmakingData, wi, he, si, this.delay);
+					s.textAlign(s.LEFT);
 					s.stroke(0);
 					s.textSize(si*.8);
 					s.fill(152, 255, 152,255);
@@ -289,6 +290,7 @@ export default class Display {
 					s.noFill();
 					s.stroke(255);
 					s.rect(wi/2-si*2,he/3-si/10,si*4,si*1.1);
+					s.textAlign(s.CENTER);
 					if(s.mouseIsPressed && s.mouseX < wi/2+si*2 && s.mouseX > wi/2-si*2 && s.mouseY < he/3+si*1.1-si/10 && s.mouseY > he/3-si/10){
 						this.app.sendCreateRoom();
 					}
@@ -1186,6 +1188,7 @@ export default class Display {
 
 			if (this.app.gamePhase === 'LOADING') {
 				runLoadScreen(255);
+				input.remove();
 			}
 			//EXPERIMENT
 			s.mouseIsPressed = false;
@@ -1444,6 +1447,7 @@ export default class Display {
 			s.rect(0,0,s.width,s.height);
 			s.fill(255);
 			s.textFont(titleFont);
+			s.textSize(s.width/23);
 			s.textAlign(s.CENTER);
 			s.text("LOADING", s.width/2,s.height/1.8);
 		}
