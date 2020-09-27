@@ -343,29 +343,12 @@ export default class Display {
 
 					drawGrid(wi, he, si, this.playerColors);
 					for(let p = 0; p < 4; p = p + 1){
-						if(this.app.game.players[p].victoryCondition == -1){
-							if(p == 1){
-								s.translate(0,he/2);
-							}
-							else if(p == 2){
-								s.translate(wi/2,0);
-							}
-							else if(p == 3){
-								s.translate(wi/2,he/2);
-							}
-								s.fill(0,220);
-								s.noStroke();
-								s.rect(0,0,wi/2,he/2);
-								if(p == 1){
-									s.translate(0,-he/2);
-								}
-								else if(p == 2){
-									s.translate(-wi/2,0);
-								}
-								else if(p == 3){
-									s.translate(-wi/2,-he/2);
-								}
+						s.fill(255,80);
+						s.noStroke();
+						if((this.app.playerNumber-1) == p){
+							s.rect(0,0,si*15,si*10);
 						}
+
 					}
 
 					//Tooltip Section
@@ -373,34 +356,7 @@ export default class Display {
 					hoverY=s.int(s.mouseY/si);
 
 					for(let p = 0; p < 4; p = p + 1){
-						if(this.app.game.players[p].victoryCondition == -1){
-							s.textFont(titleFont);
-							if(p == 1){
-								s.translate(0,he/2);
-							}
-							else if(p == 2){
-								s.translate(wi/2,0);
-							}
-							else if(p == 3){
-								s.translate(wi/2,he/2);
-							}
-							s.textSize(si*1.6);
-							s.fill(this.playerColors[p][0], this.playerColors[p][1], this.playerColors[p][2], 255);
-							s.stroke(0);
-							s.text("Defeated",wi/8,he/4);
-							if(this.app.game.players[p].victoryCondition == -1){
-								s.textFont(titleFont);
-								if(p == 1){
-									s.translate(0,-he/2);
-								}
-								else if(p == 2){
-									s.translate(-wi/2,0);
-								}
-								else if(p == 3){
-									s.translate(-wi/2,-he/2);
-								}
-							}
-						}
+
 					}
 					//HoverSquares
 					s.fill(255,100);
