@@ -49,7 +49,7 @@ export default class GameController {
 		if (this.playerSpots[clientController.playerNumber] === clientController) {
 			this.playerSpots[clientController.playerNumber] = null;
 		}
-		
+
 		// remove outgoing client from clientControllers list
 		this.clientControllers = this.clientControllers.filter( (member) => {
 			if (member === clientController) {
@@ -97,7 +97,7 @@ export default class GameController {
 			}
 		}
 
-		this.setGamePhaseForAll(0);
+		this.setGamePhaseForAll("TITLE");
 		this.sendGameStateToAll();
 		this.sendLastTurnHistoryToAll();
 	}
@@ -250,9 +250,9 @@ export default class GameController {
 			for (let i = 1; i <= 4; i++) {
 				if (this.playerSpots[i] == null) {
 					let basicAI = new BasicAI(this.game, i);
-	
+
 					this.playerSpots[i] = basicAI;
-	
+
 					//Major Hack for AI first turn placements ******
 					basicAI.createAIBase();
 					this.executeOrder(this.playerSpots[i].ordersToExecute[0]);
@@ -260,7 +260,7 @@ export default class GameController {
 					this.executeOrder(this.playerSpots[i].ordersToExecute[1]);
 					this.playerSpots[i].ordersToExecute = [];
 					basicAI.generateOrders(0);
-	
+
 					basicAI.ordersSubmitted = true;
 				}
 			}

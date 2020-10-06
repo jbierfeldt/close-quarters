@@ -52,7 +52,7 @@ class App {
 		});
 
 		this.game.init();
-		this.setGamePhase(0);
+		this.setGamePhase("TITLE");
 		if (debug.enabled) {this.debugInit();};
 		this.bindListeners();
 	}
@@ -105,7 +105,7 @@ class App {
 		this.socket.on('simulationSuccessful', (data) => {
 			this.updateLastTurnHistory(data);
 			this.simulationRun = true;
-			this.setGamePhase(2); // show simulation phase
+			this.setGamePhase("SIMULATION"); // show simulation phase
 		})
 
 		this.socket.on('updateServerState', (data) => {
@@ -261,7 +261,7 @@ class App {
 
 	sendResetGame () {
 		debug.log(1, "Resetting game!");
-		this.setGamePhase(0);
+		this.setGamePhase("TITLE");
 		this.socket.emit('resetGame');
 	}
 
@@ -282,7 +282,7 @@ class App {
 				// callback to be called once ClientInfo is received from server
 				this.waitOnInfoCallback = () => {
 					if (this.loadedServerStateFromServer && this.loadedClientInfoFromServer) {
-						this.setGamePhase(0.75);
+						this.setGamePhase("LOBBY");
 						this.waitOnInfoCallback = undefined;
 					}
 				}
@@ -304,7 +304,7 @@ class App {
 				// callback to be called once ClientInfo is received from server
 				this.waitOnInfoCallback = () => {
 					if (this.loadedServerStateFromServer && this.loadedClientInfoFromServer) {
-						this.setGamePhase(0.75);
+						this.setGamePhase("LOBBY");
 						this.waitOnInfoCallback = undefined;
 					}
 					else {
@@ -382,9 +382,9 @@ class App {
 		document.getElementById("force-submit-turn").addEventListener("click", this.forcesendSubmitTurn.bind(this));
 		document.getElementById("server-data").addEventListener("click", this.sendPrintServerData.bind(this));
 		document.getElementById("reset-game").addEventListener("click", this.sendResetGame.bind(this));
-		document.getElementById("phase-1").addEventListener("click", this.setGamePhase.bind(this, 1));
-		document.getElementById("phase-2").addEventListener("click", this.setGamePhase.bind(this, 2));
-		document.getElementById("phase-3").addEventListener("click", this.setGamePhase.bind(this, 3));
+		document.getElementById("phase-1").addEventListener("click", this.setGamePhase.bind(this, "PLACEMENT"));
+		document.getElementById("phase-2").addEventListener("click", this.setGamePhase.bind(this, "SIMULATION"));
+		document.getElementById("phase-3").addEventListener("click", this.setGamePhase.bind(this, "REVIEW"));
 		document.getElementById("disconnect").addEventListener("click", this.sendDisconnect.bind(this));
 		document.getElementById("connect").addEventListener("click", this.sendConnect.bind(this));
 		document.getElementById("authdump").addEventListener("click", function(){ localStorage.authToken = ''; window.open(window.location.href,'_blank'); });

@@ -214,7 +214,7 @@ export default class Display {
 
 				//Phase begins at 0 via the constructor of Display(see above)
 				//Phase 0 is the Title Sccreen, Phase 1 is Unit Placement, and Phase 2 is the Battle Phase
-				if(this.app.gamePhase == 0){
+				if(this.app.gamePhase == "TITLE"){
 					gameStart=0;
 					//The below function displays the title sequence
 					// Add bar magnet field lines
@@ -258,7 +258,7 @@ export default class Display {
 							s.resizeCanvas(window.screen.height*1.5, window.screen.height);
 					//	}
 						buttonMaker = 1;
-						this.app.setGamePhase(0.5);
+						this.app.setGamePhase("MATCHMAKING");
 						s.mouseIsPressed = false;
 						unitButtons = [];
 					}
@@ -266,10 +266,10 @@ export default class Display {
 
 				}
 
-				else if(this.app.gamePhase === 0.5){
+				else if(this.app.gamePhase === "MATCHMAKING"){
 
-					input.position(wi/9, he/3);
-					input.size(wi/9,he/20);
+					input.position(3*wi/5+si/10, he/4.65);
+					input.size(si*4,he/20);
 					input.style('font-size', '28px');
 					input.style('background-color', '#000000');
 					input.style('border-color', 'white');
@@ -283,19 +283,19 @@ export default class Display {
 					s.stroke(0);
 					s.textSize(si*.8);
 					s.fill(152, 255, 152,255);
-					s.text("Create",wi/2-si*1.5,he/3+si*.75);
+					s.text("Create",3*wi/5+si/2,he/3+si*1.55);
 					s.fill(210,130,240,255);
-					s.text("Join",wi/2+si*10.35,he/3+si*.75);
+					s.text("Join",3*wi/5+si,he/4+he/3.025);
 					s.fill(230,100);
 					s.noFill();
 					s.stroke(255);
-					s.rect(wi/2-si*2,he/3-si/10,si*4,si*1.1);
+					s.rect(3*wi/5,he/4+he/8.25,si*4,si*1.1);
 					s.textAlign(s.CENTER);
-					if(s.mouseIsPressed && s.mouseX < wi/2+si*2 && s.mouseX > wi/2-si*2 && s.mouseY < he/3+si*1.1-si/10 && s.mouseY > he/3-si/10){
+					if(s.mouseIsPressed && s.mouseX < 3*wi/5+si*4 && s.mouseX > 3*wi/5 && s.mouseY < he/4+he/8.25+si*1.1 && s.mouseY > he/4+he/8.25){
 						this.app.sendCreateRoom();
 					}
-					s.rect(wi/2+si*9.25,he/3-si/10,si*4,si*1.1);
-					if(s.mouseIsPressed && s.mouseX < wi/2+9.25*si+si*4 && s.mouseX > wi/2+9.25*si && s.mouseY < he/3+si*1.1-si/10 && s.mouseY > he/3-si/10){
+					s.rect(3*wi/5,he/4+he/3.45,si*4,si*1.1);
+					if(s.mouseIsPressed && s.mouseX < 3*wi/5+si*4 && s.mouseX > 3*wi/5 && s.mouseY < he/4+he/3.45+si*1.1 && s.mouseY > he/4+he/3.45){
 						for (let el in this.app.matchmakingData.gameRooms) {
 							if(this.app.matchmakingData.gameRooms[el].openSpots > 1){
 							 //${el} (${4 - data.gameRooms[el].openSpots} / 4)`;
@@ -304,7 +304,6 @@ export default class Display {
 						}
 					}
 
-					//let allowJoinGame =0; RIG THIS UP SO IT ONLY SENDS ONCE
 					let gameID = input.value();
 
 					if(gameID.length == 5){
@@ -319,7 +318,7 @@ export default class Display {
 						s.stroke(0);
 						s.text("Room Not Found",wi/9-si/2,he/3+si*1.7);
 					}
-				/*	else if(this.successfulJoinedGame === true){
+				  /*else if(this.successfulJoinedGame === true){
 						this.app.setGamePhase(1);
 					}*/
 					//instructionSheet(si, this.app.playerNumber, this.playerColors);
@@ -332,7 +331,7 @@ export default class Display {
 					}*/
 
 			}
-			else if(this.app.gamePhase === 0.75 && this.app.clientState !== 'SPECTATOR'){
+			else if(this.app.gamePhase === "LOBBY" && this.app.clientState !== 'SPECTATOR'){
 				  input.remove();
 					sideBarGrowth = 0.8;
 					sideBarMenu = true;
@@ -343,10 +342,28 @@ export default class Display {
 
 					drawGrid(wi, he, si, this.playerColors);
 					for(let p = 0; p < 4; p = p + 1){
+						if(p == 1){
+							s.translate(0,he/2);
+						}
+						else if(p == 2){
+							s.translate(wi/2,0);
+						}
+						else if(p == 3){
+							s.translate(wi/2,he/2);
+						}
 						s.fill(255,80);
 						s.noStroke();
 						if((this.app.playerNumber-1) == p){
 							s.rect(0,0,si*15,si*10);
+						}
+						if(p == 1){
+							s.translate(0,-he/2);
+						}
+						else if(p == 2){
+							s.translate(-wi/2,0);
+						}
+						else if(p == 3){
+							s.translate(-wi/2,-he/2);
 						}
 
 					}
@@ -384,7 +401,7 @@ export default class Display {
 					s.text("Leave Room", wi+si*1.5, si*4.5);
 					bStartMatch.drawButton();
 					if(s.mouseIsPressed && bStartMatch.isInRange(s.mouseX,s.mouseY)){
-						bStartMatch.func.call(this.app,1);
+						bStartMatch.func.call(this.app,"PLACEMENT");
 					}
 					s.fill(255);
 					s.stroke(0);
@@ -425,7 +442,7 @@ export default class Display {
 				}
 			}
 
-			else if(this.app.gamePhase === 1 && this.app.clientState !== 'SPECTATOR' && this.app.clientState !== 'DEFEATED_PLAYER' && this.app.turnIsIn !== true){
+			else if(this.app.gamePhase === "PLACEMENT" && this.app.clientState !== 'SPECTATOR' && this.app.clientState !== 'DEFEATED_PLAYER' && this.app.turnIsIn !== true){
 					input.remove();
 					justTriggered = 1;
 					this.t = 1;
@@ -532,7 +549,7 @@ export default class Display {
 							if(this.app.turnNumber > 1){
 								if(bPhaseThree.isInRange(s.mouseX,s.mouseY)){
 									//bPhaseThree.func.call(this.app, 3);
-									this.app.setGamePhase(3);
+									this.app.setGamePhase("REVIEW");
 									//break
 								}
 							}
@@ -625,17 +642,17 @@ export default class Display {
 							case 'AI':
 								s.text("Orders Submitted", wi/35, he/1.75+(a-1)*si);
 								break
-							case 0:
+							case "TITLE":
 								s.text("Loading", wi/35, he/1.75+(a-1)*si);
 								break
-							case 1:
+							case "PLACEMENT":
 								if (this.app.playersOnServer[a].ordersSubmitted) {
 									s.text("Orders Submitted", wi/35, he/1.75+(a-1)*si);
 								} else {
 									s.text("Making Turn", wi/35, he/1.75+(a-1)*si);
 								}
 								break
-							case 3:
+							case "REVIEW":
 								if (this.app.playersOnServer[a].ordersSubmitted) {
 									s.text("Orders Submitted", wi/35, he/1.75+(a-1)*si);
 								} else {
@@ -801,7 +818,7 @@ export default class Display {
 
 				}
 
-				else if(this.app.gamePhase==2 || this.app.clientState === 'SPECTATOR' || this.app.clientState === 'DEFEATED_PLAYER'){
+				else if(this.app.gamePhase == "SIMULATION" || this.app.clientState === 'SPECTATOR' || this.app.clientState === 'DEFEATED_PLAYER'){
 					bSubmit.submitted = false;
 					bSubmit.confirmed = false;
 					if(animate >= 10 && this.t < (Object.keys(this.simulationDisplayTurn.tick).length-1)){
@@ -942,7 +959,7 @@ export default class Display {
 
 				if(this.t === Object.keys(this.simulationDisplayTurn.tick).length - 1){
 					if(gameOver == 0){
-					this.app.setGamePhase(3);
+					this.app.setGamePhase("REVIEW");
 					sideBarGrowth = 1;
 					sideBarMenu = false;
 					}
@@ -951,7 +968,7 @@ export default class Display {
 			}
 
 			///REVIEW BOARD PHASE
-			else if(this.app.gamePhase ==  3 && this.app.game.players[this.app.playerNumber-1].victoryCondition != -1){
+			else if(this.app.gamePhase ==  "REVIEW" && this.app.game.players[this.app.playerNumber-1].victoryCondition != -1){
 				if(sideBarGrowth > 0.8){
 					sideBarGrowth = sideBarGrowth - .003;
 				}
@@ -1112,10 +1129,9 @@ export default class Display {
 					s.text("Credits Earned: "+ this.app.game.players[this.app.playerNumber-1].creditsEarnedThisTurn, -s.width+3*s.width*(scroller-Math.floor(scroller)), s.height-si*1.7);
 
 					if(s.mouseIsPressed && bPhaseOne.isInRange(s.mouseX,s.mouseY)){
-						bPhaseOne.func.call(this.app,1);
+						bPhaseOne.func.call(this.app,"PLACEMENT");
 					}
 				}
-
 			}
 
 			//End Phase 3
@@ -1300,9 +1316,13 @@ export default class Display {
 		function displayMatchmaking(data, width, height, size,delay){
 			s.background(0);
 
-			for(let i = 0; i < lineFlame.length; i = i+1){
+			/*for(let i = 0; i < lineFlame.length; i = i+1){
 				lineFlame[i].render(size/4, .6, width, height);
-			}
+			}*/
+			//BEGIN TESLA COILS
+			s.fill(255,0,128,255);
+			s.noStroke();
+			s.rect(width/8-width/30,height/4,2*width/30,3*height/5);
 
 			s.textFont(titleFont);
 			s.strokeWeight(1);
@@ -1316,18 +1336,18 @@ export default class Display {
 			s.stroke(0);
 			s.textSize(size);
 			s.fill(176,196,243,255);
-			s.text("Enter Game Code", width/6,height/4);
+			s.text("Enter Game Code", width*2/5,height/4);
 			s.fill(152, 255, 152,255);
-			s.text("New Lobby", width/2,height/4);
+			s.text("New Lobby", width*2/5,height/4+height/6);
 			s.fill(210,130,240,255);
-			s.text("Hot Seat", 7*width/8,height/4);
+			s.text("Hot Seat", width*2/5,height/4+2*height/6);
 			//s.textAlign(s.LEFT);
 
 		}
 
 		function tooltip(hoverX,hoverY, b, tick, wi, he, si, pColors, sdt, app){
 			if(b[hoverY][hoverX].length != 0){
-				if(app.gamePhase != 1){
+				if(app.gamePhase != "PLACEMENT"){
 				hoverObject = sdt.tick[tick].gameObjects.get(sdt.tick[tick].board[hoverY][hoverX][0]);
 			}
 			else{
