@@ -334,18 +334,26 @@ export default class Display {
 					wi = s.width * sideBarGrowth;
 					si = wi/30;
 					he = si*20;
+					let offsetX = 0;
+					let offsetY = 0;
 
 
 					drawGrid(wi, he, si, this.playerColors);
 					for(let p = 0; p < 4; p = p + 1){
 						if(p == 1){
 							s.translate(0,he/2);
+							offsetX = 0;
+							offsetY = he/2;
 						}
 						else if(p == 2){
 							s.translate(wi/2,0);
+							offsetX = wi/2;
+							offsetY = 0;
 						}
 						else if(p == 3){
 							s.translate(wi/2,he/2);
+							offsetX = wi/2;
+							offsetY = he/2;
 						}
 						s.strokeWeight(10);
 						s.stroke(255,255);
@@ -368,8 +376,9 @@ export default class Display {
 							s.stroke(0);
 							s.textSize(si/1.4);
 							s.text("MAKE AI",wi/4-si*1.45,he/4+si/5);
-							if(s.mouseIsPressed && s.mouseX < wi/4-si*2+si*4 && s.mouseX > wi/4-si*2 && s.mouseY < he/4-si/2+si && s.mouseY > he/4-si/2){
-								//PLACE MAKE AI LOGIC HERE
+							if(s.mouseIsPressed && s.mouseX < wi/4-si*2+si*4+offsetX && s.mouseX > wi/4-si*2+offsetX && s.mouseY < he/4-si/2+si+offsetY && s.mouseY > he/4-si/2+offsetY){
+								this.app.sendAssignAIToSpot(p+1);
+								console.log("HERE");
 							}
 						}
 
@@ -380,6 +389,9 @@ export default class Display {
 						s.textAlign(s.CENTER);
 						if((this.app.playerNumber-1) === p){
 							s.text("USER",wi/4,he/4);
+						}
+						if(this.app.playerSpotsInGameRoom[p+1].playerType == 'AI'){
+							s.text("COMPUTER",wi/4,he/4);
 						}
 						if(p == 1){
 							s.translate(0,-he/2);
