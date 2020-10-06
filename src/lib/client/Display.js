@@ -45,6 +45,7 @@ export default class Display {
 			//let successfulJoinedGame = null;
 
 			//Button Declarations
+
 			let bPhaseOne;
 			let bStartMatch;
 			let bPhaseThree;
@@ -172,6 +173,7 @@ export default class Display {
 
 
 					bPhaseOne = new Buttoned(wi-si*5.55, si*2.9, si*5.1, si*1.1, "Deploy Machines", this.app.setGamePhase);
+
 					bStartMatch = new Buttoned(wi-si*5.55, si*11.5, si*5.1, si*1.1, "Start Match", this.app.setGamePhase);
 
 					bPhaseThree = new Buttoned(wi/3.2 + submitShifterX, he/1.65 - submitShifterY,si*6.1,si*1.1,"Review Board",this.app.setGamePhase);
@@ -316,19 +318,13 @@ export default class Display {
 						s.fill(255,0,128,255);
 					  s.textSize(si/2);
 						s.stroke(0);
+						s.textFont(standardFont);
 						s.text("Room Not Found",wi/9-si/2,he/3+si*1.7);
 					}
-				  /*else if(this.successfulJoinedGame === true){
-						this.app.setGamePhase(1);
-					}*/
-					//instructionSheet(si, this.app.playerNumber, this.playerColors);
 				}
 				else{
 					allowNewID = 1;
 				}
-			/*	if(this.successfulJoinedGame === true){
-						this.app.setGamePhase(1);
-					}*/
 
 			}
 			else if(this.app.gamePhase === "LOBBY" && this.app.clientState !== 'SPECTATOR'){
@@ -351,10 +347,39 @@ export default class Display {
 						else if(p == 3){
 							s.translate(wi/2,he/2);
 						}
-						s.fill(255,80);
-						s.noStroke();
-						if((this.app.playerNumber-1) == p){
+						s.strokeWeight(10);
+						s.stroke(255,255);
+						s.strokeWeight(1);
+						s.noFill()
+						if(this.app.playerSpotsInGameRoom[p+1].playerType == 'Human'){
 							s.rect(0,0,si*15,si*10);
+						}
+						else{
+							s.noStroke();
+							s.fill(0,150);
+              s.rect(0,0,si*15,si*10);
+						}
+						if(this.app.playerSpotsInGameRoom[p+1].playerType == 'Open'){
+							s.stroke(255);
+							s.fill(0);
+							s.rect(wi/4-si*2,he/4-si/2,si*4,si);
+							s.textFont(titleFont);
+							s.fill(255);
+							s.stroke(0);
+							s.textSize(si/1.4);
+							s.text("MAKE AI",wi/4-si*1.45,he/4+si/5);
+							if(s.mouseIsPressed && s.mouseX < wi/4-si*2+si*4 && s.mouseX > wi/4-si*2 && s.mouseY < he/4-si/2+si && s.mouseY > he/4-si/2){
+								//PLACE MAKE AI LOGIC HERE
+							}
+						}
+
+						s.textFont(titleFont);
+						s.textSize(si);
+						s.fill(255);
+						s.stroke(0);
+						s.textAlign(s.CENTER);
+						if((this.app.playerNumber-1) === p){
+							s.text("USER",wi/4,he/4);
 						}
 						if(p == 1){
 							s.translate(0,-he/2);
@@ -365,6 +390,7 @@ export default class Display {
 						else if(p == 3){
 							s.translate(-wi/2,-he/2);
 						}
+						s.textAlign(s.LEFT);
 
 					}
 
@@ -376,9 +402,9 @@ export default class Display {
 
 					}
 					//HoverSquares
-					s.fill(255,100);
+			/*	s.fill(255,100);
 					s.noStroke();
-					s.rect(hoverX*si,hoverY*si,si,si);
+					s.rect(hoverX*si,hoverY*si,si,si);*/
 
 ///SIDE BAR FOR REVIEW MODE
 					s.textFont(titleFont);
@@ -394,7 +420,9 @@ export default class Display {
 					s.stroke(255);
 					s.line(wi+si/4,si*2,s.width-si/4,si*2);
 					s.noFill();
+					s.strokeWeight(3);
 					s.rect(wi+si*1.2,si*3.5,si*5,si*1.5);
+					s.strokeWeight(1);
 					s.fill(255);
 					s.stroke(0);
 				  s.textSize(si*.7);
