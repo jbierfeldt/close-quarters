@@ -22,22 +22,9 @@ export default class ConnectionHandler {
 	init() {
 
 		this.registerMiddleware();
-		this.createGameRoom();
-	/*	for (let i = 0; i < 5; i++) {
-			let newGameID = createID(5);
-			// let IO_ROOM = this.io.to(newGameID);
+		let firstGame = this.createGameRoom();
+		this.openGame = firstGame;
 
-			let newGame = new GameController({
-				id: newGameID,
-				IO_INSTANCE: this.io
-			});
-			newGame.init();
-
-			this.gameControllers.set(newGame.id, newGame);
-
-			this.openGame = newGame;
-		}
-*/
 		this.io.on('connection', (socket) => {
 
 			// check for already existing token and if so, don't make new player controller
@@ -95,10 +82,9 @@ export default class ConnectionHandler {
 
 	}
 
-	createGameRoom(){
+	createGameRoom() {
 		for (let i = 0; i < 1; i++) {
 				let newGameID = createID(5);
-				// let IO_ROOM = this.io.to(newGameID);
 
 				let newGame = new GameController({
 					id: newGameID,
@@ -108,8 +94,6 @@ export default class ConnectionHandler {
 
 				this.gameControllers.set(newGame.id, newGame);
 
-				this.openGame = newGame;
-				
 				return newGameID;
 			}
 
@@ -177,7 +161,7 @@ export default class ConnectionHandler {
 			}
 
 			clientController.socket.join(clientController.gameController.id, () => {
-				clientController.gameController.sendServerStateToAll();
+				clientController.gameController.sendRoomStateToAll();
 				clientController.gameController.sendGameStateToClient(clientController.socket);
 				clientController.gameController.sendLastTurnHistoryToClient(clientController.socket);
 

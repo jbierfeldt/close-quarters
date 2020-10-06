@@ -36,7 +36,7 @@ export default class GameController {
 	registerClientController (clientController) {
 		this.clientControllers.push(clientController);
 		this.sendGameStateToAll();
-		this.sendServerStateToAll();
+		this.sendRoomStateToAll();
 	}
 
 	// function to be run when a clientController disconnects
@@ -79,12 +79,13 @@ export default class GameController {
 			clientController.setPlayerNumber(playerSpot);
 			this.sendMessage(`${clientController.id} joined the room as player ${playerSpot}`);
 
+			this.sendRoomStateToAll();
+
 			return true;
 		} else {
 			debug.log(1, `Spot ${playerSpot} is already taken.`);
 			return false;
-		}
-	}
+		}	}
 
 	resetGame() {
 		let newGame = new Game();
@@ -174,28 +175,34 @@ export default class GameController {
 		});
 	}
 
-	sendServerStateToAll() {
+	sendRoomStateToAll() {
 
 		let playerSpots = {};
 
 		for (let i = 1; i <= 4; i++) {
 			if (this.playerSpots[i] && !this.playerSpots[i].isAI) {
 				playerSpots[i] = {
+					playerType: 'Human',
 					gamePhase: this.playerSpots[i].clientGamePhase,
 					ordersSubmitted: this.playerSpots[i].ordersSubmitted
 				}
 			} else if (this.playerSpots[i] && this.playerSpots[i].isAI) {
 				playerSpots[i] = {
-					gamePhase: 'AI',
+					playerType: 'AI',
+					gamePhase: null,
 					ordersSubmitted: this.playerSpots[i].ordersSubmitted
 				}
 			} else {
-				playerSpots[i] = null;
+				playerSpots[i] = {
+					playerType: 'Open',
+					gamePhase: null,
+					ordersSubmitted: null
+				};
 			}
 		}
 
-		this.io.to(this.id).emit('updateServerState', {
-			players: JSON.stringify(playerSpots)
+		this.io.to(this.id).emit('updateRoomState', {
+			playerSpots: JSON.stringify(playerSpots)
 		});
 	}
 
@@ -222,7 +229,7 @@ export default class GameController {
 
 	checkAllOrdersSubmitted() {
 		// update all clients on who has submitted orders
-		this.sendServerStateToAll();
+		this.sendRoomStateToAll();
 
 		// check if all the seated players have submitted their orders
 		// if not, return false and don't execute

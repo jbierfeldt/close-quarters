@@ -31,11 +31,11 @@ class App {
 		this.clientID = undefined;
 		this.token = undefined;
 		this.playerNumber = undefined;
-		this.playersOnServer = undefined;
+		this.playerSpotsInGameRoom = undefined;
 		this.spectatorMode = false;
 		this.clientState = null;
 		this.loadedClientInfoFromServer = false;
-		this.loadedServerStateFromServer = false;
+		this.loadedRoomStateFromServer = false;
 		this.turnIsIn = false; //Use this for the transition
 		this.simulationRun = false;
 
@@ -108,15 +108,16 @@ class App {
 			this.setGamePhase("SIMULATION"); // show simulation phase
 		})
 
-		this.socket.on('updateServerState', (data) => {
-			debug.log(0, `got update server state`, data);
+		this.socket.on('updateRoomState', (data) => {
+			debug.log(0, `got update room state`, data);
 
-			if (this.loadedServerStateFromServer === false) {
-				this.loadedServerStateFromServer = true;
+			if (this.loadedRoomStateFromServer === false) {
+				this.loadedRoomStateFromServer = true;
 			}
 
-			let players = JSON.parse(data.players);
-			this.playersOnServer = players;
+			let playerSpots = JSON.parse(data.playerSpots);
+			this.playerSpotsInGameRoom = playerSpots;
+			debug.log(1, this.playerSpotsInGameRoom);
 			this.updateDebugInfo();
 
 			if (this.waitOnInfoCallback) {
@@ -281,7 +282,7 @@ class App {
 
 				// callback to be called once ClientInfo is received from server
 				this.waitOnInfoCallback = () => {
-					if (this.loadedServerStateFromServer && this.loadedClientInfoFromServer) {
+					if (this.loadedRoomStateFromServer && this.loadedClientInfoFromServer) {
 						this.setGamePhase("LOBBY");
 						this.waitOnInfoCallback = undefined;
 					}
@@ -303,12 +304,12 @@ class App {
 
 				// callback to be called once ClientInfo is received from server
 				this.waitOnInfoCallback = () => {
-					if (this.loadedServerStateFromServer && this.loadedClientInfoFromServer) {
+					if (this.loadedRoomStateFromServer && this.loadedClientInfoFromServer) {
 						this.setGamePhase("LOBBY");
 						this.waitOnInfoCallback = undefined;
 					}
 					else {
-						console.log(`this.loadedServerStateFromServer: ${this.loadedServerStateFromServer} \n this.loadedClientInfoFromServer: ${this.loadedClientInfoFromServer}`)
+						console.log(`this.loadedRoomStateFromServer: ${this.loadedRoomStateFromServer} \n this.loadedClientInfoFromServer: ${this.loadedClientInfoFromServer}`)
 					}
 				}
 			}
@@ -459,31 +460,44 @@ class App {
 			}
 		}
 
-		if (this.playersOnServer) {
+		if (this.playerSpotsInGameRoom) {
 			document.getElementById("players-info").innerHTML = '';
 			for (let i = 1; i <= 4; i++) {
 				let newPlayerDiv = document.createElement("div");
 				let newPlayerSpan = document.createElement("span");
-				if (this.playersOnServer[i] !== null) {
-					switch (this.playersOnServer[i].gamePhase) {
+				if (this.playerSpotsInGameRoom[i] !== null) {
+					switch (this.playerSpotsInGameRoom[i].playerType) {
 						case 'AI':
 						newPlayerSpan.innerHTML = "Orders submitted (AI)."
 						break
-						case 0:
-						newPlayerSpan.innerHTML = "Loading...";
+						case 'Open':
+						newPlayerSpan.innerHTML = "Open Spot";
 						break
-						case 1:
-						if (this.playersOnServer[i].ordersSubmitted) {
-							newPlayerSpan.innerHTML = "Orders submitted.";
-						} else {
-							newPlayerSpan.innerHTML = "Making Turn...";
-						}
-						break
-						case 2:
-						newPlayerSpan.innerHTML = "Watching Simulation...";
-						break
-						case 3:
-						newPlayerSpan.innerHTML = "Reviewing Board...";
+						case 'Human':
+							if (this.playerSpotsInGameRoom[i].ordersSubmitted) {
+								newPlayerSpan.innerHTML = "Orders submitted.";
+							} else {
+								switch (this.playerSpotsInGameRoom[i].gamePhase) {
+									case 'TITLE':
+										newPlayerSpan.innerHTML = "Loading...";
+										break
+									case 'MATCHMAKING':
+										newPlayerSpan.innerHTML = "Joining Room...";
+										break
+									case 'LOBBY':
+										newPlayerSpan.innerHTML = "Waiting for Game to Start...";
+										break
+									case 'PLACEMENT':
+										newPlayerSpan.innerHTML = "Placing Units...";
+										break
+									case 'SIMULATION':
+										newPlayerSpan.innerHTML = "Watching Simulation...";
+										break
+									case 'REVIEW':
+										newPlayerSpan.innerHTML = "Reviewing Board...";
+										break
+								}
+							}
 						break
 					}
 				} else {

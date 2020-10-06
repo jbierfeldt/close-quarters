@@ -12,6 +12,7 @@ export default class ClientController {
 		this.gameController = null;
 		this.playerNumber = null;
 
+		this.isAI = false;
 		this.connectionState = 'ONLINE'; // ONLINE, OFFLINE, RECONNECTING
 
 		this.ordersToExecute = [];
@@ -90,7 +91,7 @@ export default class ClientController {
 
 		this.socket.on('updateClientPhase', (data) => {
 			this.clientGamePhase = data.newPhase;
-			this.gameController.sendServerStateToAll();
+			this.gameController.sendRoomStateToAll();
 		})
 
 		this.socket.on('disconnect', (reason) => {

@@ -637,8 +637,8 @@ export default class Display {
 
 					for(let a = 1; a <= 4; a = a + 1){
 						s.fill(this.playerColors[a-1][0], this.playerColors[a-1][1], this.playerColors[a-1][2], this.playerColors[a-1][3]);
-						if (this.app.playersOnServer[a] !== null) {
-						switch (this.app.playersOnServer[a].gamePhase) {
+						if (this.app.playerSpotsInGameRoom[a] !== null) {
+						switch (this.app.playerSpotsInGameRoom[a].gamePhase) {
 							case 'AI':
 								s.text("Orders Submitted", wi/35, he/1.75+(a-1)*si);
 								break
@@ -646,14 +646,14 @@ export default class Display {
 								s.text("Loading", wi/35, he/1.75+(a-1)*si);
 								break
 							case "PLACEMENT":
-								if (this.app.playersOnServer[a].ordersSubmitted) {
+								if (this.app.playerSpotsInGameRoom[a].ordersSubmitted) {
 									s.text("Orders Submitted", wi/35, he/1.75+(a-1)*si);
 								} else {
 									s.text("Making Turn", wi/35, he/1.75+(a-1)*si);
 								}
 								break
 							case "REVIEW":
-								if (this.app.playersOnServer[a].ordersSubmitted) {
+								if (this.app.playerSpotsInGameRoom[a].ordersSubmitted) {
 									s.text("Orders Submitted", wi/35, he/1.75+(a-1)*si);
 								} else {
 									s.text("Reviewing Board", wi/35, he/1.75+(a-1)*si);
