@@ -87,6 +87,70 @@ export default class GameController {
 			return false;
 		}	}
 
+	removeClientFromSpot (clientController, playerSpot) {
+		// check if clientController is alread in playerSpot
+		if (this.playerSpots[playerSpot] === clientController) {
+
+			// remove client from desired spot
+			this.playerSpots[playerSpot] = null;
+
+			clientController.setPlayerNumber(null)
+
+			this.sendRoomStateToAll();
+
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	assignAIToSpot (playerSpot) {
+		// if spot is empty, insert AI
+		if (!this.playerSpots[playerSpot]) {
+
+			let basicAI = new BasicAI(this.game, playerSpot);
+			this.playerSpots[playerSpot] = basicAI;
+
+			//Major Hack for AI first turn placements ******
+			basicAI.createAIBase();
+			this.executeOrder(this.playerSpots[playerSpot].ordersToExecute[0]);
+			basicAI.createAIBase();
+			this.executeOrder(this.playerSpots[playerSpot].ordersToExecute[1]);
+			this.playerSpots[playerSpot].ordersToExecute = [];
+			basicAI.generateOrders(0);
+
+			basicAI.ordersSubmitted = true;
+
+
+			this.sendRoomStateToAll();
+
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	startGame() {
+		// if all seats in the lobby are filled with humans or AI,
+		// start the game
+
+		for (let i = 1; i <= 4; i++) {
+			if (this.playerSpots[i] !== null) {
+				// do nothing
+			} else {
+				return false;
+			}
+		}
+
+		this.setGamePhaseForAll('PLACEMENT'); // should happen as the result of a client triggered event 'GAME START'
+
+		this.gameStatus = 'IN_PROGRESS';
+
+		return true;
+	}
+
+
+
 	resetGame() {
 		let newGame = new Game();
 		this.game = newGame;
@@ -256,19 +320,17 @@ export default class GameController {
 		if (this.game.turnNumber === 1) {
 			for (let i = 1; i <= 4; i++) {
 				if (this.playerSpots[i] == null) {
-					let basicAI = new BasicAI(this.game, i);
+					this.assignAIToSpot(i);
 
-					this.playerSpots[i] = basicAI;
+					// //Major Hack for AI first turn placements ******
+					// basicAI.createAIBase();
+					// this.executeOrder(this.playerSpots[i].ordersToExecute[0]);
+					// basicAI.createAIBase();
+					// this.executeOrder(this.playerSpots[i].ordersToExecute[1]);
+					// this.playerSpots[i].ordersToExecute = [];
+					// basicAI.generateOrders(0);
 
-					//Major Hack for AI first turn placements ******
-					basicAI.createAIBase();
-					this.executeOrder(this.playerSpots[i].ordersToExecute[0]);
-					basicAI.createAIBase();
-					this.executeOrder(this.playerSpots[i].ordersToExecute[1]);
-					this.playerSpots[i].ordersToExecute = [];
-					basicAI.generateOrders(0);
-
-					basicAI.ordersSubmitted = true;
+					// basicAI.ordersSubmitted = true;
 				}
 			}
 		}
