@@ -319,6 +319,16 @@ class App {
 		});
 	}
 
+	sendAssignPlayerToSpot (playerSpot) {
+
+	}
+
+	sendAssignAIToSpot (playerSpot) {
+		this.socket.emit('assignAIToSpot', {
+			playerSpot: playerSpot
+		});
+	}
+
 	setGamePhase (phase) {
 		console.log(`setting game phase ${phase}`);
 		this.gamePhase = phase;
