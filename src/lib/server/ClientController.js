@@ -236,6 +236,12 @@ export default class ClientController {
 		this.sendClientInfo();
 	}
 
+	setGamePhase (gamePhase) {
+		this.socket.emit('updateClientGamePhase', {
+			newPhase: gamePhase
+		});
+	}
+
 	setClientState (state) {
 		this.clientState = state;
 		this.sendClientInfo();
