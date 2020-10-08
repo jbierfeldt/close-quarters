@@ -464,16 +464,19 @@ export default class Display {
 					if(s.mouseIsPressed && bStartMatch.isInRange(s.mouseX,s.mouseY)){
 						bStartMatch.func.call(this.app,"PLACEMENT");
 					}
-					s.fill(255);
+					s.fill(110,255);
 					s.stroke(0);
 					s.textSize(si*0.9);
 					s.text("Start Match", wi+si*.71, si*15.35);
-
+					s.fill(255,255);
+					s.textSize(si*0.475);
+					s.text("All Spots Must Be Filled", wi+si*.71, si*16.5);
+s.text("By Humans Or AI To Begin", wi+si*.71, si*17.25);
 					s.fill(255);
 					s.stroke(0);
 					s.textSize(si*1.25);
 					s.textAlign(s.CENTER);
-					s.text("Join Code" , wi+wi*.125, si*8.5);
+					s.text("Join Code" , wi+wi*.125, si*9);
 					s.line(wi+wi*.1,si*8.5,s.width-wi*.1,si*8.5)
 					s.stroke(255);
 					s.fill(this.playerColors[this.app.playerNumber-1][0], this.playerColors[this.app.playerNumber-1][1], this.playerColors[this.app.playerNumber-1][2], 255);
@@ -482,7 +485,7 @@ export default class Display {
 					s.textFont(standardFont);
           s.textSize(si*.89);
 					let upperCase = this.app.gameRoom.toUpperCase();
-          s.text(upperCase , wi+wi*.125, si*10);
+          s.text(upperCase , wi+wi*.125, si*10.5);
 
 					s.textFont(titleFont);
 					s.textAlign(s.LEFT);
