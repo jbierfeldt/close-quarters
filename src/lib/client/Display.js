@@ -21,6 +21,7 @@ export default class Display {
 		this.board = [[]];
 		this.t = 1;
 		this.successfulJoinedGame = null;
+		this.startButtonEnabled = false;
 	}
 
 
@@ -174,7 +175,7 @@ export default class Display {
 
 					bPhaseOne = new Buttoned(wi-si*5.55, si*2.9, si*5.1, si*1.1, "Deploy Machines", this.app.setGamePhase);
 
-					bStartMatch = new Buttoned(wi-si*5.55, si*11.5, si*5.1, si*1.1, "Start Match", this.app.setGamePhase);
+					bStartMatch = new Buttoned(wi-si*5.55, si*11.5, si*5.1, si*1.1, "Start Match", this.app.sendStartGame);
 
 					bPhaseThree = new Buttoned(wi/3.2 + submitShifterX, he/1.65 - submitShifterY,si*6.1,si*1.1,"Review Board",this.app.setGamePhase);
 
@@ -319,7 +320,7 @@ export default class Display {
 					  s.textSize(si/2);
 						s.stroke(0);
 						s.textFont(standardFont);
-						s.text("Room Not Found",wi/9-si/2,he/3+si*1.7);
+						s.text("Room Not Found",wi/2+si*5,he/3-si*.7);
 					}
 				}
 				else{
@@ -460,18 +461,28 @@ export default class Display {
 					s.stroke(0);
 				  s.textSize(si*.7);
 					s.text("Leave Room", wi+si*1.5, si*4.5);
-					bStartMatch.drawButton();
-					if(s.mouseIsPressed && bStartMatch.isInRange(s.mouseX,s.mouseY)){
-						bStartMatch.func.call(this.app,"PLACEMENT");
+					if(s.mouseIsPressed && s.mouseX < wi+si*1.2+si*5 && s.mouseX > wi+si*1.2 && s.mouseY < si*3.5+si*1.5 && s.mouseY > si*3.5){
+						this.app.sendClearSpot(this.app.playerNumber);
 					}
+					bStartMatch.drawButton();
+					if(this.startButtonEnabled === true){
+					if(s.mouseIsPressed && bStartMatch.isInRange(s.mouseX,s.mouseY)){
+						bStartMatch.func.call(this.app);
+					}
+				}
+				if(this.startButtonEnabled === true){
+					s.fill(255,255);
+				}
+				else{
 					s.fill(110,255);
+				}
 					s.stroke(0);
 					s.textSize(si*0.9);
 					s.text("Start Match", wi+si*.71, si*15.35);
 					s.fill(255,255);
 					s.textSize(si*0.475);
 					s.text("All Spots Must Be Filled", wi+si*.71, si*16.5);
-s.text("By Humans Or AI To Begin", wi+si*.71, si*17.25);
+					s.text("By Humans Or AI To Begin", wi+si*.71, si*17.25);
 					s.fill(255);
 					s.stroke(0);
 					s.textSize(si*1.25);

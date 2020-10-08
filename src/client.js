@@ -121,8 +121,9 @@ class App {
 			// if no more open spots, enable the start button
 			if (data.openSpots === 0) {
 				// enable start button
+				this.display.startButtonEnabled = true;
 			} else {
-				// disable start button
+				this.display.startButtonEnabled = false;
 			}
 
 			this.updateDebugInfo();
