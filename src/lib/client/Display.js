@@ -298,12 +298,7 @@ export default class Display {
 					}
 					s.rect(3*wi/5,he/4+he/3.45,si*4,si*1.1);
 					if(s.mouseIsPressed && s.mouseX < 3*wi/5+si*4 && s.mouseX > 3*wi/5 && s.mouseY < he/4+he/3.45+si*1.1 && s.mouseY > he/4+he/3.45){
-						for (let el in this.app.matchmakingData.gameRooms) {
-							if(this.app.matchmakingData.gameRooms[el].openSpots > 1){
-							 //${el} (${4 - data.gameRooms[el].openSpots} / 4)`;
-								this.app.sendJoinGame(el);
-							}
-						}
+						this.app.sendJoinOpenGame();
 					}
 
 					let gameID = input.value();

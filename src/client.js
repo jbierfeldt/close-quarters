@@ -305,6 +305,28 @@ class App {
 		});
 	}
 
+	sendJoinOpenGame () {
+		debug.log(1, `Trying to join open game.`);
+		this.socket.emit('joinOpenGame', (result) => {
+			debug.log(1, `Joined the game? ${result}`);
+			if (result === true) {
+				this.display.successfulJoinedGame = true;
+				this.setGamePhase('LOADING');
+
+				// callback to be called once ClientInfo is received from server
+				this.waitOnInfoCallback = () => {
+					if (this.loadedRoomStateFromServer && this.loadedClientInfoFromServer) {
+						this.setGamePhase("LOBBY");
+						this.waitOnInfoCallback = undefined;
+					}
+				}
+			}
+			else {
+				this.display.successfulJoinedGame = false;
+			}
+		});
+	}
+
 	sendCreateRoom () {
 		debug.log(1, `Creating New Room`);
 		this.socket.emit('createGameRoom', (result, game) => {

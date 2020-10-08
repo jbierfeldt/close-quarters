@@ -22,6 +22,7 @@ export default class ConnectionHandler {
 	init() {
 
 		this.registerMiddleware();
+
 		let firstGame = this.createGameRoom();
 		this.openGame = firstGame;
 
@@ -250,12 +251,28 @@ export default class ConnectionHandler {
 
 		if (gameController) {
 			this.connectClientToGameRoom(clientController, gameController);
-			// clientController.socket.emit('joinGameResult', {joinedGame: true});
 			return true;
 		} else {
-			// clientController.socket.emit('joinGameResult', {joinedGame: false});
 			debug.log(0, `No GameRoom with id ${gameID} found.`)
 			return false;
+		}
+	}
+
+	attemptClientJoinOpenGame(clientController) {
+		let openGame = this.gameControllers.get(this.openGame);
+		let openSpots = openGame.getOpenSpotsCount();
+		if (openSpots < 1) {
+			debug.log(1, `${this.openGame} is full.`)
+
+			// create a new game and join that
+			this.openGame = this.createGameRoom();
+			openGame = this.gameControllers.get(this.openGame);
+			this.connectClientToGameRoom(clientController, openGame);
+			return true;
+		} else {
+			debug.log(1, `${this.openGame} has ${openSpots} open spots.`)
+			this.connectClientToGameRoom(clientController, openGame);
+			return true;
 		}
 	}
 
