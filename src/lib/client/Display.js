@@ -281,7 +281,7 @@ export default class Display {
 					input.style('text-transform', 'uppercase');
 					input.style('font-family', "Monaco");
 
-					displayMatchmaking(this.app.matchmakingData, wi, he, si, this.delay);
+					displayMatchmaking(this.app.matchmakingData, wi, he, si, this.delay, this.playerColors);
 					s.textAlign(s.LEFT);
 					s.stroke(0);
 					s.textSize(si*.8);
@@ -1388,26 +1388,65 @@ export default class Display {
 
 			}
 		}
-		function displayMatchmaking(data, width, height, size,delay){
+		function displayMatchmaking(data, width, height, size, delay, pColors){
 			s.background(0);
 			/*for(let i = 0; i < lineFlame.length; i = i+1){
 				lineFlame[i].render(size/4, .6, width, height);
 			}*/
 			//BEGIN TESLA COILS
 			s.noStroke();
-			s.fill(255);
-			//s.fill(255,0,128,255);
-			for(let h = 0; h < height/28; h = h + 1){
-				s.ellipse(width/8-width/30+width/30,height/4+3*height/5+h,width/12,width/52);
 
-			}
-			for(let h = height/28; h < height/18; h = h + 1){
+			//s.fill(255,0,128,255);
+			s.fill(255);
+			for(let h = s.int(height/18); h >= s.int(height/28); h = h - 1){
+				if(h === s.int(height/28)){
+					s.stroke(255,0,128,255);
+				}
+				else{
+					s.stroke(255,255);
+				}
 				s.ellipse(width/8-width/30+width/30,height/4+3*height/5+h,width/9,width/52);
 			}
+			for(let h = s.int(height/28); h >= 0; h = h - 1){
+				if(h === 0){
+					s.stroke(255,0,128,255);
+				}
+				else{
+					s.stroke(255,255);
+				}
+				s.ellipse(width/8-width/30+width/30,height/4+3*height/5+h,width/12,width/62);
+			}
+
 			s.stroke(255);
 			s.fill(255,0,128,255);
-			s.rect(width/8-width/40,height/4,2*width/40,3*height/5);
-			//Use the
+			s.rect(width/8-width/50,height/4,2*width/50,3*height/5);
+			//drawTripwireProjectile(5, 5, 1, size, pColors, [0,0], 10, 0);
+			//Begin Projectiles
+			let refx = width/8-width/30+width/30;
+			let refy = height/4;
+			s.fill(pColors[0][0],pColors[0][1],pColors[0][2], 155);
+			s.translate(refx,refy);
+			for(let angle = 0; angle < 360; angle = angle + 60){
+				s.rotate(s.radians(angle));
+				let endX;
+				let endY;
+				let xx = 0
+				let yy = 0;
+				while(yy < size/10){//to bottom of screen
+	       endX = xx + s.random(-size/10,size/10); //x-value varies
+	       endY = yy + size/40;    //y just goes up
+	     	 s.strokeWeight(1);//bolt is a little thicker than a line
+	     	 s.stroke(255); //white line
+	       s.line(xx,yy,endX,endY);//draw a tiny segment
+	       xx = endX;  //then x and y are moved to the
+	       yy = endY;  //end of the segment and so on
+	     }
+			 s.rotate(-s.radians(angle));
+	 	}
+
+			s.stroke(0,255);
+			s.ellipse(0, 0, size/4,size/4);
+			s.translate(-refx,-refy);
 			//END TESLA COILS
 			s.textFont(titleFont);
 			s.strokeWeight(1);
@@ -1427,7 +1466,6 @@ export default class Display {
 			s.fill(210,130,240,255);
 			s.text("Hot Seat", width*2/5,height/4+2*height/6);
 			//s.textAlign(s.LEFT);
-
 		}
 
 		function tooltip(hoverX,hoverY, b, tick, wi, he, si, pColors, sdt, app){
