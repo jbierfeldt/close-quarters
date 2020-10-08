@@ -361,6 +361,18 @@ export default class Display {
 						s.noFill()
 						if(this.app.playerSpotsInGameRoom[p+1].playerType == 'Human'){
 							s.rect(0,0,si*15,si*10);
+							s.stroke(255);
+							s.fill(0);
+							s.rect(wi/4-si*2,he/4-si/2,si*4,si);
+							s.textFont(titleFont);
+							s.fill(255);
+							s.stroke(0);
+							s.textSize(si/1.4);
+							s.text("REMOVE",wi/4-si*1.45,he/4+si/5);
+							if(s.mouseIsPressed && s.mouseX < wi/4-si*2+si*4+offsetX && s.mouseX > wi/4-si*2+offsetX && s.mouseY < he/4-si/2+si+offsetY && s.mouseY > he/4-si/2+offsetY){
+								this.app.sendClearSpot(p+1);
+
+							}
 						}
 						else{
 							s.noStroke();
@@ -375,10 +387,23 @@ export default class Display {
 							s.fill(255);
 							s.stroke(0);
 							s.textSize(si/1.4);
+
 							s.text("MAKE AI",wi/4-si*1.45,he/4+si/5);
 							if(s.mouseIsPressed && s.mouseX < wi/4-si*2+si*4+offsetX && s.mouseX > wi/4-si*2+offsetX && s.mouseY < he/4-si/2+si+offsetY && s.mouseY > he/4-si/2+offsetY){
 								this.app.sendAssignAIToSpot(p+1);
-								console.log("HERE");
+							}
+						}
+						if(this.app.playerSpotsInGameRoom[p+1].playerType == 'AI'){
+							s.stroke(255);
+							s.fill(0);
+							s.rect(wi/4-si*2,he/4-si/2,si*4,si);
+							s.textFont(titleFont);
+							s.fill(255);
+							s.stroke(0);
+							s.textSize(si/1.4);
+							s.text("RE-OPEN",wi/4-si*1.45,he/4+si/5);
+							if(s.mouseIsPressed && s.mouseX < wi/4-si*2+si*4+offsetX && s.mouseX > wi/4-si*2+offsetX && s.mouseY < he/4-si/2+si+offsetY && s.mouseY > he/4-si/2+offsetY){
+								this.app.sendClearSpot(p+1);
 							}
 						}
 
@@ -388,10 +413,13 @@ export default class Display {
 						s.stroke(0);
 						s.textAlign(s.CENTER);
 						if((this.app.playerNumber-1) === p){
-							s.text("USER",wi/4,he/4);
+							s.text("USER",wi/4,he/4.7);
 						}
 						if(this.app.playerSpotsInGameRoom[p+1].playerType == 'AI'){
-							s.text("COMPUTER",wi/4,he/4);
+							s.text("COMPUTER",wi/4,he/4.7);
+						}
+						if(this.app.playerSpotsInGameRoom[p+1].playerType == 'Open'){
+							s.text("OPEN",wi/4,he/4.7);
 						}
 						if(p == 1){
 							s.translate(0,-he/2);
@@ -1355,15 +1383,24 @@ export default class Display {
 		}
 		function displayMatchmaking(data, width, height, size,delay){
 			s.background(0);
-
 			/*for(let i = 0; i < lineFlame.length; i = i+1){
 				lineFlame[i].render(size/4, .6, width, height);
 			}*/
 			//BEGIN TESLA COILS
-			s.fill(255,0,128,255);
 			s.noStroke();
+			s.fill(255,0,128,255);
+			for(let h = 0; h < height/25; h = h + 1){
+				s.ellipse(width/8-width/30+width/30,height/4+3*height/5+h,width/12,width/52);
+				s.fill(255);
+			}
+			for(let h = height/25; h < height/18; h = h + 1){
+				s.ellipse(width/8-width/30+width/30,height/4+3*height/5+h,width/9,width/52);
+			}
+			s.stroke(255);
+			s.fill(255,0,128,255);
 			s.rect(width/8-width/30,height/4,2*width/30,3*height/5);
-
+			//Use the
+			//END TESLA COILS
 			s.textFont(titleFont);
 			s.strokeWeight(1);
 			s.stroke(0);
