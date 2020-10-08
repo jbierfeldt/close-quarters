@@ -95,12 +95,12 @@ export default class GameController {
 			// remove client from desired spot
 			this.playerSpots[playerSpot] = null;
 
+			// send client back to match making
+			clientController.setGamePhase('MATCHMAKING');
+
 			clientController.setPlayerNumber(null)
 
 			this.sendRoomStateToAll();
-
-			// send client back to match making
-			clientController.setGamePhase('MATCHMAKING');
 
 			return true;
 		} else {
