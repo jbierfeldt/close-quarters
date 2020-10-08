@@ -329,6 +329,12 @@ class App {
 		});
 	}
 
+	sendClearSpot (playerSpot) {
+		this.socket.emit('clearSpot', {
+			playerSpot: playerSpot
+		});
+	}
+
 	setGamePhase (phase) {
 		console.log(`setting game phase ${phase}`);
 		this.gamePhase = phase;

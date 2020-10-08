@@ -2,6 +2,7 @@ import { DEBUG, createID } from '../shared/utilities.js';
 const debug = new DEBUG(process.env.DEBUG, 0);
 import Game from '../shared/Game.js';
 import BasicAI from '../shared/AI.js';
+import ClientController from './ClientController.js';
 
 export default class GameController {
 
@@ -88,7 +89,7 @@ export default class GameController {
 		}	}
 
 	removeClientFromSpot (clientController, playerSpot) {
-		// check if clientController is alread in playerSpot
+		// check if clientController is already in playerSpot
 		if (this.playerSpots[playerSpot] === clientController) {
 
 			// remove client from desired spot
@@ -101,6 +102,15 @@ export default class GameController {
 			return true;
 		} else {
 			return false;
+		}
+	}
+
+	clearSpot (playerSpot) {
+		if (this.playerSpots[playerSpot] instanceof ClientController) {
+			this.removeClientFromSpot(this.playerSpots[playerSpot], playerSpot);
+		} else {
+			this.playerSpots[playerSpot] = null;
+			this.sendRoomStateToAll();
 		}
 	}
 

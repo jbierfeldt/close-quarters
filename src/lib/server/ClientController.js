@@ -142,8 +142,11 @@ export default class ClientController {
 
 		this.socket.on('assignAIToSpot', (data) => {
 			this.gameController.assignAIToSpot(data.playerSpot);
-		})
+		});
 
+		this.socket.on('clearSpot', (data) => {
+			this.gameController.clearSpot(data.playerSpot);
+		});
 
 	}
 
