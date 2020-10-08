@@ -287,7 +287,7 @@ export default class Display {
 					s.fill(152, 255, 152,255);
 					s.text("Create",3*wi/5+si/2,he/3+si*1.55);
 					s.fill(210,130,240,255);
-					s.text("Join",3*wi/5+si,he/4+he/3.025);
+					s.text("Join",3*wi/5+si*1.15,he/4+he/3.025);
 					s.fill(230,100);
 					s.noFill();
 					s.stroke(255);
@@ -337,7 +337,6 @@ export default class Display {
 					let offsetX = 0;
 					let offsetY = 0;
 
-
 					drawGrid(wi, he, si, this.playerColors);
 					for(let p = 0; p < 4; p = p + 1){
 						if(p == 1){
@@ -371,7 +370,6 @@ export default class Display {
 							s.text("REMOVE",wi/4-si*1.45,he/4+si/5);
 							if(s.mouseIsPressed && s.mouseX < wi/4-si*2+si*4+offsetX && s.mouseX > wi/4-si*2+offsetX && s.mouseY < he/4-si/2+si+offsetY && s.mouseY > he/4-si/2+offsetY){
 								this.app.sendClearSpot(p+1);
-
 							}
 						}
 						else{
@@ -387,7 +385,6 @@ export default class Display {
 							s.fill(255);
 							s.stroke(0);
 							s.textSize(si/1.4);
-
 							s.text("MAKE AI",wi/4-si*1.45,he/4+si/5);
 							if(s.mouseIsPressed && s.mouseX < wi/4-si*2+si*4+offsetX && s.mouseX > wi/4-si*2+offsetX && s.mouseY < he/4-si/2+si+offsetY && s.mouseY > he/4-si/2+offsetY){
 								this.app.sendAssignAIToSpot(p+1);
@@ -431,16 +428,12 @@ export default class Display {
 							s.translate(-wi/2,-he/2);
 						}
 						s.textAlign(s.LEFT);
-
 					}
 
 					//Tooltip Section
 					hoverX=s.int(s.mouseX/si);
 					hoverY=s.int(s.mouseY/si);
 
-					for(let p = 0; p < 4; p = p + 1){
-
-					}
 					//HoverSquares
 			/*	s.fill(255,100);
 					s.noStroke();
@@ -1388,17 +1381,18 @@ export default class Display {
 			}*/
 			//BEGIN TESLA COILS
 			s.noStroke();
-			s.fill(255,0,128,255);
-			for(let h = 0; h < height/25; h = h + 1){
+			s.fill(255);
+			//s.fill(255,0,128,255);
+			for(let h = 0; h < height/28; h = h + 1){
 				s.ellipse(width/8-width/30+width/30,height/4+3*height/5+h,width/12,width/52);
-				s.fill(255);
+
 			}
-			for(let h = height/25; h < height/18; h = h + 1){
+			for(let h = height/28; h < height/18; h = h + 1){
 				s.ellipse(width/8-width/30+width/30,height/4+3*height/5+h,width/9,width/52);
 			}
 			s.stroke(255);
 			s.fill(255,0,128,255);
-			s.rect(width/8-width/30,height/4,2*width/30,3*height/5);
+			s.rect(width/8-width/40,height/4,2*width/40,3*height/5);
 			//Use the
 			//END TESLA COILS
 			s.textFont(titleFont);
