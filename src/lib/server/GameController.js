@@ -99,6 +99,9 @@ export default class GameController {
 
 			this.sendRoomStateToAll();
 
+			// send client back to match making
+			clientController.setGamePhase('MATCHMAKING');
+
 			return true;
 		} else {
 			return false;
