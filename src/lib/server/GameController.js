@@ -149,13 +149,15 @@ export default class GameController {
 
 		for (let i = 1; i <= 4; i++) {
 			if (this.playerSpots[i] !== null) {
-				// do nothing
+				// allow to proceed
 			} else {
+				// if any of the spots are open, exit function
 				return false;
 			}
 		}
 
-		this.setGamePhaseForAll('PLACEMENT'); // should happen as the result of a client triggered event 'GAME START'
+		// send startingGame message to all connected clients
+		this.io.to(this.id).emit('startingGame');
 
 		this.gameStatus = 'IN_PROGRESS';
 
@@ -255,6 +257,7 @@ export default class GameController {
 	sendRoomStateToAll() {
 
 		let playerSpots = {};
+		let openSpots = 0;
 
 		for (let i = 1; i <= 4; i++) {
 			if (this.playerSpots[i] && !this.playerSpots[i].isAI) {
@@ -270,6 +273,9 @@ export default class GameController {
 					ordersSubmitted: this.playerSpots[i].ordersSubmitted
 				}
 			} else {
+
+				openSpots += 1;
+
 				playerSpots[i] = {
 					playerType: 'Open',
 					gamePhase: null,
@@ -279,7 +285,8 @@ export default class GameController {
 		}
 
 		this.io.to(this.id).emit('updateRoomState', {
-			playerSpots: JSON.stringify(playerSpots)
+			playerSpots: JSON.stringify(playerSpots),
+			openSpots: openSpots
 		});
 	}
 

@@ -148,6 +148,10 @@ export default class ClientController {
 			this.gameController.clearSpot(data.playerSpot);
 		});
 
+		this.socket.on('startGame', () => {
+			this.gameController.startGame();
+		});
+
 	}
 
 	// oldbindGameListeners() {

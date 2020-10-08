@@ -117,7 +117,14 @@ class App {
 
 			let playerSpots = JSON.parse(data.playerSpots);
 			this.playerSpotsInGameRoom = playerSpots;
-			debug.log(1, this.playerSpotsInGameRoom);
+
+			// if no more open spots, enable the start button
+			if (data.openSpots === 0) {
+				// enable start button
+			} else {
+				// disable start button
+			}
+
 			this.updateDebugInfo();
 
 			if (this.waitOnInfoCallback) {
@@ -173,6 +180,10 @@ class App {
 		this.socket.on('updateLobbyInfo', (data) => {
 			debug.log(1, "Got Lobby Info", JSON.parse(data));
 			this.updateLobbyInfo(JSON.parse(data));
+		})
+
+		this.socket.on('startingGame', (data) => {
+			this.setGamePhase('PLACEMENT');
 		})
 
 		// this.socket.on('joinGameResult', (data) => {
@@ -333,6 +344,10 @@ class App {
 		this.socket.emit('clearSpot', {
 			playerSpot: playerSpot
 		});
+	}
+
+	sendStartGame () {
+		this.socket.emit('startGame');
 	}
 
 	setGamePhase (phase) {
