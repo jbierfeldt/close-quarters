@@ -1385,12 +1385,12 @@ export default class Display {
 		}
 		function displayMatchmaking(data, width, height, size, delay, pColors){
 			s.background(0);
+			let lightningTrigger = s.int(delay);
 			/*for(let i = 0; i < lineFlame.length; i = i+1){
 				lineFlame[i].render(size/4, .6, width, height);
 			}*/
 			//BEGIN TESLA COILS
 			s.noStroke();
-
 			//s.fill(255,0,128,255);
 			s.fill(255);
 			for(let h = s.int(height/18); h >= s.int(height/28); h = h - 1){
@@ -1413,22 +1413,27 @@ export default class Display {
 			}
 
 			s.stroke(255);
+			s.noStroke();
 			s.fill(255,0,128,255);
-			s.rect(width/8-width/50,height/4,2*width/50,3*height/5);
+			s.fill(255,255);
+			s.rect(width/8-width/100,height/4,2*width/100,3*height/5);
 			//drawTripwireProjectile(5, 5, 1, size, pColors, [0,0], 10, 0);
 			//Begin Projectiles
 			let refx = width/8-width/30+width/30;
 			let refy = height/4;
-			s.fill(pColors[0][0],pColors[0][1],pColors[0][2], 155);
+			let ballSize = size*10;
+			//s.fill(255,0,128, 155);
 			s.translate(refx,refy);
-			for(let angle = 0; angle < 360; angle = angle + 60){
+
+			if(lightningTrigger % 3 == 0){
+			for(let angle = 0; angle < 360; angle = angle + 30){
 				s.rotate(s.radians(angle));
 				let endX;
 				let endY;
 				let xx = 0
 				let yy = 0;
-				while(yy < size/10){//to bottom of screen
-	       endX = xx + s.random(-size/10,size/10); //x-value varies
+				while(yy < ballSize/30){//to bottom of screen
+	       endX = xx + s.random(-ballSize/12, ballSize/12); //x-value varies
 	       endY = yy + size/40;    //y just goes up
 	     	 s.strokeWeight(1);//bolt is a little thicker than a line
 	     	 s.stroke(255); //white line
@@ -1438,9 +1443,11 @@ export default class Display {
 	     }
 			 s.rotate(-s.radians(angle));
 	 	}
-
+	}
+	s.fill(255,0,128,255);
 			s.stroke(0,255);
-			s.ellipse(0, 0, size/4,size/4);
+			s.noStroke();
+			s.ellipse(0, 0, ballSize/4,ballSize/4);
 			s.translate(-refx,-refy);
 			//END TESLA COILS
 			s.textFont(titleFont);
