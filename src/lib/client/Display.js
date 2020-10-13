@@ -32,7 +32,6 @@ export default class Display {
 
 			//Declarations prior to the draw loop & setup
 			let scroller = 0;
-			let lineFlame = [];
 			let titleFont;
 			let standardFont;
 			let animate = 0; //use to decide when a new tick value occurs
@@ -80,6 +79,7 @@ export default class Display {
 			let imgFive;
 			let imgSix;
 			let imgSeven;
+			let imgEight;  //Background texture for matchmaking
 			let col_high;
 			let col_med;
 			let col_low;
@@ -112,6 +112,7 @@ export default class Display {
 				imgFive = s.loadImage('static/P3_Core.png');
 				imgSix = s.loadImage('static/P4_Core.png');
 				imgSeven = s.loadImage('static/RedShifter.png');
+				imgEight = s.loadImage('static/Tex6.jpg');
 				col_high = s.loadImage('static/Col_High.png');
 				col_med = s.loadImage('static/Col_Med.png');
 				col_low = s.loadImage('static/Col_Low.png');
@@ -120,16 +121,9 @@ export default class Display {
 			//Create the canvas based on the size of the user window
 			s.setup = () =>{
 				s.createCanvas(tempConfig.canvasX, tempConfig.canvasY);
-				for (let i = 0; i < 25; i++) {
-			    lineFlame[i] = new Flame(Math.floor(Math.random()*tempConfig.canvasX),Math.floor(Math.random()*tempConfig.canvasY));
-			  }
 				s.frameRate(60);
 				input = s.createInput();
 
-			  //input.size(width/6,height/9);
-				//input.style('font-size', '48px');
-				//input.style('background-color', '#ffffa1');
-				//input.style('font-family', "Impact");
 			}
 
 			//The draw function loops continuously while the sketch is active
@@ -219,21 +213,9 @@ export default class Display {
 				//Phase 0 is the Title Sccreen, Phase 1 is Unit Placement, and Phase 2 is the Battle Phase
 				if(this.app.gamePhase == "TITLE"){
 					gameStart=0;
-					//The below function displays the title sequence
-					// Add bar magnet field lines
-
-
-
-				/*	for (let el in data.gameRooms) {
-						let room = `${el} (${4 - data.gameRooms[el].openSpots} / 4)`;
-					//	s.text(room, width/15,height/4+size*count);
-					//	console.log(room);
-						count=count+1;
-					}*/
 
 					//this.app.sendJoinGame;
 					titleSequence(wi,he,this.delay,si/2);
-
 					//Display the game title on top of the title sequence
 					if(this.delay>25){
 						s.stroke(0,(this.delay-25)*2.9);
@@ -270,14 +252,13 @@ export default class Display {
 				}
 
 				else if(this.app.gamePhase === "MATCHMAKING"){
-
+					//input = s.createInput();
 					input.position(3*wi/5+si/10, he/4.65);
 					input.size(si*4,he/20);
 					input.style('font-size', '28px');
-					input.style('background-color', '#000000');
+					input.style('background-color', 'transparent');
 					input.style('border-color', 'white');
 					input.style('color', '#B0C4F3');
-
 					input.style('text-transform', 'uppercase');
 					input.style('font-family', "Monaco");
 
@@ -321,10 +302,10 @@ export default class Display {
 				else{
 					allowNewID = 1;
 				}
-
 			}
 			else if(this.app.gamePhase === "LOBBY" && this.app.clientState !== 'SPECTATOR'){
 				  input.remove();
+					//input.style('display', 'none');
 					sideBarGrowth = 0.8;
 					sideBarMenu = true;
 					wi = s.width * sideBarGrowth;
@@ -332,7 +313,6 @@ export default class Display {
 					he = si*20;
 					let offsetX = 0;
 					let offsetY = 0;
-
 					drawGrid(wi, he, si, this.playerColors);
 					for(let p = 0; p < 4; p = p + 1){
 						if(p == 1){
@@ -368,7 +348,7 @@ export default class Display {
 								this.app.sendClearSpot(p+1);
 							}
 						}
-						else{
+						else if(this.app.playerSpotsInGameRoom[p+1].playerType != 'AI'){
 							s.noStroke();
 							s.fill(0,150);
               s.rect(0,0,si*15,si*10);
@@ -406,7 +386,10 @@ export default class Display {
 						s.stroke(0);
 						s.textAlign(s.CENTER);
 						if((this.app.playerNumber-1) === p){
-							s.text("USER",wi/4,he/4.7);
+							s.text("YOU",wi/4,he/4.7);
+						}
+						else if(this.app.playerSpotsInGameRoom[p+1].playerType == 'Human'){
+							s.text("HUMAN",wi/4,he/4.7);
 						}
 						if(this.app.playerSpotsInGameRoom[p+1].playerType == 'AI'){
 							s.text("COMPUTER",wi/4,he/4.7);
@@ -1386,11 +1369,12 @@ export default class Display {
 		function displayMatchmaking(data, width, height, size, delay, pColors){
 			s.background(0);
 			let lightningTrigger = s.int(delay);
-			/*for(let i = 0; i < lineFlame.length; i = i+1){
-				lineFlame[i].render(size/4, .6, width, height);
-			}*/
+
+			s.tint(255,0,128);
+			s.image(imgEight, 0, 0, height*1.6, height);
+			s.noTint();
 			//BEGIN TESLA COILS
-			s.noStroke();
+			/*s.noStroke();
 			//s.fill(255,0,128,255);
 			s.fill(255);
 			for(let h = s.int(height/18); h >= s.int(height/28); h = h - 1){
@@ -1425,7 +1409,7 @@ export default class Display {
 			//s.fill(255,0,128, 155);
 			s.translate(refx,refy);
 
-			if(lightningTrigger % 3 == 0){
+			if(lightningTrigger % 1 == 0){
 			for(let angle = 0; angle < 360; angle = angle + 30){
 				s.rotate(s.radians(angle));
 				let endX;
@@ -1434,7 +1418,8 @@ export default class Display {
 				let yy = 0;
 				while(yy < ballSize/30){//to bottom of screen
 	       endX = xx + s.random(-ballSize/12, ballSize/12); //x-value varies
-	       endY = yy + size/40;    //y just goes up
+				 //endX = xx + s.random(-ballSize/206, ballSize/206)+s.noise(delay/100)*ballSize/12;
+	       endY = yy + size/20;    //y just goes up
 	     	 s.strokeWeight(1);//bolt is a little thicker than a line
 	     	 s.stroke(255); //white line
 	       s.line(xx,yy,endX,endY);//draw a tiny segment
@@ -1450,6 +1435,7 @@ export default class Display {
 			s.ellipse(0, 0, ballSize/4,ballSize/4);
 			s.translate(-refx,-refy);
 			//END TESLA COILS
+			*/
 			s.textFont(titleFont);
 			s.strokeWeight(1);
 			s.stroke(0);
@@ -2509,21 +2495,6 @@ function drawCreditsSymbol(x, y, size, player, a, pColors){
 			let player = proj.player;
 			let refx=x*size+size/2;
 			let refy=y*size+size/2;
-
-	// 		s.tint(pColors[player-1][0],pColors[player-1][1],pColors[player-1][2],s.abs(4.5-(4.5-a))*9);
-	// 		//s.translate(refx,refy);
-	// 	//	for(let angle = 0; angle < 360; angle = angle + 120){
-	// 		//	s.rotate(s.radians(angle));
-	// 		if(proj.damage >= 25){
-	// 		s.image(col_high,refx-size/2,refy-size/2,size,size);
-	// 	}
-	// 	else{
-	// 		s.image(col_med,refx-size/2,refy-size/2,size,size);
-	// 	}
-	// 	//s.rotate(-s.radians(angle));
-	// //}
-
-		//s.translate(-refx,-refy);
 			s.noTint();
 			s.noFill();
 			let theta=0;
@@ -2531,11 +2502,11 @@ function drawCreditsSymbol(x, y, size, player, a, pColors){
 			let meh=0;
 			let osx=0;
 			let osy=0;
-			let wave = Math.floor(proj.damage);
+			let wave = Math.floor(proj.damage)+3;
 			let rad = 360;
 			let radius=size/25;
 			for (let i = 0; i < rad; i = i + 18){
-				s.stroke(pColors[player-1][0],pColors[player-1][1],pColors[player-1][2], 25+2*s.abs(a-4.5));
+				s.stroke(pColors[player-1][0],pColors[player-1][1],pColors[player-1][2], 25 + 2*s.abs(a-4.5));
 				theta = i*(360/rad);
 				phase=((Math.PI)/rad);
 				meh = (radius*1.8+11.5)*s.sin(wave*theta+phase)*s.cos(phase);
