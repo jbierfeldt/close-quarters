@@ -430,7 +430,7 @@ export class Maglev extends Unit {
 		3: [[-1,-1],[-1,0],[-1,1],[0,-1],[0,1],[1,0],[1,1],[1,-1]],
 		4: [[-1,-1],[-1,0],[-1,1],[0,-1],[0,1],[1,0],[1,1],[1,-1]]
 	}
-	static description = "The Maglev is an offensive powerhouse that emits magnetic pulses in all directions. These strikes begin with a high base damage and fade off exponentially as they travel.";
+	static description = "The Maglev is an offensive powerhouse that emits magnetic pulses in all directions. These strikes begin with a high base damage that fades as they travel.";
 
 	static createFromSerialized (props) {
 		return new Maglev(props.player, props.health, props.firing, props.id, props.collidedWith, props.lifeSpan, props.damageDealt);

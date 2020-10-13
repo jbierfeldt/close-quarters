@@ -139,16 +139,15 @@ export default class Display {
 				this.delay=this.delay+.19+s.deltaTime/425;
 				this.integerRising = this.integerRising + 1;
 
-
 				//playerShifter shifts the Button Menu if the player is on the right side of the screen
 				playerShifter = 0;
 				submitShifterX = 0;
 				submitShifterY = 0;
-				if(this.app.playerNumber>2){
+
+				if(this.app.playerNumber > 2){
 					playerShifter=s.width/2;
 				}
 				if(buttonMaker === 1){
-
 					if(this.app.playerNumber == 2){
 						submitShifterX = 0;
 						submitShifterY = he/2;;
@@ -161,16 +160,11 @@ export default class Display {
 						submitShifterX = wi/2;
 						submitShifterY = he/2;
 					}
-
 					bPhaseOne = new Buttoned(wi-si*5.55, si*2.9, si*5.1, si*1.1, "Deploy Machines", this.app.setGamePhase);
 					bPhaseThree = new Buttoned(wi/3.2 + submitShifterX, he/1.65 - submitShifterY,si*6.1,si*1.1,"Review Board",this.app.setGamePhase);
-
 					bSubmit = new Buttoned(wi/3.2 + submitShifterX, he/1.85 - submitShifterY,si*5,si*1.1,"Submit Turn",this.app.sendSubmitTurn);
-
 					bBase=new Buttoned(wi/2+si-playerShifter,si*buttonScale*2,wi/2-si*2,si*buttonScale*3,"Base",this.app.sendCreateBase);
-
 					//Unit Buttons Below
-
 					bRayTracer=new Buttoned(wi/2+si-playerShifter,si*3,wi/2-si*2,si*buttonScale,"RayTracer",this.app.sendCreateUnit);
 					unitButtons.push(bRayTracer);
 					bRedShifter=new Buttoned(wi/2+si-playerShifter,si*3+buttonScale*si*1,wi/2-si*2,si*buttonScale,"RedShifter",this.app.sendCreateUnit);
@@ -191,14 +185,8 @@ export default class Display {
 					unitButtons.push(bResonator);
 					bIntegrator=new Buttoned(wi/2+si-playerShifter,si*3+buttonScale*si*9,wi/2-si*2,si*buttonScale,"Integrator",this.app.sendCreateUnit);
 					unitButtons.push(bIntegrator);
-
-
 				}
 				buttonMaker=0;
-
-				//Sets the background to black each time around the loop in order to prevent sketch objects from stacking on each other
-				//s.background(0);
-
 				//Sets the default text font and its size
 				s.textFont(titleFont);
 				s.textSize(wi/9);
@@ -211,7 +199,7 @@ export default class Display {
 					// Add bar magnet field lines
 					titleSequence(wi,he,this.delay,si/2);
 					//Display the game title on top of the title sequence
-					if(this.delay>25){
+					if(this.delay > 25){
 						s.stroke(0,(this.delay-25)*2.9);
 						s.fill(255,0,128,(this.delay-25)*2.9);
 					}
@@ -237,13 +225,9 @@ export default class Display {
 					s.textAlign(s.LEFT);
 					s.textSize(wi/9);
 					//buttonScale sets the size of the buttons(dependent on their overall number)
-
-
 					if(s.mouseIsPressed){
-
 					//	if (!debug.enabled) {
 							//runLoadScreen(this.delay);
-
 							s.fullscreen(full);
 							s.resizeCanvas(window.screen.height*1.5, window.screen.height);
 					//	}
