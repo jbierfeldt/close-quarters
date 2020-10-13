@@ -82,6 +82,9 @@ export class RedBullet extends Projectile {
 		if(this.distance >= 10){
 			this.damage = 30;
 		}
+		else{
+			this.damage = 0;
+		}
 		this.distance = this.distance + 1;
 	}
 
@@ -139,7 +142,7 @@ export class MagBullet extends Projectile {
 
 	update(tick) {
 		super.update(tick);
-		this.damage = this.maxDamage - Math.round(this.distance*this.distance*.5);
+		this.damage = this.maxDamage - Math.round(this.distance*this.distance*.35);
 		if(this.damage <= 0){
 			this.damage = 5;
 		}
@@ -315,7 +318,7 @@ export class TriBullet extends Projectile {
 
 
 export class BeaBullet extends Projectile {
-	constructor(player, initialOrientation = [0, 0], initialSpeed = 0, projCount, lifeSpan, unit, distance = 0, id)  {
+	constructor(player, initialOrientation = [0, 0], initialSpeed = 0, unit, distance = 0, id)  {
 		super(player, initialOrientation, initialSpeed, unit, id);
 		this.identifier = "BeaProj";
 		this.damage = 35;
@@ -328,7 +331,7 @@ export class BeaBullet extends Projectile {
 	}
 
 	static createFromSerialized (props) {
-		return new BeaBullet(props.player, props.orientation, props.speed, props.projCount, props.lifeSpan, props.unit, props.distance, props.id);
+		return new BeaBullet(props.player, props.orientation, props.speed, props.unit, props.distance, props.id);
 	}
 
 	update(tick) {

@@ -136,7 +136,7 @@ export default class Display {
 				hoverY=s.int(s.mouseY/si);
 
 				//Delay serves as a variable that has a constant increment for animation
-				this.delay=this.delay+.19+s.deltaTime/450;
+				this.delay=this.delay+.19+s.deltaTime/425;
 				this.integerRising = this.integerRising + 1;
 
 
@@ -771,7 +771,7 @@ export default class Display {
 						}
 				}
 				//IMPORTANT - ANIMATION SPEED
-		    animate = animate + (.65 + s.deltaTime/100);
+		    animate = animate + (.65 + s.deltaTime/70);
 
 				if(this.t === Object.keys(this.simulationDisplayTurn.tick).length - 1){
 					if(gameOver == 0){
