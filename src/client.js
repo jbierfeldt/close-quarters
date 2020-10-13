@@ -308,6 +308,7 @@ class App {
 
 	sendJoinOpenGame () {
 		debug.log(1, `Trying to join open game.`);
+		this.loadedRoomStateFromServer = false;
 		this.socket.emit('joinOpenGame', (result) => {
 			debug.log(1, `Joined the game? ${result}`);
 			if (result === true) {
@@ -330,6 +331,7 @@ class App {
 
 	sendCreateRoom () {
 		debug.log(1, `Creating New Room`);
+		this.loadedRoomStateFromServer = false;
 		this.socket.emit('createGameRoom', (result, game) => {
 			debug.log(1, `New game ${game} returned ${result}`);
 			if (result === true)  {
@@ -385,7 +387,7 @@ class App {
 		this.turnNumber = turnNumber;
 		this.game.turnNumber = turnNumber;
 		this.currentTurnOrders = [];
-	}
+	} 
 
 	loadSerializedGameState(serializedGameState) {
 		let gameState = JSON.parse(serializedGameState);
@@ -572,5 +574,9 @@ app.init();
 
 // secret reset for production games
 window.resetGame = app.sendResetGame.bind(app);
+
+window.printStatus = function () {
+	console.log(app.waitOnInfoCallback, app.loadedClientInfoFromServer, app.loadedRoomStateFromServer);
+}
 
 app.display.stage.grid = app.game.board;

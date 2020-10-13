@@ -43,9 +43,6 @@ export default class GameController {
 	// function to be run when a clientController disconnects
 	disconnectClientController (clientController) {
 
-		// if the client was a player, check if now all the orders have been submitted
-		// ...
-
 		// remove outgoing client from playerSpot
 		if (this.playerSpots[clientController.playerNumber] === clientController) {
 			this.playerSpots[clientController.playerNumber] = null;
@@ -96,9 +93,7 @@ export default class GameController {
 			this.playerSpots[playerSpot] = null;
 
 			// send client back to match making
-			clientController.setGamePhase('MATCHMAKING');
-
-			clientController.setPlayerNumber(null)
+			clientController.onLeaveGameRoom();
 
 			this.sendRoomStateToAll();
 

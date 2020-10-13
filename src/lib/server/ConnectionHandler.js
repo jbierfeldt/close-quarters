@@ -135,10 +135,6 @@ export default class ConnectionHandler {
 
 		this.connectSocketToClient(socket, newClientController);
 
-		// TEMP — This will actually be handled elsewhere
-		// this.connectClientToGameRoom(newClientController, this.openGame);
-		// newClientController.sendLobbyInfo();
-
 		// make socket aware of its clientController
 		socket.clientController = newClientController;
 		this.clientControllers.set(newClientController.id, newClientController);
@@ -200,15 +196,10 @@ export default class ConnectionHandler {
 	connectClientToGameRoom(clientController, gameController) {
 		// if the client already is in a GameRoom, leave that one
 		if (clientController.gameController !== null) {
-			clientController.removeListeners();
-
-			// remove clientController from Game Room clientController list
-			clientController.gameController.disconnectClientController(clientController);
-
-			// leave socket.io room
-			clientController.socket.leave(clientController.gameController.id)
 
 			this.io.to(clientController.gameController.id).emit('message', `${clientController.id} has left ${clientController.gameController.id}.`);
+
+			clientController.onLeaveGameRoom();
 		}
 
 		// set new GameRoom for the clientController
