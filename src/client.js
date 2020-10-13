@@ -57,8 +57,21 @@ class App {
 		this.bindListeners();
 	}
 
-	onFinishedLoading () {
+	onFinishedLoading (data) {
 		this.display.init();
+
+		if (data.clientGamePhase === 'TITLE' || data.clientGamePhase === 'MATCHMAKING') {
+			this.setGamePhase(data.clientGamePhase);
+		} else {
+			const phase = data.clientGamePhase;
+			this.waitOnInfoCallback = () => {
+				console.log("no here", this.playerSpotsInGameRoom);
+				if (this.loadedRoomStateFromServer && this.loadedClientInfoFromServer) {
+					this.setGamePhase(phase);
+					this.waitOnInfoCallback = undefined;
+				}
+			}
+		}
 	}
 
 	bindListeners () {
@@ -164,10 +177,12 @@ class App {
 			this.playerNumber = data.playerNumber;
 			this.clientState = data.clientState;
 
+			console.log('clientGamePhase', data.clientGamePhase)
+
 			// if first time getting clientInfo, start Display
 			//	if (this.loadedClientInfoFromServer === false && this.gameRoom && this.playerNumber) {
 			if (this.loadedClientInfoFromServer === false) {
-				this.onFinishedLoading();
+				this.onFinishedLoading(data);
 				this.loadedClientInfoFromServer = true;
 			}
 
@@ -308,6 +323,7 @@ class App {
 
 	sendJoinOpenGame () {
 		debug.log(1, `Trying to join open game.`);
+		// this.loadedRoomStateFromServer = false;
 		this.socket.emit('joinOpenGame', (result) => {
 			debug.log(1, `Joined the game? ${result}`);
 			if (result === true) {
@@ -330,6 +346,7 @@ class App {
 
 	sendCreateRoom () {
 		debug.log(1, `Creating New Room`);
+		// this.loadedRoomStateFromServer = false;
 		this.socket.emit('createGameRoom', (result, game) => {
 			debug.log(1, `New game ${game} returned ${result}`);
 			if (result === true)  {
@@ -376,7 +393,7 @@ class App {
 	setGamePhase (phase) {
 		console.log(`setting game phase ${phase}`);
 		this.gamePhase = phase;
-		this.socket.emit('updateClientPhase', {
+		this.socket.emit('updateClientGamePhase', {
 			newPhase: this.gamePhase
 		});
 	}
@@ -385,7 +402,7 @@ class App {
 		this.turnNumber = turnNumber;
 		this.game.turnNumber = turnNumber;
 		this.currentTurnOrders = [];
-	}
+	} 
 
 	loadSerializedGameState(serializedGameState) {
 		let gameState = JSON.parse(serializedGameState);
@@ -572,5 +589,9 @@ app.init();
 
 // secret reset for production games
 window.resetGame = app.sendResetGame.bind(app);
+
+window.printStatus = function () {
+	console.log(app.waitOnInfoCallback, app.loadedClientInfoFromServer, app.loadedRoomStateFromServer);
+}
 
 app.display.stage.grid = app.game.board;

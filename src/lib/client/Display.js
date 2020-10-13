@@ -68,7 +68,7 @@ export default class Display {
 			let counter = 0;
 
 			let unitButtons=[]; //List of the Buttons for unit creation
-			let buttonMaker=0; //Variable so buttons only get created once
+			let buttonMaker=1; //Variable so buttons only get created once
 			let hoverX;
 			let hoverY;
 

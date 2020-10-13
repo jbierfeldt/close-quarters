@@ -13,7 +13,7 @@ export default class ConnectionHandler {
 		this.SECRET_KEY = SECRET_KEY;
 
 		// current open game (temp)
-		this.openGame = null;
+		this.openGames = [];
 
 		this.clientControllers = new Map();
 		this.gameControllers = new Map();
@@ -24,7 +24,7 @@ export default class ConnectionHandler {
 		this.registerMiddleware();
 
 		let firstGame = this.createGameRoom();
-		this.openGame = firstGame;
+		this.openGames.push(firstGame);
 
 		this.io.on('connection', (socket) => {
 
@@ -83,6 +83,23 @@ export default class ConnectionHandler {
 
 	}
 
+	getOpenGame () {
+
+		for (let i = 0; i < this.openGames.length; i++) {
+			let openGame = this.gameControllers.get(this.openGames[i]);
+			let openSpots = openGame.getOpenSpotsCount();
+			if (openSpots >= 1) {
+				return openGame;
+			}
+		}
+
+		// if no open games, make a new one
+		let newOpenGame = this.createGameRoom();
+		this.openGames.push(newOpenGame);
+		let openGame = this.gameControllers.get(newOpenGame);
+		return openGame;
+	}
+
 	createGameRoom() {
 		for (let i = 0; i < 1; i++) {
 				let newGameID = createID(5);
@@ -97,7 +114,6 @@ export default class ConnectionHandler {
 
 				return newGameID;
 			}
-
 	}
 
 	registerMiddleware() {
@@ -134,10 +150,6 @@ export default class ConnectionHandler {
 		});
 
 		this.connectSocketToClient(socket, newClientController);
-
-		// TEMP — This will actually be handled elsewhere
-		// this.connectClientToGameRoom(newClientController, this.openGame);
-		// newClientController.sendLobbyInfo();
 
 		// make socket aware of its clientController
 		socket.clientController = newClientController;
@@ -200,15 +212,10 @@ export default class ConnectionHandler {
 	connectClientToGameRoom(clientController, gameController) {
 		// if the client already is in a GameRoom, leave that one
 		if (clientController.gameController !== null) {
-			clientController.removeListeners();
-
-			// remove clientController from Game Room clientController list
-			clientController.gameController.disconnectClientController(clientController);
-
-			// leave socket.io room
-			clientController.socket.leave(clientController.gameController.id)
 
 			this.io.to(clientController.gameController.id).emit('message', `${clientController.id} has left ${clientController.gameController.id}.`);
+
+			clientController.onLeaveGameRoom();
 		}
 
 		// set new GameRoom for the clientController
@@ -259,21 +266,9 @@ export default class ConnectionHandler {
 	}
 
 	attemptClientJoinOpenGame(clientController) {
-		let openGame = this.gameControllers.get(this.openGame);
-		let openSpots = openGame.getOpenSpotsCount();
-		if (openSpots < 1) {
-			debug.log(1, `${this.openGame} is full.`)
-
-			// create a new game and join that
-			this.openGame = this.createGameRoom();
-			openGame = this.gameControllers.get(this.openGame);
-			this.connectClientToGameRoom(clientController, openGame);
-			return true;
-		} else {
-			debug.log(1, `${this.openGame} has ${openSpots} open spots.`)
-			this.connectClientToGameRoom(clientController, openGame);
-			return true;
-		}
+		let openGame = this.getOpenGame();
+		this.connectClientToGameRoom(clientController, openGame);
+		return true;
 	}
 
 	// DEBUG
