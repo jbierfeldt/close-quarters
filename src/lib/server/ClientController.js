@@ -18,8 +18,8 @@ export default class ClientController {
 		this.ordersToExecute = [];
 		this.ordersSubmitted = false;
 
-		this.clientGamePhase = null;
-		this.clientState = 'MATCHMAKING'; // Prior to player assignment - fix for null, SPECTATOR, ACTIVE_PLAYER, DEFEATED_PLAYER
+		this.clientGamePhase = 'TITLE';
+		this.clientState = 'TITLE'; // Prior to player assignment - fix for null, SPECTATOR, ACTIVE_PLAYER, DEFEATED_PLAYER
 	}
 
 	onConnect() {
@@ -116,6 +116,10 @@ export default class ClientController {
 			let newGame = this.connectionHandler.createGameRoom();
 			let joinGameResult = this.connectionHandler.attemptClientJoinGameRoom(this, newGame);
 			callback(joinGameResult, newGame);
+		});
+
+		this.socket.on('updateClientGamePhase', (data) => {
+			this.clientGamePhase = data.newPhase;
 		})
 	}
 
@@ -125,8 +129,8 @@ export default class ClientController {
 		// this.removeListeners();
 		// this.bindListeners();
 
-		this.socket.on('updateClientPhase', (data) => {
-			this.clientGamePhase = data.newPhase;
+		this.socket.on('updateClientGamePhase', (data) => {
+			// this.clientGamePhase = data.newPhase;
 			this.gameController.sendRoomStateToAll();
 		})
 
@@ -252,6 +256,7 @@ export default class ClientController {
 			'gameRoom': (this.gameController ? this.gameController.id : null),
 			'token': this.token,
 			'clientState': this.clientState,
+			'clientGamePhase': this.clientGamePhase,
 			'playerNumber': this.playerNumber
 		});
 	}
