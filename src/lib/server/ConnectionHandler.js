@@ -1,3 +1,4 @@
+import e from 'express';
 import { DEBUG, createID } from '../shared/utilities.js';
 const debug = new DEBUG(process.env.DEBUG, 0);
 import ClientController from './ClientController.js';
@@ -209,7 +210,7 @@ export default class ConnectionHandler {
 		clientController.bindListeners();
 	}
 
-	connectClientToGameRoom(clientController, gameController) {
+	async connectClientToGameRoom(clientController, gameController) {
 		// if the client already is in a GameRoom, leave that one
 		if (clientController.gameController !== null) {
 
@@ -218,47 +219,61 @@ export default class ConnectionHandler {
 			clientController.onLeaveGameRoom();
 		}
 
+		// join socket.io room for new GameRoom
+		// join is async, so await promise before continuing
+		const joinedSocket = await new Promise(
+				(resolve, reject) => {
+					clientController.socket.join(gameController.id, () => {
+			
+						this.io.to(gameController.id).emit('message', `Successfully connected Client ${clientController.id} to GameRoom ${gameController.id}`);
+			
+						resolve(true);
+					});
+				}
+			)
+
 		// set new GameRoom for the clientController
 		clientController.gameController = gameController;
+		
+		// add player to open player spot
+		let openSpot = gameController.getOpenPlayerSpot();
+		if (openSpot) {
 
-		// join socket.io room for new GameRoom
-		// because join is async, rest of implementation is in callback
-		clientController.socket.join(gameController.id, () => {
+			gameController.assignClientToSpot(clientController, openSpot);
+			clientController.setClientState('ACTIVE_PLAYER');
 
-			// add player to open player spot
-			let openSpot = gameController.getOpenPlayerSpot();
-			if (openSpot) {
+		} else {
 
-				gameController.assignClientToSpot(clientController, openSpot);
-				clientController.setClientState('ACTIVE_PLAYER');
+			clientController.setPlayerNumber(null);
+			clientController.setClientState('SPECTATOR');
 
-			} else {
+		}
 
-				clientController.setPlayerNumber(null);
-				clientController.setClientState('SPECTATOR');
+		gameController.registerClientController(clientController);
 
-			}
+		clientController.bindListeners();
+		clientController.bindGameListeners();
 
-			gameController.registerClientController(clientController);
-
-			clientController.bindListeners();
-			clientController.bindGameListeners();
-
-			clientController.onSuccessfulJoinGame(); // also sends clientinfo
-			clientController.sendLobbyInfo();
-
-			this.io.to(gameController.id).emit('message', `Successfully connected Client ${clientController.id} to GameRoom ${gameController.id}`);
-		});
+		clientController.onSuccessfulJoinGame(); // also sends clientinfo
+		clientController.sendLobbyInfo();
 
 		debug.log(0, `Successfully connected Client ${clientController.id} to GameRoom ${gameController.id}`);
+
+		return joinedSocket;
 	}
 
-	attemptClientJoinGameRoom(clientController, gameID) {
+	async attemptClientJoinGameRoom(clientController, gameID) {
 		let gameController = this.gameControllers.get(gameID);
 
 		if (gameController) {
-			this.connectClientToGameRoom(clientController, gameController);
-			return true;
+			let joinStatus = await this.connectClientToGameRoom(clientController, gameController);
+
+			if (joinStatus === true) {
+				return true;
+			} else {
+				debug.log(0, "Error joining client to Game Room.");
+				return false;
+			}
 		} else {
 			debug.log(0, `No GameRoom with id ${gameID} found.`)
 			return false;

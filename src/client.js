@@ -314,6 +314,8 @@ class App {
 						this.waitOnInfoCallback = undefined;
 					}
 				}
+
+				this.waitOnInfoCallback();
 			}
 			else {
 				this.display.successfulJoinedGame = false;
@@ -323,7 +325,6 @@ class App {
 
 	sendJoinOpenGame () {
 		debug.log(1, `Trying to join open game.`);
-		// this.loadedRoomStateFromServer = false;
 		this.socket.emit('joinOpenGame', (result) => {
 			debug.log(1, `Joined the game? ${result}`);
 			if (result === true) {
@@ -337,6 +338,8 @@ class App {
 						this.waitOnInfoCallback = undefined;
 					}
 				}
+
+				this.waitOnInfoCallback();
 			}
 			else {
 				this.display.successfulJoinedGame = false;
@@ -346,7 +349,6 @@ class App {
 
 	sendCreateRoom () {
 		debug.log(1, `Creating New Room`);
-		// this.loadedRoomStateFromServer = false;
 		this.socket.emit('createGameRoom', (result, game) => {
 			debug.log(1, `New game ${game} returned ${result}`);
 			if (result === true)  {
@@ -359,10 +361,9 @@ class App {
 						this.setGamePhase("LOBBY");
 						this.waitOnInfoCallback = undefined;
 					}
-					else {
-						console.log(`this.loadedRoomStateFromServer: ${this.loadedRoomStateFromServer} \n this.loadedClientInfoFromServer: ${this.loadedClientInfoFromServer}`)
-					}
 				}
+
+				this.waitOnInfoCallback();
 			}
 			else {
 				this.display.successfulJoinedGame =  false;

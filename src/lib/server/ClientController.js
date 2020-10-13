@@ -102,19 +102,19 @@ export default class ClientController {
 			if (this.gameController) this.gameController.printGameRoomInformation();
 		})
 
-		this.socket.on('joinGame', (data, callback) => {
-			let joinedGameResult = this.connectionHandler.attemptClientJoinGameRoom(this, data.gameID);
+		this.socket.on('joinGame', async (data, callback) => {
+			let joinedGameResult = await this.connectionHandler.attemptClientJoinGameRoom(this, data.gameID);
 			callback(joinedGameResult);
 		})
 
-		this.socket.on('joinOpenGame', (callback) => {
-			let joinedGameResult = this.connectionHandler.attemptClientJoinOpenGame(this);
+		this.socket.on('joinOpenGame', async (callback) => {
+			let joinedGameResult = await this.connectionHandler.attemptClientJoinOpenGame(this);
 			callback(joinedGameResult);
 		});
 
-		this.socket.on('createGameRoom', (callback) => {
+		this.socket.on('createGameRoom', async (callback) => {
 			let newGame = this.connectionHandler.createGameRoom();
-			let joinGameResult = this.connectionHandler.attemptClientJoinGameRoom(this, newGame);
+			let joinGameResult = await this.connectionHandler.attemptClientJoinGameRoom(this, newGame);
 			callback(joinGameResult, newGame);
 		});
 
