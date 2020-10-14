@@ -232,6 +232,7 @@ export default class Display {
 					}
 
 					s.strokeWeight(4);
+					s.textAlign(s.LEFT);
 					s.text("Close",s.width/3.05,s.height/2.4);
 					s.text("Quarters",s.width/4.45,s.height/1.6);
 
