@@ -39,7 +39,7 @@ export default class Display {
 			let playerShifter;
 			let submitShifterX;
 			let submitShifterY;
-			let gameStart;
+			let gameStart = 0;
 			let sideBarGrowth = 1;
 			let sideBarMenu = false;
 			//let successfulJoinedGame = null;
