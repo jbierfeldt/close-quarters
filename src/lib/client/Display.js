@@ -122,6 +122,7 @@ export default class Display {
 			s.setup = () =>{
 				s.createCanvas(tempConfig.canvasX, tempConfig.canvasY);
 				s.frameRate(60);
+				//input = s.createInput();
 				input = s.createInput();
 
 			}
@@ -129,7 +130,8 @@ export default class Display {
 			//The draw function loops continuously while the sketch is active
 			//Different screens of the game are portioned off using trigger variables and user input to move between them
 			s.draw = () => {
-
+				//input = null;
+				input.style('display', 'none');
 				s.cursor(s.CROSS);
 
 				let transitioning = 0;
@@ -252,7 +254,10 @@ export default class Display {
 				}
 
 				else if(this.app.gamePhase === "MATCHMAKING"){
-					//input = s.createInput();
+					/*if(!input){
+					input = s.createInput();
+				}*/
+				input.style('display', 'block');
 					input.position(3*wi/5+si/10, he/4.65);
 					input.size(si*4,he/20);
 					input.style('font-size', '28px');
@@ -304,8 +309,9 @@ export default class Display {
 				}
 			}
 			else if(this.app.gamePhase === "LOBBY" && this.app.clientState !== 'SPECTATOR'){
-				  input.remove();
-					//input.style('display', 'none');
+				//	window.sdf = input;
+				 // input.remove();
+
 					sideBarGrowth = 0.8;
 					sideBarMenu = true;
 					wi = s.width * sideBarGrowth;
