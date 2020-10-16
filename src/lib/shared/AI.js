@@ -7,10 +7,10 @@ export default class BasicAI {
 	constructor (game, playerNumber) {
     this.game = game;
     this.playerNumber = playerNumber;
-		this.isAI = true;
+	this.isAI = true; // used in sendRoomState in GameController
 
     this.ordersToExecute = [];
-		this.ordersSubmitted = null;
+	this.ordersSubmitted = false;
   }
 
   createOrder (orderType, args) {

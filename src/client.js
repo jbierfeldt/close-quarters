@@ -18,10 +18,12 @@ class App {
 		this.display = null;
 		this.gameState = undefined;
 		this.socket = undefined;
+		this.gameRoom = undefined;
 
 		this.gamePhase = undefined;
 		this.currentTurnOrders = [];
 
+		this.matchmakingData = undefined;
 		// info from server
 		this.turnNumber = 1;
 		this.currentTurnInitialState = {};
@@ -29,12 +31,15 @@ class App {
 		this.clientID = undefined;
 		this.token = undefined;
 		this.playerNumber = undefined;
-		this.playersOnServer = undefined;
+		this.playerSpotsInGameRoom = undefined;
 		this.spectatorMode = false;
 		this.clientState = null;
 		this.loadedClientInfoFromServer = false;
+		this.loadedRoomStateFromServer = false;
 		this.turnIsIn = false; //Use this for the transition
 		this.simulationRun = false;
+
+		this.waitOnInfoCallback = undefined;
 	}
 
 	init() {
@@ -47,13 +52,26 @@ class App {
 		});
 
 		this.game.init();
-		this.setGamePhase(0);
+		this.setGamePhase("TITLE");
 		if (debug.enabled) {this.debugInit();};
 		this.bindListeners();
 	}
 
-	onFinishedLoading () {
+	onFinishedLoading (data) {
 		this.display.init();
+
+		if (data.clientGamePhase === 'TITLE' || data.clientGamePhase === 'MATCHMAKING') {
+			this.setGamePhase(data.clientGamePhase);
+		} else {
+			const phase = data.clientGamePhase;
+			this.waitOnInfoCallback = () => {
+				console.log("no here", this.playerSpotsInGameRoom);
+				if (this.loadedRoomStateFromServer && this.loadedClientInfoFromServer) {
+					this.setGamePhase(phase);
+					this.waitOnInfoCallback = undefined;
+				}
+			}
+		}
 	}
 
 	bindListeners () {
@@ -100,13 +118,32 @@ class App {
 		this.socket.on('simulationSuccessful', (data) => {
 			this.updateLastTurnHistory(data);
 			this.simulationRun = true;
-			this.setGamePhase(2); // show simulation phase
+			this.setGamePhase("SIMULATION"); // show simulation phase
 		})
 
-		this.socket.on('updateServerState', (data) => {
-			let players = JSON.parse(data.players);
-			this.playersOnServer = players;
+		this.socket.on('updateRoomState', (data) => {
+			debug.log(0, `got update room state`, data);
+
+			if (this.loadedRoomStateFromServer === false) {
+				this.loadedRoomStateFromServer = true;
+			}
+
+			let playerSpots = JSON.parse(data.playerSpots);
+			this.playerSpotsInGameRoom = playerSpots;
+
+			// if no more open spots, enable the start button
+			if (data.openSpots === 0) {
+				// enable start button
+				this.display.startButtonEnabled = true;
+			} else {
+				this.display.startButtonEnabled = false;
+			}
+
 			this.updateDebugInfo();
+
+			if (this.waitOnInfoCallback) {
+				this.waitOnInfoCallback();
+			}
 		});
 
 		this.socket.on('updateLastTurnHistory', (data) => {
@@ -121,28 +158,61 @@ class App {
 		this.socket.on('updateClientGamePhase', (data) => {
 			debug.log(0, 'got new phase from server', data.newPhase);
 			this.setGamePhase(data.newPhase);
+			this.updateDebugInfo();
 		})
 
 		this.socket.on('updateClientState', (data) => {
 			debug.log(0, "got new client state");
 			this.clientState = data.clientState;
+			this.updateDebugInfo();
 		})
 
 		this.socket.on('updateClientInfo', (data) => {
+			debug.log(1, "Got Client Info");
 			this.updateTokenInfo(data.token);
 
 			this.clientID = data.clientID;
+			this.socketID = data.socketID;
+			this.gameRoom = data.gameRoom;
 			this.playerNumber = data.playerNumber;
 			this.clientState = data.clientState;
 
+			console.log('clientGamePhase', data.clientGamePhase)
+
 			// if first time getting clientInfo, start Display
+			//	if (this.loadedClientInfoFromServer === false && this.gameRoom && this.playerNumber) {
 			if (this.loadedClientInfoFromServer === false) {
-				this.onFinishedLoading();
+				this.onFinishedLoading(data);
 				this.loadedClientInfoFromServer = true;
 			}
 
-			debug.log(1, "Got Client Info");
+			this.updateDebugInfo();
+
+			if (this.waitOnInfoCallback) {
+				this.waitOnInfoCallback();
+			}
 		})
+
+		this.socket.on('updateLobbyInfo', (data) => {
+			debug.log(1, "Got Lobby Info", JSON.parse(data));
+			this.updateLobbyInfo(JSON.parse(data));
+		})
+
+		this.socket.on('startingGame', (data) => {
+			this.setGamePhase('PLACEMENT');
+		})
+
+		// this.socket.on('joinGameResult', (data) => {
+		// 	debug.log(1, `Joined the game? ${data.joinedGame}`);
+		// 	if (data.joinedGame === true) {
+		// 		// this.setGamePhase(1);
+		// 		this.display.successfulJoinedGame = true;
+		// 		this.setGamePhase(1);
+		// 	}
+		// 	else {
+		// 		this.display.successfulJoinedGame = false;
+		// 	}
+		// })
 
 	}
 
@@ -213,18 +283,118 @@ class App {
 	}
 
 	sendPrintServerData () {
+		debug.log(1, 'requesting server print connection info');
 		this.socket.emit('printServerData');
 	}
 
 	sendResetGame () {
 		debug.log(1, "Resetting game!");
-		this.setGamePhase(0);
+		this.setGamePhase("TITLE");
 		this.socket.emit('resetGame');
 	}
 
+	sendJoinGame (id) {
+		let gameID;
+		if (id) {
+			gameID = id;
+		} else {
+			gameID = document.getElementById("join-game-id").value;
+		}
+		debug.log(1, `Attempting to join game ${gameID}`);
+		this.socket.emit('joinGame', {gameID:  gameID}, (result) => {
+			debug.log(1, `Joined the game? ${result}`);
+			if (result === true) {
+				this.display.successfulJoinedGame = true;
+				this.setGamePhase('LOADING');
+
+				// callback to be called once ClientInfo is received from server
+				this.waitOnInfoCallback = () => {
+					if (this.loadedRoomStateFromServer && this.loadedClientInfoFromServer) {
+						this.setGamePhase("LOBBY");
+						this.waitOnInfoCallback = undefined;
+					}
+				}
+
+				this.waitOnInfoCallback();
+			}
+			else {
+				this.display.successfulJoinedGame = false;
+			}
+		});
+	}
+
+	sendJoinOpenGame () {
+		debug.log(1, `Trying to join open game.`);
+		this.socket.emit('joinOpenGame', (result) => {
+			debug.log(1, `Joined the game? ${result}`);
+			if (result === true) {
+				this.display.successfulJoinedGame = true;
+				this.setGamePhase('LOADING');
+
+				// callback to be called once ClientInfo is received from server
+				this.waitOnInfoCallback = () => {
+					if (this.loadedRoomStateFromServer && this.loadedClientInfoFromServer) {
+						this.setGamePhase("LOBBY");
+						this.waitOnInfoCallback = undefined;
+					}
+				}
+
+				this.waitOnInfoCallback();
+			}
+			else {
+				this.display.successfulJoinedGame = false;
+			}
+		});
+	}
+
+	sendCreateRoom () {
+		debug.log(1, `Creating New Room`);
+		this.socket.emit('createGameRoom', (result, game) => {
+			debug.log(1, `New game ${game} returned ${result}`);
+			if (result === true)  {
+				this.display.successfulJoinedGame = true;
+				this.setGamePhase('LOADING');
+
+				// callback to be called once ClientInfo is received from server
+				this.waitOnInfoCallback = () => {
+					if (this.loadedRoomStateFromServer && this.loadedClientInfoFromServer) {
+						this.setGamePhase("LOBBY");
+						this.waitOnInfoCallback = undefined;
+					}
+				}
+
+				this.waitOnInfoCallback();
+			}
+			else {
+				this.display.successfulJoinedGame =  false;
+			}
+		});
+	}
+
+	sendAssignPlayerToSpot (playerSpot) {
+
+	}
+
+	sendAssignAIToSpot (playerSpot) {
+		this.socket.emit('assignAIToSpot', {
+			playerSpot: playerSpot
+		});
+	}
+
+	sendClearSpot (playerSpot) {
+		this.socket.emit('clearSpot', {
+			playerSpot: playerSpot
+		});
+	}
+
+	sendStartGame () {
+		this.socket.emit('startGame');
+	}
+
 	setGamePhase (phase) {
+		console.log(`setting game phase ${phase}`);
 		this.gamePhase = phase;
-		this.socket.emit('updateClientPhase', {
+		this.socket.emit('updateClientGamePhase', {
 			newPhase: this.gamePhase
 		});
 	}
@@ -233,7 +403,7 @@ class App {
 		this.turnNumber = turnNumber;
 		this.game.turnNumber = turnNumber;
 		this.currentTurnOrders = [];
-	}
+	} 
 
 	loadSerializedGameState(serializedGameState) {
 		let gameState = JSON.parse(serializedGameState);
@@ -263,7 +433,7 @@ class App {
 		let lastTurnHistory = this.loadSerializedLastTurnHistory(data.s_lastTurnHistory);
 		this.display.t = 1;
 		this.display.simulationDisplayTurn = lastTurnHistory;
-		debug.log(0, "sent to Display", this.display.simulationDisplayTurn);
+		debug.log(0, "last turn info sent to Display", this.display.simulationDisplayTurn);
 	}
 
 	updateTokenInfo (token) {
@@ -285,14 +455,15 @@ class App {
 		document.getElementById("force-submit-turn").addEventListener("click", this.forcesendSubmitTurn.bind(this));
 		document.getElementById("server-data").addEventListener("click", this.sendPrintServerData.bind(this));
 		document.getElementById("reset-game").addEventListener("click", this.sendResetGame.bind(this));
-		document.getElementById("phase-1").addEventListener("click", this.setGamePhase.bind(this, 1));
-		document.getElementById("phase-2").addEventListener("click", this.setGamePhase.bind(this, 2));
-		document.getElementById("phase-3").addEventListener("click", this.setGamePhase.bind(this, 3));
+		document.getElementById("phase-1").addEventListener("click", this.setGamePhase.bind(this, "PLACEMENT"));
+		document.getElementById("phase-2").addEventListener("click", this.setGamePhase.bind(this, "SIMULATION"));
+		document.getElementById("phase-3").addEventListener("click", this.setGamePhase.bind(this, "REVIEW"));
 		document.getElementById("disconnect").addEventListener("click", this.sendDisconnect.bind(this));
 		document.getElementById("connect").addEventListener("click", this.sendConnect.bind(this));
 		document.getElementById("authdump").addEventListener("click", function(){ localStorage.authToken = ''; window.open(window.location.href,'_blank'); });
 		document.getElementById("save-snapshot").addEventListener("click", this.saveSnapshot.bind(this));
 		document.getElementById("load-snapshot").addEventListener("click", this.loadSnapshot.bind(this));
+		document.getElementById("join-game").addEventListener("click", this.sendJoinGame.bind(this, undefined));
 	}
 
 	saveSnapshot () {
@@ -313,10 +484,29 @@ class App {
 		}
 	}
 
+	updateLobbyInfo (data) {
+		this.matchmakingData = data;
+		const lobbyPane = document.getElementById("lobby-pane");
+		lobbyPane.innerHTML = '';
+		for (let el in data.gameRooms) {
+			let newEl = document.createElement("div");
+			newEl.innerHTML = `${el} (${4 - data.gameRooms[el].openSpots} / 4)`;
+			let newButton =  document.createElement("button");
+			newButton.innerHTML = 'Join Game';
+			newButton.addEventListener("click", () => {
+				this.sendJoinGame(el);
+			});
+			lobbyPane.append(newEl);
+			lobbyPane.append(newButton);
+		}
+	}
+
 	updateDebugInfo () {
 
 		const debugData = {
 			'clientID': this.clientID,
+			'socketID': this.socketID,
+			'gameRoom': this.gameRoom,
 			'clientState': this.clientState,
 			'playerNumber': this.playerNumber,
 			'turnNumber': this.turnNumber,
@@ -342,31 +532,44 @@ class App {
 			}
 		}
 
-		if (this.playersOnServer) {
+		if (this.playerSpotsInGameRoom) {
 			document.getElementById("players-info").innerHTML = '';
 			for (let i = 1; i <= 4; i++) {
 				let newPlayerDiv = document.createElement("div");
 				let newPlayerSpan = document.createElement("span");
-				if (this.playersOnServer[i] !== null) {
-					switch (this.playersOnServer[i].gamePhase) {
+				if (this.playerSpotsInGameRoom[i] !== null) {
+					switch (this.playerSpotsInGameRoom[i].playerType) {
 						case 'AI':
 						newPlayerSpan.innerHTML = "Orders submitted (AI)."
 						break
-						case 0:
-						newPlayerSpan.innerHTML = "Loading...";
+						case 'Open':
+						newPlayerSpan.innerHTML = "Open Spot";
 						break
-						case 1:
-						if (this.playersOnServer[i].ordersSubmitted) {
-							newPlayerSpan.innerHTML = "Orders submitted.";
-						} else {
-							newPlayerSpan.innerHTML = "Making Turn...";
-						}
-						break
-						case 2:
-						newPlayerSpan.innerHTML = "Watching Simulation...";
-						break
-						case 3:
-						newPlayerSpan.innerHTML = "Reviewing Board...";
+						case 'Human':
+							if (this.playerSpotsInGameRoom[i].ordersSubmitted) {
+								newPlayerSpan.innerHTML = "Orders submitted.";
+							} else {
+								switch (this.playerSpotsInGameRoom[i].gamePhase) {
+									case 'TITLE':
+										newPlayerSpan.innerHTML = "Loading...";
+										break
+									case 'MATCHMAKING':
+										newPlayerSpan.innerHTML = "Joining Room...";
+										break
+									case 'LOBBY':
+										newPlayerSpan.innerHTML = "Waiting for Game to Start...";
+										break
+									case 'PLACEMENT':
+										newPlayerSpan.innerHTML = "Placing Units...";
+										break
+									case 'SIMULATION':
+										newPlayerSpan.innerHTML = "Watching Simulation...";
+										break
+									case 'REVIEW':
+										newPlayerSpan.innerHTML = "Reviewing Board...";
+										break
+								}
+							}
 						break
 					}
 				} else {
@@ -387,5 +590,9 @@ app.init();
 
 // secret reset for production games
 window.resetGame = app.sendResetGame.bind(app);
+
+window.printStatus = function () {
+	console.log(app.waitOnInfoCallback, app.loadedClientInfoFromServer, app.loadedRoomStateFromServer);
+}
 
 app.display.stage.grid = app.game.board;

@@ -5,7 +5,7 @@ const debug = new DEBUG(true, 5);
 
 export default class Projectile {
 	constructor(player, initialOrientation = [0, 0], initialSpeed = 0, unitID, id) {
-		this.id = id || 'proj'+createID();
+		this.id = id || 'proj_'+createID();
 		this.player = player;
 		this.orientation = initialOrientation;
 		this.speed = initialSpeed;

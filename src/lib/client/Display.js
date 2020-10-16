@@ -21,23 +21,18 @@ export default class Display {
 		this.integerRising = 0;
 		this.board = [[]];
 		this.t = 1;
+		this.successfulJoinedGame = null;
+		this.startButtonEnabled = false;
 	}
 
-	runLoadScreen (alpha) {
-		s.noStroke();
-		s.fill(0,alpha)
-		s.rect(0,0,s.width,s.height);
-		s.fill(255);
-		s.textFont(titleFont);
-		s.textAlign(s.CENTER);
-		s.text("LOADING", s.width/2,s.height/1.8);
-	}
+
 
 	init() {
 
 		let sketch = (s) => {
 
 			//Declarations prior to the draw loop & setup
+			let scroller = 0;
 			let titleFont;
 			let standardFont;
 			let animate = 0; //use to decide when a new tick value occurs
@@ -45,12 +40,15 @@ export default class Display {
 			let playerShifter;
 			let submitShifterX;
 			let submitShifterY;
-			let gameStart;
+			let gameStart = 0;
 			let sideBarGrowth = 1;
 			let sideBarMenu = false;
+			//let successfulJoinedGame = null;
 
 			//Button Declarations
+
 			let bPhaseOne;
+			let bStartMatch;
 			let bPhaseThree;
 			let bBase;
 			let bRayTracer;
@@ -72,7 +70,7 @@ export default class Display {
 			let counter = 0;
 
 			let unitButtons=[]; //List of the Buttons for unit creation
-			let buttonMaker=0; //Variable so buttons only get created once
+			let buttonMaker=1; //Variable so buttons only get created once
 			let hoverX;
 			let hoverY;
 
@@ -83,6 +81,7 @@ export default class Display {
 			let imgFive;
 			let imgSix;
 			let imgSeven;
+			let imgEight;  //Background texture for matchmaking
 			let col_high;
 			let col_med;
 			let col_low;
@@ -98,6 +97,11 @@ export default class Display {
 			let gameOver = 0;
 			let alpha = 0;
 
+			let input;
+			let allowNewID = 1;
+
+			let loading = false;
+
 			p5.disableFriendlyErrors = true;
 			//Preload the fonts and other assets below
 			s.preload = () =>{
@@ -110,6 +114,7 @@ export default class Display {
 				imgFive = s.loadImage('static/P3_Core.png');
 				imgSix = s.loadImage('static/P4_Core.png');
 				imgSeven = s.loadImage('static/RedShifter.png');
+				imgEight = s.loadImage('static/Tex6.jpg');
 				col_high = s.loadImage('static/Col_High.png');
 				col_med = s.loadImage('static/Col_Med.png');
 				col_low = s.loadImage('static/Col_Low.png');
@@ -119,12 +124,16 @@ export default class Display {
 			s.setup = () =>{
 				s.createCanvas(tempConfig.canvasX, tempConfig.canvasY);
 				s.frameRate(60);
+				//input = s.createInput();
+				input = s.createInput();
+
 			}
 
 			//The draw function loops continuously while the sketch is active
 			//Different screens of the game are portioned off using trigger variables and user input to move between them
 			s.draw = () => {
-
+				//input = null;
+				input.style('display', 'none');
 				s.cursor(s.CROSS);
 
 				let transitioning = 0;
@@ -161,6 +170,9 @@ export default class Display {
 						submitShifterY = he/2;
 					}
 					bPhaseOne = new Buttoned(wi-si*5.55, si*2.9, si*5.1, si*1.1, "Deploy Machines", this.app.setGamePhase);
+
+					bStartMatch = new Buttoned(wi-si*5.55, si*11.5, si*5.1, si*1.1, "Start Match", this.app.sendStartGame);
+
 					bPhaseThree = new Buttoned(wi/3.2 + submitShifterX, he/1.65 - submitShifterY,si*6.1,si*1.1,"Review Board",this.app.setGamePhase);
 					bSubmit = new Buttoned(wi/3.2 + submitShifterX, he/1.85 - submitShifterY,si*5,si*1.1,"Submit Turn",this.app.sendSubmitTurn);
 					bBase=new Buttoned(wi/2+si-playerShifter,si*buttonScale*2,wi/2-si*2,si*buttonScale*3,"Base",this.app.sendCreateBase);
@@ -193,10 +205,10 @@ export default class Display {
 
 				//Phase begins at 0 via the constructor of Display(see above)
 				//Phase 0 is the Title Sccreen, Phase 1 is Unit Placement, and Phase 2 is the Battle Phase
-				if(this.app.gamePhase == 0){
+				if(this.app.gamePhase == "TITLE"){
 					gameStart=0;
-					//The below function displays the title sequence
-					// Add bar magnet field lines
+
+					//this.app.sendJoinGame;
 					titleSequence(wi,he,this.delay,si/2);
 					//Display the game title on top of the title sequence
 					if(this.delay > 25){
@@ -226,22 +238,270 @@ export default class Display {
 					s.textSize(wi/9);
 					//buttonScale sets the size of the buttons(dependent on their overall number)
 					if(s.mouseIsPressed){
-					//	if (!debug.enabled) {
-							//runLoadScreen(this.delay);
+
+						if (!debug.enabled) {
 							s.fullscreen(full);
 							s.resizeCanvas(window.screen.height*1.5, window.screen.height);
-					//	}
+						}
 						buttonMaker = 1;
-						this.app.setGamePhase(1);
+						this.app.setGamePhase("MATCHMAKING");
 						s.mouseIsPressed = false;
 						unitButtons = [];
 					}
 					//Exit this phase and move to the Battle Phase if the mouse is pressed(button trigger to be added)
+
 				}
-				else if(this.app.gamePhase === 0.5){
-					displayMatchmaking(si, this.app.playerNumber, this.playerColors);
+
+				else if(this.app.gamePhase === "MATCHMAKING"){
+					/*if(!input){
+					input = s.createInput();
+				}*/
+				input.style('display', 'block');
+					input.position(3*wi/5+si/10, he/4.65);
+					input.size(si*4,he/20);
+					input.style('font-size', '28px');
+					input.style('background-color', 'transparent');
+					input.style('border-color', 'white');
+					input.style('color', '#B0C4F3');
+					input.style('text-transform', 'uppercase');
+					input.style('font-family', "Monaco");
+
+					displayMatchmaking(this.app.matchmakingData, wi, he, si, this.delay, this.playerColors);
+					s.textAlign(s.LEFT);
+					s.stroke(0);
+					s.textSize(si*.8);
+					s.fill(152, 255, 152,255);
+					s.text("Create",3*wi/5+si/2,he/3+si*1.55);
+					s.fill(210,130,240,255);
+					s.text("Join",3*wi/5+si*1.15,he/4+he/3.025);
+					s.fill(230,100);
+					s.noFill();
+					s.stroke(255);
+					s.rect(3*wi/5,he/4+he/8.25,si*4,si*1.1);
+					s.textAlign(s.CENTER);
+					if(s.mouseIsPressed && s.mouseX < 3*wi/5+si*4 && s.mouseX > 3*wi/5 && s.mouseY < he/4+he/8.25+si*1.1 && s.mouseY > he/4+he/8.25){
+						this.app.sendCreateRoom();
+					}
+					s.rect(3*wi/5,he/4+he/3.45,si*4,si*1.1);
+					if(s.mouseIsPressed && s.mouseX < 3*wi/5+si*4 && s.mouseX > 3*wi/5 && s.mouseY < he/4+he/3.45+si*1.1 && s.mouseY > he/4+he/3.45){
+						this.app.sendJoinOpenGame();
+					}
+
+					let gameID = input.value();
+
+					if(gameID.length == 5){
+						if(allowNewID == 1){
+							this.app.sendJoinGame(gameID);
+							allowNewID = 0;
+
+					}
+					if(this.successfulJoinedGame === false){
+						s.fill(255,0,128,255);
+					  s.textSize(si/2);
+						s.stroke(0);
+						s.textFont(standardFont);
+						s.text("Room Not Found",wi/2+si*5,he/3-si*.7);
+					}
 				}
-				else if(this.app.gamePhase === 1 && this.app.clientState !== 'SPECTATOR' && this.app.clientState !== 'DEFEATED_PLAYER' && this.app.turnIsIn !== true){
+				else{
+					allowNewID = 1;
+				}
+			}
+			else if(this.app.gamePhase === "LOBBY" && this.app.clientState !== 'SPECTATOR'){
+				//	window.sdf = input;
+				 // input.remove();
+
+					sideBarGrowth = 0.8;
+					sideBarMenu = true;
+					wi = s.width * sideBarGrowth;
+					si = wi/30;
+					he = si*20;
+					let offsetX = 0;
+					let offsetY = 0;
+					drawGrid(wi, he, si, this.playerColors);
+					for(let p = 0; p < 4; p = p + 1){
+						if(p == 1){
+							s.translate(0,he/2);
+							offsetX = 0;
+							offsetY = he/2;
+						}
+						else if(p == 2){
+							s.translate(wi/2,0);
+							offsetX = wi/2;
+							offsetY = 0;
+						}
+						else if(p == 3){
+							s.translate(wi/2,he/2);
+							offsetX = wi/2;
+							offsetY = he/2;
+						}
+						s.strokeWeight(10);
+						s.stroke(255,255);
+						s.strokeWeight(1);
+						s.noFill()
+						if(this.app.playerSpotsInGameRoom[p+1].playerType == 'Human'){
+							s.rect(0,0,si*15,si*10);
+							s.stroke(255);
+							s.fill(0);
+							s.rect(wi/4-si*2,he/4-si/2,si*4,si);
+							s.textFont(titleFont);
+							s.fill(255);
+							s.stroke(0);
+							s.textSize(si/1.4);
+							s.text("REMOVE",wi/4-si*1.45,he/4+si/5);
+							if(s.mouseIsPressed && s.mouseX < wi/4-si*2+si*4+offsetX && s.mouseX > wi/4-si*2+offsetX && s.mouseY < he/4-si/2+si+offsetY && s.mouseY > he/4-si/2+offsetY){
+								this.app.sendClearSpot(p+1);
+							}
+						}
+						else if(this.app.playerSpotsInGameRoom[p+1].playerType != 'AI'){
+							s.noStroke();
+							s.fill(0,150);
+              s.rect(0,0,si*15,si*10);
+						}
+						if(this.app.playerSpotsInGameRoom[p+1].playerType == 'Open'){
+							s.stroke(255);
+							s.fill(0);
+							s.rect(wi/4-si*2,he/4-si/2,si*4,si);
+							s.textFont(titleFont);
+							s.fill(255);
+							s.stroke(0);
+							s.textSize(si/1.4);
+							s.text("MAKE AI",wi/4-si*1.45,he/4+si/5);
+							if(s.mouseIsPressed && s.mouseX < wi/4-si*2+si*4+offsetX && s.mouseX > wi/4-si*2+offsetX && s.mouseY < he/4-si/2+si+offsetY && s.mouseY > he/4-si/2+offsetY){
+								this.app.sendAssignAIToSpot(p+1);
+							}
+						}
+						if(this.app.playerSpotsInGameRoom[p+1].playerType == 'AI'){
+							s.stroke(255);
+							s.fill(0);
+							s.rect(wi/4-si*2,he/4-si/2,si*4,si);
+							s.textFont(titleFont);
+							s.fill(255);
+							s.stroke(0);
+							s.textSize(si/1.4);
+							s.text("RE-OPEN",wi/4-si*1.45,he/4+si/5);
+							if(s.mouseIsPressed && s.mouseX < wi/4-si*2+si*4+offsetX && s.mouseX > wi/4-si*2+offsetX && s.mouseY < he/4-si/2+si+offsetY && s.mouseY > he/4-si/2+offsetY){
+								this.app.sendClearSpot(p+1);
+							}
+						}
+
+						s.textFont(titleFont);
+						s.textSize(si);
+						s.fill(255);
+						s.stroke(0);
+						s.textAlign(s.CENTER);
+						if((this.app.playerNumber-1) === p){
+							s.text("YOU",wi/4,he/4.7);
+						}
+						else if(this.app.playerSpotsInGameRoom[p+1].playerType == 'Human'){
+							s.text("HUMAN",wi/4,he/4.7);
+						}
+						if(this.app.playerSpotsInGameRoom[p+1].playerType == 'AI'){
+							s.text("COMPUTER",wi/4,he/4.7);
+						}
+						if(this.app.playerSpotsInGameRoom[p+1].playerType == 'Open'){
+							s.text("OPEN",wi/4,he/4.7);
+						}
+						if(p == 1){
+							s.translate(0,-he/2);
+						}
+						else if(p == 2){
+							s.translate(-wi/2,0);
+						}
+						else if(p == 3){
+							s.translate(-wi/2,-he/2);
+						}
+						s.textAlign(s.LEFT);
+					}
+
+					//Tooltip Section
+					hoverX=s.int(s.mouseX/si);
+					hoverY=s.int(s.mouseY/si);
+
+					//HoverSquares
+			/*	s.fill(255,100);
+					s.noStroke();
+					s.rect(hoverX*si,hoverY*si,si,si);*/
+
+///SIDE BAR FOR REVIEW MODE
+					s.textFont(titleFont);
+					s.fill(0,150);
+					s.noStroke();
+					s.rect(wi,0,s.width - wi,he);
+					s.rect(0,he,s.width,s.width-he);
+				if(sideBarMenu == true){
+					s.textSize(si*1.2);
+					s.fill(this.playerColors[this.app.playerNumber-1][0], this.playerColors[this.app.playerNumber-1][1], this.playerColors[this.app.playerNumber-1][2], 255);
+					s.stroke(0);
+					s.text("Lobby", wi+si*2, si*1.5);
+					s.stroke(255);
+					s.line(wi+si/4,si*2,s.width-si/4,si*2);
+					s.noFill();
+					s.strokeWeight(3);
+					s.rect(wi+si*1.2,si*3.5,si*5,si*1.5);
+					s.strokeWeight(1);
+					s.fill(255);
+					s.stroke(0);
+				  s.textSize(si*.7);
+					s.text("Leave Room", wi+si*1.5, si*4.5);
+					if(s.mouseIsPressed && s.mouseX < wi+si*1.2+si*5 && s.mouseX > wi+si*1.2 && s.mouseY < si*3.5+si*1.5 && s.mouseY > si*3.5){
+						this.app.sendClearSpot(this.app.playerNumber);
+					}
+					bStartMatch.drawButton();
+					if(this.startButtonEnabled === true){
+					if(s.mouseIsPressed && bStartMatch.isInRange(s.mouseX,s.mouseY)){
+						bStartMatch.func.call(this.app);
+					}
+				}
+				if(this.startButtonEnabled === true){
+					s.fill(255,255);
+				}
+				else{
+					s.fill(110,255);
+				}
+					s.stroke(0);
+					s.textSize(si*0.9);
+					s.text("Start Match", wi+si*.71, si*15.35);
+					s.fill(255,255);
+					s.textSize(si*0.475);
+					s.text("All Spots Must Be Filled", wi+si*.71, si*16.5);
+					s.text("By Humans Or AI To Begin", wi+si*.71, si*17.25);
+					s.fill(255);
+					s.stroke(0);
+					s.textSize(si*1.25);
+					s.textAlign(s.CENTER);
+					s.text("Join Code" , wi+wi*.125, si*9);
+					s.line(wi+wi*.1,si*8.5,s.width-wi*.1,si*8.5)
+					s.stroke(255);
+					s.fill(this.playerColors[this.app.playerNumber-1][0], this.playerColors[this.app.playerNumber-1][1], this.playerColors[this.app.playerNumber-1][2], 255);
+
+					s.stroke(0);
+					s.textFont(standardFont);
+          s.textSize(si*.89);
+					let upperCase = this.app.gameRoom.toUpperCase();
+          s.text(upperCase , wi+wi*.125, si*10.5);
+
+					s.textFont(titleFont);
+					s.textAlign(s.LEFT);
+					s.textSize(si*1.1);
+					s.stroke(0);
+					s.strokeWeight(2);
+					//Scrolling Bar;
+					s.textSize(si*1.7);
+					s.textFont(standardFont);
+					scroller = this.delay/250;
+					s.text("Common Unit: ", -s.width+3*s.width*(scroller-Math.floor(scroller)), s.height-si*1.7);
+					scroller = (this.delay+ 60)/250;
+					s.text("Starting Cores: 2", -s.width+3*s.width*(scroller-Math.floor(scroller)), s.height-si*1.7);
+					scroller = (this.delay + 120)/250;
+					s.text("Games Active: ", -s.width+3*s.width*(scroller-Math.floor(scroller)), s.height-si*1.7);
+				  scroller = (this.delay - 60)/250;
+					s.text("Starting Credits: 7", -s.width+3*s.width*(scroller-Math.floor(scroller)), s.height-si*1.7);
+				}
+			}
+
+			else if(this.app.gamePhase === "PLACEMENT" && this.app.clientState !== 'SPECTATOR' && this.app.clientState !== 'DEFEATED_PLAYER' && this.app.turnIsIn !== true){
+					input.remove();
 					justTriggered = 1;
 					this.t = 1;
 					animate = 0;
@@ -277,7 +537,7 @@ export default class Display {
 						s.fill(255);
 						s.stroke(0);
 						s.textSize(wi/26.5);
-						s.text("Place Core", wi/2+si*4.4-playerShifter,si*buttonScale*3.7);
+						s.text("Place Core", wi/2+si*4.25-playerShifter,si*buttonScale*3.7);
 						if(s.mouseIsPressed){
 							if(bBase.isInRange(s.mouseX,s.mouseY)){
 								bBase.buttonHasBeenPressed();
@@ -347,7 +607,7 @@ export default class Display {
 							if(this.app.turnNumber > 1){
 								if(bPhaseThree.isInRange(s.mouseX,s.mouseY)){
 									//bPhaseThree.func.call(this.app, 3);
-									this.app.setGamePhase(3);
+									this.app.setGamePhase("REVIEW");
 									//break
 								}
 							}
@@ -435,30 +695,37 @@ export default class Display {
 
 					for(let a = 1; a <= 4; a = a + 1){
 						s.fill(this.playerColors[a-1][0], this.playerColors[a-1][1], this.playerColors[a-1][2], this.playerColors[a-1][3]);
-						if (this.app.playersOnServer[a] !== null) {
-						switch (this.app.playersOnServer[a].gamePhase) {
-							case 0:
+						if (this.app.playerSpotsInGameRoom[a] !== null) {
+						switch (this.app.playerSpotsInGameRoom[a].gamePhase) {
+							case 'AI':
+								s.text("Orders Submitted", wi/35, he/1.75+(a-1)*si);
+								break
+							case "TITLE":
 								s.text("Loading", wi/35, he/1.75+(a-1)*si);
 								break
-							case 1:
-								if (this.app.playersOnServer[a].ordersSubmitted) {
+							case "PLACEMENT":
+								if (this.app.playerSpotsInGameRoom[a].ordersSubmitted) {
 									s.text("Orders Submitted", wi/35, he/1.75+(a-1)*si);
 								} else {
 									s.text("Making Turn", wi/35, he/1.75+(a-1)*si);
 								}
 								break
-							case 3:
-								s.text("Reviewing Board", wi/35, he/1.75+(a-1)*si);
+							case "REVIEW":
+								if (this.app.playerSpotsInGameRoom[a].ordersSubmitted) {
+									s.text("Orders Submitted", wi/35, he/1.75+(a-1)*si);
+								} else {
+									s.text("Reviewing Board", wi/35, he/1.75+(a-1)*si);
+								}
 							  break
 							default:
 								s.text("Hypothesizing", wi/35, he/1.75+(a-1)*si);
 								}
 
+							}
+						else {
+							s.text("Waiting For Player", wi/35, he/1.75+(a-1)*si);
+						}
 					}
-					else {
-						s.text("Waiting For Player", wi/35, he/1.75+(a-1)*si);
-					}
-				}
 					if(this.app.playerNumber == 2){
 						s.translate(-0,he/2);
 					}
@@ -491,16 +758,11 @@ export default class Display {
 						}
 					}
 					//Target path hovering
-
-
-
-
-
 					//Calculate which cell the mouse is currently hovering over and highlight it
 
 					if(hoverX >= 0 && hoverX < 30 && hoverY >= 0 && hoverY < 20) {
 				  if(board[hoverY][hoverX].length != 0){
-						//hoverObject = false;
+
 						if(this.app.playerNumber == 1 && hoverX <= 14 && hoverY < 10 && hoverX < 30 && hoverY < 20){
 							tooltip(hoverX, hoverY, board, this.t, wi, he, si, this.playerColors,this.simulationDisplayTurn,this.app);
 						}
@@ -515,8 +777,6 @@ export default class Display {
 						}
 					}
 				}
-
-
 					s.fill(255,100);
 					s.noStroke();
 					if(this.app.game.players[this.app.playerNumber-1].baseCount < 2 && gameStart == 0 && this.app.game.turnNumber < 2){
@@ -607,18 +867,16 @@ export default class Display {
 									s.textAlign(s.LEFT);
 								}
 								fullBoardTrigger = 1;
-								//let tarX = possibleTargets[i][0];
 							}
 					}
 					else{
 						fullBoardTrigger = 0;
 					}
-}
-
+			 	}
 
 				}
 
-				else if(this.app.gamePhase==2 || this.app.clientState === 'SPECTATOR' || this.app.clientState === 'DEFEATED_PLAYER'){
+				else if(this.app.gamePhase == "SIMULATION" || this.app.clientState === 'SPECTATOR' || this.app.clientState === 'DEFEATED_PLAYER'){
 					bSubmit.submitted = false;
 					bSubmit.confirmed = false;
 					if(animate >= 10 && this.t < (Object.keys(this.simulationDisplayTurn.tick).length-1)){
@@ -753,33 +1011,32 @@ export default class Display {
 								s.text("Is Victorious",wi/13,he/1.5);
 							}
 						}
-				}
+					}
 				//IMPORTANT - ANIMATION SPEED
 		    animate = animate + (.65 + s.deltaTime/70);
 
 				if(this.t === Object.keys(this.simulationDisplayTurn.tick).length - 1){
 					if(gameOver == 0){
-					this.app.setGamePhase(3);
+					this.app.setGamePhase("REVIEW");
 					sideBarGrowth = 1;
 					sideBarMenu = false;
-				}
+					}
 				}
 
 			}
 
 			///REVIEW BOARD PHASE
-			else if(this.app.gamePhase ==  3 && this.app.game.players[this.app.playerNumber-1].victoryCondition != -1){
+			else if(this.app.gamePhase ==  "REVIEW" && this.app.game.players[this.app.playerNumber-1].victoryCondition != -1){
 				if(sideBarGrowth > 0.8){
 					sideBarGrowth = sideBarGrowth - .003;
 				}
 				else{
 					sideBarMenu = true;
 				}
-				wi = s.width * sideBarGrowth;
-				si = wi/30;
-				he = si*20;
-				//
-				this.t = Object.keys(this.simulationDisplayTurn.tick).length;
+					wi = s.width * sideBarGrowth;
+					si = wi/30;
+					he = si*20;
+					this.t = Object.keys(this.simulationDisplayTurn.tick).length;
 					drawGrid(wi, he, si, this.playerColors);
 					for(let p = 0; p < 4; p = p + 1){
 						if(this.app.game.players[p].victoryCondition == -1){
@@ -910,30 +1167,30 @@ export default class Display {
 							s.text("- " + this.app.game.players[a].score+ " -", wi+wi*.125, si*10+a*si);
 							}
 						}
-						s.textFont(titleFont);
-						s.textAlign(s.LEFT);
-						s.textSize(si*1.1);
-						drawCreditsSymbol(wi+si/.42, si*16, si*1.3, this.app.playerNumber, 10, this.playerColors);
-						s.stroke(0);
-						s.strokeWeight(2);
-						s.text(":  "+this.app.game.players[this.app.playerNumber-1].credits, wi+si/.25, si*16.4);
-						//Scrolling Bar;
-						s.textSize(si*1.7);
-						s.textFont(standardFont);
-						let scroller = this.delay/250;
-						s.text("Damage Dealt: "+ this.app.game.players[this.app.playerNumber-1].damageDealtThisTurn, -s.width+3*s.width*(scroller-Math.floor(scroller)), s.height-si*1.7);
-						scroller = (this.delay+ 60)/250;
-						s.text("Machines Lost: "+ this.app.game.players[this.app.playerNumber-1].unitsLostThisTurn, -s.width+3*s.width*(scroller-Math.floor(scroller)), s.height-si*1.7);
-						scroller = (this.delay + 120)/250;
-						s.text("Machines Destroyed: "+ this.app.game.players[this.app.playerNumber-1].unitsKilledThisTurn, -s.width+3*s.width*(scroller-Math.floor(scroller)), s.height-si*1.7);
-					 scroller = (this.delay - 60)/250;
-						s.text("Credits Earned: "+ this.app.game.players[this.app.playerNumber-1].creditsEarnedThisTurn, -s.width+3*s.width*(scroller-Math.floor(scroller)), s.height-si*1.7);
+					} // possible errant bracket
+					s.textFont(titleFont);
+					s.textAlign(s.LEFT);
+					s.textSize(si*1.1);
+					drawCreditsSymbol(wi+si/.42, si*16, si*1.3, this.app.playerNumber, 10, this.playerColors);
+					s.stroke(0);
+					s.strokeWeight(2);
+					s.text(":  "+this.app.game.players[this.app.playerNumber-1].credits, wi+si/.25, si*16.4);
+					//Scrolling Bar;
+					s.textSize(si*1.7);
+					s.textFont(standardFont);
+					scroller = this.delay/250;
+					s.text("Damage Dealt: "+ this.app.game.players[this.app.playerNumber-1].damageDealtThisTurn, -s.width+3*s.width*(scroller-Math.floor(scroller)), s.height-si*1.7);
+					scroller = (this.delay+ 60)/250;
+					s.text("Machines Lost: "+ this.app.game.players[this.app.playerNumber-1].unitsLostThisTurn, -s.width+3*s.width*(scroller-Math.floor(scroller)), s.height-si*1.7);
+					scroller = (this.delay + 120)/250;
+					s.text("Machines Destroyed: "+ this.app.game.players[this.app.playerNumber-1].unitsKilledThisTurn, -s.width+3*s.width*(scroller-Math.floor(scroller)), s.height-si*1.7);
+				 scroller = (this.delay - 60)/250;
+					s.text("Credits Earned: "+ this.app.game.players[this.app.playerNumber-1].creditsEarnedThisTurn, -s.width+3*s.width*(scroller-Math.floor(scroller)), s.height-si*1.7);
 
-						if(s.mouseIsPressed && bPhaseOne.isInRange(s.mouseX,s.mouseY)){
-							bPhaseOne.func.call(this.app,1);
-						}
+					if(s.mouseIsPressed && bPhaseOne.isInRange(s.mouseX,s.mouseY)){
+						bPhaseOne.func.call(this.app,"PLACEMENT");
+					}
 				}
-
 			}
 
 			//End Phase 3
@@ -952,23 +1209,21 @@ export default class Display {
 			//Load Screen Logic Below
 		  if(this.app.turnIsIn == true){
 
-				if(justTriggered = 1){
-					alpha = 255;
-					justTriggered = 0;
-				}
-				else{
-					alpha = alpha + 1;
-				}
-				runLoadScreen(alpha);
+				runLoadScreen(255);
+
 			}
 			if(this.app.simulationRun == true){
 				this.app.turnIsIn = false;
 				this.app.simulationRun = false;
 			}
+
+			if (this.app.gamePhase === 'LOADING') {
+				runLoadScreen(255);
+				input.remove();
+			}
 			//EXPERIMENT
 			s.mouseIsPressed = false;
 		}
-
 
 
 
@@ -1107,9 +1362,149 @@ export default class Display {
 			s.textAlign(s.LEFT);
 		}
 
+		class Flame {
+
+		  constructor(x,y) {
+		    this.length = 0;
+				this.x = x;
+				this.y = y;
+
+		    this.orientationOne = Math.floor(Math.random()*3)-1;
+				this.orientationTwo = Math.floor(Math.random()*3)-1;
+				if(this.orientationOne ==  0 && this.orientationTwo == 0){
+					this.orientationOne = 1;
+				}
+				//if()
+		    //this.secondpriorx=0;
+		  }
+		  checkCoordinates(x,y,width,height) {
+				if(x < 0 || x > width || y < 0 || y > height){
+					this.orientationOne = Math.floor(Math.random()*3)-1;
+					this.orientationTwo = Math.floor(Math.random()*3)-1;
+					if(this.orientationOne ==  0 && this.orientationTwo == 0){
+						this.orientationTwo = 1;
+					}
+					this.x = Math.floor(Math.random()*width);
+					this.y = Math.floor(Math.random()*height);
+					}
+		    }
+		  render(size, speed, width, height) {
+
+		    //Make sure the asteroids have a lot less mass so they don't fall in as easily
+		    this.length = size*3;
+		    this.speed = speed;
+				this.x = this.x + this.orientationOne*speed;
+				this.y = this.y + this.orientationTwo*speed;
+				for(let l = 0; l < this.length; l = l + 1){
+					s.fill(255,0,128,255-255*l/this.length);
+					s.strokeWeight(1);
+					s.stroke(0);
+					s.noStroke();
+				  s.ellipse(this.x-l*this.orientationOne,this.y-l*this.orientationTwo,3-l/20,3-l/20);
+			}
+				this.checkCoordinates(this.x, this.y, width,height);
+
+		  }
+		}
+		function displayLobby(gameRoom, data, width, height, size, delay){
+			s.textSize(si);
+			for(let p = 0; p < 4; p = p + 1){
+
+			}
+		}
+		function displayMatchmaking(data, width, height, size, delay, pColors){
+			s.background(0);
+			let lightningTrigger = s.int(delay);
+
+			s.tint(255,0,128);
+			s.image(imgEight, 0, 0, height*1.6, height);
+			s.noTint();
+			//BEGIN TESLA COILS
+			/*s.noStroke();
+			//s.fill(255,0,128,255);
+			s.fill(255);
+			for(let h = s.int(height/18); h >= s.int(height/28); h = h - 1){
+				if(h === s.int(height/28)){
+					s.stroke(255,0,128,255);
+				}
+				else{
+					s.stroke(255,255);
+				}
+				s.ellipse(width/8-width/30+width/30,height/4+3*height/5+h,width/9,width/52);
+			}
+			for(let h = s.int(height/28); h >= 0; h = h - 1){
+				if(h === 0){
+					s.stroke(255,0,128,255);
+				}
+				else{
+					s.stroke(255,255);
+				}
+				s.ellipse(width/8-width/30+width/30,height/4+3*height/5+h,width/12,width/62);
+			}
+
+			s.stroke(255);
+			s.noStroke();
+			s.fill(255,0,128,255);
+			s.fill(255,255);
+			s.rect(width/8-width/100,height/4,2*width/100,3*height/5);
+			//drawTripwireProjectile(5, 5, 1, size, pColors, [0,0], 10, 0);
+			//Begin Projectiles
+			let refx = width/8-width/30+width/30;
+			let refy = height/4;
+			let ballSize = size*10;
+			//s.fill(255,0,128, 155);
+			s.translate(refx,refy);
+
+			if(lightningTrigger % 1 == 0){
+			for(let angle = 0; angle < 360; angle = angle + 30){
+				s.rotate(s.radians(angle));
+				let endX;
+				let endY;
+				let xx = 0
+				let yy = 0;
+				while(yy < ballSize/30){//to bottom of screen
+	       endX = xx + s.random(-ballSize/12, ballSize/12); //x-value varies
+				 //endX = xx + s.random(-ballSize/206, ballSize/206)+s.noise(delay/100)*ballSize/12;
+	       endY = yy + size/20;    //y just goes up
+	     	 s.strokeWeight(1);//bolt is a little thicker than a line
+	     	 s.stroke(255); //white line
+	       s.line(xx,yy,endX,endY);//draw a tiny segment
+	       xx = endX;  //then x and y are moved to the
+	       yy = endY;  //end of the segment and so on
+	     }
+			 s.rotate(-s.radians(angle));
+	 	}
+	}
+	s.fill(255,0,128,255);
+			s.stroke(0,255);
+			s.noStroke();
+			s.ellipse(0, 0, ballSize/4,ballSize/4);
+			s.translate(-refx,-refy);
+			//END TESLA COILS
+			*/
+			s.textFont(titleFont);
+			s.strokeWeight(1);
+			s.stroke(0);
+			s.fill(255,255);
+			s.textAlign(s.CENTER);
+			s.textSize(size*2);
+			s.text("Matchmaking", width/2,height/12);
+			s.stroke(255);
+			s.line(width/4,height/10,3*width/4,height/10);
+			s.stroke(0);
+			s.textSize(size);
+			s.fill(176,196,243,255);
+			s.text("Enter Game Code", width*2/5,height/4);
+			s.fill(152, 255, 152,255);
+			s.text("New Lobby", width*2/5,height/4+height/6);
+			s.fill(210,130,240,255);
+			s.text("Hot Seat", width*2/5,height/4+2*height/6);
+			//s.textAlign(s.LEFT);
+		}
+
 		function tooltip(hoverX,hoverY, b, tick, wi, he, si, pColors, sdt, app){
 			if(b[hoverY][hoverX].length != 0){
-				if(app.gamePhase != 1){
+				if(app.gamePhase != "PLACEMENT"){
 				hoverObject = sdt.tick[tick].gameObjects.get(sdt.tick[tick].board[hoverY][hoverX][0]);
 			}
 			else{
@@ -1203,6 +1598,7 @@ export default class Display {
 			s.rect(0,0,s.width,s.height);
 			s.fill(255);
 			s.textFont(titleFont);
+			s.textSize(s.width/23);
 			s.textAlign(s.CENTER);
 			s.text("LOADING", s.width/2,s.height/1.8);
 			s.textAlign(s.LEFT);
@@ -2211,21 +2607,6 @@ function drawCreditsSymbol(x, y, size, player, a, pColors){
 			let player = proj.player;
 			let refx=x*size+size/2;
 			let refy=y*size+size/2;
-
-	// 		s.tint(pColors[player-1][0],pColors[player-1][1],pColors[player-1][2],s.abs(4.5-(4.5-a))*9);
-	// 		//s.translate(refx,refy);
-	// 	//	for(let angle = 0; angle < 360; angle = angle + 120){
-	// 		//	s.rotate(s.radians(angle));
-	// 		if(proj.damage >= 25){
-	// 		s.image(col_high,refx-size/2,refy-size/2,size,size);
-	// 	}
-	// 	else{
-	// 		s.image(col_med,refx-size/2,refy-size/2,size,size);
-	// 	}
-	// 	//s.rotate(-s.radians(angle));
-	// //}
-
-		//s.translate(-refx,-refy);
 			s.noTint();
 			s.noFill();
 			let theta=0;
@@ -2233,11 +2614,11 @@ function drawCreditsSymbol(x, y, size, player, a, pColors){
 			let meh=0;
 			let osx=0;
 			let osy=0;
-			let wave = Math.floor(proj.damage);
+			let wave = Math.floor(proj.damage)+3;
 			let rad = 360;
 			let radius=size/25;
 			for (let i = 0; i < rad; i = i + 18){
-				s.stroke(pColors[player-1][0],pColors[player-1][1],pColors[player-1][2], 25+2*s.abs(a-4.5));
+				s.stroke(pColors[player-1][0],pColors[player-1][1],pColors[player-1][2], 25 + 2*s.abs(a-4.5));
 				theta = i*(360/rad);
 				phase=((Math.PI)/rad);
 				meh = (radius*1.8+11.5)*s.sin(wave*theta+phase)*s.cos(phase);

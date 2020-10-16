@@ -16,7 +16,7 @@ const tempConfig = {
 export default class Game {
 
 	constructor(gameObjects = [], players = [], board = new Object, turnNumber = 0) {
-		this.id = 'game'+createID();
+		this.id = 'game_'+createID();
 		this.players = players;
 		this.board = board;
 		this.gameObjects = new Map();

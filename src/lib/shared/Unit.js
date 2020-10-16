@@ -11,7 +11,7 @@ const debug = new DEBUG(true, 5);
 export default class Unit {
 
 	constructor(id = undefined)  {
-		this.id = id || 'unit'+createID();
+		this.id = id || 'unit_'+createID();
 		this.health = 0;
 		this.invulnerable=false;
 		this.objCategory = "Units";
@@ -158,7 +158,7 @@ export class RedShifter extends Unit {
 
 		//initialize a project object and pass in the direction based on the tick
 		this.firing = true;
-	  let direction = 1+Math.floor(Math.random()*3);
+	  let direction = 1 + Math.floor(Math.random()*3);
 	//let direction =1;
 		if(direction === 1){
 			if(this.player == 1){
