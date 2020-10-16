@@ -1167,1493 +1167,1492 @@ export default class Display {
 								s.text("- " + this.app.game.players[a].score + " -", wi + wi * .125, si * 10 + a * si);
 							}
 						}
-					} // possible errant bracket
-					s.textFont(titleFont);
-					s.textAlign(s.LEFT);
-					s.textSize(si * 1.1);
-					drawCreditsSymbol(wi + si / .42, si * 16, si * 1.3, this.app.playerNumber, 10, this.playerColors);
-					s.stroke(0);
-					s.strokeWeight(2);
-					s.text(":  " + this.app.game.players[this.app.playerNumber - 1].credits, wi + si / .25, si * 16.4);
-					//Scrolling Bar;
-					s.textSize(si * 1.7);
-					s.textFont(standardFont);
-					scroller = this.delay / 250;
-					s.text("Damage Dealt: " + this.app.game.players[this.app.playerNumber - 1].damageDealtThisTurn, -s.width + 3 * s.width * (scroller - Math.floor(scroller)), s.height - si * 1.7);
-					scroller = (this.delay + 60) / 250;
-					s.text("Machines Lost: " + this.app.game.players[this.app.playerNumber - 1].unitsLostThisTurn, -s.width + 3 * s.width * (scroller - Math.floor(scroller)), s.height - si * 1.7);
-					scroller = (this.delay + 120) / 250;
-					s.text("Machines Destroyed: " + this.app.game.players[this.app.playerNumber - 1].unitsKilledThisTurn, -s.width + 3 * s.width * (scroller - Math.floor(scroller)), s.height - si * 1.7);
-					scroller = (this.delay - 60) / 250;
-					s.text("Credits Earned: " + this.app.game.players[this.app.playerNumber - 1].creditsEarnedThisTurn, -s.width + 3 * s.width * (scroller - Math.floor(scroller)), s.height - si * 1.7);
+						s.textFont(titleFont);
+						s.textAlign(s.LEFT);
+						s.textSize(si * 1.1);
+						drawCreditsSymbol(wi + si / .42, si * 16, si * 1.3, this.app.playerNumber, 10, this.playerColors);
+						s.stroke(0);
+						s.strokeWeight(2);
+						s.text(":  " + this.app.game.players[this.app.playerNumber - 1].credits, wi + si / .25, si * 16.4);
+						//Scrolling Bar;
+						s.textSize(si * 1.7);
+						s.textFont(standardFont);
+						scroller = this.delay / 250;
+						s.text("Damage Dealt: " + this.app.game.players[this.app.playerNumber - 1].damageDealtThisTurn, -s.width + 3 * s.width * (scroller - Math.floor(scroller)), s.height - si * 1.7);
+						scroller = (this.delay + 60) / 250;
+						s.text("Machines Lost: " + this.app.game.players[this.app.playerNumber - 1].unitsLostThisTurn, -s.width + 3 * s.width * (scroller - Math.floor(scroller)), s.height - si * 1.7);
+						scroller = (this.delay + 120) / 250;
+						s.text("Machines Destroyed: " + this.app.game.players[this.app.playerNumber - 1].unitsKilledThisTurn, -s.width + 3 * s.width * (scroller - Math.floor(scroller)), s.height - si * 1.7);
+						scroller = (this.delay - 60) / 250;
+						s.text("Credits Earned: " + this.app.game.players[this.app.playerNumber - 1].creditsEarnedThisTurn, -s.width + 3 * s.width * (scroller - Math.floor(scroller)), s.height - si * 1.7);
 
-					if (s.mouseIsPressed && bPhaseOne.isInRange(s.mouseX, s.mouseY)) {
-						bPhaseOne.func.call(this.app, "PLACEMENT");
+						if (s.mouseIsPressed && bPhaseOne.isInRange(s.mouseX, s.mouseY)) {
+							bPhaseOne.func.call(this.app, "PLACEMENT");
+						}
+					}
+				}
+
+				//End Phase 3
+				//Begin Spectator Mode
+				if (this.app.clientState === "SPECTATOR" || this.app.clientState === "DEFEATED_PLAYER") {
+
+					s.stroke(0, 100);
+					s.fill(255, 100);
+					s.strokeWeight(2);
+					s.textSize(wi / 15);
+					s.textFont(titleFont);
+					s.textAlign(s.CENTER);
+					s.text("SPECTATOR MODE", s.width / 2, s.height / 1.87);
+					s.textAlign(s.LEFT);
+				}
+				//Load Screen Logic Below
+				if (this.app.turnIsIn == true) {
+
+					runLoadScreen(255);
+
+				}
+				if (this.app.simulationRun == true) {
+					this.app.turnIsIn = false;
+					this.app.simulationRun = false;
+				}
+
+				if (this.app.gamePhase === 'LOADING') {
+					runLoadScreen(255);
+					input.remove();
+				}
+				//EXPERIMENT
+				s.mouseIsPressed = false;
+			}
+
+
+
+			//FUNCTIONS BELOW THIS LINE
+			class Buttoned {
+				constructor(x, y, xlen, ylen, text, func) {
+					this.isPressed = false;
+					this.xx = x;
+					this.yy = y;
+					this.text = text;
+					this.xlen = xlen;
+					this.ylen = ylen;
+					this.func = func;
+					this.confirmed = false;
+					this.submitted = false;
+				}
+				drawButton() {
+					s.stroke(255, 255, 255, 255);
+					s.noFill();
+					s.strokeWeight(3);
+					s.rect(this.xx, this.yy, this.xlen, this.ylen);
+					if (this.isPressed == true) {
+						s.stroke(255, 255, 255, 255);
+						s.fill(255, 255, 255, 100);
+						s.rect(this.xx, this.yy, this.xlen, this.ylen);
+
+					}
+				}
+				buttonHasBeenPressed() {
+					if (this.submitted === false) {
+						this.isPressed = true;
+					}
+				}
+				submission() {
+					this.submitted = true;
+				}
+				confirmation() {
+					this.isPressed = false;
+					this.confirmed = true;
+				}
+				isInRange(x, y) {
+					if (x < (this.xx + this.xlen) && x > this.xx && y > this.yy && y < (this.yy + this.ylen)) {
+						return true;
+					}
+					else {
+						return false;
 					}
 				}
 			}
+			function getPossibleTargets(unitName, x, y, player) {
 
-			//End Phase 3
-			//Begin Spectator Mode
-			if (this.app.clientState === "SPECTATOR" || this.app.clientState === "DEFEATED_PLAYER") {
+				let tempArray = Units[unitName].orientations[player];
+				let finalArray = [];
+				let counter = 0;
+				let upperDistance = 30;
+				let lowerDistance = 1;
+				if (unitName == "Oscillator") {
+					upperDistance = 2;
+				}
+				else if (unitName == "Resonator") {
+					lowerDistance = 6;
+					upperDistance = 19;
+				}
+				else if (unitName == "Tripwire") {
+					//lowerDistance = 5;
+					upperDistance = 6;
+				}
+				else if (unitName == "Ballast") {
+					//lowerDistance = 5;
+					upperDistance = 2;
+				}
+				else if (unitName == "RedShifter") {
+					lowerDistance = 12;
 
-				s.stroke(0, 100);
-				s.fill(255, 100);
-				s.strokeWeight(2);
-				s.textSize(wi / 15);
+					//upperDistance = 2;
+				}
+				else if (unitName == "BeamSplitter") {
+					upperDistance = 9;
+					//upperDistance = 2;
+				}
+				for (let i = 0; i < tempArray.length; i = i + 1) {
+					let xx = lowerDistance;
+					while ((tempArray[i][0] * xx + x) < 30 && (tempArray[i][0] * xx + x) >= 0 && xx < upperDistance) {
+						let yy = 1;
+						finalArray[counter] = [(tempArray[i][0] * xx + x), (tempArray[i][1] * xx + y)]
+						counter = counter + 1;
+						xx = xx + 1;
+					}
+				}
+				if (unitName == "BeamSplitter") {
+					let turningPoint = 8;
+					if (player == 1) {
+						for (let i = 1; i < 25; i = i + 1) {
+							finalArray.push([x + turningPoint + i, y + turningPoint]);
+							finalArray.push([x + turningPoint, y + turningPoint + i]);
+						}
+					}
+					if (player == 2) {
+						for (let i = 1; i < 25; i = i + 1) {
+							finalArray.push([x + turningPoint + i, y - turningPoint]);
+							finalArray.push([x + turningPoint, y - turningPoint - i]);
+						}
+					}
+					if (player == 3) {
+						for (let i = 1; i < 25; i = i + 1) {
+							finalArray.push([x - turningPoint - i, y + turningPoint]);
+							finalArray.push([x - turningPoint, y = turningPoint + i]);
+						}
+					}
+					if (player == 4) {
+						for (let i = 1; i < 25; i = i + 1) {
+							finalArray.push([x - turningPoint - i, y - turningPoint]);
+							finalArray.push([x - turningPoint, y - turningPoint - i]);
+						}
+					}
+
+				}
+
+				return finalArray;
+			}
+
+			function displayMatchmaking(size, player, pColors) {
+
+				s.background(0);
 				s.textFont(titleFont);
+				s.textSize(size);
+				s.strokeWeight(2);
+				s.stroke(0);
+				s.fill(255, 0, 128, 255);
 				s.textAlign(s.CENTER);
-				s.text("SPECTATOR MODE", s.width / 2, s.height / 1.87);
+				s.text("Join Game", width / 4, height / 4);
+				s.text("Create New Game", 3 * width / 4, height / 4);
+				s.text("Play Now", 2 * width / 4, height / 4);
+				s.fill(176, 196, 243, 255);
+				s.text("As a master tactition, you are ready to command electromagnetic machines in a war of ", width / 2, height / 2);
 				s.textAlign(s.LEFT);
 			}
-			//Load Screen Logic Below
-			if (this.app.turnIsIn == true) {
 
-				runLoadScreen(255);
+			class Flame {
 
-			}
-			if (this.app.simulationRun == true) {
-				this.app.turnIsIn = false;
-				this.app.simulationRun = false;
-			}
+				constructor(x, y) {
+					this.length = 0;
+					this.x = x;
+					this.y = y;
 
-			if (this.app.gamePhase === 'LOADING') {
-				runLoadScreen(255);
-				input.remove();
-			}
-			//EXPERIMENT
-			s.mouseIsPressed = false;
-		}
-
-
-
-		//FUNCTIONS BELOW THIS LINE
-		class Buttoned {
-			constructor(x, y, xlen, ylen, text, func) {
-				this.isPressed = false;
-				this.xx = x;
-				this.yy = y;
-				this.text = text;
-				this.xlen = xlen;
-				this.ylen = ylen;
-				this.func = func;
-				this.confirmed = false;
-				this.submitted = false;
-			}
-			drawButton() {
-				s.stroke(255, 255, 255, 255);
-				s.noFill();
-				s.strokeWeight(3);
-				s.rect(this.xx, this.yy, this.xlen, this.ylen);
-				if (this.isPressed == true) {
-					s.stroke(255, 255, 255, 255);
-					s.fill(255, 255, 255, 100);
-					s.rect(this.xx, this.yy, this.xlen, this.ylen);
-
-				}
-			}
-			buttonHasBeenPressed() {
-				if (this.submitted === false) {
-					this.isPressed = true;
-				}
-			}
-			submission() {
-				this.submitted = true;
-			}
-			confirmation() {
-				this.isPressed = false;
-				this.confirmed = true;
-			}
-			isInRange(x, y) {
-				if (x < (this.xx + this.xlen) && x > this.xx && y > this.yy && y < (this.yy + this.ylen)) {
-					return true;
-				}
-				else {
-					return false;
-				}
-			}
-		}
-		function getPossibleTargets(unitName, x, y, player) {
-
-			let tempArray = Units[unitName].orientations[player];
-			let finalArray = [];
-			let counter = 0;
-			let upperDistance = 30;
-			let lowerDistance = 1;
-			if (unitName == "Oscillator") {
-				upperDistance = 2;
-			}
-			else if (unitName == "Resonator") {
-				lowerDistance = 6;
-				upperDistance = 19;
-			}
-			else if (unitName == "Tripwire") {
-				//lowerDistance = 5;
-				upperDistance = 6;
-			}
-			else if (unitName == "Ballast") {
-				//lowerDistance = 5;
-				upperDistance = 2;
-			}
-			else if (unitName == "RedShifter") {
-				lowerDistance = 12;
-
-				//upperDistance = 2;
-			}
-			else if (unitName == "BeamSplitter") {
-				upperDistance = 9;
-				//upperDistance = 2;
-			}
-			for (let i = 0; i < tempArray.length; i = i + 1) {
-				let xx = lowerDistance;
-				while ((tempArray[i][0] * xx + x) < 30 && (tempArray[i][0] * xx + x) >= 0 && xx < upperDistance) {
-					let yy = 1;
-					finalArray[counter] = [(tempArray[i][0] * xx + x), (tempArray[i][1] * xx + y)]
-					counter = counter + 1;
-					xx = xx + 1;
-				}
-			}
-			if (unitName == "BeamSplitter") {
-				let turningPoint = 8;
-				if (player == 1) {
-					for (let i = 1; i < 25; i = i + 1) {
-						finalArray.push([x + turningPoint + i, y + turningPoint]);
-						finalArray.push([x + turningPoint, y + turningPoint + i]);
-					}
-				}
-				if (player == 2) {
-					for (let i = 1; i < 25; i = i + 1) {
-						finalArray.push([x + turningPoint + i, y - turningPoint]);
-						finalArray.push([x + turningPoint, y - turningPoint - i]);
-					}
-				}
-				if (player == 3) {
-					for (let i = 1; i < 25; i = i + 1) {
-						finalArray.push([x - turningPoint - i, y + turningPoint]);
-						finalArray.push([x - turningPoint, y = turningPoint + i]);
-					}
-				}
-				if (player == 4) {
-					for (let i = 1; i < 25; i = i + 1) {
-						finalArray.push([x - turningPoint - i, y - turningPoint]);
-						finalArray.push([x - turningPoint, y - turningPoint - i]);
-					}
-				}
-
-			}
-
-			return finalArray;
-		}
-
-		function displayMatchmaking(size, player, pColors) {
-
-			s.background(0);
-			s.textFont(titleFont);
-			s.textSize(size);
-			s.strokeWeight(2);
-			s.stroke(0);
-			s.fill(255, 0, 128, 255);
-			s.textAlign(s.CENTER);
-			s.text("Join Game", width / 4, height / 4);
-			s.text("Create New Game", 3 * width / 4, height / 4);
-			s.text("Play Now", 2 * width / 4, height / 4);
-			s.fill(176, 196, 243, 255);
-			s.text("As a master tactition, you are ready to command electromagnetic machines in a war of ", width / 2, height / 2);
-			s.textAlign(s.LEFT);
-		}
-
-		class Flame {
-
-			constructor(x, y) {
-				this.length = 0;
-				this.x = x;
-				this.y = y;
-
-				this.orientationOne = Math.floor(Math.random() * 3) - 1;
-				this.orientationTwo = Math.floor(Math.random() * 3) - 1;
-				if (this.orientationOne == 0 && this.orientationTwo == 0) {
-					this.orientationOne = 1;
-				}
-				//if()
-				//this.secondpriorx=0;
-			}
-			checkCoordinates(x, y, width, height) {
-				if (x < 0 || x > width || y < 0 || y > height) {
 					this.orientationOne = Math.floor(Math.random() * 3) - 1;
 					this.orientationTwo = Math.floor(Math.random() * 3) - 1;
 					if (this.orientationOne == 0 && this.orientationTwo == 0) {
-						this.orientationTwo = 1;
+						this.orientationOne = 1;
 					}
-					this.x = Math.floor(Math.random() * width);
-					this.y = Math.floor(Math.random() * height);
+					//if()
+					//this.secondpriorx=0;
 				}
-			}
-			render(size, speed, width, height) {
-
-				//Make sure the asteroids have a lot less mass so they don't fall in as easily
-				this.length = size * 3;
-				this.speed = speed;
-				this.x = this.x + this.orientationOne * speed;
-				this.y = this.y + this.orientationTwo * speed;
-				for (let l = 0; l < this.length; l = l + 1) {
-					s.fill(255, 0, 128, 255 - 255 * l / this.length);
-					s.strokeWeight(1);
-					s.stroke(0);
-					s.noStroke();
-					s.ellipse(this.x - l * this.orientationOne, this.y - l * this.orientationTwo, 3 - l / 20, 3 - l / 20);
-				}
-				this.checkCoordinates(this.x, this.y, width, height);
-
-			}
-		}
-		function displayLobby(gameRoom, data, width, height, size, delay) {
-			s.textSize(si);
-			for (let p = 0; p < 4; p = p + 1) {
-
-			}
-		}
-		function displayMatchmaking(data, width, height, size, delay, pColors) {
-			s.background(0);
-			let lightningTrigger = s.int(delay);
-
-			s.tint(255, 0, 128);
-			s.image(imgEight, 0, 0, height * 1.6, height);
-			s.noTint();
-			//BEGIN TESLA COILS
-			/*s.noStroke();
-			//s.fill(255,0,128,255);
-			s.fill(255);
-			for(let h = s.int(height/18); h >= s.int(height/28); h = h - 1){
-				if(h === s.int(height/28)){
-					s.stroke(255,0,128,255);
-				}
-				else{
-					s.stroke(255,255);
-				}
-				s.ellipse(width/8-width/30+width/30,height/4+3*height/5+h,width/9,width/52);
-			}
-			for(let h = s.int(height/28); h >= 0; h = h - 1){
-				if(h === 0){
-					s.stroke(255,0,128,255);
-				}
-				else{
-					s.stroke(255,255);
-				}
-				s.ellipse(width/8-width/30+width/30,height/4+3*height/5+h,width/12,width/62);
-			}
-
-			s.stroke(255);
-			s.noStroke();
-			s.fill(255,0,128,255);
-			s.fill(255,255);
-			s.rect(width/8-width/100,height/4,2*width/100,3*height/5);
-			//drawTripwireProjectile(5, 5, 1, size, pColors, [0,0], 10, 0);
-			//Begin Projectiles
-			let refx = width/8-width/30+width/30;
-			let refy = height/4;
-			let ballSize = size*10;
-			//s.fill(255,0,128, 155);
-			s.translate(refx,refy);
-
-			if(lightningTrigger % 1 == 0){
-			for(let angle = 0; angle < 360; angle = angle + 30){
-				s.rotate(s.radians(angle));
-				let endX;
-				let endY;
-				let xx = 0
-				let yy = 0;
-				while(yy < ballSize/30){//to bottom of screen
-		   endX = xx + s.random(-ballSize/12, ballSize/12); //x-value varies
-				 //endX = xx + s.random(-ballSize/206, ballSize/206)+s.noise(delay/100)*ballSize/12;
-		   endY = yy + size/20;    //y just goes up
-			   s.strokeWeight(1);//bolt is a little thicker than a line
-			   s.stroke(255); //white line
-		   s.line(xx,yy,endX,endY);//draw a tiny segment
-		   xx = endX;  //then x and y are moved to the
-		   yy = endY;  //end of the segment and so on
-		 }
-			 s.rotate(-s.radians(angle));
-		  }
-	}
-	s.fill(255,0,128,255);
-			s.stroke(0,255);
-			s.noStroke();
-			s.ellipse(0, 0, ballSize/4,ballSize/4);
-			s.translate(-refx,-refy);
-			//END TESLA COILS
-			*/
-			s.textFont(titleFont);
-			s.strokeWeight(1);
-			s.stroke(0);
-			s.fill(255, 255);
-			s.textAlign(s.CENTER);
-			s.textSize(size * 2);
-			s.text("Matchmaking", width / 2, height / 12);
-			s.stroke(255);
-			s.line(width / 4, height / 10, 3 * width / 4, height / 10);
-			s.stroke(0);
-			s.textSize(size);
-			s.fill(176, 196, 243, 255);
-			s.text("Enter Game Code", width * 2 / 5, height / 4);
-			s.fill(152, 255, 152, 255);
-			s.text("New Lobby", width * 2 / 5, height / 4 + height / 6);
-			s.fill(210, 130, 240, 255);
-			s.text("Hot Seat", width * 2 / 5, height / 4 + 2 * height / 6);
-			//s.textAlign(s.LEFT);
-		}
-
-		function tooltip(hoverX, hoverY, b, tick, wi, he, si, pColors, sdt, app) {
-			if (b[hoverY][hoverX].length != 0) {
-				if (app.gamePhase != "PLACEMENT") {
-					hoverObject = sdt.tick[tick].gameObjects.get(sdt.tick[tick].board[hoverY][hoverX][0]);
-				}
-				else {
-					hoverObject = app.game.gameObjects.get(b[hoverY][hoverX][0]);
-				}
-				if (hoverObject && hoverObject.objCategory != "Projectiles") {
-					s.stroke(0);
-					s.strokeWeight(3);
-					s.fill(255, 125);
-					let transX = 0;
-					let transY = 0;
-					if (hoverX >= wi / (si * 2) && hoverY < he / (si * 2)) {
-						transX = 1;
+				checkCoordinates(x, y, width, height) {
+					if (x < 0 || x > width || y < 0 || y > height) {
+						this.orientationOne = Math.floor(Math.random() * 3) - 1;
+						this.orientationTwo = Math.floor(Math.random() * 3) - 1;
+						if (this.orientationOne == 0 && this.orientationTwo == 0) {
+							this.orientationTwo = 1;
+						}
+						this.x = Math.floor(Math.random() * width);
+						this.y = Math.floor(Math.random() * height);
 					}
-					else if (hoverX >= wi / (si * 2) && hoverY >= he / (si * 2)) {
-						transX = 1;
-						transY = 1;
-					}
-					else if (hoverX < wi / (si * 2) && hoverY >= he / (si * 2)) {
-						transY = 1;
-					}
-					s.translate(-si * 5 * transX, -si * 4 * transY);
-					s.rect(hoverX * si + si, hoverY * si + si, si * 4, si * 3);
-					s.fill(pColors[hoverObject.player - 1][0], pColors[hoverObject.player - 1][1], pColors[hoverObject.player - 1][2], pColors[hoverObject.player - 1][3]);
-					s.stroke(0);
-					s.textFont(standardFont);
-					s.textSize(si / 2.5);
-					s.text(hoverObject.fullName, hoverX * si + si * 1.2, hoverY * si + si * 1.7);
+				}
+				render(size, speed, width, height) {
 
-
-					s.fill(120, 255);
-					s.rect(hoverX * si + si * 1.2, hoverY * si + si * 2.05, si * 3.6, si / 2);
-					s.noStroke();
-					s.fill(pColors[hoverObject.player - 1][0], pColors[hoverObject.player - 1][1], pColors[hoverObject.player - 1][2], pColors[hoverObject.player - 1][3]);
-
-					s.rect(hoverX * si + si * 1.2, hoverY * si + si * 2.05, si * 3.6 * (hoverObject.health / hoverObject.constructor.maxHealth), si / 2);
-					//s.fill(155,255);
-					s.stroke(0);
-					s.noFill();
-					s.rect(hoverX * si + si * 1.2, hoverY * si + si * 2.05, si * 3.6, si / 2);
-
-					s.noFill();
-
-					s.fill(0);
-					s.textAlign(s.CENTER);
-					s.textSize(si / 3);
-					s.noStroke();
-					s.text("Health: " + hoverObject.health, hoverX * si + si * 3, hoverY * si + si * 2.43);
-					s.textAlign(s.LEFT);
-					s.fill(pColors[hoverObject.player - 1][0], pColors[hoverObject.player - 1][1], pColors[hoverObject.player - 1][2], pColors[hoverObject.player - 1][3]);
-
-					if (hoverObject.objCategory == "Units") {
-
-						s.textSize(si / 3.8);
+					//Make sure the asteroids have a lot less mass so they don't fall in as easily
+					this.length = size * 3;
+					this.speed = speed;
+					this.x = this.x + this.orientationOne * speed;
+					this.y = this.y + this.orientationTwo * speed;
+					for (let l = 0; l < this.length; l = l + 1) {
+						s.fill(255, 0, 128, 255 - 255 * l / this.length);
+						s.strokeWeight(1);
 						s.stroke(0);
+						s.noStroke();
+						s.ellipse(this.x - l * this.orientationOne, this.y - l * this.orientationTwo, 3 - l / 20, 3 - l / 20);
+					}
+					this.checkCoordinates(this.x, this.y, width, height);
 
-						s.text("Damage Dealt: " + (hoverObject.damageDealt), hoverX * si + si * 1.3, hoverY * si + si * 3.1);
-						if (hoverObject.lifeSpan == 0) {
-							s.text("Turns Active: " + 1, hoverX * si + si * 1.3, hoverY * si + si * 3.6);
+				}
+			}
+			function displayLobby(gameRoom, data, width, height, size, delay) {
+				s.textSize(si);
+				for (let p = 0; p < 4; p = p + 1) {
+
+				}
+			}
+			function displayMatchmaking(data, width, height, size, delay, pColors) {
+				s.background(0);
+				let lightningTrigger = s.int(delay);
+
+				s.tint(255, 0, 128);
+				s.image(imgEight, 0, 0, height * 1.6, height);
+				s.noTint();
+				//BEGIN TESLA COILS
+				/*s.noStroke();
+				//s.fill(255,0,128,255);
+				s.fill(255);
+				for(let h = s.int(height/18); h >= s.int(height/28); h = h - 1){
+					if(h === s.int(height/28)){
+						s.stroke(255,0,128,255);
+					}
+					else{
+						s.stroke(255,255);
+					}
+					s.ellipse(width/8-width/30+width/30,height/4+3*height/5+h,width/9,width/52);
+				}
+				for(let h = s.int(height/28); h >= 0; h = h - 1){
+					if(h === 0){
+						s.stroke(255,0,128,255);
+					}
+					else{
+						s.stroke(255,255);
+					}
+					s.ellipse(width/8-width/30+width/30,height/4+3*height/5+h,width/12,width/62);
+				}
+	
+				s.stroke(255);
+				s.noStroke();
+				s.fill(255,0,128,255);
+				s.fill(255,255);
+				s.rect(width/8-width/100,height/4,2*width/100,3*height/5);
+				//drawTripwireProjectile(5, 5, 1, size, pColors, [0,0], 10, 0);
+				//Begin Projectiles
+				let refx = width/8-width/30+width/30;
+				let refy = height/4;
+				let ballSize = size*10;
+				//s.fill(255,0,128, 155);
+				s.translate(refx,refy);
+	
+				if(lightningTrigger % 1 == 0){
+				for(let angle = 0; angle < 360; angle = angle + 30){
+					s.rotate(s.radians(angle));
+					let endX;
+					let endY;
+					let xx = 0
+					let yy = 0;
+					while(yy < ballSize/30){//to bottom of screen
+			   endX = xx + s.random(-ballSize/12, ballSize/12); //x-value varies
+					 //endX = xx + s.random(-ballSize/206, ballSize/206)+s.noise(delay/100)*ballSize/12;
+			   endY = yy + size/20;    //y just goes up
+				   s.strokeWeight(1);//bolt is a little thicker than a line
+				   s.stroke(255); //white line
+			   s.line(xx,yy,endX,endY);//draw a tiny segment
+			   xx = endX;  //then x and y are moved to the
+			   yy = endY;  //end of the segment and so on
+			 }
+				 s.rotate(-s.radians(angle));
+			  }
+		}
+		s.fill(255,0,128,255);
+				s.stroke(0,255);
+				s.noStroke();
+				s.ellipse(0, 0, ballSize/4,ballSize/4);
+				s.translate(-refx,-refy);
+				//END TESLA COILS
+				*/
+				s.textFont(titleFont);
+				s.strokeWeight(1);
+				s.stroke(0);
+				s.fill(255, 255);
+				s.textAlign(s.CENTER);
+				s.textSize(size * 2);
+				s.text("Matchmaking", width / 2, height / 12);
+				s.stroke(255);
+				s.line(width / 4, height / 10, 3 * width / 4, height / 10);
+				s.stroke(0);
+				s.textSize(size);
+				s.fill(176, 196, 243, 255);
+				s.text("Enter Game Code", width * 2 / 5, height / 4);
+				s.fill(152, 255, 152, 255);
+				s.text("New Lobby", width * 2 / 5, height / 4 + height / 6);
+				s.fill(210, 130, 240, 255);
+				s.text("Hot Seat", width * 2 / 5, height / 4 + 2 * height / 6);
+				//s.textAlign(s.LEFT);
+			}
+
+			function tooltip(hoverX, hoverY, b, tick, wi, he, si, pColors, sdt, app) {
+				if (b[hoverY][hoverX].length != 0) {
+					if (app.gamePhase != "PLACEMENT") {
+						hoverObject = sdt.tick[tick].gameObjects.get(sdt.tick[tick].board[hoverY][hoverX][0]);
+					}
+					else {
+						hoverObject = app.game.gameObjects.get(b[hoverY][hoverX][0]);
+					}
+					if (hoverObject && hoverObject.objCategory != "Projectiles") {
+						s.stroke(0);
+						s.strokeWeight(3);
+						s.fill(255, 125);
+						let transX = 0;
+						let transY = 0;
+						if (hoverX >= wi / (si * 2) && hoverY < he / (si * 2)) {
+							transX = 1;
 						}
-						else {
-							s.text("Turns Active: " + hoverObject.lifeSpan, hoverX * si + si * 1.3, hoverY * si + si * 3.6);
+						else if (hoverX >= wi / (si * 2) && hoverY >= he / (si * 2)) {
+							transX = 1;
+							transY = 1;
+						}
+						else if (hoverX < wi / (si * 2) && hoverY >= he / (si * 2)) {
+							transY = 1;
+						}
+						s.translate(-si * 5 * transX, -si * 4 * transY);
+						s.rect(hoverX * si + si, hoverY * si + si, si * 4, si * 3);
+						s.fill(pColors[hoverObject.player - 1][0], pColors[hoverObject.player - 1][1], pColors[hoverObject.player - 1][2], pColors[hoverObject.player - 1][3]);
+						s.stroke(0);
+						s.textFont(standardFont);
+						s.textSize(si / 2.5);
+						s.text(hoverObject.fullName, hoverX * si + si * 1.2, hoverY * si + si * 1.7);
+
+
+						s.fill(120, 255);
+						s.rect(hoverX * si + si * 1.2, hoverY * si + si * 2.05, si * 3.6, si / 2);
+						s.noStroke();
+						s.fill(pColors[hoverObject.player - 1][0], pColors[hoverObject.player - 1][1], pColors[hoverObject.player - 1][2], pColors[hoverObject.player - 1][3]);
+
+						s.rect(hoverX * si + si * 1.2, hoverY * si + si * 2.05, si * 3.6 * (hoverObject.health / hoverObject.constructor.maxHealth), si / 2);
+						//s.fill(155,255);
+						s.stroke(0);
+						s.noFill();
+						s.rect(hoverX * si + si * 1.2, hoverY * si + si * 2.05, si * 3.6, si / 2);
+
+						s.noFill();
+
+						s.fill(0);
+						s.textAlign(s.CENTER);
+						s.textSize(si / 3);
+						s.noStroke();
+						s.text("Health: " + hoverObject.health, hoverX * si + si * 3, hoverY * si + si * 2.43);
+						s.textAlign(s.LEFT);
+						s.fill(pColors[hoverObject.player - 1][0], pColors[hoverObject.player - 1][1], pColors[hoverObject.player - 1][2], pColors[hoverObject.player - 1][3]);
+
+						if (hoverObject.objCategory == "Units") {
+
+							s.textSize(si / 3.8);
+							s.stroke(0);
+
+							s.text("Damage Dealt: " + (hoverObject.damageDealt), hoverX * si + si * 1.3, hoverY * si + si * 3.1);
+							if (hoverObject.lifeSpan == 0) {
+								s.text("Turns Active: " + 1, hoverX * si + si * 1.3, hoverY * si + si * 3.6);
+							}
+							else {
+								s.text("Turns Active: " + hoverObject.lifeSpan, hoverX * si + si * 1.3, hoverY * si + si * 3.6);
+							}
+						}
+						s.translate(si * 5 * transX, si * 4 * transY);
+						if (hoverObject.objCategory != "Bases" && app.gamePhase != 2) {
+							let pt = getPossibleTargets(hoverObject.constructor.name, hoverX, hoverY, hoverObject.player);
+							for (let i = 0; i < pt.length; i++) {
+								s.fill(255, 240, 0, 85);
+								s.noStroke();
+								s.rect(pt[i][0] * si, pt[i][1] * si, si);
+								if (pt.length == 1) {
+									s.fill(255, 85);
+									s.stroke(0, 85);
+									s.textSize(wi / 40);
+									s.textFont(titleFont);
+									s.textAlign(s.CENTER);
+									s.text("?", pt[i][0] * si + si / 2, pt[i][1] * si + si / 1.4);
+									s.textAlign(s.LEFT);
+								}
+							}
 						}
 					}
-					s.translate(si * 5 * transX, si * 4 * transY);
-					if (hoverObject.objCategory != "Bases" && app.gamePhase != 2) {
-						let pt = getPossibleTargets(hoverObject.constructor.name, hoverX, hoverY, hoverObject.player);
-						for (let i = 0; i < pt.length; i++) {
-							s.fill(255, 240, 0, 85);
-							s.noStroke();
-							s.rect(pt[i][0] * si, pt[i][1] * si, si);
-							if (pt.length == 1) {
-								s.fill(255, 85);
-								s.stroke(0, 85);
-								s.textSize(wi / 40);
-								s.textFont(titleFont);
-								s.textAlign(s.CENTER);
-								s.text("?", pt[i][0] * si + si / 2, pt[i][1] * si + si / 1.4);
-								s.textAlign(s.LEFT);
+				}
+
+			}
+
+			function runLoadScreen(alpha) {
+				s.noStroke();
+				s.fill(0, alpha)
+				s.rect(0, 0, s.width, s.height);
+				s.fill(255);
+				s.textFont(titleFont);
+				s.textSize(s.width / 23);
+				s.textAlign(s.CENTER);
+				s.text("LOADING", s.width / 2, s.height / 1.8);
+				s.textAlign(s.LEFT);
+			}
+
+			function showUnitDescription(unitType, player, wid, hei, siz) {
+				let tranX = 0;
+				let tranY = 0;
+				if (player == 1) {
+					tranY = 1
+				}
+				else if (player == 3) {
+					tranX = 1;
+					tranY = 1;
+				}
+				else if (player == 4) {
+					tranX = 1;
+				}
+				s.translate(wid * tranX / 2, hei * tranY / 2);
+				s.textFont(standardFont);
+				s.textSize(siz / 2.8);
+				s.fill(255);
+				s.stroke(0);
+				s.strokeWeight(0);
+				s.text(Units[unitType].description, siz, siz * 5, siz * 12, siz * 12);
+				//s.text("RIGHT HERE", siz*2, siz*7);
+				s.translate(-wid * tranX / 2, -hei * tranY / 2);
+			}
+
+			function drawDisplayObject(displayObject, x, y, size, colors, a) {
+
+				if (displayObject.identifier == "Base") {
+					drawBase(x, y, displayObject.player, size, displayObject.health, displayObject.maxHealth, colors);
+				}
+				if (displayObject.identifier == "Ray") {
+					drawRayTracer(x, y, displayObject.player, size, displayObject.health, Units["RayTracer"].maxHealth, colors);
+				}
+				if (displayObject.identifier == "Red") {
+					drawRedShifter(x, y, displayObject.player, size, displayObject.health, Units["RayTracer"].maxHealth, colors);
+				}
+				if (displayObject.identifier == "Osc") {
+					drawOscillator(x, y, displayObject.player, size, displayObject.health, Units["Oscillator"].maxHealth, colors);
+				}
+				if (displayObject.identifier == "Mag") {
+					drawMaglev(x, y, displayObject.player, size, displayObject.health, Units["Maglev"].maxHealth, colors);
+				}
+				if (displayObject.identifier == "Jug") {
+					drawJuggernode(x, y, displayObject.player, size, displayObject.health, Units["Juggernode"].maxHealth, colors);
+				}
+				if (displayObject.identifier == "Bea") {
+					drawBeamSplitter(x, y, displayObject.player, size, displayObject.health, Units["Ballast"].maxHealth, colors);
+				}
+				if (displayObject.identifier == "Bal") {
+					drawBallast(x, y, displayObject.player, size, displayObject.health, Units["Ballast"].maxHealth, colors);
+				}
+				if (displayObject.identifier == "Tri") {
+					drawTripwire(x, y, displayObject.player, size, displayObject.health, Units["Tripwire"].maxHealth, colors, displayObject.tripped);
+				}
+				if (displayObject.identifier == "Cir") {
+					drawResonator(x, y, displayObject.player, size, displayObject.health, Units["Resonator"].maxHealth, colors);
+				}
+				if (displayObject.identifier == "Int") {
+					drawIntegrator(x, y, displayObject.player, size, displayObject.health, Units["Integrator"].maxHealth, colors, displayObject.lifeSpan);
+				}
+				if (displayObject.identifier == "JugProj") {
+					drawJuggernodeProjectile(x, y, displayObject.player, size, colors, displayObject.orientation, displayObject.damage, a);
+				}
+				if (displayObject.identifier == "RayProj") {
+					drawRayTracerProjectile(x, y, displayObject.player, size, colors, displayObject.orientation, a);
+				}
+				if (displayObject.identifier == "RedProj") {
+					drawRedShifterProjectile(x, y, displayObject.player, size, colors, displayObject.orientation, displayObject.damage, displayObject.distance, a);
+				}
+				if (displayObject.identifier == "OscProj") {
+					drawOscillatorProjectile(x, y, displayObject.player, size, colors, displayObject.orientation, a);
+				}
+				if (displayObject.identifier == "MagProj") {
+					drawMaglevProjectile(x, y, displayObject.player, size, colors, displayObject.orientation, displayObject.damage, a);
+				}
+				if (displayObject.identifier == "BeaProj") {
+					drawBeamSplitterProjectile(x, y, displayObject.player, size, colors, displayObject.orientation, displayObject.damage, a);
+				}
+				if (displayObject.identifier == "BalProj") {
+					drawBallastProjectile(x, y, displayObject.player, size, colors, displayObject.damage, a);
+				}
+				if (displayObject.identifier == "TriProj") {
+					drawTripwireProjectile(x, y, displayObject.player, size, colors, displayObject.orientation, displayObject.damage, a);
+				}
+				if (displayObject.identifier == "CirProj") {
+					drawResonatorProjectile(x, y, displayObject.player, size, colors, displayObject.orientation, displayObject.damage, a);
+				}
+				if (displayObject.identifier == "IntProj") {
+					drawIntegratorProjectile(x, y, displayObject.player, size, colors, displayObject.orientation, displayObject.damage, a);
+				}
+			}
+
+
+			function drawRect(rect) {
+				s.fill(rect.color[0], rect.color[1], rect.color[2]);
+				s.rect(rect.x, rect.y, rect.size, rect.size);
+			}
+
+			function drawUnitMenu(pColors, player, scale) {
+				s.textFont(titleFont);
+				s.translate(0, -scale / 2);
+				let wid = s.width;
+				let hei = s.height;
+				let siz = s.width / 30;
+				s.strokeWeight(3);
+				s.stroke(255);
+				s.textSize(wid / 23);
+				if (player == 3 || player == 4) {
+					s.translate(-wid / 2, 0);
+				}
+				s.fill(225, 225, 225, 65);
+				s.quad(wid / 2 + siz, siz, wid / 2 + siz, hei - siz, wid - siz, hei - siz, wid - siz, siz);
+				s.fill(pColors[player - 1][0], pColors[player - 1][1], pColors[player - 1][2], 255);
+				s.line(wid / 2 + siz * 10, siz, wid / 2 + siz * 10, hei - siz);
+				s.line(wid / 2 + siz * 12, siz, wid / 2 + siz * 12, hei - siz);
+				s.stroke(0);
+				//s.text("Unit",wid/2+siz*1.5,siz*2.25);
+				s.text("Machine", wid / 2 + siz * 2.5, siz * 2.45);
+				let refXX = wid / 2 + siz * 11.02;
+				let refYY = siz * 2;
+				//s.translate(size,size);
+				s.noFill();
+				s.strokeWeight(1.5);
+				s.ellipse(refXX, refYY, siz * 1.4, siz * 1.4);
+				s.strokeWeight(3);
+				s.fill(0);
+				s.stroke(pColors[player - 1][0], pColors[player - 1][1], pColors[player - 1][2], 255);
+				s.ellipse(refXX, refYY, siz * 1.25, siz * 1.25);
+
+				//s.ellipse(refXX,refYY,siz*1.04,siz*1.04);
+				//s.translate(-size,-size);
+				s.fill(pColors[player - 1][0], pColors[player - 1][1], pColors[player - 1][2], 255);
+				//let refXX = wid/2+siz*10.42;
+				//let refYY = siz*1.56;
+				refXX = wid / 2 + siz * 10.92;
+				refYY = siz * 1.56;
+				let propOne = .2;
+				let propTwo = .35;
+				s.strokeWeight(1.5);
+				s.beginShape();
+				s.vertex(refXX, refYY);
+				s.vertex(refXX + siz * propOne, refYY);
+				s.vertex(refXX + siz * propOne, refYY + siz * propTwo);
+				s.vertex(refXX + siz * (propOne + propTwo), refYY + siz * propTwo);
+				s.vertex(refXX + siz * (propOne + propTwo), refYY + siz * (propOne + propTwo));
+				s.vertex(refXX + siz * propOne, refYY + siz * (propOne + propTwo));
+				s.vertex(refXX + siz * propOne, refYY + siz * (propOne + propTwo + propTwo));
+				s.vertex(refXX, refYY + siz * (propOne + propTwo + propTwo));
+				s.vertex(refXX, refYY + siz * (propOne + propTwo));
+				s.vertex(refXX - siz * propTwo, refYY + siz * (propOne + propTwo));
+				s.vertex(refXX - siz * propTwo, refYY + siz * propTwo);
+				s.vertex(refXX, refYY + siz * propTwo);
+				s.vertex(refXX, refYY);
+				s.endShape();
+
+				drawCreditsSymbol(refXX + siz * 2.08, refYY + siz / 2.2, siz, player, 10, pColors);
+				//s.text("Cost",wid/2+siz*12.3,siz*2.45);
+				s.textSize(wid / 37);
+				//s.textFont(standardFont);
+				s.translate(0, siz / 6);
+				//Ray Tracer Button Decoration
+				s.strokeWeight(2);
+				s.stroke(0);
+				s.fill(pColors[player - 1][0], pColors[player - 1][1], pColors[player - 1][2], 255);
+				s.rect(siz * 16.9, siz * 3.15, siz, siz);
+				drawRayTracer(16.9, 3.15, 0, siz, Units["RayTracer"].maxHealth, Units["RayTracer"].maxHealth, pColors);
+				s.fill(255);
+				s.text("Ray Tracer", wid / 2 + siz * 3.75, siz * 4);
+				s.text(Units["RayTracer"].maxHealth, wid / 2 + siz * 10.45, siz * 4);
+				s.stroke(0);
+				s.fill(255);
+
+				s.text(Units["RayTracer"].cost, wid / 2 + siz * 12.85, siz * 4);
+
+				//Oscillator Button Decoration
+				s.translate(0, scale * siz * 1);
+				s.stroke(0);
+				s.fill(pColors[player - 1][0], pColors[player - 1][1], pColors[player - 1][2], 255);
+				s.rect(siz * 16.9, siz * 3.15, siz, siz);
+				drawRedShifter(16.9, 3.15, 0, siz, Units["RedShifter"].maxHealth, Units["RedShifter"].maxHealth, pColors);
+
+				s.fill(255);
+				s.text("Red Shifter", wid / 2 + siz * 3.75, siz * 4);
+				s.text(Units["RedShifter"].maxHealth, wid / 2 + siz * 10.45, siz * 4);
+				s.text(Units["RedShifter"].cost, wid / 2 + siz * 12.85, siz * 4);
+
+
+				s.translate(0, -scale * siz * 1);
+				s.translate(0, scale * siz * 2);
+				s.stroke(0);
+				s.fill(pColors[player - 1][0], pColors[player - 1][1], pColors[player - 1][2], 255);
+				s.rect(siz * 16.9, siz * 3.15, siz, siz);
+				drawOscillator(16.9, 3.15, 0, siz, Units["Oscillator"].maxHealth, Units["Oscillator"].maxHealth, pColors);
+
+
+				s.fill(255);
+				s.text("Oscillator", wid / 2 + siz * 3.75, siz * 4);
+				s.text(Units["Oscillator"].maxHealth, wid / 2 + siz * 10.45, siz * 4);
+				s.text(Units["Oscillator"].cost, wid / 2 + siz * 12.85, siz * 4);
+
+
+				s.translate(0, -scale * siz * 2);
+				//Ballast Button Decoration
+				s.translate(0, scale * siz * 3);
+				s.stroke(0);
+				s.fill(pColors[player - 1][0], pColors[player - 1][1], pColors[player - 1][2], 255);
+				s.rect(siz * 16.9, siz * 3.15, siz, siz);
+				drawBeamSplitter(16.9, 3.15, 0, siz, Units["BeamSplitter"].maxHealth, Units["BeamSplitter"].maxHealth, pColors);
+
+				s.fill(255);
+				s.text("Beam Splitter", wid / 2 + siz * 3.75, siz * 4)
+				s.text(Units["BeamSplitter"].maxHealth, wid / 2 + siz * 10.45, siz * 4)
+				s.text(Units["BeamSplitter"].cost, wid / 2 + siz * 12.85, siz * 4);
+
+				s.translate(0, -scale * siz * 3);
+
+				s.translate(0, scale * siz * 4);
+				s.stroke(0);
+				s.strokeWeight(2);
+				s.fill(pColors[player - 1][0], pColors[player - 1][1], pColors[player - 1][2], 255);
+				s.rect(siz * 16.9, siz * 3.15, siz, siz);
+				drawBallast(16.9, 3.15, 0, siz, Units["Ballast"].maxHealth, Units["Ballast"].maxHealth, pColors);
+
+				s.fill(255);
+				s.text("Ballast", wid / 2 + siz * 3.75, siz * 4)
+				s.text(Units["Ballast"].maxHealth, wid / 2 + siz * 10.45, siz * 4)
+				s.text(Units["Ballast"].cost, wid / 2 + siz * 12.85, siz * 4);
+
+				s.translate(0, -scale * siz * 4);
+				//Juggernode Button Decoration
+				s.translate(0, scale * siz * 5);
+				s.strokeWeight(2);
+				s.stroke(0);
+				s.fill(pColors[player - 1][0], pColors[player - 1][1], pColors[player - 1][2], 255);
+				s.rect(siz * 16.9, siz * 3.15, siz, siz);
+				drawJuggernode(16.9, 3.15, 4, siz, 400, 400, pColors);
+
+				s.fill(255);
+				s.text("Juggernode", wid / 2 + siz * 3.75, siz * 4)
+				s.text(Units["Juggernode"].maxHealth, wid / 2 + siz * 10.45, siz * 4)
+				s.text(Units["Juggernode"].cost, wid / 2 + siz * 12.85, siz * 4);
+
+				s.translate(0, -scale * siz * 5);
+				s.translate(0, scale * siz * 6);
+				s.stroke(0);
+				s.fill(pColors[player - 1][0], pColors[player - 1][1], pColors[player - 1][2], 255);
+				s.rect(siz * 16.9, siz * 3.15, siz, siz);
+				drawTripwire(16.9, 3.15, 0, siz, 400, 400, pColors);
+				s.fill(255);
+				s.text("Tripwire", wid / 2 + siz * 3.75, siz * 4)
+				s.text(Units["Tripwire"].maxHealth, wid / 2 + siz * 10.45, siz * 4)
+				s.text(Units["Tripwire"].cost, wid / 2 + siz * 12.85, siz * 4);
+				s.translate(0, -scale * siz * 6);
+				//Maglev Button Decoration
+				s.translate(0, scale * siz * 7);
+				s.stroke(0);
+				s.strokeWeight(2);
+				s.fill(pColors[player - 1][0], pColors[player - 1][1], pColors[player - 1][2], 255);
+				s.rect(siz * 16.9, siz * 3.15, siz, siz);
+				drawMaglev(16.9, 3.15, 4, siz, 400, 400, pColors);
+				s.fill(255);
+				s.text("Maglev", wid / 2 + siz * 3.75, siz * 4)
+				s.text(Units["Maglev"].maxHealth, wid / 2 + siz * 10.45, siz * 4);
+				s.text(Units["Maglev"].cost, wid / 2 + siz * 12.85, siz * 4);
+				s.noFill();
+				s.translate(0, -scale * siz * 7);
+				//Circuit Breaker Button Decoration
+				s.translate(0, scale * siz * 8);
+				s.stroke(0);
+				s.strokeWeight(2);
+				s.fill(pColors[player - 1][0], pColors[player - 1][1], pColors[player - 1][2], 255);
+				s.rect(siz * 16.9, siz * 3.15, siz, siz);
+				drawResonator(16.9, 3.15, 4, siz, 400, 400, pColors);
+				s.fill(255);
+				s.text("Resonator", wid / 2 + siz * 3.75, siz * 4);
+				s.text(Units["Resonator"].maxHealth, wid / 2 + siz * 10.45, siz * 4);
+				s.text(Units["Resonator"].cost, wid / 2 + siz * 12.85, siz * 4);
+				s.noFill();
+				s.stroke(255);
+				s.translate(0, -scale * siz * 8);
+
+				s.translate(0, scale * siz * 9);
+				s.stroke(0);
+				s.strokeWeight(2);
+				s.fill(pColors[player - 1][0], pColors[player - 1][1], pColors[player - 1][2], 255);
+				s.rect(siz * 16.9, siz * 3.15, siz, siz);
+				drawIntegrator(16.9, 3.15, 4, siz, 400, 400, pColors);
+				s.fill(255);
+				s.text("Integrator", wid / 2 + siz * 3.75, siz * 4)
+				s.text(Units["Integrator"].maxHealth, wid / 2 + siz * 10.45, siz * 4)
+				s.text(Units["Integrator"].cost, wid / 2 + siz * 12.85, siz * 4);
+				s.noFill();
+				s.stroke(255);
+
+				s.translate(0, -scale * siz * 9);
+				s.translate(0, -siz / 6);
+				if (player == 3 || player == 4) {
+					s.translate(wid / 2, 0);
+				}
+
+				//text("Report",28*this.wid/40,3*this.hei/40);
+				//text("H",36*this.wid/40,3*this.hei/40);
+				//text("C",38.5*this.wid/40,3*this.hei/40);
+				s.translate(0, scale / 2);
+			}
+
+			function drawQuarterGrid(grid, pColors, player) {
+				s.stroke(0, opacity);
+				s.strokeWeight(2);
+				let opacity = 227;
+				let rectSize = s.width / 30;
+				let rectSizeY = s.height / 20;
+				for (var i = 0; i < grid.length; i++) {
+					let rectY = i * (s.height / 20);
+					for (var j = 0; j < grid[i].length; j++) {
+						//let rectX = j* s.height / grid.length;
+						let rectX = j * s.width / grid[i].length;
+						if (i <= grid.length / 2 - 1 && j <= grid[i].length / 2 - 1) {
+							s.fill(pColors[0][0], pColors[0][1], pColors[0][2], opacity)
+							if (player == 1) {
+								s.rect(rectX, rectY, rectSize, rectSizeY);
+							}
+						}
+						else if (i >= grid.length / 2 - 1 && j <= grid[i].length / 2 - 1) {
+							s.fill(pColors[1][0], pColors[1][1], pColors[1][2], opacity)
+							if (player == 2) {
+								s.rect(rectX, rectY, rectSize, rectSizeY);
+							}
+						}
+						else if (i <= grid.length / 2 - 1 && j >= grid[i].length / 2 - 1) {
+							s.fill(pColors[2][0], pColors[2][1], pColors[2][2], opacity)
+							if (player == 3) {
+								s.rect(rectX, rectY, rectSize, rectSizeY);
+							}
+						}
+						else if (i >= grid.length / 2 - 1 && j >= grid[i].length / 2 - 1) {
+							s.fill(pColors[3][0], pColors[3][1], pColors[3][2], opacity)
+							if (player == 4) {
+								s.rect(rectX, rectY, rectSize, rectSizeY);
 							}
 						}
 					}
 				}
 			}
 
-		}
-
-		function runLoadScreen(alpha) {
-			s.noStroke();
-			s.fill(0, alpha)
-			s.rect(0, 0, s.width, s.height);
-			s.fill(255);
-			s.textFont(titleFont);
-			s.textSize(s.width / 23);
-			s.textAlign(s.CENTER);
-			s.text("LOADING", s.width / 2, s.height / 1.8);
-			s.textAlign(s.LEFT);
-		}
-
-		function showUnitDescription(unitType, player, wid, hei, siz) {
-			let tranX = 0;
-			let tranY = 0;
-			if (player == 1) {
-				tranY = 1
-			}
-			else if (player == 3) {
-				tranX = 1;
-				tranY = 1;
-			}
-			else if (player == 4) {
-				tranX = 1;
-			}
-			s.translate(wid * tranX / 2, hei * tranY / 2);
-			s.textFont(standardFont);
-			s.textSize(siz / 2.8);
-			s.fill(255);
-			s.stroke(0);
-			s.strokeWeight(0);
-			s.text(Units[unitType].description, siz, siz * 5, siz * 12, siz * 12);
-			//s.text("RIGHT HERE", siz*2, siz*7);
-			s.translate(-wid * tranX / 2, -hei * tranY / 2);
-		}
-
-		function drawDisplayObject(displayObject, x, y, size, colors, a) {
-
-			if (displayObject.identifier == "Base") {
-				drawBase(x, y, displayObject.player, size, displayObject.health, displayObject.maxHealth, colors);
-			}
-			if (displayObject.identifier == "Ray") {
-				drawRayTracer(x, y, displayObject.player, size, displayObject.health, Units["RayTracer"].maxHealth, colors);
-			}
-			if (displayObject.identifier == "Red") {
-				drawRedShifter(x, y, displayObject.player, size, displayObject.health, Units["RayTracer"].maxHealth, colors);
-			}
-			if (displayObject.identifier == "Osc") {
-				drawOscillator(x, y, displayObject.player, size, displayObject.health, Units["Oscillator"].maxHealth, colors);
-			}
-			if (displayObject.identifier == "Mag") {
-				drawMaglev(x, y, displayObject.player, size, displayObject.health, Units["Maglev"].maxHealth, colors);
-			}
-			if (displayObject.identifier == "Jug") {
-				drawJuggernode(x, y, displayObject.player, size, displayObject.health, Units["Juggernode"].maxHealth, colors);
-			}
-			if (displayObject.identifier == "Bea") {
-				drawBeamSplitter(x, y, displayObject.player, size, displayObject.health, Units["Ballast"].maxHealth, colors);
-			}
-			if (displayObject.identifier == "Bal") {
-				drawBallast(x, y, displayObject.player, size, displayObject.health, Units["Ballast"].maxHealth, colors);
-			}
-			if (displayObject.identifier == "Tri") {
-				drawTripwire(x, y, displayObject.player, size, displayObject.health, Units["Tripwire"].maxHealth, colors, displayObject.tripped);
-			}
-			if (displayObject.identifier == "Cir") {
-				drawResonator(x, y, displayObject.player, size, displayObject.health, Units["Resonator"].maxHealth, colors);
-			}
-			if (displayObject.identifier == "Int") {
-				drawIntegrator(x, y, displayObject.player, size, displayObject.health, Units["Integrator"].maxHealth, colors, displayObject.lifeSpan);
-			}
-			if (displayObject.identifier == "JugProj") {
-				drawJuggernodeProjectile(x, y, displayObject.player, size, colors, displayObject.orientation, displayObject.damage, a);
-			}
-			if (displayObject.identifier == "RayProj") {
-				drawRayTracerProjectile(x, y, displayObject.player, size, colors, displayObject.orientation, a);
-			}
-			if (displayObject.identifier == "RedProj") {
-				drawRedShifterProjectile(x, y, displayObject.player, size, colors, displayObject.orientation, displayObject.damage, displayObject.distance, a);
-			}
-			if (displayObject.identifier == "OscProj") {
-				drawOscillatorProjectile(x, y, displayObject.player, size, colors, displayObject.orientation, a);
-			}
-			if (displayObject.identifier == "MagProj") {
-				drawMaglevProjectile(x, y, displayObject.player, size, colors, displayObject.orientation, displayObject.damage, a);
-			}
-			if (displayObject.identifier == "BeaProj") {
-				drawBeamSplitterProjectile(x, y, displayObject.player, size, colors, displayObject.orientation, displayObject.damage, a);
-			}
-			if (displayObject.identifier == "BalProj") {
-				drawBallastProjectile(x, y, displayObject.player, size, colors, displayObject.damage, a);
-			}
-			if (displayObject.identifier == "TriProj") {
-				drawTripwireProjectile(x, y, displayObject.player, size, colors, displayObject.orientation, displayObject.damage, a);
-			}
-			if (displayObject.identifier == "CirProj") {
-				drawResonatorProjectile(x, y, displayObject.player, size, colors, displayObject.orientation, displayObject.damage, a);
-			}
-			if (displayObject.identifier == "IntProj") {
-				drawIntegratorProjectile(x, y, displayObject.player, size, colors, displayObject.orientation, displayObject.damage, a);
-			}
-		}
 
 
-		function drawRect(rect) {
-			s.fill(rect.color[0], rect.color[1], rect.color[2]);
-			s.rect(rect.x, rect.y, rect.size, rect.size);
-		}
-
-		function drawUnitMenu(pColors, player, scale) {
-			s.textFont(titleFont);
-			s.translate(0, -scale / 2);
-			let wid = s.width;
-			let hei = s.height;
-			let siz = s.width / 30;
-			s.strokeWeight(3);
-			s.stroke(255);
-			s.textSize(wid / 23);
-			if (player == 3 || player == 4) {
-				s.translate(-wid / 2, 0);
-			}
-			s.fill(225, 225, 225, 65);
-			s.quad(wid / 2 + siz, siz, wid / 2 + siz, hei - siz, wid - siz, hei - siz, wid - siz, siz);
-			s.fill(pColors[player - 1][0], pColors[player - 1][1], pColors[player - 1][2], 255);
-			s.line(wid / 2 + siz * 10, siz, wid / 2 + siz * 10, hei - siz);
-			s.line(wid / 2 + siz * 12, siz, wid / 2 + siz * 12, hei - siz);
-			s.stroke(0);
-			//s.text("Unit",wid/2+siz*1.5,siz*2.25);
-			s.text("Machine", wid / 2 + siz * 2.5, siz * 2.45);
-			let refXX = wid / 2 + siz * 11.02;
-			let refYY = siz * 2;
-			//s.translate(size,size);
-			s.noFill();
-			s.strokeWeight(1.5);
-			s.ellipse(refXX, refYY, siz * 1.4, siz * 1.4);
-			s.strokeWeight(3);
-			s.fill(0);
-			s.stroke(pColors[player - 1][0], pColors[player - 1][1], pColors[player - 1][2], 255);
-			s.ellipse(refXX, refYY, siz * 1.25, siz * 1.25);
-
-			//s.ellipse(refXX,refYY,siz*1.04,siz*1.04);
-			//s.translate(-size,-size);
-			s.fill(pColors[player - 1][0], pColors[player - 1][1], pColors[player - 1][2], 255);
-			//let refXX = wid/2+siz*10.42;
-			//let refYY = siz*1.56;
-			refXX = wid / 2 + siz * 10.92;
-			refYY = siz * 1.56;
-			let propOne = .2;
-			let propTwo = .35;
-			s.strokeWeight(1.5);
-			s.beginShape();
-			s.vertex(refXX, refYY);
-			s.vertex(refXX + siz * propOne, refYY);
-			s.vertex(refXX + siz * propOne, refYY + siz * propTwo);
-			s.vertex(refXX + siz * (propOne + propTwo), refYY + siz * propTwo);
-			s.vertex(refXX + siz * (propOne + propTwo), refYY + siz * (propOne + propTwo));
-			s.vertex(refXX + siz * propOne, refYY + siz * (propOne + propTwo));
-			s.vertex(refXX + siz * propOne, refYY + siz * (propOne + propTwo + propTwo));
-			s.vertex(refXX, refYY + siz * (propOne + propTwo + propTwo));
-			s.vertex(refXX, refYY + siz * (propOne + propTwo));
-			s.vertex(refXX - siz * propTwo, refYY + siz * (propOne + propTwo));
-			s.vertex(refXX - siz * propTwo, refYY + siz * propTwo);
-			s.vertex(refXX, refYY + siz * propTwo);
-			s.vertex(refXX, refYY);
-			s.endShape();
-
-			drawCreditsSymbol(refXX + siz * 2.08, refYY + siz / 2.2, siz, player, 10, pColors);
-			//s.text("Cost",wid/2+siz*12.3,siz*2.45);
-			s.textSize(wid / 37);
-			//s.textFont(standardFont);
-			s.translate(0, siz / 6);
-			//Ray Tracer Button Decoration
-			s.strokeWeight(2);
-			s.stroke(0);
-			s.fill(pColors[player - 1][0], pColors[player - 1][1], pColors[player - 1][2], 255);
-			s.rect(siz * 16.9, siz * 3.15, siz, siz);
-			drawRayTracer(16.9, 3.15, 0, siz, Units["RayTracer"].maxHealth, Units["RayTracer"].maxHealth, pColors);
-			s.fill(255);
-			s.text("Ray Tracer", wid / 2 + siz * 3.75, siz * 4);
-			s.text(Units["RayTracer"].maxHealth, wid / 2 + siz * 10.45, siz * 4);
-			s.stroke(0);
-			s.fill(255);
-
-			s.text(Units["RayTracer"].cost, wid / 2 + siz * 12.85, siz * 4);
-
-			//Oscillator Button Decoration
-			s.translate(0, scale * siz * 1);
-			s.stroke(0);
-			s.fill(pColors[player - 1][0], pColors[player - 1][1], pColors[player - 1][2], 255);
-			s.rect(siz * 16.9, siz * 3.15, siz, siz);
-			drawRedShifter(16.9, 3.15, 0, siz, Units["RedShifter"].maxHealth, Units["RedShifter"].maxHealth, pColors);
-
-			s.fill(255);
-			s.text("Red Shifter", wid / 2 + siz * 3.75, siz * 4);
-			s.text(Units["RedShifter"].maxHealth, wid / 2 + siz * 10.45, siz * 4);
-			s.text(Units["RedShifter"].cost, wid / 2 + siz * 12.85, siz * 4);
-
-
-			s.translate(0, -scale * siz * 1);
-			s.translate(0, scale * siz * 2);
-			s.stroke(0);
-			s.fill(pColors[player - 1][0], pColors[player - 1][1], pColors[player - 1][2], 255);
-			s.rect(siz * 16.9, siz * 3.15, siz, siz);
-			drawOscillator(16.9, 3.15, 0, siz, Units["Oscillator"].maxHealth, Units["Oscillator"].maxHealth, pColors);
-
-
-			s.fill(255);
-			s.text("Oscillator", wid / 2 + siz * 3.75, siz * 4);
-			s.text(Units["Oscillator"].maxHealth, wid / 2 + siz * 10.45, siz * 4);
-			s.text(Units["Oscillator"].cost, wid / 2 + siz * 12.85, siz * 4);
-
-
-			s.translate(0, -scale * siz * 2);
-			//Ballast Button Decoration
-			s.translate(0, scale * siz * 3);
-			s.stroke(0);
-			s.fill(pColors[player - 1][0], pColors[player - 1][1], pColors[player - 1][2], 255);
-			s.rect(siz * 16.9, siz * 3.15, siz, siz);
-			drawBeamSplitter(16.9, 3.15, 0, siz, Units["BeamSplitter"].maxHealth, Units["BeamSplitter"].maxHealth, pColors);
-
-			s.fill(255);
-			s.text("Beam Splitter", wid / 2 + siz * 3.75, siz * 4)
-			s.text(Units["BeamSplitter"].maxHealth, wid / 2 + siz * 10.45, siz * 4)
-			s.text(Units["BeamSplitter"].cost, wid / 2 + siz * 12.85, siz * 4);
-
-			s.translate(0, -scale * siz * 3);
-
-			s.translate(0, scale * siz * 4);
-			s.stroke(0);
-			s.strokeWeight(2);
-			s.fill(pColors[player - 1][0], pColors[player - 1][1], pColors[player - 1][2], 255);
-			s.rect(siz * 16.9, siz * 3.15, siz, siz);
-			drawBallast(16.9, 3.15, 0, siz, Units["Ballast"].maxHealth, Units["Ballast"].maxHealth, pColors);
-
-			s.fill(255);
-			s.text("Ballast", wid / 2 + siz * 3.75, siz * 4)
-			s.text(Units["Ballast"].maxHealth, wid / 2 + siz * 10.45, siz * 4)
-			s.text(Units["Ballast"].cost, wid / 2 + siz * 12.85, siz * 4);
-
-			s.translate(0, -scale * siz * 4);
-			//Juggernode Button Decoration
-			s.translate(0, scale * siz * 5);
-			s.strokeWeight(2);
-			s.stroke(0);
-			s.fill(pColors[player - 1][0], pColors[player - 1][1], pColors[player - 1][2], 255);
-			s.rect(siz * 16.9, siz * 3.15, siz, siz);
-			drawJuggernode(16.9, 3.15, 4, siz, 400, 400, pColors);
-
-			s.fill(255);
-			s.text("Juggernode", wid / 2 + siz * 3.75, siz * 4)
-			s.text(Units["Juggernode"].maxHealth, wid / 2 + siz * 10.45, siz * 4)
-			s.text(Units["Juggernode"].cost, wid / 2 + siz * 12.85, siz * 4);
-
-			s.translate(0, -scale * siz * 5);
-			s.translate(0, scale * siz * 6);
-			s.stroke(0);
-			s.fill(pColors[player - 1][0], pColors[player - 1][1], pColors[player - 1][2], 255);
-			s.rect(siz * 16.9, siz * 3.15, siz, siz);
-			drawTripwire(16.9, 3.15, 0, siz, 400, 400, pColors);
-			s.fill(255);
-			s.text("Tripwire", wid / 2 + siz * 3.75, siz * 4)
-			s.text(Units["Tripwire"].maxHealth, wid / 2 + siz * 10.45, siz * 4)
-			s.text(Units["Tripwire"].cost, wid / 2 + siz * 12.85, siz * 4);
-			s.translate(0, -scale * siz * 6);
-			//Maglev Button Decoration
-			s.translate(0, scale * siz * 7);
-			s.stroke(0);
-			s.strokeWeight(2);
-			s.fill(pColors[player - 1][0], pColors[player - 1][1], pColors[player - 1][2], 255);
-			s.rect(siz * 16.9, siz * 3.15, siz, siz);
-			drawMaglev(16.9, 3.15, 4, siz, 400, 400, pColors);
-			s.fill(255);
-			s.text("Maglev", wid / 2 + siz * 3.75, siz * 4)
-			s.text(Units["Maglev"].maxHealth, wid / 2 + siz * 10.45, siz * 4);
-			s.text(Units["Maglev"].cost, wid / 2 + siz * 12.85, siz * 4);
-			s.noFill();
-			s.translate(0, -scale * siz * 7);
-			//Circuit Breaker Button Decoration
-			s.translate(0, scale * siz * 8);
-			s.stroke(0);
-			s.strokeWeight(2);
-			s.fill(pColors[player - 1][0], pColors[player - 1][1], pColors[player - 1][2], 255);
-			s.rect(siz * 16.9, siz * 3.15, siz, siz);
-			drawResonator(16.9, 3.15, 4, siz, 400, 400, pColors);
-			s.fill(255);
-			s.text("Resonator", wid / 2 + siz * 3.75, siz * 4);
-			s.text(Units["Resonator"].maxHealth, wid / 2 + siz * 10.45, siz * 4);
-			s.text(Units["Resonator"].cost, wid / 2 + siz * 12.85, siz * 4);
-			s.noFill();
-			s.stroke(255);
-			s.translate(0, -scale * siz * 8);
-
-			s.translate(0, scale * siz * 9);
-			s.stroke(0);
-			s.strokeWeight(2);
-			s.fill(pColors[player - 1][0], pColors[player - 1][1], pColors[player - 1][2], 255);
-			s.rect(siz * 16.9, siz * 3.15, siz, siz);
-			drawIntegrator(16.9, 3.15, 4, siz, 400, 400, pColors);
-			s.fill(255);
-			s.text("Integrator", wid / 2 + siz * 3.75, siz * 4)
-			s.text(Units["Integrator"].maxHealth, wid / 2 + siz * 10.45, siz * 4)
-			s.text(Units["Integrator"].cost, wid / 2 + siz * 12.85, siz * 4);
-			s.noFill();
-			s.stroke(255);
-
-			s.translate(0, -scale * siz * 9);
-			s.translate(0, -siz / 6);
-			if (player == 3 || player == 4) {
-				s.translate(wid / 2, 0);
-			}
-
-			//text("Report",28*this.wid/40,3*this.hei/40);
-			//text("H",36*this.wid/40,3*this.hei/40);
-			//text("C",38.5*this.wid/40,3*this.hei/40);
-			s.translate(0, scale / 2);
-		}
-
-		function drawQuarterGrid(grid, pColors, player) {
-			s.stroke(0, opacity);
-			s.strokeWeight(2);
-			let opacity = 227;
-			let rectSize = s.width / 30;
-			let rectSizeY = s.height / 20;
-			for (var i = 0; i < grid.length; i++) {
-				let rectY = i * (s.height / 20);
-				for (var j = 0; j < grid[i].length; j++) {
-					//let rectX = j* s.height / grid.length;
-					let rectX = j * s.width / grid[i].length;
-					if (i <= grid.length / 2 - 1 && j <= grid[i].length / 2 - 1) {
-						s.fill(pColors[0][0], pColors[0][1], pColors[0][2], opacity)
-						if (player == 1) {
-							s.rect(rectX, rectY, rectSize, rectSizeY);
-						}
-					}
-					else if (i >= grid.length / 2 - 1 && j <= grid[i].length / 2 - 1) {
-						s.fill(pColors[1][0], pColors[1][1], pColors[1][2], opacity)
-						if (player == 2) {
-							s.rect(rectX, rectY, rectSize, rectSizeY);
-						}
-					}
-					else if (i <= grid.length / 2 - 1 && j >= grid[i].length / 2 - 1) {
-						s.fill(pColors[2][0], pColors[2][1], pColors[2][2], opacity)
-						if (player == 3) {
-							s.rect(rectX, rectY, rectSize, rectSizeY);
-						}
-					}
-					else if (i >= grid.length / 2 - 1 && j >= grid[i].length / 2 - 1) {
-						s.fill(pColors[3][0], pColors[3][1], pColors[3][2], opacity)
-						if (player == 4) {
-							s.rect(rectX, rectY, rectSize, rectSizeY);
-						}
-					}
-				}
-			}
-		}
-
-
-
-		function drawGrid(wi, he, si, pColors) {
-			s.image(imgTwo, 0, 0, s.height * 1.6, s.height);
-			s.noStroke();
-			let opacity = 227;
-			//s.fill(pColors[0][0],pColors[0][1],pColors[0][2],pColors[0][3]);
-			s.fill(pColors[0][0], pColors[0][1], pColors[0][2], opacity);
-			s.rect(0, 0, wi / 2, he / 2);
-			//s.fill(pColors[1][0],pColors[1][1],pColors[1][2],pColors[1][3]);
-			s.fill(pColors[1][0], pColors[1][1], pColors[1][2], opacity);
-			s.rect(0, he / 2, wi / 2, he / 2);
-			s.fill(pColors[2][0], pColors[2][1], pColors[2][2], opacity);
-			s.rect(wi / 2, 0, wi / 2, he / 2);
-			s.fill(pColors[3][0], pColors[3][1], pColors[3][2], opacity);
-			s.rect(wi / 2, he / 2, wi / 2, he / 2);
-			s.stroke(0, opacity);
-			s.strokeWeight(2);
-			for (let i = 0; i <= 30; i = i + 1) {
-				s.line(si * i, 0, si * i, he);
-			}
-			for (let j = 0; j <= 20; j = j + 1) {
-				s.line(0, j * si, wi, j * si);
-			}
-		}
-
-
-		function drawBase(x, y, player, size, health, max, pColors) {
-			if (player == 1) {
-				s.image(imgThree, x * size, y * size, size - .95, size - .95);
-			}
-			else if (player == 2) {
-				s.image(imgFour, x * size, y * size, size - .95, size - .95);
-			}
-			else if (player == 3) {
-				s.image(imgFive, x * size, y * size, size - .95, size - .95);
-			}
-			else if (player == 4) {
-				s.image(imgSix, x * size, y * size, size - .95, size - .95);
-			}
-		}
-
-		function drawRayTracer(x, y, player, size, health, max, pColors) {
-			s.stroke(0);
-			s.strokeWeight(2);
-			s.translate(x * size + size / 2, y * size + size / 2);
-			let angle = 0;
-			s.rotate(s.radians(angle));
-			s.line(size / 2.5, size / 2.5, size / 6, size / 8);
-			s.line(size / 2.5, size / 2.5, size / 8, size / 6);
-			s.rotate(-s.radians(angle));
-			angle = 90;
-			s.rotate(s.radians(angle));
-			s.line(size / 2.5, size / 2.5, size / 6, size / 8);
-			s.line(size / 2.5, size / 2.5, size / 8, size / 6);
-			s.rotate(-s.radians(angle));
-			angle = 180;
-			s.rotate(s.radians(angle));
-			s.line(size / 2.5, size / 2.5, size / 6, size / 8);
-			s.line(size / 2.5, size / 2.5, size / 8, size / 6);
-			s.rotate(-s.radians(angle));
-			angle = 270;
-			s.rotate(s.radians(angle));
-			s.line(size / 2.5, size / 2.5, size / 6, size / 8);
-			s.line(size / 2.5, size / 2.5, size / 8, size / 6);
-			s.rotate(-s.radians(angle));
-			s.translate(-x * size - size / 2, -y * size - size / 2);
-			s.fill(0);
-			s.ellipse(x * size + size / 2, y * size + size / 2, size / 5, size / 5);
-		}
-
-		function drawRedShifter(x, y, player, size, health, max, pColors) {
-			s.image(imgSeven, size * x + size / 80, size * y + size / 80, size - size / 40, size - size / 40);
-		}
-
-		function drawOscillator(x, y, player, size, health, max, pColors) {
-			//s.translate(0,size/25);
-			s.stroke(0);
-			s.fill(0);
-			s.translate(x * size + size / 2, y * size + size / 2);
-			for (let angle = 0; angle < 360; angle = angle + 120) {
+			function drawGrid(wi, he, si, pColors) {
+				s.image(imgTwo, 0, 0, s.height * 1.6, s.height);
+				s.noStroke();
+				let opacity = 227;
+				//s.fill(pColors[0][0],pColors[0][1],pColors[0][2],pColors[0][3]);
+				s.fill(pColors[0][0], pColors[0][1], pColors[0][2], opacity);
+				s.rect(0, 0, wi / 2, he / 2);
+				//s.fill(pColors[1][0],pColors[1][1],pColors[1][2],pColors[1][3]);
+				s.fill(pColors[1][0], pColors[1][1], pColors[1][2], opacity);
+				s.rect(0, he / 2, wi / 2, he / 2);
+				s.fill(pColors[2][0], pColors[2][1], pColors[2][2], opacity);
+				s.rect(wi / 2, 0, wi / 2, he / 2);
+				s.fill(pColors[3][0], pColors[3][1], pColors[3][2], opacity);
+				s.rect(wi / 2, he / 2, wi / 2, he / 2);
+				s.stroke(0, opacity);
 				s.strokeWeight(2);
-				s.rotate(s.radians(angle));
-				s.scale(1.4);
-				s.triangle(0, size / 10, size / 8, size / 6, -size / 8, size / 6);
-				s.scale(1 / 1.4);
-				s.rotate(-s.radians(angle));
-				//s.strokeWeight(1);
-				s.rotate(s.radians(angle + 30));
-				s.line(0, 0, size / 2.9, 0);
-				//s.line(size/3.5,-size/20,size/3.5,size/20);
-				s.rotate(-s.radians(angle + 30));
-			}
-			s.noFill();
-			s.ellipse(0, 0, size / 1.3, size / 1.3);
-			s.translate(-x * size - size / 2, -y * size - size / 2);
-			//	s.translate(0,-size/25);
-		}
-
-		function drawMaglev(x, y, player, size, health, max, pColors) {
-			s.stroke(0);
-			s.noFill();
-			s.strokeWeight(2);
-			s.beginShape();
-			for (let i = 0; i <= 361; i = i + 20) {
-				s.curveVertex(size / 2 + size * x + (size / 3) * s.sin(7 * s.radians(i) + Math.PI / 2), size / 2 + size * y + (size / 2.5) * s.sin(s.radians(i)));
-			}
-			s.endShape();
-		}
-
-		function drawResonator(x, y, player, size, health, max, pColors) {
-			s.stroke(0);
-			s.strokeWeight(2);
-			s.noFill();
-			s.translate(size * x + size / 2, size * y + size / 2);
-			let c = 0;
-			for (let r = 0; r <= size / 1.3; r = r + size / 6) {
-				s.rotate(c * (Math.PI / 4));
-				s.rect(-r / 2, -r / 2, r, r);
-				s.rotate(-c * (Math.PI / 4));
-				c = c + 1;
-			}
-
-			s.translate(-(size * x + size / 2), -(size * y + size / 2));
-		}
-
-		function drawIntegrator(x, y, player, size, health, max, pColors, life) {
-
-			s.noStroke();
-			for (let r = 0; r < life; r = r + .5) {
-				s.fill(255, 80 - r * 3);
-				s.ellipse(size * x + size / 2, size * y + size / 2 - size / 4, r * size / 9, r * size / 9);
-			}
-			s.fill(0);
-			s.stroke(0);
-			s.strokeWeight(1);
-			s.translate(size * x + size / 2, size * y + size / 2);
-			s.beginShape();
-			s.vertex(-size / 6, size / 2.4);
-			s.vertex(-size / 6, size / 2.45);
-			s.vertex(-size / 7, size / 2.6);
-			s.vertex(size / 7, size / 2.6);
-			s.vertex(size / 6, size / 2.45);
-			s.vertex(size / 6, size / 2.4);
-			s.vertex(-size / 6, size / 2.4);
-			s.endShape();
-			s.strokeWeight(2);
-			for (let l = 2 * size / 12.5; l < size / 1.6; l = l + size / 12.5) {
-				s.line(-size / 12, -size / 6 + l, size / 12, -size / 5 + l);
-			}
-			s.fill(255);
-			s.ellipse(0, -size / 4, size / 2.9, size / 2.9);
-			s.translate(-(size * x + size / 2), -(size * y + size / 2));
-		}
-
-		function drawTripwire(x, y, player, size, health, max, pColors, tripped) {
-			let iconSize = size / 3;
-			s.stroke(0);
-			s.strokeWeight(1);
-			s.fill(0);
-			s.translate(x * size + size / 2, y * size + size / 2);
-			s.translate(0, iconSize / 2);
-			s.triangle(0, -iconSize * 1.6, iconSize * .7, 0, -iconSize * .7, 0);
-			s.ellipse(0, 0, iconSize * 2.2, 10);
-			s.triangle(-iconSize / 1.65, -iconSize / 1, -iconSize, 0, -(s.abs(iconSize - s.abs(iconSize / 1.2))), 0);
-			s.triangle(iconSize / 1.65, -iconSize / 1, +iconSize, 0, (s.abs(iconSize - s.abs(iconSize / 1.2))), 0);
-			s.noStroke();
-			s.stroke(0);
-			s.fill(0);
-			s.line(-iconSize + 1, 0, iconSize - 1, 0);
-			s.noStroke();
-			s.ellipse(0, -iconSize / 4.5, 11, 8);
-			s.ellipse(0, -iconSize / 7, 12, 9);
-			s.stroke(0);
-			s.ellipse(0, -iconSize / 4.5, 11, 8);
-			s.noStroke();
-			s.ellipse(0, -iconSize / 3.2, 12, 6);
-
-			if (tripped) {
-				s.fill(pColors[player - 1][0], pColors[player - 1][1], pColors[player - 1][2], 255);
-			}
-			else {
-				s.fill(255);
-			}
-			s.ellipse(0, -iconSize / 2.3, iconSize / 2, iconSize / 2);
-			s.translate(0, -iconSize / 2);
-			s.translate(-(x * size + size / 2), -(y * size + size / 2));
-		}
-
-		function drawJuggernode(x, y, player, size, health, max, pColors) {
-			s.stroke(0);
-			s.strokeWeight(2);
-			s.translate(x * size + size / 2, y * size + size / 2);
-			for (let angle = 0; angle < 360; angle = angle + 60) {
-				s.rotate(s.radians(angle));
-				s.fill(pColors[player - 1][0], pColors[player - 1][1], pColors[player - 1][2], 255);
-				s.noFill();
-				s.triangle(0, 0, size / 2.7, 0, size * .5 / 2.7, size * .5 / 2.7 * s.sqrt(3));
-				s.fill(0);
-				s.ellipse(size / 2.7, 0, size / 10, size / 10);
-				s.ellipse(size * .5 / 2.7, size * .5 / 2.7 * s.sqrt(3), size / 10, size / 10);
-				s.rotate(-s.radians(angle));
-			}
-			s.fill(0, 255)
-			s.ellipse(0, 0, size / 5, size / 5);
-			s.translate(-x * size - size / 2, -y * size - size / 2);
-		}
-		function drawBeamSplitter(x, y, player, size, health, max, pColors) {
-
-			s.stroke(0);
-			s.strokeWeight(2);
-			s.fill(255);
-			let refy = y * size;
-
-			for (let count = 0; count < 7; count = count + 1) {
-				let r = size * x + size / 6 + count * size / 9
-				s.line(r, refy + size / 6, r - (count - 3) * size / 50, refy + size / 2);
-
-				s.ellipse(r, refy + size / 6, size / 12, size / 12);
-				s.line(r - (count - 3) * size / 50, refy + size / 2, size * x + size / 2, refy + size - size / 7);
-
-			}
-
-		}
-
-		function drawBallast(x, y, player, size, health, max, pColors) {
-			s.fill(0);
-			s.stroke(0);
-			s.strokeWeight(0);
-			s.fill(0);
-			s.ellipse(x * size + size / 2, y * size + 4 * size / 5, size * .65, size * .2);
-			s.beginShape();
-			s.vertex(x * size + 2 * size / 3, y * size + 3 * size / 4);
-			s.vertex(x * size + 3 * size / 4, y * size + size / 2);
-			s.vertex(x * size + size / 2, y * size + size / 8);
-			s.vertex(x * size + size / 4, y * size + size / 2);
-			s.vertex(x * size + size / 3, y * size + 3 * size / 4);
-			s.endShape();
-
-		}
-
-		function titleSequence(width, height, delay, scale) {
-			//Add purple lightning
-			delay = delay / 1.2;
-			s.background(0);
-			s.translate(width / 2, height / 2);
-			s.noStroke();
-			s.noFill();
-			s.stroke(176, 196, 243, 255);
-			s.strokeWeight(2);
-			if (delay < 200) {
-				for (var i = 0; i < delay; i = i + 1) {
-					s.quad(-width / 2 + i * scale, -height / 2 + i * scale, -width / 2 + i * scale, height / 2 - i * scale, width / 2 - i * scale, height / 2 - i * scale, width / 2 - i * scale, -height / 2 + i * scale);
+				for (let i = 0; i <= 30; i = i + 1) {
+					s.line(si * i, 0, si * i, he);
 				}
-			}
-			else {
-				for (var i = 0; i < 200; i = i + 1) {
-					s.quad(-width / 2 + i * scale, -height / 2 + i * scale, -width / 2 + i * scale, height / 2 - i * scale, width / 2 - i * scale, height / 2 - i * scale, width / 2 - i * scale, -height / 2 + i * scale);
+				for (let j = 0; j <= 20; j = j + 1) {
+					s.line(0, j * si, wi, j * si);
 				}
 			}
 
 
-			for (var angle = delay * 3; angle < delay * 3 + 360; angle = angle + 30) {
-				let titleX = (height / 3 + 90 * s.cos(3.14 * s.radians(delay))) * s.cos(s.radians(angle)) - 0;
-				let titleY = (height / 3 + 2 * s.tan(3.14 * s.radians(delay / 20))) * s.sin(s.radians(angle)) + 0;
-				s.noStroke();
-				for (let o = 255; o > 0; o = o - 5) {
-					s.fill(152, 255, 152, o);
-					s.ellipse(titleX * 1.2, titleY, height / 12 - o * height / (255 * 12), height / 12 - o * height / (255 * 12));
+			function drawBase(x, y, player, size, health, max, pColors) {
+				if (player == 1) {
+					s.image(imgThree, x * size, y * size, size - .95, size - .95);
+				}
+				else if (player == 2) {
+					s.image(imgFour, x * size, y * size, size - .95, size - .95);
+				}
+				else if (player == 3) {
+					s.image(imgFive, x * size, y * size, size - .95, size - .95);
+				}
+				else if (player == 4) {
+					s.image(imgSix, x * size, y * size, size - .95, size - .95);
 				}
 			}
-			s.translate(-width / 2, -height / 2);
-			s.background(0, 255 - delay * 7);
 
-		}
-
-		function drawRayTracerProjectile(x, y, player, size, pColors, orient, a) {
-			let refx = x * size;
-			let refy = y * size;
-			s.stroke(0)
-			s.strokeWeight(2);
-			let projSize = size / 5;
-			s.fill(pColors[player - 1][0], pColors[player - 1][1], pColors[player - 1][2], 255);
-			if (orient[0] == 0 && orient[1] == 1) {
-				s.ellipse(refx + size / 2, refy + (a + 1) * size / 10, projSize, projSize);
-			}
-			else if (orient[0] == 0 && orient[1] == -1) {
-				s.ellipse(refx + size / 2, refy + size - (a + 1) * size / 10, projSize, projSize);
-			}
-			else if (orient[0] == 1 && orient[1] == 0) {
-				s.ellipse(refx + (a + 1) * size / 10, refy + size / 2, projSize, projSize);
-			}
-			else if (orient[0] == -1 && orient[1] == 0) {
-				s.ellipse(refx + size - (a + 1) * size / 10, refy + size / 2, projSize, projSize);
-			}
-		}
-		function drawRedShifterProjectile(x, y, player, size, pColors, orient, damage, distance, a) {
-			let refx = x * size + size / 2;
-			let refy = y * size + size / 2;
-			s.stroke(0);
-			s.strokeWeight(1);
-
-			let arrowSize = size / 8;
-			let diag = s.abs(orient[1] + orient[0]) - 1;
-			s.translate(refx, refy);
-
-			s.translate(orient[0] * a * size / 10, orient[1] * a * size / 10);
-			if (orient[0] == 0 && s.abs(orient[1]) == 1) {
-				s.rotate(orient[1] * s.radians(90));
-			}
-			else if (orient[0] == -1 && orient[1] == 0) {
-				s.rotate(s.radians(180))
-			}
-			else if (orient[0] == 1 && orient[1] == 1) {
-				s.rotate(s.radians(45))
-			}
-			else if (orient[0] == 1 && orient[1] == -1) {
-				s.rotate(-s.radians(45))
-			}
-			else if (orient[0] == -1 && orient[1] == 1) {
-				s.rotate(s.radians(135))
-			}
-			else if (orient[0] == -1 && orient[1] == -1) {
-				s.rotate(-s.radians(135))
-			}
-			//s.rotate(s.radians(90)+orient[1]*s.radians(0)-orient[0]*s.radians(90)-diag*orient[0]*s.radians(45));
-			s.noFill();
-			for (let l = 0; l < distance; l = l + 2) {
-				s.arc(0 - (l + 1) * size / 25, 0, size / (5), (31 - l) * size / (150), -s.PI / 3, s.PI / 3);
-			}
-			if (damage > 0) {
-				s.fill(pColors[player - 1][0], pColors[player - 1][1], pColors[player - 1][2], 255);
-			} else {
-				s.fill(0);
-			}
-			s.beginShape();
-			s.vertex(0, 0 - arrowSize);
-			s.vertex(0 + size / 4, 0);
-			s.vertex(0, 0 + arrowSize);
-			s.vertex(0 + size / 10, 0);
-			s.vertex(0, 0 - arrowSize);
-			s.endShape();
-
-			//s.rotate(-s.radians(90)-orient[1]*s.radians(0)+orient[0]*s.radians(90)+diag*orient[0]*s.radians(45));
-			if (orient[0] == 0 && s.abs(orient[1]) == 1) {
-				s.rotate(-orient[1] * s.radians(90));
-			}
-			else if (orient[0] == -1 && orient[1] == 0) {
-				s.rotate(-s.radians(180))
-			}
-			else if (orient[0] == 1 && orient[1] == 1) {
-				s.rotate(-s.radians(45))
-			}
-			else if (orient[0] == 1 && orient[1] == -1) {
-				s.rotate(s.radians(45))
-			}
-			else if (orient[0] == -1 && orient[1] == 1) {
-				s.rotate(-s.radians(135))
-			}
-			else if (orient[0] == -1 && orient[1] == -1) {
-				s.rotate(s.radians(135))
-			}
-			s.translate(-(orient[0] * a * size / 10), -(orient[1] * a * size / 10));
-
-			s.translate(-refx, -refy);
-
-
-		}
-
-
-		function drawOscillatorProjectile(x, y, player, size, pColors, orient, a) {
-			let refx = x * size + size / 2;
-			let refy = y * size + size / 2;
-			s.stroke(0, 255);
-			s.strokeWeight(1.5);
-			for (let i = -size / 3; i <= size / 3; i = i + size / 9) {
-				s.line(refx + i, refy - .75 * (s.abs(i) - size / 3), refx + i, refy + .75 * (s.abs(i) - size / 3));
-			}
-			s.stroke(pColors[player - 1][0], pColors[player - 1][1], pColors[player - 1][2], 255);
-			s.strokeWeight(1.25 - s.abs((a - 4.5)) / 9);
-			for (let i = -size / 3; i <= size / 3; i = i + size / 9) {
-				s.line(refx + i, refy - .75 * (s.abs(i) - size / 3), refx + i, refy + .75 * (s.abs(i) - size / 3));
-			}
-		}
-
-		function drawMaglevProjectile(x, y, player, size, pColors, orient, damage, a) {
-			let refx = x * size;
-			let refy = y * size;
-			let scalar = size / 4;
-			s.fill(pColors[player - 1][0], pColors[player - 1][1], pColors[player - 1][2], damage * 5);
-			s.stroke(0, 255);
-			s.strokeWeight(2);
-			//s.noStroke();
-			s.beginShape();
-			for (let angle = 0; angle <= 360; angle = angle + 20) {
-				//s.rect(refx,refy,size,size);
-				s.curveVertex(refx + size / 2 + orient[0] * a * size / 10 + scalar * s.cos(s.radians(angle)) * s.cos(s.radians(angle)) * s.cos(s.radians(angle)), refy + size / 2 + orient[1] * a * size / 10 + scalar * s.sin(s.radians(angle)) * s.sin(s.radians(angle)) * s.sin(s.radians(angle)));
-			}
-			s.endShape();
-		}
-		function drawBeamSplitterProjectile(x, y, player, size, pColors, orient, damage, a) {
-			let refx = x * size + size / 2;
-			let refy = y * size + size / 2;
-			let starterAngle = 0;
-			if (player == 1) {
-				starterAngle = 45;
-			}
-			else if (player == 2) {
-				starterAngle = 135;
-			}
-			else if (player == 3) {
-				starterAngle = 315;
-			}
-			else if (player == 4) {
-				starterAngle = 225;
-			}
-			let scalar = size / 4;
-			s.fill(pColors[player - 1][0], pColors[player - 1][1], pColors[player - 1][2], 100);
-			s.stroke(0, 255);
-			s.strokeWeight(1);
-			s.translate(refx + orient[0] * (a - 5) * size / 10, refy + orient[1] * (a - 5) * size / 10);
-
-			s.rotate(s.radians(-starterAngle));
-			if (player == 1 || player == 4) {
-				s.rotate(s.radians((s.abs(orient[1]) - s.abs(orient[0])) * 45));
-			}
-			else {
-
-				s.rotate(s.radians(-(s.abs(orient[1]) - s.abs(orient[0])) * 45));
-			}
-			for (let r = size / 2.5; r > 0; r = r - size / 12) {
-				s.arc(0, -size + r, r, r, 0, Math.PI);
-			}
-			if (player == 1 || player == 4) {
-				s.rotate(s.radians(-(s.abs(orient[1]) - s.abs(orient[0])) * 45));
-			}
-			else {
-				s.rotate(s.radians((s.abs(orient[1]) - s.abs(orient[0])) * 45));
-			}
-			s.rotate(s.radians(starterAngle));
-			s.translate(-(refx + orient[0] * (a - 5) * size / 10), -(refy + orient[1] * (a - 5) * size / 10));
-
-		}
-
-
-		function drawTripwireProjectile(x, y, player, size, pColors, orient, damage, a) {
-			s.fill(pColors[player - 1][0], pColors[player - 1][1], pColors[player - 1][2], 155);
-			s.stroke(0, 255);
-			let refx = x * size + size / 2 + orient[0] * (a - 5) * size / 10;
-			let refy = y * size + size / 2 + orient[1] * (a - 5) * size / 10;
-
-			s.translate(refx, refy);
-			for (let angle = 0; angle < 360; angle = angle + 60) {
-				s.rotate(s.radians(angle));
-				let endX;
-				let endY;
-				let xx = 0
-				let yy = 0;
-				while (yy < size / 10) {//to bottom of screen
-					endX = xx + s.random(-size / 10, size / 10); //x-value varies
-					endY = yy + size / 40;    //y just goes up
-					s.strokeWeight(1);//bolt is a little thicker than a line
-					s.stroke(255); //white line
-					s.line(xx, yy, endX, endY);//draw a tiny segment
-					xx = endX;  //then x and y are moved to the
-					yy = endY;  //end of the segment and so on
-				}
-				s.rotate(-s.radians(angle));
-			}
-			s.stroke(0, 255);
-			s.ellipse(0, 0, size / 4, size / 4);
-			s.translate(-refx, -refy);
-
-
-		}
-
-
-		function drawJuggernodeProjectile(x, y, player, size, pColors, orient, damage, a) {
-			let refx = x * size;
-			let refy = y * size;
-
-			s.noFill();
-			s.stroke(0);
-			s.strokeWeight(3);
-			s.beginShape();
-			let xAdd = 0;
-			let yAdd = 0;
-			if (orient[1] == -1) {
-				yAdd = size;
-			}
-			if (orient[0] == -1) {
-				xAdd = size;
-			}
-			for (let i = a; i <= (a + 8); i = i + .05) {
-				s.curveVertex(refx + xAdd + orient[0] * i * (size / 10) - orient[0] * (size / 10) * s.cos(s.radians(i * 180)), refy + yAdd + orient[1] * i * size / 10 + orient[1] * (size / 10) * s.cos(s.radians(i * 180)));
-			}
-			s.endShape();
-			s.strokeWeight(2);
-			s.stroke(pColors[player - 1][0], pColors[player - 1][1], pColors[player - 1][2], 255);
-			s.beginShape();
-			for (let i = a; i <= (a + 8); i = i + .05) {
-				s.curveVertex(refx + xAdd + orient[0] * i * (size / 10) - orient[0] * (size / 10) * s.cos(s.radians(i * 180)), refy + yAdd + orient[1] * i * size / 10 + orient[1] * (size / 10) * s.cos(s.radians(i * 180)));
-			}
-			s.endShape();
-			//s.ellipse(refx,refy,size,size);
-		}
-		function drawBallastProjectile(x, y, player, size, pColors, damage, a) {
-			let refx = x * size;
-			let refy = y * size;
-			s.stroke(pColors[player - 1][0], pColors[player - 1][1], pColors[player - 1][2], 115);
-			s.strokeWeight(1);
-			let amp = size / (20 + 2 * s.abs(5 - a));
-			let n = 20 + s.abs(5 - a) / 50;
-			s.noFill();
-			s.strokeWeight(2);
-			s.stroke(0, 255);
-			s.translate(refx + size / 2, refy + size / 2);
-			s.beginShape();
-			s.curveVertex((size / 3 + (amp) * s.sin(n * s.radians(0))) * s.cos(s.radians(0)), (size / 3 + (amp) * s.sin(n * s.radians(0))) * s.sin(s.radians(0)));
-			for (let angle = 0; angle <= 360; angle = angle + 5) {
-				s.curveVertex((size / 3 + (amp) * s.sin(n * s.radians(angle))) * s.cos(s.radians(angle)), (size / 3 + (amp) * s.sin(n * s.radians(angle))) * s.sin(s.radians(angle)));
-			}
-			s.curveVertex((size / 3 + (amp) * s.sin(n * s.radians(0))) * s.cos(s.radians(0)), (size / 3 + (amp) * s.sin(n * s.radians(0))) * s.sin(s.radians(0)));
-
-			s.endShape();
-			s.strokeWeight(1);
-			s.stroke(pColors[player - 1][0], pColors[player - 1][1], pColors[player - 1][2], 255);
-			s.beginShape();
-			s.curveVertex((size / 3 + (amp) * s.sin(n * s.radians(0))) * s.cos(s.radians(0)), (size / 3 + (amp) * s.sin(n * s.radians(0))) * s.sin(s.radians(0)));
-
-			for (let angle = 0; angle <= 360; angle = angle + 5) {
-				s.curveVertex((size / 3 + (amp) * s.sin(n * s.radians(angle))) * s.cos(s.radians(angle)), (size / 3 + (amp) * s.sin(n * s.radians(angle))) * s.sin(s.radians(angle)));
-			}
-			s.curveVertex((size / 3 + (amp) * s.sin(n * s.radians(0))) * s.cos(s.radians(0)), (size / 3 + (amp) * s.sin(n * s.radians(0))) * s.sin(s.radians(0)));
-
-			s.endShape();
-			s.translate(-(refx + size / 2), -(refy + size / 2));
-
-		}
-
-		function drawResonatorProjectile(x, y, player, size, pColors, orient, damage, a) {
-			s.strokeWeight(1);
-			s.fill(pColors[player - 1][0], pColors[player - 1][1], pColors[player - 1][2], 105);
-			let crossHairOffset = size / 5;
-
-			if (damage == 0) {
-				s.translate(((a - 5) * size / 10) * orient[0], ((a - 5) * size / 10) * orient[1]);
-				s.strokeWeight(2)
-				s.stroke(255, 185);
-				s.ellipse(x * size + size / 2, y * size + size / 2, size / 20, size / 20);
-				s.line(x * size + size / 2, y * size + size / 2 - size / 20, x * size + size / 2, y * size + size / 2 - crossHairOffset);
-				s.line(x * size + size / 2 - size / 20, y * size + size / 2, x * size + size / 2 - crossHairOffset, y * size + size / 2);
-				s.line(x * size + size / 2, y * size + size / 2 + size / 20, x * size + size / 2, y * size + size / 2 + crossHairOffset);
-				s.line(x * size + size / 2 + size / 20, y * size + size / 2, x * size + size / 2 + crossHairOffset, y * size + size / 2);
-				s.strokeWeight(1)
-				s.stroke(pColors[player - 1][0], pColors[player - 1][1], pColors[player - 1][2], 185);
-				s.ellipse(x * size + size / 2, y * size + size / 2, size / 20, size / 20);
-				s.line(x * size + size / 2, y * size + size / 2 - size / 20, x * size + size / 2, y * size + size / 2 - crossHairOffset);
-				s.line(x * size + size / 2 - size / 20, y * size + size / 2, x * size + size / 2 - crossHairOffset, y * size + size / 2);
-				s.line(x * size + size / 2, y * size + size / 2 + size / 20, x * size + size / 2, y * size + size / 2 + crossHairOffset);
-				s.line(x * size + size / 2 + size / 20, y * size + size / 2, x * size + size / 2 + crossHairOffset, y * size + size / 2);
-				s.translate(-((a - 5) * size / 10) * orient[0], -((a - 5) * size / 10) * orient[1]);
-			}
-			else {
-				s.noStroke();
-
-				s.fill(pColors[player - 1][0], pColors[player - 1][1], pColors[player - 1][2], 155 * (4.5 - s.abs(4.5 - a)) / 4.5);
-
-				s.rect(x * size, y * size, size, size);
-			}
-		}
-
-		function drawIntegratorProjectile(x, y, player, size, pColors, orient, damage, a) {
-			s.strokeWeight(1);
-			let refx = x * size + size / 2;
-			let refy = y * size + size / 2;
-			let projSize = size / 6;
-			let length = 4;
-			a = a * 2 - 9
-			s.fill(pColors[player - 1][0], pColors[player - 1][1], pColors[player - 1][2], 255);
-			if (s.abs(orient[0]) == 2) {
-				if (a > 4 && a < 10) {
-					s.strokeWeight(3);
-					s.stroke(pColors[player - 1][0], pColors[player - 1][1], pColors[player - 1][2], 100);
-					s.line(refx + (orient[0] / 2) * (a) * size / 10 - size / 2, refy - orient[1] * size / 4 + orient[1] * (a) * size / 20, refx + (orient[0] / 2) * (a + length) * size / 10 - size / 2, refy - orient[1] * size / 4 + orient[1] * (a + length) * size / 20);
-				}
-				s.strokeWeight(1);
+			function drawRayTracer(x, y, player, size, health, max, pColors) {
 				s.stroke(0);
-				s.line(refx + (orient[0] / 2) * (a) * size / 10 - size / 2, refy - orient[1] * size / 4 + orient[1] * (a) * size / 20, refx + (orient[0] / 2) * (a + length) * size / 10 - size / 2, refy - orient[1] * size / 4 + orient[1] * (a + length) * size / 20);
-				//s.ellipse(refx+(orient[0]/2)*(a)*size/10-size/2,refy-orient[1]*size/4+orient[1]*(a)*size/20,projSize,projSize);
+				s.strokeWeight(2);
+				s.translate(x * size + size / 2, y * size + size / 2);
+				let angle = 0;
+				s.rotate(s.radians(angle));
+				s.line(size / 2.5, size / 2.5, size / 6, size / 8);
+				s.line(size / 2.5, size / 2.5, size / 8, size / 6);
+				s.rotate(-s.radians(angle));
+				angle = 90;
+				s.rotate(s.radians(angle));
+				s.line(size / 2.5, size / 2.5, size / 6, size / 8);
+				s.line(size / 2.5, size / 2.5, size / 8, size / 6);
+				s.rotate(-s.radians(angle));
+				angle = 180;
+				s.rotate(s.radians(angle));
+				s.line(size / 2.5, size / 2.5, size / 6, size / 8);
+				s.line(size / 2.5, size / 2.5, size / 8, size / 6);
+				s.rotate(-s.radians(angle));
+				angle = 270;
+				s.rotate(s.radians(angle));
+				s.line(size / 2.5, size / 2.5, size / 6, size / 8);
+				s.line(size / 2.5, size / 2.5, size / 8, size / 6);
+				s.rotate(-s.radians(angle));
+				s.translate(-x * size - size / 2, -y * size - size / 2);
+				s.fill(0);
+				s.ellipse(x * size + size / 2, y * size + size / 2, size / 5, size / 5);
 			}
-			else {
-				if (a > 4 && a < 10) {
+
+			function drawRedShifter(x, y, player, size, health, max, pColors) {
+				s.image(imgSeven, size * x + size / 80, size * y + size / 80, size - size / 40, size - size / 40);
+			}
+
+			function drawOscillator(x, y, player, size, health, max, pColors) {
+				//s.translate(0,size/25);
+				s.stroke(0);
+				s.fill(0);
+				s.translate(x * size + size / 2, y * size + size / 2);
+				for (let angle = 0; angle < 360; angle = angle + 120) {
 					s.strokeWeight(2);
-					s.stroke(pColors[player - 1][0], pColors[player - 1][1], pColors[player - 1][2], 155);
-					s.line(refx - (orient[0]) * size / 4 + orient[0] * (a) * size / 20, refy + (orient[1] / 2) * (a) * size / 10 - size / 2, refx - (orient[0]) * size / 4 + orient[0] * (a + length) * size / 20, refy + (orient[1] / 2) * (a + length) * size / 10 - size / 2);
+					s.rotate(s.radians(angle));
+					s.scale(1.4);
+					s.triangle(0, size / 10, size / 8, size / 6, -size / 8, size / 6);
+					s.scale(1 / 1.4);
+					s.rotate(-s.radians(angle));
+					//s.strokeWeight(1);
+					s.rotate(s.radians(angle + 30));
+					s.line(0, 0, size / 2.9, 0);
+					//s.line(size/3.5,-size/20,size/3.5,size/20);
+					s.rotate(-s.radians(angle + 30));
 				}
-				s.strokeWeight(1);
+				s.noFill();
+				s.ellipse(0, 0, size / 1.3, size / 1.3);
+				s.translate(-x * size - size / 2, -y * size - size / 2);
+				//	s.translate(0,-size/25);
+			}
+
+			function drawMaglev(x, y, player, size, health, max, pColors) {
 				s.stroke(0);
-				s.line(refx - (orient[0]) * size / 4 + orient[0] * (a) * size / 20, refy + (orient[1] / 2) * (a) * size / 10 - size / 2, refx - (orient[0]) * size / 4 + orient[0] * (a + length) * size / 20, refy + (orient[1] / 2) * (a + length) * size / 10 - size / 2);
-				//s.ellipse(refx-(orient[0])*size/4+orient[0]*(a)*size/20,refy+(orient[1]/2)*(a)*size/10-size/2,projSize,projSize);
+				s.noFill();
+				s.strokeWeight(2);
+				s.beginShape();
+				for (let i = 0; i <= 361; i = i + 20) {
+					s.curveVertex(size / 2 + size * x + (size / 3) * s.sin(7 * s.radians(i) + Math.PI / 2), size / 2 + size * y + (size / 2.5) * s.sin(s.radians(i)));
+				}
+				s.endShape();
 			}
 
-		}
+			function drawResonator(x, y, player, size, health, max, pColors) {
+				s.stroke(0);
+				s.strokeWeight(2);
+				s.noFill();
+				s.translate(size * x + size / 2, size * y + size / 2);
+				let c = 0;
+				for (let r = 0; r <= size / 1.3; r = r + size / 6) {
+					s.rotate(c * (Math.PI / 4));
+					s.rect(-r / 2, -r / 2, r, r);
+					s.rotate(-c * (Math.PI / 4));
+					c = c + 1;
+				}
 
-
-		function drawCreditsSymbol(x, y, size, player, a, pColors) {
-			s.stroke(0);
-			s.strokeWeight(2);
-			s.fill(pColors[player - 1][0], pColors[player - 1][1], pColors[player - 1][2], 255);
-			s.translate(x, y);
-			for (let angle = 45; angle < 360; angle = angle + 90) {
-				s.rotate(s.radians(angle));
-				s.rect(size / 2, -size / 10, size / 3.5, size / 5);
-				s.rotate(-s.radians(angle));
+				s.translate(-(size * x + size / 2), -(size * y + size / 2));
 			}
-			s.translate(-x, -y);
-			s.noFill();
-			s.stroke(0);
-			s.ellipse(x, y, size, size);
-			s.stroke(pColors[player - 1][0], pColors[player - 1][1], pColors[player - 1][2], 255);
-			s.ellipse(x, y, size * .875, size * .875);
-			s.stroke(0);
-			s.fill(0);
-			s.ellipse(x, y, size * .75, size * .75);
-			s.noStroke();
-			s.fill(pColors[player - 1][0], pColors[player - 1][1], pColors[player - 1][2], 255);
-			s.translate(x, y);
-			for (let angle = 45; angle < 360; angle = angle + 90) {
-				s.rotate(s.radians(angle));
-				s.rect(size / 2.3, -size / 10.6, size / 3.5, size / 5.3);
-				s.rotate(-s.radians(angle));
-			}
-			s.stroke(0);
 
-			s.fill(pColors[player - 1][0], pColors[player - 1][1], pColors[player - 1][2], 255);
+			function drawIntegrator(x, y, player, size, health, max, pColors, life) {
 
-			s.strokeWeight(1);
-			s.noStroke();
-			size = size * 1.05;
-			s.beginShape();
-			s.vertex(0, size * .25);
-			s.vertex(-size * .2, -size * .2);
-			s.vertex(-size * .1, -size * .2);
-			s.vertex(0, size * .05);
-			s.vertex(size * .08, -size * .11);
-			s.vertex(size * .02, -size * .11);
-			s.vertex(size * .19, -size * .27);
-			s.vertex(size * .15, -size * .17);
-			s.vertex(size * .22, -size * .17);
-			s.vertex(0, size * .25);
-			s.endShape();
-			s.translate(-x, -y);
-		}
-
-		function drawCollision(x, y, size, proj, a, pColors) {
-			let player = proj.player;
-			let refx = x * size + size / 2;
-			let refy = y * size + size / 2;
-			s.noTint();
-			s.noFill();
-			let theta = 0;
-			let phase = 0;
-			let meh = 0;
-			let osx = 0;
-			let osy = 0;
-			let wave = Math.floor(proj.damage) + 3;
-			let rad = 360;
-			let radius = size / 25;
-			for (let i = 0; i < rad; i = i + 18) {
-				s.stroke(pColors[player - 1][0], pColors[player - 1][1], pColors[player - 1][2], 25 + 2 * s.abs(a - 4.5));
-				theta = i * (360 / rad);
-				phase = ((Math.PI) / rad);
-				meh = (radius * 1.8 + 11.5) * s.sin(wave * theta + phase) * s.cos(phase);
-				osx = (size / 25 + meh) * s.cos(theta);
-				osy = (size / 25 + meh) * s.sin(theta);
-				s.strokeWeight(8);
-				s.point(osx + refx, osy + refy);
-				s.strokeWeight(6);
-				s.point(osx + refx, osy + refy);
-				s.strokeWeight(3);
-				s.point(osx + refx, osy + refy);
-				s.stroke(255, 160 - 17 * s.abs(a - 4.5));
+				s.noStroke();
+				for (let r = 0; r < life; r = r + .5) {
+					s.fill(255, 80 - r * 3);
+					s.ellipse(size * x + size / 2, size * y + size / 2 - size / 4, r * size / 9, r * size / 9);
+				}
+				s.fill(0);
+				s.stroke(0);
 				s.strokeWeight(1);
-				s.point(osx + refx, osy + refy);
+				s.translate(size * x + size / 2, size * y + size / 2);
+				s.beginShape();
+				s.vertex(-size / 6, size / 2.4);
+				s.vertex(-size / 6, size / 2.45);
+				s.vertex(-size / 7, size / 2.6);
+				s.vertex(size / 7, size / 2.6);
+				s.vertex(size / 6, size / 2.45);
+				s.vertex(size / 6, size / 2.4);
+				s.vertex(-size / 6, size / 2.4);
+				s.endShape();
+				s.strokeWeight(2);
+				for (let l = 2 * size / 12.5; l < size / 1.6; l = l + size / 12.5) {
+					s.line(-size / 12, -size / 6 + l, size / 12, -size / 5 + l);
+				}
+				s.fill(255);
+				s.ellipse(0, -size / 4, size / 2.9, size / 2.9);
+				s.translate(-(size * x + size / 2), -(size * y + size / 2));
 			}
+
+			function drawTripwire(x, y, player, size, health, max, pColors, tripped) {
+				let iconSize = size / 3;
+				s.stroke(0);
+				s.strokeWeight(1);
+				s.fill(0);
+				s.translate(x * size + size / 2, y * size + size / 2);
+				s.translate(0, iconSize / 2);
+				s.triangle(0, -iconSize * 1.6, iconSize * .7, 0, -iconSize * .7, 0);
+				s.ellipse(0, 0, iconSize * 2.2, 10);
+				s.triangle(-iconSize / 1.65, -iconSize / 1, -iconSize, 0, -(s.abs(iconSize - s.abs(iconSize / 1.2))), 0);
+				s.triangle(iconSize / 1.65, -iconSize / 1, +iconSize, 0, (s.abs(iconSize - s.abs(iconSize / 1.2))), 0);
+				s.noStroke();
+				s.stroke(0);
+				s.fill(0);
+				s.line(-iconSize + 1, 0, iconSize - 1, 0);
+				s.noStroke();
+				s.ellipse(0, -iconSize / 4.5, 11, 8);
+				s.ellipse(0, -iconSize / 7, 12, 9);
+				s.stroke(0);
+				s.ellipse(0, -iconSize / 4.5, 11, 8);
+				s.noStroke();
+				s.ellipse(0, -iconSize / 3.2, 12, 6);
+
+				if (tripped) {
+					s.fill(pColors[player - 1][0], pColors[player - 1][1], pColors[player - 1][2], 255);
+				}
+				else {
+					s.fill(255);
+				}
+				s.ellipse(0, -iconSize / 2.3, iconSize / 2, iconSize / 2);
+				s.translate(0, -iconSize / 2);
+				s.translate(-(x * size + size / 2), -(y * size + size / 2));
+			}
+
+			function drawJuggernode(x, y, player, size, health, max, pColors) {
+				s.stroke(0);
+				s.strokeWeight(2);
+				s.translate(x * size + size / 2, y * size + size / 2);
+				for (let angle = 0; angle < 360; angle = angle + 60) {
+					s.rotate(s.radians(angle));
+					s.fill(pColors[player - 1][0], pColors[player - 1][1], pColors[player - 1][2], 255);
+					s.noFill();
+					s.triangle(0, 0, size / 2.7, 0, size * .5 / 2.7, size * .5 / 2.7 * s.sqrt(3));
+					s.fill(0);
+					s.ellipse(size / 2.7, 0, size / 10, size / 10);
+					s.ellipse(size * .5 / 2.7, size * .5 / 2.7 * s.sqrt(3), size / 10, size / 10);
+					s.rotate(-s.radians(angle));
+				}
+				s.fill(0, 255)
+				s.ellipse(0, 0, size / 5, size / 5);
+				s.translate(-x * size - size / 2, -y * size - size / 2);
+			}
+			function drawBeamSplitter(x, y, player, size, health, max, pColors) {
+
+				s.stroke(0);
+				s.strokeWeight(2);
+				s.fill(255);
+				let refy = y * size;
+
+				for (let count = 0; count < 7; count = count + 1) {
+					let r = size * x + size / 6 + count * size / 9
+					s.line(r, refy + size / 6, r - (count - 3) * size / 50, refy + size / 2);
+
+					s.ellipse(r, refy + size / 6, size / 12, size / 12);
+					s.line(r - (count - 3) * size / 50, refy + size / 2, size * x + size / 2, refy + size - size / 7);
+
+				}
+
+			}
+
+			function drawBallast(x, y, player, size, health, max, pColors) {
+				s.fill(0);
+				s.stroke(0);
+				s.strokeWeight(0);
+				s.fill(0);
+				s.ellipse(x * size + size / 2, y * size + 4 * size / 5, size * .65, size * .2);
+				s.beginShape();
+				s.vertex(x * size + 2 * size / 3, y * size + 3 * size / 4);
+				s.vertex(x * size + 3 * size / 4, y * size + size / 2);
+				s.vertex(x * size + size / 2, y * size + size / 8);
+				s.vertex(x * size + size / 4, y * size + size / 2);
+				s.vertex(x * size + size / 3, y * size + 3 * size / 4);
+				s.endShape();
+
+			}
+
+			function titleSequence(width, height, delay, scale) {
+				//Add purple lightning
+				delay = delay / 1.2;
+				s.background(0);
+				s.translate(width / 2, height / 2);
+				s.noStroke();
+				s.noFill();
+				s.stroke(176, 196, 243, 255);
+				s.strokeWeight(2);
+				if (delay < 200) {
+					for (var i = 0; i < delay; i = i + 1) {
+						s.quad(-width / 2 + i * scale, -height / 2 + i * scale, -width / 2 + i * scale, height / 2 - i * scale, width / 2 - i * scale, height / 2 - i * scale, width / 2 - i * scale, -height / 2 + i * scale);
+					}
+				}
+				else {
+					for (var i = 0; i < 200; i = i + 1) {
+						s.quad(-width / 2 + i * scale, -height / 2 + i * scale, -width / 2 + i * scale, height / 2 - i * scale, width / 2 - i * scale, height / 2 - i * scale, width / 2 - i * scale, -height / 2 + i * scale);
+					}
+				}
+
+
+				for (var angle = delay * 3; angle < delay * 3 + 360; angle = angle + 30) {
+					let titleX = (height / 3 + 90 * s.cos(3.14 * s.radians(delay))) * s.cos(s.radians(angle)) - 0;
+					let titleY = (height / 3 + 2 * s.tan(3.14 * s.radians(delay / 20))) * s.sin(s.radians(angle)) + 0;
+					s.noStroke();
+					for (let o = 255; o > 0; o = o - 5) {
+						s.fill(152, 255, 152, o);
+						s.ellipse(titleX * 1.2, titleY, height / 12 - o * height / (255 * 12), height / 12 - o * height / (255 * 12));
+					}
+				}
+				s.translate(-width / 2, -height / 2);
+				s.background(0, 255 - delay * 7);
+
+			}
+
+			function drawRayTracerProjectile(x, y, player, size, pColors, orient, a) {
+				let refx = x * size;
+				let refy = y * size;
+				s.stroke(0)
+				s.strokeWeight(2);
+				let projSize = size / 5;
+				s.fill(pColors[player - 1][0], pColors[player - 1][1], pColors[player - 1][2], 255);
+				if (orient[0] == 0 && orient[1] == 1) {
+					s.ellipse(refx + size / 2, refy + (a + 1) * size / 10, projSize, projSize);
+				}
+				else if (orient[0] == 0 && orient[1] == -1) {
+					s.ellipse(refx + size / 2, refy + size - (a + 1) * size / 10, projSize, projSize);
+				}
+				else if (orient[0] == 1 && orient[1] == 0) {
+					s.ellipse(refx + (a + 1) * size / 10, refy + size / 2, projSize, projSize);
+				}
+				else if (orient[0] == -1 && orient[1] == 0) {
+					s.ellipse(refx + size - (a + 1) * size / 10, refy + size / 2, projSize, projSize);
+				}
+			}
+			function drawRedShifterProjectile(x, y, player, size, pColors, orient, damage, distance, a) {
+				let refx = x * size + size / 2;
+				let refy = y * size + size / 2;
+				s.stroke(0);
+				s.strokeWeight(1);
+
+				let arrowSize = size / 8;
+				let diag = s.abs(orient[1] + orient[0]) - 1;
+				s.translate(refx, refy);
+
+				s.translate(orient[0] * a * size / 10, orient[1] * a * size / 10);
+				if (orient[0] == 0 && s.abs(orient[1]) == 1) {
+					s.rotate(orient[1] * s.radians(90));
+				}
+				else if (orient[0] == -1 && orient[1] == 0) {
+					s.rotate(s.radians(180))
+				}
+				else if (orient[0] == 1 && orient[1] == 1) {
+					s.rotate(s.radians(45))
+				}
+				else if (orient[0] == 1 && orient[1] == -1) {
+					s.rotate(-s.radians(45))
+				}
+				else if (orient[0] == -1 && orient[1] == 1) {
+					s.rotate(s.radians(135))
+				}
+				else if (orient[0] == -1 && orient[1] == -1) {
+					s.rotate(-s.radians(135))
+				}
+				//s.rotate(s.radians(90)+orient[1]*s.radians(0)-orient[0]*s.radians(90)-diag*orient[0]*s.radians(45));
+				s.noFill();
+				for (let l = 0; l < distance; l = l + 2) {
+					s.arc(0 - (l + 1) * size / 25, 0, size / (5), (31 - l) * size / (150), -s.PI / 3, s.PI / 3);
+				}
+				if (damage > 0) {
+					s.fill(pColors[player - 1][0], pColors[player - 1][1], pColors[player - 1][2], 255);
+				} else {
+					s.fill(0);
+				}
+				s.beginShape();
+				s.vertex(0, 0 - arrowSize);
+				s.vertex(0 + size / 4, 0);
+				s.vertex(0, 0 + arrowSize);
+				s.vertex(0 + size / 10, 0);
+				s.vertex(0, 0 - arrowSize);
+				s.endShape();
+
+				//s.rotate(-s.radians(90)-orient[1]*s.radians(0)+orient[0]*s.radians(90)+diag*orient[0]*s.radians(45));
+				if (orient[0] == 0 && s.abs(orient[1]) == 1) {
+					s.rotate(-orient[1] * s.radians(90));
+				}
+				else if (orient[0] == -1 && orient[1] == 0) {
+					s.rotate(-s.radians(180))
+				}
+				else if (orient[0] == 1 && orient[1] == 1) {
+					s.rotate(-s.radians(45))
+				}
+				else if (orient[0] == 1 && orient[1] == -1) {
+					s.rotate(s.radians(45))
+				}
+				else if (orient[0] == -1 && orient[1] == 1) {
+					s.rotate(-s.radians(135))
+				}
+				else if (orient[0] == -1 && orient[1] == -1) {
+					s.rotate(s.radians(135))
+				}
+				s.translate(-(orient[0] * a * size / 10), -(orient[1] * a * size / 10));
+
+				s.translate(-refx, -refy);
+
+
+			}
+
+
+			function drawOscillatorProjectile(x, y, player, size, pColors, orient, a) {
+				let refx = x * size + size / 2;
+				let refy = y * size + size / 2;
+				s.stroke(0, 255);
+				s.strokeWeight(1.5);
+				for (let i = -size / 3; i <= size / 3; i = i + size / 9) {
+					s.line(refx + i, refy - .75 * (s.abs(i) - size / 3), refx + i, refy + .75 * (s.abs(i) - size / 3));
+				}
+				s.stroke(pColors[player - 1][0], pColors[player - 1][1], pColors[player - 1][2], 255);
+				s.strokeWeight(1.25 - s.abs((a - 4.5)) / 9);
+				for (let i = -size / 3; i <= size / 3; i = i + size / 9) {
+					s.line(refx + i, refy - .75 * (s.abs(i) - size / 3), refx + i, refy + .75 * (s.abs(i) - size / 3));
+				}
+			}
+
+			function drawMaglevProjectile(x, y, player, size, pColors, orient, damage, a) {
+				let refx = x * size;
+				let refy = y * size;
+				let scalar = size / 4;
+				s.fill(pColors[player - 1][0], pColors[player - 1][1], pColors[player - 1][2], damage * 5);
+				s.stroke(0, 255);
+				s.strokeWeight(2);
+				//s.noStroke();
+				s.beginShape();
+				for (let angle = 0; angle <= 360; angle = angle + 20) {
+					//s.rect(refx,refy,size,size);
+					s.curveVertex(refx + size / 2 + orient[0] * a * size / 10 + scalar * s.cos(s.radians(angle)) * s.cos(s.radians(angle)) * s.cos(s.radians(angle)), refy + size / 2 + orient[1] * a * size / 10 + scalar * s.sin(s.radians(angle)) * s.sin(s.radians(angle)) * s.sin(s.radians(angle)));
+				}
+				s.endShape();
+			}
+			function drawBeamSplitterProjectile(x, y, player, size, pColors, orient, damage, a) {
+				let refx = x * size + size / 2;
+				let refy = y * size + size / 2;
+				let starterAngle = 0;
+				if (player == 1) {
+					starterAngle = 45;
+				}
+				else if (player == 2) {
+					starterAngle = 135;
+				}
+				else if (player == 3) {
+					starterAngle = 315;
+				}
+				else if (player == 4) {
+					starterAngle = 225;
+				}
+				let scalar = size / 4;
+				s.fill(pColors[player - 1][0], pColors[player - 1][1], pColors[player - 1][2], 100);
+				s.stroke(0, 255);
+				s.strokeWeight(1);
+				s.translate(refx + orient[0] * (a - 5) * size / 10, refy + orient[1] * (a - 5) * size / 10);
+
+				s.rotate(s.radians(-starterAngle));
+				if (player == 1 || player == 4) {
+					s.rotate(s.radians((s.abs(orient[1]) - s.abs(orient[0])) * 45));
+				}
+				else {
+
+					s.rotate(s.radians(-(s.abs(orient[1]) - s.abs(orient[0])) * 45));
+				}
+				for (let r = size / 2.5; r > 0; r = r - size / 12) {
+					s.arc(0, -size + r, r, r, 0, Math.PI);
+				}
+				if (player == 1 || player == 4) {
+					s.rotate(s.radians(-(s.abs(orient[1]) - s.abs(orient[0])) * 45));
+				}
+				else {
+					s.rotate(s.radians((s.abs(orient[1]) - s.abs(orient[0])) * 45));
+				}
+				s.rotate(s.radians(starterAngle));
+				s.translate(-(refx + orient[0] * (a - 5) * size / 10), -(refy + orient[1] * (a - 5) * size / 10));
+
+			}
+
+
+			function drawTripwireProjectile(x, y, player, size, pColors, orient, damage, a) {
+				s.fill(pColors[player - 1][0], pColors[player - 1][1], pColors[player - 1][2], 155);
+				s.stroke(0, 255);
+				let refx = x * size + size / 2 + orient[0] * (a - 5) * size / 10;
+				let refy = y * size + size / 2 + orient[1] * (a - 5) * size / 10;
+
+				s.translate(refx, refy);
+				for (let angle = 0; angle < 360; angle = angle + 60) {
+					s.rotate(s.radians(angle));
+					let endX;
+					let endY;
+					let xx = 0
+					let yy = 0;
+					while (yy < size / 10) {//to bottom of screen
+						endX = xx + s.random(-size / 10, size / 10); //x-value varies
+						endY = yy + size / 40;    //y just goes up
+						s.strokeWeight(1);//bolt is a little thicker than a line
+						s.stroke(255); //white line
+						s.line(xx, yy, endX, endY);//draw a tiny segment
+						xx = endX;  //then x and y are moved to the
+						yy = endY;  //end of the segment and so on
+					}
+					s.rotate(-s.radians(angle));
+				}
+				s.stroke(0, 255);
+				s.ellipse(0, 0, size / 4, size / 4);
+				s.translate(-refx, -refy);
+
+
+			}
+
+
+			function drawJuggernodeProjectile(x, y, player, size, pColors, orient, damage, a) {
+				let refx = x * size;
+				let refy = y * size;
+
+				s.noFill();
+				s.stroke(0);
+				s.strokeWeight(3);
+				s.beginShape();
+				let xAdd = 0;
+				let yAdd = 0;
+				if (orient[1] == -1) {
+					yAdd = size;
+				}
+				if (orient[0] == -1) {
+					xAdd = size;
+				}
+				for (let i = a; i <= (a + 8); i = i + .05) {
+					s.curveVertex(refx + xAdd + orient[0] * i * (size / 10) - orient[0] * (size / 10) * s.cos(s.radians(i * 180)), refy + yAdd + orient[1] * i * size / 10 + orient[1] * (size / 10) * s.cos(s.radians(i * 180)));
+				}
+				s.endShape();
+				s.strokeWeight(2);
+				s.stroke(pColors[player - 1][0], pColors[player - 1][1], pColors[player - 1][2], 255);
+				s.beginShape();
+				for (let i = a; i <= (a + 8); i = i + .05) {
+					s.curveVertex(refx + xAdd + orient[0] * i * (size / 10) - orient[0] * (size / 10) * s.cos(s.radians(i * 180)), refy + yAdd + orient[1] * i * size / 10 + orient[1] * (size / 10) * s.cos(s.radians(i * 180)));
+				}
+				s.endShape();
+				//s.ellipse(refx,refy,size,size);
+			}
+			function drawBallastProjectile(x, y, player, size, pColors, damage, a) {
+				let refx = x * size;
+				let refy = y * size;
+				s.stroke(pColors[player - 1][0], pColors[player - 1][1], pColors[player - 1][2], 115);
+				s.strokeWeight(1);
+				let amp = size / (20 + 2 * s.abs(5 - a));
+				let n = 20 + s.abs(5 - a) / 50;
+				s.noFill();
+				s.strokeWeight(2);
+				s.stroke(0, 255);
+				s.translate(refx + size / 2, refy + size / 2);
+				s.beginShape();
+				s.curveVertex((size / 3 + (amp) * s.sin(n * s.radians(0))) * s.cos(s.radians(0)), (size / 3 + (amp) * s.sin(n * s.radians(0))) * s.sin(s.radians(0)));
+				for (let angle = 0; angle <= 360; angle = angle + 5) {
+					s.curveVertex((size / 3 + (amp) * s.sin(n * s.radians(angle))) * s.cos(s.radians(angle)), (size / 3 + (amp) * s.sin(n * s.radians(angle))) * s.sin(s.radians(angle)));
+				}
+				s.curveVertex((size / 3 + (amp) * s.sin(n * s.radians(0))) * s.cos(s.radians(0)), (size / 3 + (amp) * s.sin(n * s.radians(0))) * s.sin(s.radians(0)));
+
+				s.endShape();
+				s.strokeWeight(1);
+				s.stroke(pColors[player - 1][0], pColors[player - 1][1], pColors[player - 1][2], 255);
+				s.beginShape();
+				s.curveVertex((size / 3 + (amp) * s.sin(n * s.radians(0))) * s.cos(s.radians(0)), (size / 3 + (amp) * s.sin(n * s.radians(0))) * s.sin(s.radians(0)));
+
+				for (let angle = 0; angle <= 360; angle = angle + 5) {
+					s.curveVertex((size / 3 + (amp) * s.sin(n * s.radians(angle))) * s.cos(s.radians(angle)), (size / 3 + (amp) * s.sin(n * s.radians(angle))) * s.sin(s.radians(angle)));
+				}
+				s.curveVertex((size / 3 + (amp) * s.sin(n * s.radians(0))) * s.cos(s.radians(0)), (size / 3 + (amp) * s.sin(n * s.radians(0))) * s.sin(s.radians(0)));
+
+				s.endShape();
+				s.translate(-(refx + size / 2), -(refy + size / 2));
+
+			}
+
+			function drawResonatorProjectile(x, y, player, size, pColors, orient, damage, a) {
+				s.strokeWeight(1);
+				s.fill(pColors[player - 1][0], pColors[player - 1][1], pColors[player - 1][2], 105);
+				let crossHairOffset = size / 5;
+
+				if (damage == 0) {
+					s.translate(((a - 5) * size / 10) * orient[0], ((a - 5) * size / 10) * orient[1]);
+					s.strokeWeight(2)
+					s.stroke(255, 185);
+					s.ellipse(x * size + size / 2, y * size + size / 2, size / 20, size / 20);
+					s.line(x * size + size / 2, y * size + size / 2 - size / 20, x * size + size / 2, y * size + size / 2 - crossHairOffset);
+					s.line(x * size + size / 2 - size / 20, y * size + size / 2, x * size + size / 2 - crossHairOffset, y * size + size / 2);
+					s.line(x * size + size / 2, y * size + size / 2 + size / 20, x * size + size / 2, y * size + size / 2 + crossHairOffset);
+					s.line(x * size + size / 2 + size / 20, y * size + size / 2, x * size + size / 2 + crossHairOffset, y * size + size / 2);
+					s.strokeWeight(1)
+					s.stroke(pColors[player - 1][0], pColors[player - 1][1], pColors[player - 1][2], 185);
+					s.ellipse(x * size + size / 2, y * size + size / 2, size / 20, size / 20);
+					s.line(x * size + size / 2, y * size + size / 2 - size / 20, x * size + size / 2, y * size + size / 2 - crossHairOffset);
+					s.line(x * size + size / 2 - size / 20, y * size + size / 2, x * size + size / 2 - crossHairOffset, y * size + size / 2);
+					s.line(x * size + size / 2, y * size + size / 2 + size / 20, x * size + size / 2, y * size + size / 2 + crossHairOffset);
+					s.line(x * size + size / 2 + size / 20, y * size + size / 2, x * size + size / 2 + crossHairOffset, y * size + size / 2);
+					s.translate(-((a - 5) * size / 10) * orient[0], -((a - 5) * size / 10) * orient[1]);
+				}
+				else {
+					s.noStroke();
+
+					s.fill(pColors[player - 1][0], pColors[player - 1][1], pColors[player - 1][2], 155 * (4.5 - s.abs(4.5 - a)) / 4.5);
+
+					s.rect(x * size, y * size, size, size);
+				}
+			}
+
+			function drawIntegratorProjectile(x, y, player, size, pColors, orient, damage, a) {
+				s.strokeWeight(1);
+				let refx = x * size + size / 2;
+				let refy = y * size + size / 2;
+				let projSize = size / 6;
+				let length = 4;
+				a = a * 2 - 9
+				s.fill(pColors[player - 1][0], pColors[player - 1][1], pColors[player - 1][2], 255);
+				if (s.abs(orient[0]) == 2) {
+					if (a > 4 && a < 10) {
+						s.strokeWeight(3);
+						s.stroke(pColors[player - 1][0], pColors[player - 1][1], pColors[player - 1][2], 100);
+						s.line(refx + (orient[0] / 2) * (a) * size / 10 - size / 2, refy - orient[1] * size / 4 + orient[1] * (a) * size / 20, refx + (orient[0] / 2) * (a + length) * size / 10 - size / 2, refy - orient[1] * size / 4 + orient[1] * (a + length) * size / 20);
+					}
+					s.strokeWeight(1);
+					s.stroke(0);
+					s.line(refx + (orient[0] / 2) * (a) * size / 10 - size / 2, refy - orient[1] * size / 4 + orient[1] * (a) * size / 20, refx + (orient[0] / 2) * (a + length) * size / 10 - size / 2, refy - orient[1] * size / 4 + orient[1] * (a + length) * size / 20);
+					//s.ellipse(refx+(orient[0]/2)*(a)*size/10-size/2,refy-orient[1]*size/4+orient[1]*(a)*size/20,projSize,projSize);
+				}
+				else {
+					if (a > 4 && a < 10) {
+						s.strokeWeight(2);
+						s.stroke(pColors[player - 1][0], pColors[player - 1][1], pColors[player - 1][2], 155);
+						s.line(refx - (orient[0]) * size / 4 + orient[0] * (a) * size / 20, refy + (orient[1] / 2) * (a) * size / 10 - size / 2, refx - (orient[0]) * size / 4 + orient[0] * (a + length) * size / 20, refy + (orient[1] / 2) * (a + length) * size / 10 - size / 2);
+					}
+					s.strokeWeight(1);
+					s.stroke(0);
+					s.line(refx - (orient[0]) * size / 4 + orient[0] * (a) * size / 20, refy + (orient[1] / 2) * (a) * size / 10 - size / 2, refx - (orient[0]) * size / 4 + orient[0] * (a + length) * size / 20, refy + (orient[1] / 2) * (a + length) * size / 10 - size / 2);
+					//s.ellipse(refx-(orient[0])*size/4+orient[0]*(a)*size/20,refy+(orient[1]/2)*(a)*size/10-size/2,projSize,projSize);
+				}
+
+			}
+
+
+			function drawCreditsSymbol(x, y, size, player, a, pColors) {
+				s.stroke(0);
+				s.strokeWeight(2);
+				s.fill(pColors[player - 1][0], pColors[player - 1][1], pColors[player - 1][2], 255);
+				s.translate(x, y);
+				for (let angle = 45; angle < 360; angle = angle + 90) {
+					s.rotate(s.radians(angle));
+					s.rect(size / 2, -size / 10, size / 3.5, size / 5);
+					s.rotate(-s.radians(angle));
+				}
+				s.translate(-x, -y);
+				s.noFill();
+				s.stroke(0);
+				s.ellipse(x, y, size, size);
+				s.stroke(pColors[player - 1][0], pColors[player - 1][1], pColors[player - 1][2], 255);
+				s.ellipse(x, y, size * .875, size * .875);
+				s.stroke(0);
+				s.fill(0);
+				s.ellipse(x, y, size * .75, size * .75);
+				s.noStroke();
+				s.fill(pColors[player - 1][0], pColors[player - 1][1], pColors[player - 1][2], 255);
+				s.translate(x, y);
+				for (let angle = 45; angle < 360; angle = angle + 90) {
+					s.rotate(s.radians(angle));
+					s.rect(size / 2.3, -size / 10.6, size / 3.5, size / 5.3);
+					s.rotate(-s.radians(angle));
+				}
+				s.stroke(0);
+
+				s.fill(pColors[player - 1][0], pColors[player - 1][1], pColors[player - 1][2], 255);
+
+				s.strokeWeight(1);
+				s.noStroke();
+				size = size * 1.05;
+				s.beginShape();
+				s.vertex(0, size * .25);
+				s.vertex(-size * .2, -size * .2);
+				s.vertex(-size * .1, -size * .2);
+				s.vertex(0, size * .05);
+				s.vertex(size * .08, -size * .11);
+				s.vertex(size * .02, -size * .11);
+				s.vertex(size * .19, -size * .27);
+				s.vertex(size * .15, -size * .17);
+				s.vertex(size * .22, -size * .17);
+				s.vertex(0, size * .25);
+				s.endShape();
+				s.translate(-x, -y);
+			}
+
+			function drawCollision(x, y, size, proj, a, pColors) {
+				let player = proj.player;
+				let refx = x * size + size / 2;
+				let refy = y * size + size / 2;
+				s.noTint();
+				s.noFill();
+				let theta = 0;
+				let phase = 0;
+				let meh = 0;
+				let osx = 0;
+				let osy = 0;
+				let wave = Math.floor(proj.damage) + 3;
+				let rad = 360;
+				let radius = size / 25;
+				for (let i = 0; i < rad; i = i + 18) {
+					s.stroke(pColors[player - 1][0], pColors[player - 1][1], pColors[player - 1][2], 25 + 2 * s.abs(a - 4.5));
+					theta = i * (360 / rad);
+					phase = ((Math.PI) / rad);
+					meh = (radius * 1.8 + 11.5) * s.sin(wave * theta + phase) * s.cos(phase);
+					osx = (size / 25 + meh) * s.cos(theta);
+					osy = (size / 25 + meh) * s.sin(theta);
+					s.strokeWeight(8);
+					s.point(osx + refx, osy + refy);
+					s.strokeWeight(6);
+					s.point(osx + refx, osy + refy);
+					s.strokeWeight(3);
+					s.point(osx + refx, osy + refy);
+					s.stroke(255, 160 - 17 * s.abs(a - 4.5));
+					s.strokeWeight(1);
+					s.point(osx + refx, osy + refy);
+				}
+			}
+
+			function keyPressed() {
+				if (s.keyCode === s.LEFT_ARROW) {
+					return -1;
+				} else if (s.keyCode === s.RIGHT_ARROW) {
+					return 1;
+				}
+				else {
+					return 0;
+				}
+				return false;
+			}
+
 		}
 
-		function keyPressed() {
-			if (s.keyCode === s.LEFT_ARROW) {
-				return -1;
-			} else if (s.keyCode === s.RIGHT_ARROW) {
-				return 1;
-			}
-			else {
-				return 0;
-			}
-			return false;
-		}
+		this.engine = new p5(sketch);
+
 
 	}
-
-	this.engine = new p5(sketch);
-
-
-}
 
 
 }
