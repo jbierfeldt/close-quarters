@@ -349,33 +349,66 @@ getPossibleTargets(unitName, x, y, player) {
 	let counter = 0;
 	let upperDistance = 30;
 	let lowerDistance = 1;
-	if(unitName == "Oscillator"){
+	if (unitName == "Oscillator") {
 		upperDistance = 2;
 	}
-	else if(unitName == "Resonator"){
+	else if (unitName == "Resonator") {
 		lowerDistance = 6;
 		upperDistance = 19;
 	}
-	else if(unitName == "Tripwire"){
+	else if (unitName == "Tripwire") {
 		//lowerDistance = 5;
 		upperDistance = 6;
 	}
-	else if(unitName == "Ballast"){
+	else if (unitName == "Ballast") {
 		//lowerDistance = 5;
 		upperDistance = 2;
 	}
-	else if(unitName == "RedShifter"){
+	else if (unitName == "RedShifter") {
 		lowerDistance = 12;
+
 		//upperDistance = 2;
 	}
-	for(let i = 0; i < tempArray.length; i = i + 1){
+	else if (unitName == "BeamSplitter") {
+		upperDistance = 9;
+		//upperDistance = 2;
+	}
+	for (let i = 0; i < tempArray.length; i = i + 1) {
 		let xx = lowerDistance;
-		while((tempArray[i][0]*xx+x) < 30 && (tempArray[i][0]*xx+x) >= 0 && xx < upperDistance){
-				let yy = 1;
-				finalArray[counter] =  [(tempArray[i][0]*xx+x),(tempArray[i][1]*xx+y)]
-				counter = counter + 1;
-				xx = xx + 1;
+		while ((tempArray[i][0] * xx + x) < 30 && (tempArray[i][0] * xx + x) >= 0 && xx < upperDistance) {
+			let yy = 1;
+			finalArray[counter] = [(tempArray[i][0] * xx + x), (tempArray[i][1] * xx + y)]
+			counter = counter + 1;
+			xx = xx + 1;
 		}
+	}
+	if (unitName == "BeamSplitter") {
+		let turningPoint = 8;
+		if (player == 1) {
+			for (let i = 1; i < 25; i = i + 1) {
+				finalArray.push([x + turningPoint + i, y + turningPoint]);
+				finalArray.push([x + turningPoint, y + turningPoint + i]);
+			}
+		}
+		if (player == 2) {
+			for (let i = 1; i < 25; i = i + 1) {
+				finalArray.push([x + turningPoint + i, y - turningPoint]);
+				finalArray.push([x + turningPoint, y - turningPoint - i]);
+			}
+		}
+		if (player == 3) {
+			for (let i = 1; i < 25; i = i + 1) {
+				finalArray.push([x - turningPoint - i, y + turningPoint]);
+				finalArray.push([x - turningPoint, y + turningPoint + i]);
+			}
+		}
+		if (player == 4) {
+			for (let i = 1; i < 25; i = i + 1) {
+				finalArray.push([x - turningPoint - i, y - turningPoint]);
+				finalArray.push([x - turningPoint, y - turningPoint - i]);
+			}
+		}
+
 	}
 	return finalArray;
 }

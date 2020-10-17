@@ -29,8 +29,8 @@ export default class BasicAI {
 		let creditCost = 0;
 		let saveCredits = 0
 		let unitName = " ";
-		let allUnits = [1,1,1,1,1,2,2,3,3,3,4,4,4,4,4,5,5,5,5,5,6,7,7,7,7,7,7,8,8,8,8,8,8,9,9,9,9,9,9];
-		let twoCreditsAndBelowUnits = [1,1,1,1,2,2,3,3,3,4,4,4,5,5,5,5,5,6];
+		let allUnits = [1,1,1,1,1,2,2,3,3,3,4,4,4,4,4,4,4,5,5,5,5,5,6,6,6,6,7,7,7,7,7,7,8,8,8,8,8,8,9,9,9,9,9,9,10,10,10,10];
+		let twoCreditsAndBelowUnits = [1,1,1,1,2,2,3,3,3,4,4,4,4,5,5,5,5,5,6,6,6,10,10,10,10];
 		let oneCreditUnits = [1,1,1,1,2,2,3,3,3];
 		let rayZones = [1,2,3,4,5];
 		let redZones = [0,0,1,1,5];
@@ -41,12 +41,12 @@ export default class BasicAI {
 		let magZones = [2,3,3,3,4,4,5];
 		let resZones = [0,0,1,1,1,2,4,4,5];
 		let intZones = [1,1,1,3,3,4,4,5];
+		let beaZones = [0,1,1,1,2,3,3,4,4,5];
 		let zone = 0;
 		let unitSelected = 0;
 
 		while(credits > 0){
 			//console.log(this.playerNumber, credits);
-
 			if(credits >= 3){
 				unitSelected = allUnits[Math.floor(Math.random() * allUnits.length)];
 			}
@@ -100,6 +100,11 @@ export default class BasicAI {
 				unitName = "Integrator";
 				creditCost = 3;
 				zone = intZones[Math.floor(Math.random() * intZones.length)];
+			}
+			else if(unitSelected == 10){
+				unitName = "BeamSplitter";
+				creditCost = 2;
+				zone = beaZones[Math.floor(Math.random() * intZones.length)];
 			}
 
 	    let newUnitCoord =  this.game.getRandomCoordInPlayerRegion(this.playerNumber, 0, zone);

@@ -71,6 +71,7 @@ export default class Display {
 
 			let unitButtons = []; //List of the Buttons for unit creation
 			let buttonMaker = 1; //Variable so buttons only get created once
+			let buttonMakerTwo = 1;
 			let hoverX;
 			let hoverY;
 
@@ -127,6 +128,7 @@ export default class Display {
 				//input = s.createInput();
 				input = s.createInput();
 
+
 			}
 
 			//The draw function loops continuously while the sketch is active
@@ -144,6 +146,8 @@ export default class Display {
 				hoverX = s.int(s.mouseX / si);
 				hoverY = s.int(s.mouseY / si);
 
+			//	bStartMatch = new Buttoned(wi - si * 5.55, si * 11.5, si * 5.1, si * 1.1, "Start Match", this.app.sendStartGame);
+
 				//Delay serves as a variable that has a constant increment for animation
 				this.delay = this.delay + .19 + s.deltaTime / 425;
 				this.integerRising = this.integerRising + 1;
@@ -156,7 +160,14 @@ export default class Display {
 				if (this.app.playerNumber > 2) {
 					playerShifter = s.width / 2;
 				}
-				if (buttonMaker === 1) {
+				if (buttonMakerTwo === 1) {
+
+					bStartMatch = new Buttoned(wi - si * 5.55, si * 11.5, si * 5.1, si * 1.1, "Start Match", this.app.sendStartGame);
+
+				}
+				buttonMakerTwo = 0;
+
+				/*
 					if (this.app.playerNumber == 2) {
 						submitShifterX = 0;
 						submitShifterY = he / 2;;
@@ -199,6 +210,7 @@ export default class Display {
 					unitButtons.push(bIntegrator);
 				}
 				buttonMaker = 0;
+				*/
 				//Sets the default text font and its size
 				s.textFont(titleFont);
 				s.textSize(wi / 9);
@@ -244,6 +256,7 @@ export default class Display {
 							s.resizeCanvas(window.screen.height * 1.5, window.screen.height);
 						}
 						buttonMaker = 1;
+						buttonMakerTwo = 1;
 						this.app.setGamePhase("MATCHMAKING");
 						s.mouseIsPressed = false;
 						unitButtons = [];
@@ -501,6 +514,50 @@ export default class Display {
 				}
 
 				else if (this.app.gamePhase === "PLACEMENT" && this.app.clientState !== 'SPECTATOR' && this.app.clientState !== 'DEFEATED_PLAYER' && this.app.turnIsIn !== true) {
+					if (buttonMaker === 1) {
+						if (this.app.playerNumber == 2) {
+							submitShifterX = 0;
+							submitShifterY = he / 2;;
+						}
+						else if (this.app.playerNumber == 3) {
+							submitShifterX = wi / 2;
+							submitShifterY = 0;
+						}
+						else if (this.app.playerNumber == 4) {
+							submitShifterX = wi / 2;
+							submitShifterY = he / 2;
+						}
+						bPhaseOne = new Buttoned(wi - si * 5.55, si * 2.9, si * 5.1, si * 1.1, "Deploy Machines", this.app.setGamePhase);
+
+						bStartMatch = new Buttoned(wi - si * 5.55, si * 11.5, si * 5.1, si * 1.1, "Start Match", this.app.sendStartGame);
+
+						bPhaseThree = new Buttoned(wi / 3.2 + submitShifterX, he / 1.65 - submitShifterY, si * 6.1, si * 1.1, "Review Board", this.app.setGamePhase);
+						bSubmit = new Buttoned(wi / 3.2 + submitShifterX, he / 1.85 - submitShifterY, si * 5, si * 1.1, "Submit Turn", this.app.sendSubmitTurn);
+						bBase = new Buttoned(wi / 2 + si - playerShifter, si * buttonScale * 2, wi / 2 - si * 2, si * buttonScale * 3, "Base", this.app.sendCreateBase);
+						//Unit Buttons Below
+						bRayTracer = new Buttoned(wi / 2 + si - playerShifter, si * 3, wi / 2 - si * 2, si * buttonScale, "RayTracer", this.app.sendCreateUnit);
+						unitButtons.push(bRayTracer);
+						bRedShifter = new Buttoned(wi / 2 + si - playerShifter, si * 3 + buttonScale * si * 1, wi / 2 - si * 2, si * buttonScale, "RedShifter", this.app.sendCreateUnit);
+						unitButtons.push(bRedShifter);
+						bOscillator = new Buttoned(wi / 2 + si - playerShifter, si * 3 + buttonScale * si * 2, wi / 2 - si * 2, si * buttonScale, "Oscillator", this.app.sendCreateUnit);
+						unitButtons.push(bOscillator);
+						bBeamSplitter = new Buttoned(wi / 2 + si - playerShifter, si * 3 + buttonScale * si * 3, wi / 2 - si * 2, si * buttonScale, "BeamSplitter", this.app.sendCreateUnit);
+						unitButtons.push(bBeamSplitter);
+						bBallast = new Buttoned(wi / 2 + si - playerShifter, si * 3 + buttonScale * si * 4, wi / 2 - si * 2, si * buttonScale, "Ballast", this.app.sendCreateUnit);
+						unitButtons.push(bBallast);
+						bJuggernode = new Buttoned(wi / 2 + si - playerShifter, si * 3 + buttonScale * si * 5, wi / 2 - si * 2, si * buttonScale, "Juggernode", this.app.sendCreateUnit);
+						unitButtons.push(bJuggernode);
+						bTripwire = new Buttoned(wi / 2 + si - playerShifter, si * 3 + buttonScale * si * 6, wi / 2 - si * 2, si * buttonScale, "Tripwire", this.app.sendCreateUnit);
+						unitButtons.push(bTripwire);
+						bMaglev = new Buttoned(wi / 2 + si - playerShifter, si * 3 + buttonScale * si * 7, wi / 2 - si * 2, si * buttonScale, "Maglev", this.app.sendCreateUnit);
+						unitButtons.push(bMaglev);
+						bResonator = new Buttoned(wi / 2 + si - playerShifter, si * 3 + buttonScale * si * 8, wi / 2 - si * 2, si * buttonScale, "Resonator", this.app.sendCreateUnit);
+						unitButtons.push(bResonator);
+						bIntegrator = new Buttoned(wi / 2 + si - playerShifter, si * 3 + buttonScale * si * 9, wi / 2 - si * 2, si * buttonScale, "Integrator", this.app.sendCreateUnit);
+						unitButtons.push(bIntegrator);
+					}
+					buttonMaker = 0;
+
 					input.remove();
 					justTriggered = 1;
 					this.t = 1;
@@ -1329,7 +1386,7 @@ export default class Display {
 					if (player == 3) {
 						for (let i = 1; i < 25; i = i + 1) {
 							finalArray.push([x - turningPoint - i, y + turningPoint]);
-							finalArray.push([x - turningPoint, y = turningPoint + i]);
+							finalArray.push([x - turningPoint, y + turningPoint + i]);
 						}
 					}
 					if (player == 4) {
@@ -1440,7 +1497,7 @@ export default class Display {
 					}
 					s.ellipse(width/8-width/30+width/30,height/4+3*height/5+h,width/12,width/62);
 				}
-	
+
 				s.stroke(255);
 				s.noStroke();
 				s.fill(255,0,128,255);
@@ -1453,7 +1510,7 @@ export default class Display {
 				let ballSize = size*10;
 				//s.fill(255,0,128, 155);
 				s.translate(refx,refy);
-	
+
 				if(lightningTrigger % 1 == 0){
 				for(let angle = 0; angle < 360; angle = angle + 30){
 					s.rotate(s.radians(angle));
@@ -2613,7 +2670,7 @@ export default class Display {
 				let meh = 0;
 				let osx = 0;
 				let osy = 0;
-				let wave = Math.floor(proj.damage) + 3;
+				let wave = Math.floor(proj.damage)*.1 + 10;
 				let rad = 360;
 				let radius = size / 25;
 				for (let i = 0; i < rad; i = i + 18) {
