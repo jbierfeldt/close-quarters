@@ -34,6 +34,7 @@ class App {
 		this.playerSpotsInGameRoom = undefined;
 		this.spectatorMode = false;
 		this.clientState = null;
+		this.loadedInitialClientInfoFromServer = false;
 		this.loadedClientInfoFromServer = false;
 		this.loadedRoomStateFromServer = false;
 		this.turnIsIn = false; //Use this for the transition
@@ -58,7 +59,6 @@ class App {
 	}
 
 	onFinishedLoading (data) {
-		this.display.init();
 
 		if (data.clientGamePhase === 'TITLE' || data.clientGamePhase === 'MATCHMAKING') {
 			this.setGamePhase(data.clientGamePhase);
@@ -72,6 +72,8 @@ class App {
 				}
 			}
 		}
+
+		this.display.init();
 	}
 
 	bindListeners () {
@@ -179,11 +181,15 @@ class App {
 
 			console.log('clientGamePhase', data.clientGamePhase)
 
+			if (this.loadedClientInfoFromServer === false) {
+				this.loadedClientInfoFromServer = true;
+			}
+
 			// if first time getting clientInfo, start Display
 			//	if (this.loadedClientInfoFromServer === false && this.gameRoom && this.playerNumber) {
-			if (this.loadedClientInfoFromServer === false) {
+			if (this.loadedInitialClientInfoFromServer === false) {
 				this.onFinishedLoading(data);
-				this.loadedClientInfoFromServer = true;
+				this.loadedInitialClientInfoFromServer = true;
 			}
 
 			this.updateDebugInfo();
@@ -201,18 +207,6 @@ class App {
 		this.socket.on('startingGame', (data) => {
 			this.setGamePhase('PLACEMENT');
 		})
-
-		// this.socket.on('joinGameResult', (data) => {
-		// 	debug.log(1, `Joined the game? ${data.joinedGame}`);
-		// 	if (data.joinedGame === true) {
-		// 		// this.setGamePhase(1);
-		// 		this.display.successfulJoinedGame = true;
-		// 		this.setGamePhase(1);
-		// 	}
-		// 	else {
-		// 		this.display.successfulJoinedGame = false;
-		// 	}
-		// })
 
 	}
 
@@ -300,6 +294,8 @@ class App {
 		} else {
 			gameID = document.getElementById("join-game-id").value;
 		}
+		this.loadedClientInfoFromServer = false;
+		this.loadedRoomStateFromServer = false;
 		debug.log(1, `Attempting to join game ${gameID}`);
 		this.socket.emit('joinGame', {gameID:  gameID}, (result) => {
 			debug.log(1, `Joined the game? ${result}`);
@@ -324,6 +320,8 @@ class App {
 	}
 
 	sendJoinOpenGame () {
+		this.loadedClientInfoFromServer = false;
+		this.loadedRoomStateFromServer = false;
 		debug.log(1, `Trying to join open game.`);
 		this.socket.emit('joinOpenGame', (result) => {
 			debug.log(1, `Joined the game? ${result}`);
@@ -348,6 +346,8 @@ class App {
 	}
 
 	sendCreateRoom () {
+		this.loadedClientInfoFromServer = false;
+		this.loadedRoomStateFromServer = false;
 		debug.log(1, `Creating New Room`);
 		this.socket.emit('createGameRoom', (result, game) => {
 			debug.log(1, `New game ${game} returned ${result}`);
@@ -592,7 +592,7 @@ app.init();
 window.resetGame = app.sendResetGame.bind(app);
 
 window.printStatus = function () {
-	console.log(app.waitOnInfoCallback, app.loadedClientInfoFromServer, app.loadedRoomStateFromServer);
+	console.log("callback: ", app.waitOnInfoCallback, "clientInfo: ", app.loadedClientInfoFromServer, "roomstate: ", app.loadedRoomStateFromServer);
 }
 
 app.display.stage.grid = app.game.board;
