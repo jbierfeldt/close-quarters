@@ -43,6 +43,8 @@ export default class Display {
 			let gameStart = 0;
 			let sideBarGrowth = 1;
 			let sideBarMenu = false;
+
+			let value = false;
 			//let successfulJoinedGame = null;
 
 			//Button Declarations
@@ -66,6 +68,8 @@ export default class Display {
 			let currentButtonPressed = 0;
 
 			let bSubmit;
+			let bLeaveMatch;
+			let bFullScreen;
 
 			let counter = 0;
 
@@ -102,6 +106,9 @@ export default class Display {
 			let allowNewID = 1;
 
 			let loading = false;
+
+			let showMenu = false;
+
 
 			p5.disableFriendlyErrors = true;
 			//Preload the fonts and other assets below
@@ -167,7 +174,7 @@ export default class Display {
 				}
 				buttonMakerTwo = 0;
 
-				/*
+				if(this.app.playerNumber && buttonMaker == 1){
 					if (this.app.playerNumber == 2) {
 						submitShifterX = 0;
 						submitShifterY = he / 2;;
@@ -180,10 +187,10 @@ export default class Display {
 						submitShifterX = wi / 2;
 						submitShifterY = he / 2;
 					}
+					bLeaveMatch = new Buttoned(wi*2/7, he/4-si, wi*3/7, si * 2, "Leave Match", this.app.setGamePhase);
+					bFullScreen = new Buttoned(wi*2/7, he/4-si+he/8, wi*3/7, si * 2, "Toggle Full Screen", this.app.setGamePhase);;
 					bPhaseOne = new Buttoned(wi - si * 5.55, si * 2.9, si * 5.1, si * 1.1, "Deploy Machines", this.app.setGamePhase);
-
-					bStartMatch = new Buttoned(wi - si * 5.55, si * 11.5, si * 5.1, si * 1.1, "Start Match", this.app.sendStartGame);
-
+					//bStartMatch = new Buttoned(wi - si * 5.55, si * 11.5, si * 5.1, si * 1.1, "Start Match", this.app.sendStartGame);
 					bPhaseThree = new Buttoned(wi / 3.2 + submitShifterX, he / 1.65 - submitShifterY, si * 6.1, si * 1.1, "Review Board", this.app.setGamePhase);
 					bSubmit = new Buttoned(wi / 3.2 + submitShifterX, he / 1.85 - submitShifterY, si * 5, si * 1.1, "Submit Turn", this.app.sendSubmitTurn);
 					bBase = new Buttoned(wi / 2 + si - playerShifter, si * buttonScale * 2, wi / 2 - si * 2, si * buttonScale * 3, "Base", this.app.sendCreateBase);
@@ -208,9 +215,9 @@ export default class Display {
 					unitButtons.push(bResonator);
 					bIntegrator = new Buttoned(wi / 2 + si - playerShifter, si * 3 + buttonScale * si * 9, wi / 2 - si * 2, si * buttonScale, "Integrator", this.app.sendCreateUnit);
 					unitButtons.push(bIntegrator);
-				}
-				buttonMaker = 0;
-				*/
+					buttonMaker = 0;
+			}
+
 				//Sets the default text font and its size
 				s.textFont(titleFont);
 				s.textSize(wi / 9);
@@ -512,9 +519,8 @@ export default class Display {
 						s.text("Starting Credits: 7", -s.width + 3 * s.width * (scroller - Math.floor(scroller)), s.height - si * 1.7);
 					}
 				}
-
 				else if (this.app.gamePhase === "PLACEMENT" && this.app.clientState !== 'SPECTATOR' && this.app.clientState !== 'DEFEATED_PLAYER' && this.app.turnIsIn !== true) {
-					if (buttonMaker === 1) {
+				//	if (buttonMaker === 1) {
 						if (this.app.playerNumber == 2) {
 							submitShifterX = 0;
 							submitShifterY = he / 2;;
@@ -527,36 +533,6 @@ export default class Display {
 							submitShifterX = wi / 2;
 							submitShifterY = he / 2;
 						}
-						bPhaseOne = new Buttoned(wi - si * 5.55, si * 2.9, si * 5.1, si * 1.1, "Deploy Machines", this.app.setGamePhase);
-
-						bStartMatch = new Buttoned(wi - si * 5.55, si * 11.5, si * 5.1, si * 1.1, "Start Match", this.app.sendStartGame);
-
-						bPhaseThree = new Buttoned(wi / 3.2 + submitShifterX, he / 1.65 - submitShifterY, si * 6.1, si * 1.1, "Review Board", this.app.setGamePhase);
-						bSubmit = new Buttoned(wi / 3.2 + submitShifterX, he / 1.85 - submitShifterY, si * 5, si * 1.1, "Submit Turn", this.app.sendSubmitTurn);
-						bBase = new Buttoned(wi / 2 + si - playerShifter, si * buttonScale * 2, wi / 2 - si * 2, si * buttonScale * 3, "Base", this.app.sendCreateBase);
-						//Unit Buttons Below
-						bRayTracer = new Buttoned(wi / 2 + si - playerShifter, si * 3, wi / 2 - si * 2, si * buttonScale, "RayTracer", this.app.sendCreateUnit);
-						unitButtons.push(bRayTracer);
-						bRedShifter = new Buttoned(wi / 2 + si - playerShifter, si * 3 + buttonScale * si * 1, wi / 2 - si * 2, si * buttonScale, "RedShifter", this.app.sendCreateUnit);
-						unitButtons.push(bRedShifter);
-						bOscillator = new Buttoned(wi / 2 + si - playerShifter, si * 3 + buttonScale * si * 2, wi / 2 - si * 2, si * buttonScale, "Oscillator", this.app.sendCreateUnit);
-						unitButtons.push(bOscillator);
-						bBeamSplitter = new Buttoned(wi / 2 + si - playerShifter, si * 3 + buttonScale * si * 3, wi / 2 - si * 2, si * buttonScale, "BeamSplitter", this.app.sendCreateUnit);
-						unitButtons.push(bBeamSplitter);
-						bBallast = new Buttoned(wi / 2 + si - playerShifter, si * 3 + buttonScale * si * 4, wi / 2 - si * 2, si * buttonScale, "Ballast", this.app.sendCreateUnit);
-						unitButtons.push(bBallast);
-						bJuggernode = new Buttoned(wi / 2 + si - playerShifter, si * 3 + buttonScale * si * 5, wi / 2 - si * 2, si * buttonScale, "Juggernode", this.app.sendCreateUnit);
-						unitButtons.push(bJuggernode);
-						bTripwire = new Buttoned(wi / 2 + si - playerShifter, si * 3 + buttonScale * si * 6, wi / 2 - si * 2, si * buttonScale, "Tripwire", this.app.sendCreateUnit);
-						unitButtons.push(bTripwire);
-						bMaglev = new Buttoned(wi / 2 + si - playerShifter, si * 3 + buttonScale * si * 7, wi / 2 - si * 2, si * buttonScale, "Maglev", this.app.sendCreateUnit);
-						unitButtons.push(bMaglev);
-						bResonator = new Buttoned(wi / 2 + si - playerShifter, si * 3 + buttonScale * si * 8, wi / 2 - si * 2, si * buttonScale, "Resonator", this.app.sendCreateUnit);
-						unitButtons.push(bResonator);
-						bIntegrator = new Buttoned(wi / 2 + si - playerShifter, si * 3 + buttonScale * si * 9, wi / 2 - si * 2, si * buttonScale, "Integrator", this.app.sendCreateUnit);
-						unitButtons.push(bIntegrator);
-					}
-					buttonMaker = 0;
 
 					input.remove();
 					justTriggered = 1;
@@ -588,6 +564,19 @@ export default class Display {
 						s.rect(0, 0, wi, he / 2);
 						s.rect(0, he / 2, wi / 2, he / 2);
 					}
+					//s.rect(wi/4 - wi/8 + submitShifterX, he - si * 1.5 - submitShifterY, wi/4, si * 1);
+					s.strokeWeight(1);
+					s.fill(255);
+					s.stroke(0);
+					s.textSize(si * .4);
+					s.textAlign(s.CENTER);
+				//	s.textSize
+					s.text("Press 'M' To Access Game Menu", wi/4 - wi/8 + submitShifterX+wi/8, he - si * 0.8 - submitShifterY);
+					s.textAlign(s.LEFT);
+					if (s.mouseIsPressed && s.mouseX < wi/4 - wi/8 + submitShifterX + wi*4 && s.mouseX > wi/4 - wi/8 + submitShifterX && s.mouseY < si * 3.5 + si * 1.5 && s.mouseY > si * 3.5) {
+					//	this.app.sendClearSpot(this.app.playerNumber);
+					}
+
 
 					if (this.app.game.players[this.app.playerNumber - 1].baseCount < 2 && gameStart == 0 && this.app.game.turnNumber < 2) {
 						bBase.drawButton();
@@ -930,6 +919,48 @@ export default class Display {
 							fullBoardTrigger = 0;
 						}
 					}
+					if(s.keyIsPressed ){
+						//console.log(s.keyCode);
+						if(s.keyCode === 77){
+							if(showMenu === true){
+								showMenu = false;
+							}
+							else{
+							showMenu = true;
+						}
+						s.keyIsPressed = false;
+						//this.app.sendClearSpot(this.app.playerNumber);
+						}
+					}
+					if(showMenu === true){
+						s.noStroke();
+						s.fill(0,190);
+						s.rect(0,0,wi,he);
+						s.stroke(255);
+						s.strokeWeight(2);
+						s.line(0,he/4,wi*2/7,he/4);
+						s.line(wi*5/7,he/4,wi,he/4);
+						bLeaveMatch.drawButton();
+						s.textAlign(s.CENTER);
+						s.textSize(si*1.15);
+						s.fill(255);
+						s.stroke(0);
+						s.textFont(titleFont);
+						s.text("Leave Game", wi/2-4, he/4 + si*.25);
+						s.text("Toggle Full Screen", wi/2-4, he/4 + si*.25 + he/8);
+						s.textAlign(s.LEFT);
+						bFullScreen.drawButton();
+						if (s.mouseIsPressed) {
+							if (bLeaveMatch.isInRange(s.mouseX, s.mouseY)) {
+								this.app.sendClearSpot(this.app.playerNumber);
+								showMenu = false;
+							}
+						}
+						/*s.noFill();
+						s.rect(wi*2/5, he/4-si, wi*1/5,si*2);
+						s.text("Leave Match",)*/
+					}
+					//Bug Fix: Underneath buttons need to be disabled
 
 				}
 
@@ -1027,6 +1058,7 @@ export default class Display {
 									}
 								}
 							}
+
 							else if (this.simulationDisplayTurn.tick[this.t].players[p].victoryCondition == 1) {
 								gameOver = 1;
 								//Victory Sequence, fix it.
@@ -1073,7 +1105,7 @@ export default class Display {
 					animate = animate + (.65 + s.deltaTime / 70);
 
 					if (this.t === Object.keys(this.simulationDisplayTurn.tick).length - 1) {
-						if (gameOver == 0) {
+						if (gameOver == 0 && this.app.clientState !== "SPECTATOR" && this.app.clientState !== "DEFEATED_PLAYER") {
 							this.app.setGamePhase("REVIEW");
 							sideBarGrowth = 1;
 							sideBarMenu = false;
@@ -1198,17 +1230,16 @@ export default class Display {
 						s.stroke(255);
 						s.line(wi + si / 4, si * 2, s.width - si / 4, si * 2);
 						s.textSize(si * .7);
-
+						bPhaseOne.yy = si * 4;
 						bPhaseOne.drawButton();
-
 
 						s.fill(255);
 						s.stroke(0);
-						s.text("Deploy Machines", wi + si / 1.3, si * 4.5);
+						s.text("Deploy Machines", wi + si / 1.3, si * 4.9);
 						s.textSize(si * 1.25);
 						s.textAlign(s.CENTER);
 						s.text("Score", wi + wi * .125, si * 8.5);
-						s.line(wi + wi * .1, si * 8.5, s.width - wi * .1, si * 8.5)
+					//	s.line(wi + wi * .1, si * 8.5, s.width - wi * .1, si * 8.5)
 						s.stroke(255);
 						s.fill(255, 100);
 						s.stroke(0);

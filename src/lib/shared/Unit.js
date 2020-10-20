@@ -884,7 +884,7 @@ export class BeamSplitter extends Unit {
 		4: [[-1,-1]]
 	}
 
-	static description = "The Beam Splitter is an offensive ...";
+	static description = "The Beam Splitter is a unique offensive unit that fires diagonally before splitting off in one of two directions. It can be used to hit otherwise difficult channels between a straight shot and true diagonal.";
 
 	static createFromSerialized (props) {
 		return new BeamSplitter(props.player, props.health, props.firing, props.id, props.collidedWith, props.lifeSpan, props.damageDealt);
