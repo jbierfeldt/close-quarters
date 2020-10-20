@@ -13,6 +13,7 @@ export default class BasicAI {
 		this.ordersSubmitted = false;
 
 		this.tempBoard = [];
+		this.baseCount = 0;
 	}
 
 	createOrder(orderType, args) {
@@ -80,7 +81,7 @@ export default class BasicAI {
 		let zone = 0;
 		let unitSelected = 0;
 
-		if (this.game.turnNumber === 1) {
+		if (this.game.turnNumber === 1 && this.baseCount < 2) {
 			// create two bases on turn 1
 			this.createAIBase();
 			this.createAIBase();
@@ -239,6 +240,7 @@ export default class BasicAI {
 			this.addPlaceholderAtCoord(secondBaseCoord[0]+1, secondBaseCoord[1]);
 			this.addPlaceholderAtCoord(secondBaseCoord[0], secondBaseCoord[1]+1);
 			this.addPlaceholderAtCoord(secondBaseCoord[0]+1, secondBaseCoord[1]+1);
+			this.baseCount++;
 			return true;
 		} else {
 			this.createAIBase();
