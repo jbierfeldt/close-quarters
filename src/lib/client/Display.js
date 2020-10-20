@@ -1121,6 +1121,7 @@ export default class Display {
 					animate = animate + (.65 + s.deltaTime / 70);
 
 					if (this.t === Object.keys(this.simulationDisplayTurn.tick).length - 1) {
+						this.app.onSimulationPhaseEnd();
 						if (gameOver == 0 && this.app.clientState !== "SPECTATOR" && this.app.clientState !== "DEFEATED_PLAYER") {
 							this.app.setGamePhase("REVIEW");
 							sideBarGrowth = 1;

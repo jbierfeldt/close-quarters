@@ -41,6 +41,7 @@ class App {
 		this.simulationRun = false;
 
 		this.waitOnInfoCallback = undefined;
+		this.waitOnSimulationPhaseEndCallback = undefined;
 	}
 
 	init() {
@@ -165,8 +166,14 @@ class App {
 
 		this.socket.on('updateClientState', (data) => {
 			debug.log(0, "got new client state");
-			this.clientState = data.clientState;
-			this.updateDebugInfo();
+
+			// put new clientState in callback to be set
+			// at the end of the next simulation phase
+			this.waitOnSimulationPhaseEndCallback = () => {
+				this.clientState = data.clientState;
+				this.updateDebugInfo();
+			}
+
 		})
 
 		this.socket.on('updateClientInfo', (data) => {
@@ -179,7 +186,7 @@ class App {
 			this.playerNumber = data.playerNumber;
 			this.clientState = data.clientState;
 
-			console.log('clientGamePhase', data.clientGamePhase)
+			debug.log(1, `clientGamePhase: ${data.clientGamePhase}`);
 
 			if (this.loadedClientInfoFromServer === false) {
 				this.loadedClientInfoFromServer = true;
@@ -392,7 +399,7 @@ class App {
 	}
 
 	setGamePhase (phase) {
-		console.log(`setting game phase ${phase}`);
+		debug.log(1, `setting game phase ${phase}`);
 		this.gamePhase = phase;
 		this.socket.emit('updateClientGamePhase', {
 			newPhase: this.gamePhase
@@ -444,6 +451,13 @@ class App {
 		this.socket.io.opts.query = {
 			token: this.token || ''
 		};
+	}
+
+	onSimulationPhaseEnd () {
+		if (this.waitOnSimulationPhaseEndCallback) {
+			this.waitOnSimulationPhaseEndCallback();
+			this.waitOnSimulationPhaseEndCallback = undefined;
+		}
 	}
 
  /* Debug ============================== Debug

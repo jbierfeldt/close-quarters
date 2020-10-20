@@ -19,7 +19,7 @@ export default class ClientController {
 		this.ordersSubmitted = false;
 
 		this.clientGamePhase = 'TITLE';
-		this.clientState = 'TITLE'; // Prior to player assignment - fix for null, SPECTATOR, ACTIVE_PLAYER, DEFEATED_PLAYER
+		this.clientState = null; // Prior to player assignment - fix for null, SPECTATOR, ACTIVE_PLAYER, DEFEATED_PLAYER
 	}
 
 	onConnect() {
@@ -30,10 +30,6 @@ export default class ClientController {
 	onSuccessfulJoinGame() {
 		this.sendClientInfo();
 		this.gameController.sendLastTurnHistoryToClient(this.socket);
-	}
-
-	onEnterMatchmaking() {
-		this.setClientState('MATCHMAKING');
 	}
 
 	onLeaveGameRoom() {
@@ -55,7 +51,7 @@ export default class ClientController {
 		}
 
 		this.setGamePhase('MATCHMAKING');
-		this.onEnterMatchmaking();
+		this.sendClientInfo();
 	}
 
 	disconnectFromGame() {
@@ -125,17 +121,16 @@ export default class ClientController {
 
 	bindGameListeners () {
 
-		// (re-)bind regular listeners as well
-		// this.removeListeners();
-		// this.bindListeners();
-
+		this.socket.removeAllListeners('updateClientGamePhase');
 		this.socket.on('updateClientGamePhase', (data) => {
-			// this.clientGamePhase = data.newPhase;
-			this.gameController.sendRoomStateToAll();
 
-			if (data.newPhase === "REVIEW") {
-				this.setClientStateFromVictoryCondition(this.gameController.game.players[this.playerNumber - 1].victoryCondition);
-			}
+			// if (data.newPhase === "REVIEW") {
+			// 	this.setClientStateFromVictoryCondition(this.gameController.game.players[this.playerNumber - 1].victoryCondition);
+			// }
+
+			this.clientGamePhase = data.newPhase;
+
+			this.gameController.sendRoomStateToAll();
 		})
 
 		this.socket.on('disconnect', (reason) => {
@@ -166,6 +161,7 @@ export default class ClientController {
 		this.socket.on('resetGame', (data) => {
 			// reset Game
 			this.gameController.resetGame();
+			this.onLeaveGameRoom();
 		});
 
 		this.socket.on('loadSnapshot', (data) => {

@@ -445,7 +445,7 @@ export default class GameController {
 
 	runSimulation() {
 		this.game.runSimulation();
-		// this.checkPlayerStateChanges();
+		this.checkPlayerStateChanges();
 		this.sendGameStateToAll();
 		this.sendSuccessfulSimulationToAll();
 	}
