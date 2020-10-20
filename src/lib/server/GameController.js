@@ -119,15 +119,16 @@ export default class GameController {
 			let basicAI = new BasicAI(this.game, playerSpot);
 			this.playerSpots[playerSpot] = basicAI;
 
-			//Major Hack for AI first turn placements ******
-			basicAI.createAIBase();
-			this.executeOrder(this.playerSpots[playerSpot].ordersToExecute[0]);
-			basicAI.createAIBase();
-			this.executeOrder(this.playerSpots[playerSpot].ordersToExecute[1]);
-			this.playerSpots[playerSpot].ordersToExecute = [];
-			basicAI.generateOrders(0);
+			// //Major Hack for AI first turn placements ******
+			// basicAI.createAIBase();
+			// this.executeOrder(this.playerSpots[playerSpot].ordersToExecute[0]);
+			// basicAI.createAIBase();
+			// this.executeOrder(this.playerSpots[playerSpot].ordersToExecute[1]);
+			// // this.playerSpots[playerSpot].ordersToExecute = [];
+			// basicAI.tempBoard = JSON.parse(JSON.stringify(this.game.board));
+			// basicAI.generateOrders(0);
 
-			basicAI.ordersSubmitted = true;
+			// basicAI.ordersSubmitted = true;
 
 
 			this.sendRoomStateToAll();
@@ -148,6 +149,15 @@ export default class GameController {
 			} else {
 				// if any of the spots are open, exit function
 				return false;
+			}
+		}
+
+		// have AI generate initial orders
+		for (let i = 1; i <= 4; i++) {
+			if (this.playerSpots[i] instanceof BasicAI) {
+				this.playerSpots[i].tempBoard = JSON.parse(JSON.stringify(this.game.board));
+				this.playerSpots[i].generateOrders(0);
+				this.playerSpots[i].ordersSubmitted = true;
 			}
 		}
 
@@ -332,10 +342,10 @@ export default class GameController {
 		// TEMP
 		// all human players have submitted their turns, fill the rest of the spots
 		// with AI
-		if (this.game.turnNumber === 1) {
-			for (let i = 1; i <= 4; i++) {
-				if (this.playerSpots[i] == null) {
-					this.assignAIToSpot(i);
+		// if (this.game.turnNumber === 1) {
+		// 	for (let i = 1; i <= 4; i++) {
+		// 		if (this.playerSpots[i] == null) {
+		// 			this.assignAIToSpot(i);
 
 					// //Major Hack for AI first turn placements ******
 					// basicAI.createAIBase();
@@ -346,9 +356,9 @@ export default class GameController {
 					// basicAI.generateOrders(0);
 
 					// basicAI.ordersSubmitted = true;
-				}
-			}
-		}
+		// 		}
+		// 	}
+		// }
 
 		// send turnsSubmitted event to clients
 		this.sendTurnsSubmittedToAll();
@@ -374,6 +384,7 @@ export default class GameController {
 		// AI generate orders for next turn
 		for (let i = 1; i <= 4; i++) {
 			if (this.playerSpots[i] instanceof BasicAI && this.game.players[i-1].victoryCondition !== -1) {
+				this.playerSpots[i].tempBoard = JSON.parse(JSON.stringify(this.game.board));
 				this.playerSpots[i].generateOrders(0);
 				this.playerSpots[i].ordersSubmitted = true;
 			}
