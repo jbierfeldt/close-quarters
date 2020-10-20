@@ -97,7 +97,6 @@ export default class Display {
 			let fullBoardTrigger = 0;
 			//let flag = [0,0,0,0];
 
-			let full = true;
 			let justTriggered = 1;
 			let gameOver = 0;
 			let alpha = 0;
@@ -141,6 +140,7 @@ export default class Display {
 			//The draw function loops continuously while the sketch is active
 			//Different screens of the game are portioned off using trigger variables and user input to move between them
 			s.draw = () => {
+
 				//input = null;
 				input.style('display', 'none');
 				s.cursor(s.CROSS);
@@ -258,10 +258,10 @@ export default class Display {
 					//buttonScale sets the size of the buttons(dependent on their overall number)
 					if (s.mouseIsPressed) {
 
-						if (!debug.enabled) {
-							s.fullscreen(full);
+					//	if (!debug.enabled) {
+							s.fullscreen(true);
 							s.resizeCanvas(window.screen.height * 1.5, window.screen.height);
-						}
+				//		}
 						buttonMaker = 1;
 						buttonMakerTwo = 1;
 						this.app.setGamePhase("MATCHMAKING");
@@ -534,7 +534,7 @@ export default class Display {
 							submitShifterY = he / 2;
 						}
 
-					input.remove();
+
 					justTriggered = 1;
 					this.t = 1;
 					animate = 0;
@@ -940,14 +940,16 @@ export default class Display {
 						s.strokeWeight(2);
 						s.line(0,he/4,wi*2/7,he/4);
 						s.line(wi*5/7,he/4,wi,he/4);
+						s.line(0,he/4+he/8,wi*2/7,he/4+he/8);
+						s.line(wi*5/7,he/4+he/8,wi,he/4+he/8);
 						bLeaveMatch.drawButton();
 						s.textAlign(s.CENTER);
 						s.textSize(si*1.15);
 						s.fill(255);
 						s.stroke(0);
 						s.textFont(titleFont);
-						s.text("Leave Game", wi/2-4, he/4 + si*.25);
-						s.text("Toggle Full Screen", wi/2-4, he/4 + si*.25 + he/8);
+						s.text("Leave Game", wi/2-4, he/4 + si*.4);
+						s.text("Enter Full Screen", wi/2-4, he/4 + si*.4 + he/8);
 						s.textAlign(s.LEFT);
 						bFullScreen.drawButton();
 						if (s.mouseIsPressed) {
@@ -955,14 +957,28 @@ export default class Display {
 								this.app.sendClearSpot(this.app.playerNumber);
 								showMenu = false;
 							}
+							if (bFullScreen.isInRange(s.mouseX, s.mouseY)) {
+								//let fs = s.fullscreen();
+								s.fullscreen(true);
+						  //document.requestFullscreen();
+							/*	if(s.fullScreen){
+										s.fullscreen(!fs);
+								}
+								else{
+									  s.fullscreen(!fs);
+								}*/
+							//s.fullscreen(full);
+							buttonMaker = 1;
+							buttonMakerTwo = 1;
+							s.resizeCanvas(window.screen.height * 1.5, window.screen.height);
 						}
-						/*s.noFill();
-						s.rect(wi*2/5, he/4-si, wi*1/5,si*2);
-						s.text("Leave Match",)*/
+						s.mouseIsPressed = false;
 					}
-					//Bug Fix: Underneath buttons need to be disabled
 
 				}
+					//Bug Fix: Underneath buttons need to be disabled
+
+			}
 
 				else if (this.app.gamePhase == "SIMULATION" || this.app.clientState === 'SPECTATOR' || this.app.clientState === 'DEFEATED_PLAYER') {
 					bSubmit.submitted = false;
