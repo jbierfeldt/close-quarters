@@ -309,7 +309,7 @@ export default class GameController {
 		// checks if players have been defeated/victorious
 
 		for (let i = 1; i <= 4; i++) {
-			if (this.playerSpots[i].isConnected) {
+			if (!this.playerSpots[i].isAI) {
 				this.playerSpots[i].setClientStateFromVictoryCondition(this.game.players[i - 1].victoryCondition);
 			}
 		}
@@ -445,7 +445,7 @@ export default class GameController {
 
 	runSimulation() {
 		this.game.runSimulation();
-		this.checkPlayerStateChanges();
+		// this.checkPlayerStateChanges();
 		this.sendGameStateToAll();
 		this.sendSuccessfulSimulationToAll();
 	}
