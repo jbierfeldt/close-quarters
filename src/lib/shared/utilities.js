@@ -11,7 +11,15 @@ export class DEBUG {
 				console.log(message);
 			})
 		}
-	}
+  }
+  
+  enable() {
+    this.enabled = true;
+  }
+
+  disable() {
+    this.enabled = false;
+  }
 }
 
 export const create2DArray = function (rows, columns) {
