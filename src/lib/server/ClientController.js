@@ -132,6 +132,10 @@ export default class ClientController {
 		this.socket.on('updateClientGamePhase', (data) => {
 			// this.clientGamePhase = data.newPhase;
 			this.gameController.sendRoomStateToAll();
+
+			if (data.newPhase === "REVIEW") {
+				this.setClientStateFromVictoryCondition(this.gameController.game.players[this.playerNumber - 1].victoryCondition);
+			}
 		})
 
 		this.socket.on('disconnect', (reason) => {
@@ -223,6 +227,8 @@ export default class ClientController {
 			case 1:
 				newState = "VICTORIOUS_PLAYER";
 		}
+
+		debug.log(1, `setting client state ${this.id} to ${newState}`);
 
 		if (this.clientState !== newState) {
 			this.clientState = newState;
