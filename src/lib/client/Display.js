@@ -959,7 +959,15 @@ export default class Display {
 							}
 							if (bFullScreen.isInRange(s.mouseX, s.mouseY)) {
 								//let fs = s.fullscreen();
-								s.fullscreen(true);
+							//	console.log(fs);
+								s.fullscreen(false);
+								s.resizeCanvas(tempConfig.canvasX, tempConfig.canvasY);
+							/*	if(){
+								s.resizeCanvas(window.screen.height * 1.5, window.screen.height);
+							}
+							else{
+								s.resizeCanvas(tempConfig.canvasX, tempConfig.canvasY);
+							}*/
 						  //document.requestFullscreen();
 							/*	if(s.fullScreen){
 										s.fullscreen(!fs);
