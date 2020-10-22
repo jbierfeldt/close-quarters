@@ -127,11 +127,11 @@ export class OscBullet extends Projectile {
 }
 
 export class MagBullet extends Projectile {
-	constructor(player, initialOrientation = [0, 0], initialSpeed = 0, unit, damage = 50, distance = 0, id)  {
+	constructor(player, initialOrientation = [0, 0], initialSpeed = 0, unit, damage = 40, distance = 0, id)  {
 		super(player, initialOrientation, initialSpeed, unit, id);
 		this.identifier = "MagProj";
 		this.damage = damage;
-		this.maxDamage = 50;
+		this.maxDamage = 40;
 		this.ableToBeDestroyed = true;
 		this.distance = distance;
 	}
