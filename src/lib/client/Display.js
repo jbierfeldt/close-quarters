@@ -949,7 +949,7 @@ export default class Display {
 						s.stroke(0);
 						s.textFont(titleFont);
 						s.text("Leave Game", wi/2-4, he/4 + si*.4);
-						s.text("Enter Full Screen", wi/2-4, he/4 + si*.4 + he/8);
+						s.text("Toggle Full Screen", wi/2-4, he/4 + si*.4 + he/8);
 						s.textAlign(s.LEFT);
 						bFullScreen.drawButton();
 						if (s.mouseIsPressed) {
@@ -958,27 +958,22 @@ export default class Display {
 								showMenu = false;
 							}
 							if (bFullScreen.isInRange(s.mouseX, s.mouseY)) {
-								//let fs = s.fullscreen();
-							//	console.log(fs);
-								s.fullscreen(false);
-								s.resizeCanvas(tempConfig.canvasX, tempConfig.canvasY);
-							/*	if(){
-								s.resizeCanvas(window.screen.height * 1.5, window.screen.height);
+								let fs = s.fullscreen();
+
+								if(s.height != window.screen.height){
+									s.fullscreen(true);
+									//s.resizeCanvas(tempConfig.canvasX, tempConfig.canvasY);
+									s.resizeCanvas(window.screen.height * 1.5, window.screen.height);
 							}
 							else{
-								s.resizeCanvas(tempConfig.canvasX, tempConfig.canvasY);
-							}*/
-						  //document.requestFullscreen();
-							/*	if(s.fullScreen){
-										s.fullscreen(!fs);
-								}
-								else{
-									  s.fullscreen(!fs);
-								}*/
-							//s.fullscreen(full);
+									s.fullscreen(false);
+									s.resizeCanvas(tempConfig.canvasX, tempConfig.canvasY);
+									//s.resizeCanvas(100, 100);
+							}
+
 							buttonMaker = 1;
 							buttonMakerTwo = 1;
-							s.resizeCanvas(window.screen.height * 1.5, window.screen.height);
+
 						}
 						s.mouseIsPressed = false;
 					}
