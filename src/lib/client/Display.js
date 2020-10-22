@@ -187,6 +187,7 @@ export default class Display {
 						submitShifterX = wi / 2;
 						submitShifterY = he / 2;
 					}
+					unitButtons = [];
 					bLeaveMatch = new Buttoned(wi*2/7, he/4-si, wi*3/7, si * 2, "Leave Match", this.app.setGamePhase);
 					bFullScreen = new Buttoned(wi*2/7, he/4-si+he/8, wi*3/7, si * 2, "Toggle Full Screen", this.app.setGamePhase);;
 					bPhaseOne = new Buttoned(wi - si * 5.55, si * 2.9, si * 5.1, si * 1.1, "Deploy Machines", this.app.setGamePhase);
@@ -273,9 +274,6 @@ export default class Display {
 				}
 
 				else if (this.app.gamePhase === "MATCHMAKING") {
-					/*if(!input){
-					input = s.createInput();
-				}*/
 					input.style('display', 'block');
 					input.position(3 * wi / 5 + si / 10, he / 4.65);
 					input.size(si * 4, he / 20);
@@ -1131,6 +1129,66 @@ export default class Display {
 							sideBarMenu = false;
 						}
 					}
+					if(s.keyIsPressed ){
+						//console.log(s.keyCode);
+						if(s.keyCode === 77){
+							if(showMenu === true){
+								showMenu = false;
+							}
+							else{
+							showMenu = true;
+						}
+						s.keyIsPressed = false;
+						//this.app.sendClearSpot(this.app.playerNumber);
+						}
+					}
+					if(showMenu === true){
+						s.noStroke();
+						s.fill(0,190);
+						s.rect(0,0,wi,he);
+						s.stroke(255);
+						s.strokeWeight(2);
+						s.line(0,he/4,wi*2/7,he/4);
+						s.line(wi*5/7,he/4,wi,he/4);
+						s.line(0,he/4+he/8,wi*2/7,he/4+he/8);
+						s.line(wi*5/7,he/4+he/8,wi,he/4+he/8);
+						bLeaveMatch.drawButton();
+						s.textAlign(s.CENTER);
+						s.textSize(si*1.15);
+						s.fill(255);
+						s.stroke(0);
+						s.textFont(titleFont);
+						s.text("Leave Game", wi/2-4, he/4 + si*.4);
+						s.text("Toggle Full Screen", wi/2-4, he/4 + si*.4 + he/8);
+						s.textAlign(s.LEFT);
+						bFullScreen.drawButton();
+						if (s.mouseIsPressed) {
+							if (bLeaveMatch.isInRange(s.mouseX, s.mouseY)) {
+								this.app.sendClearSpot(this.app.playerNumber);
+								showMenu = false;
+							}
+							if (bFullScreen.isInRange(s.mouseX, s.mouseY)) {
+								let fs = s.fullscreen();
+
+								if(s.height != window.screen.height){
+									s.fullscreen(true);
+									//s.resizeCanvas(tempConfig.canvasX, tempConfig.canvasY);
+									s.resizeCanvas(window.screen.height * 1.5, window.screen.height);
+							}
+							else{
+									s.fullscreen(false);
+									s.resizeCanvas(tempConfig.canvasX, tempConfig.canvasY);
+									//s.resizeCanvas(100, 100);
+							}
+
+							buttonMaker = 1;
+							buttonMakerTwo = 1;
+
+						}
+						s.mouseIsPressed = false;
+					}
+
+				}
 
 				}
 
@@ -1298,6 +1356,66 @@ export default class Display {
 							bPhaseOne.func.call(this.app, "PLACEMENT");
 						}
 					}
+					if(s.keyIsPressed ){
+						//console.log(s.keyCode);
+						if(s.keyCode === 77){
+							if(showMenu === true){
+								showMenu = false;
+							}
+							else{
+							showMenu = true;
+						}
+						s.keyIsPressed = false;
+						//this.app.sendClearSpot(this.app.playerNumber);
+						}
+					}
+					if(showMenu === true){
+						s.noStroke();
+						s.fill(0,190);
+						s.rect(0,0,wi,he);
+						s.stroke(255);
+						s.strokeWeight(2);
+						s.line(0,he/4,wi*2/7,he/4);
+						s.line(wi*5/7,he/4,wi,he/4);
+						s.line(0,he/4+he/8,wi*2/7,he/4+he/8);
+						s.line(wi*5/7,he/4+he/8,wi,he/4+he/8);
+						bLeaveMatch.drawButton();
+						s.textAlign(s.CENTER);
+						s.textSize(si*1.15);
+						s.fill(255);
+						s.stroke(0);
+						s.textFont(titleFont);
+						s.text("Leave Game", wi/2-4, he/4 + si*.4);
+						s.text("Toggle Full Screen", wi/2-4, he/4 + si*.4 + he/8);
+						s.textAlign(s.LEFT);
+						bFullScreen.drawButton();
+						if (s.mouseIsPressed) {
+							if (bLeaveMatch.isInRange(s.mouseX, s.mouseY)) {
+								this.app.sendClearSpot(this.app.playerNumber);
+								showMenu = false;
+							}
+							if (bFullScreen.isInRange(s.mouseX, s.mouseY)) {
+								let fs = s.fullscreen();
+
+								if(s.height != window.screen.height){
+									s.fullscreen(true);
+									//s.resizeCanvas(tempConfig.canvasX, tempConfig.canvasY);
+									s.resizeCanvas(window.screen.height * 1.5, window.screen.height);
+							}
+							else{
+									s.fullscreen(false);
+									s.resizeCanvas(tempConfig.canvasX, tempConfig.canvasY);
+									//s.resizeCanvas(100, 100);
+							}
+
+							buttonMaker = 1;
+							buttonMakerTwo = 1;
+
+						}
+						s.mouseIsPressed = false;
+					}
+
+				}
 				}
 
 				//End Phase 3
