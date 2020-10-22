@@ -119,18 +119,6 @@ export default class GameController {
 			let basicAI = new BasicAI(this.game, playerSpot);
 			this.playerSpots[playerSpot] = basicAI;
 
-			// //Major Hack for AI first turn placements ******
-			// basicAI.createAIBase();
-			// this.executeOrder(this.playerSpots[playerSpot].ordersToExecute[0]);
-			// basicAI.createAIBase();
-			// this.executeOrder(this.playerSpots[playerSpot].ordersToExecute[1]);
-			// // this.playerSpots[playerSpot].ordersToExecute = [];
-			// basicAI.tempBoard = JSON.parse(JSON.stringify(this.game.board));
-			// basicAI.generateOrders(0);
-
-			// basicAI.ordersSubmitted = true;
-
-
 			this.sendRoomStateToAll();
 
 			return true;
@@ -338,27 +326,6 @@ export default class GameController {
 		if (onlinePlayers < 1) {
 			return false;
 		}
-
-		// TEMP
-		// all human players have submitted their turns, fill the rest of the spots
-		// with AI
-		// if (this.game.turnNumber === 1) {
-		// 	for (let i = 1; i <= 4; i++) {
-		// 		if (this.playerSpots[i] == null) {
-		// 			this.assignAIToSpot(i);
-
-					// //Major Hack for AI first turn placements ******
-					// basicAI.createAIBase();
-					// this.executeOrder(this.playerSpots[i].ordersToExecute[0]);
-					// basicAI.createAIBase();
-					// this.executeOrder(this.playerSpots[i].ordersToExecute[1]);
-					// this.playerSpots[i].ordersToExecute = [];
-					// basicAI.generateOrders(0);
-
-					// basicAI.ordersSubmitted = true;
-		// 		}
-		// 	}
-		// }
 
 		// send turnsSubmitted event to clients
 		this.sendTurnsSubmittedToAll();
