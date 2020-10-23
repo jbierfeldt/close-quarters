@@ -215,6 +215,10 @@ class App {
 			this.setGamePhase('PLACEMENT');
 		})
 
+		this.socket.on('gameOver', (data) => {
+			debug.log(1, "NO REMAINING ACTIVE HUMAN PLAYERS ");
+		})
+
 	}
 
 	createOrder (orderType, args) {
