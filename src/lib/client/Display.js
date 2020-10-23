@@ -40,7 +40,6 @@ export default class Display {
 			let playerShifter;
 			let submitShifterX;
 			let submitShifterY;
-			let gameStart = 0;
 			let sideBarGrowth = 1;
 			let sideBarMenu = false;
 
@@ -177,7 +176,7 @@ export default class Display {
 				if(this.app.playerNumber && buttonMaker == 1){
 					if (this.app.playerNumber == 2) {
 						submitShifterX = 0;
-						submitShifterY = he / 2;;
+						submitShifterY = he / 2;
 					}
 					else if (this.app.playerNumber == 3) {
 						submitShifterX = wi / 2;
@@ -226,7 +225,7 @@ export default class Display {
 				//Phase begins at 0 via the constructor of Display(see above)
 				//Phase 0 is the Title Sccreen, Phase 1 is Unit Placement, and Phase 2 is the Battle Phase
 				if (this.app.gamePhase == "TITLE") {
-					gameStart = 0;
+
 
 					//this.app.sendJoinGame;
 					titleSequence(wi, he, this.delay, si / 2);
@@ -296,6 +295,8 @@ export default class Display {
 					s.noFill();
 					s.stroke(255);
 					s.rect(3 * wi / 5, he / 4 + he / 8.25, si * 4, si * 1.1);
+
+					s.rect(wi / 2 - wi/8, he / 4 + 2.65 * he / 6, wi/4, he/12);
 					s.textAlign(s.CENTER);
 					if (s.mouseIsPressed && s.mouseX < 3 * wi / 5 + si * 4 && s.mouseX > 3 * wi / 5 && s.mouseY < he / 4 + he / 8.25 + si * 1.1 && s.mouseY > he / 4 + he / 8.25) {
 						this.app.sendCreateRoom();
@@ -358,7 +359,7 @@ export default class Display {
 						s.strokeWeight(1);
 						s.noFill()
 						if (this.app.playerSpotsInGameRoom[p + 1].playerType == 'Human') {
-							s.rect(0, 0, si * 15, si * 10);
+							//s.rect(0, 0, si * 15, si * 10);
 							s.stroke(255);
 							s.fill(0);
 							s.rect(wi / 4 - si * 2, he / 4 - si / 2, si * 4, si);
@@ -521,7 +522,7 @@ export default class Display {
 				//	if (buttonMaker === 1) {
 						if (this.app.playerNumber == 2) {
 							submitShifterX = 0;
-							submitShifterY = he / 2;;
+							submitShifterY = he / 2;
 						}
 						else if (this.app.playerNumber == 3) {
 							submitShifterX = wi / 2;
@@ -571,12 +572,12 @@ export default class Display {
 				//	s.textSize
 					s.text("Press 'M' To Access Game Menu", wi/4 - wi/8 + submitShifterX+wi/8, he - si * 0.8 - submitShifterY);
 					s.textAlign(s.LEFT);
-					if (s.mouseIsPressed && s.mouseX < wi/4 - wi/8 + submitShifterX + wi*4 && s.mouseX > wi/4 - wi/8 + submitShifterX && s.mouseY < si * 3.5 + si * 1.5 && s.mouseY > si * 3.5) {
+			/*		if (s.mouseIsPressed && s.mouseX < wi/4 - wi/8 + submitShifterX + wi*4 && s.mouseX > wi/4 - wi/8 + submitShifterX && s.mouseY < si * 3.5 + si * 1.5 && s.mouseY > si * 3.5) {
 					//	this.app.sendClearSpot(this.app.playerNumber);
-					}
+				}*/
 
 
-					if (this.app.game.players[this.app.playerNumber - 1].baseCount < 2 && gameStart == 0 && this.app.game.turnNumber < 2) {
+					if (this.app.game.players[this.app.playerNumber - 1].baseCount < 2 && this.app.game.turnNumber === 1) {
 						bBase.drawButton();
 						s.fill(255);
 						s.stroke(0);
@@ -608,7 +609,6 @@ export default class Display {
 					}
 					else {
 						s.textSize(wi / 40);
-						gameStart = 1;
 						if (this.app.turnNumber > 1) {
 							bPhaseThree.drawButton();
 							s.fill(255);
@@ -823,7 +823,7 @@ export default class Display {
 					}
 					s.fill(255, 100);
 					s.noStroke();
-					if (this.app.game.players[this.app.playerNumber - 1].baseCount < 2 && gameStart == 0 && this.app.game.turnNumber < 2) {
+					if (this.app.game.players[this.app.playerNumber - 1].baseCount < 2 && this.app.game.turnNumber === 1) {
 						if (this.app.playerNumber == 1 && hoverX <= 14 && hoverY < 10 && hoverX < 30 && hoverY < 20) {
 							s.rect(hoverX * si, hoverY * si, si * 2, si * 2);
 						}
@@ -1370,6 +1370,9 @@ export default class Display {
 						}
 					}
 					if(showMenu === true){
+						wi = s.width;
+						si = wi / 30;
+						he = si * 20;
 						s.noStroke();
 						s.fill(0,190);
 						s.rect(0,0,wi,he);
@@ -1407,10 +1410,8 @@ export default class Display {
 									s.resizeCanvas(tempConfig.canvasX, tempConfig.canvasY);
 									//s.resizeCanvas(100, 100);
 							}
-
 							buttonMaker = 1;
 							buttonMakerTwo = 1;
-
 						}
 						s.mouseIsPressed = false;
 					}
@@ -1641,72 +1642,10 @@ export default class Display {
 				s.background(0);
 				let lightningTrigger = s.int(delay);
 
-				s.tint(255, 0, 128);
-				s.image(imgEight, 0, 0, height * 1.6, height);
+				s.tint(255, 0, 128, 70+(1+s.cos(delay/5))*35);
+				s.image(imgTwo, 0, 0, height * 1.6, height);
 				s.noTint();
-				//BEGIN TESLA COILS
-				/*s.noStroke();
-				//s.fill(255,0,128,255);
-				s.fill(255);
-				for(let h = s.int(height/18); h >= s.int(height/28); h = h - 1){
-					if(h === s.int(height/28)){
-						s.stroke(255,0,128,255);
-					}
-					else{
-						s.stroke(255,255);
-					}
-					s.ellipse(width/8-width/30+width/30,height/4+3*height/5+h,width/9,width/52);
-				}
-				for(let h = s.int(height/28); h >= 0; h = h - 1){
-					if(h === 0){
-						s.stroke(255,0,128,255);
-					}
-					else{
-						s.stroke(255,255);
-					}
-					s.ellipse(width/8-width/30+width/30,height/4+3*height/5+h,width/12,width/62);
-				}
 
-				s.stroke(255);
-				s.noStroke();
-				s.fill(255,0,128,255);
-				s.fill(255,255);
-				s.rect(width/8-width/100,height/4,2*width/100,3*height/5);
-				//drawTripwireProjectile(5, 5, 1, size, pColors, [0,0], 10, 0);
-				//Begin Projectiles
-				let refx = width/8-width/30+width/30;
-				let refy = height/4;
-				let ballSize = size*10;
-				//s.fill(255,0,128, 155);
-				s.translate(refx,refy);
-
-				if(lightningTrigger % 1 == 0){
-				for(let angle = 0; angle < 360; angle = angle + 30){
-					s.rotate(s.radians(angle));
-					let endX;
-					let endY;
-					let xx = 0
-					let yy = 0;
-					while(yy < ballSize/30){//to bottom of screen
-			   endX = xx + s.random(-ballSize/12, ballSize/12); //x-value varies
-					 //endX = xx + s.random(-ballSize/206, ballSize/206)+s.noise(delay/100)*ballSize/12;
-			   endY = yy + size/20;    //y just goes up
-				   s.strokeWeight(1);//bolt is a little thicker than a line
-				   s.stroke(255); //white line
-			   s.line(xx,yy,endX,endY);//draw a tiny segment
-			   xx = endX;  //then x and y are moved to the
-			   yy = endY;  //end of the segment and so on
-			 }
-				 s.rotate(-s.radians(angle));
-			  }
-		}
-		s.fill(255,0,128,255);
-				s.stroke(0,255);
-				s.noStroke();
-				s.ellipse(0, 0, ballSize/4,ballSize/4);
-				s.translate(-refx,-refy);
-				//END TESLA COILS
-				*/
 				s.textFont(titleFont);
 				s.strokeWeight(1);
 				s.stroke(0);
@@ -1724,6 +1663,8 @@ export default class Display {
 				s.text("New Lobby", width * 2 / 5, height / 4 + height / 6);
 				s.fill(210, 130, 240, 255);
 				s.text("Hot Seat", width * 2 / 5, height / 4 + 2 * height / 6);
+				s.fill(255, 255);
+				s.text("How To Play", width / 2, height / 4 + 3 * height / 6);
 				//s.textAlign(s.LEFT);
 			}
 
