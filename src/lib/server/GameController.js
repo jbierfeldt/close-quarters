@@ -296,12 +296,29 @@ export default class GameController {
 	checkPlayerStateChanges() {
 		// checks if players have been defeated/victorious
 
+		let onlinePlayers = 0;
+		let defeatedPlayers = 0;
+
 		for (let i = 1; i <= 4; i++) {
 			if (!this.playerSpots[i].isAI) {
+
+				if (this.playerSpots[i].connectionState === "ONLINE") {
+					onlinePlayers++;
+				}
+
 				this.playerSpots[i].setClientStateFromVictoryCondition(this.game.players[i - 1].victoryCondition);
+
+				if (this.playerSpots[i].clientState === "DEFEATED_PLAYER") {
+					defeatedPlayers++;
+				}
 			}
 		}
 
+		if (defeatedPlayers > 0 && onlinePlayers === defeatedPlayers) {
+			debug.log(1, "NO MORE ACTIVE ONLINE PLAYERS");
+
+			this.io.to(this.id).emit('gameOver');
+		}
 	}
 
 	checkAllOrdersSubmitted() {
