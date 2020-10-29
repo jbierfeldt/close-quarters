@@ -1,6 +1,8 @@
 import p5 from 'p5';
+
 import * as Units from '../shared/Unit.js';
 import * as Projectiles from '../shared/Projectile.js';
+import * as Sprite from './Sprites.js';
 
 const tempConfig = {
 	canvasX: 1000,
@@ -31,7 +33,7 @@ export default class Display {
 
 		let sketch = (s) => {
 
-			//Declarations prior to the draw loop & setup
+			//Variable declarations prior to the draw loop & setup
 			let scroller = 0;
 			let titleFont;
 			let standardFont;
@@ -44,7 +46,6 @@ export default class Display {
 			let sideBarMenu = false;
 
 			let value = false;
-			//let successfulJoinedGame = null;
 
 			//Button Declarations
 
@@ -62,19 +63,16 @@ export default class Display {
 			let bResonator;
 			let bOscillator;
 			let bIntegrator;
-
 			let newButtonPressed = 0;
 			let currentButtonPressed = 0;
-
 			let bSubmit;
 			let bLeaveMatch;
 			let bFullScreen;
-
-			let counter = 0;
-
 			let unitButtons = []; //List of the Buttons for unit creation
 			let buttonMaker = 1; //Variable so buttons only get created once
 			let buttonMakerTwo = 1;
+
+			let counter = 0;
 			let hoverX;
 			let hoverY;
 
@@ -86,25 +84,21 @@ export default class Display {
 			let imgSix;
 			let imgSeven;
 			let imgEight;  //Background texture for matchmaking
+
+
 			let col_high;
 			let col_med;
 			let col_low;
-
 			let b;
 			let possibleTargets = [];
 			let hoverObject;
 			let fullBoardTrigger = 0;
-			//let flag = [0,0,0,0];
-
 			let justTriggered = 1;
 			let gameOver = 0;
 			let alpha = 0;
-
 			let input;
 			let allowNewID = 1;
-
-			let loading = false;
-
+			let loading = false; //Whether The Loading Screen Should Be Displayed. 
 			let showMenu = false;
 
 
@@ -1925,9 +1919,7 @@ export default class Display {
 				s.endShape();
 
 				drawCreditsSymbol(refXX + siz * 2.08, refYY + siz / 2.2, siz, player, 10, pColors);
-				//s.text("Cost",wid/2+siz*12.3,siz*2.45);
 				s.textSize(wid / 37);
-				//s.textFont(standardFont);
 				s.translate(0, siz / 6);
 				//Ray Tracer Button Decoration
 				s.strokeWeight(2);

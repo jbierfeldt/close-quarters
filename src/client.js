@@ -216,6 +216,7 @@ class App {
 		})
 
 		this.socket.on('gameOver', (data) => {
+			this.setGamePhase('MATCHMAKING');
 			debug.log(1, "NO REMAINING ACTIVE HUMAN PLAYERS ");
 		})
 
@@ -414,7 +415,7 @@ class App {
 		this.turnNumber = turnNumber;
 		this.game.turnNumber = turnNumber;
 		this.currentTurnOrders = [];
-	} 
+	}
 
 	loadSerializedGameState(serializedGameState) {
 		let gameState = JSON.parse(serializedGameState);
