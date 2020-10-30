@@ -134,8 +134,7 @@ export default class Display {
 			//The draw function loops continuously while the sketch is active
 			//Different screens of the game are portioned off using trigger variables and user input to move between them
 			s.draw = () => {
-
-				//input = null;
+				//this.app.setGamePhase("STATS");
 				input.style('display', 'none');
 				alias.style('display', 'none');
 				s.cursor(s.CROSS);
@@ -222,8 +221,6 @@ export default class Display {
 				//Phase 0 is the Title Sccreen, Phase 1 is Unit Placement, and Phase 2 is the Battle Phase
 				if (this.app.gamePhase == "TITLE") {
 
-
-					//this.app.sendJoinGame;
 					titleSequence(wi, he, this.delay, si / 2);
 					//Display the game title on top of the title sequence
 					if (this.delay > 25) {
@@ -243,7 +240,7 @@ export default class Display {
 					s.text("Close", s.width / 2, s.height / 2.4);
 					s.text("Quarters", s.width / 2, s.height / 1.6);
 					let id = alias.value();
-					if (this.delay > 50) {
+					if (this.delay > 20) {
 						s.textSize(wi / 20);
 					//	if (s.sin(s.radians(3 * this.integerRising)) > -0.45) {
 							s.fill(210, 130, 240, 201);
@@ -265,10 +262,6 @@ export default class Display {
 							alias.style('text-transform', 'uppercase');
 							alias.style('font-family', "Monaco");
 
-					/*		if(id.length > 0){
-								s.text("Confirm", s.width / 1.1, s.height / 1.15);
-							}*/
-					//	}
 					}
 					s.textAlign(s.LEFT);
 					s.textSize(wi / 9);
@@ -1457,8 +1450,28 @@ export default class Display {
 
 				}
 				}
+				//End Review Phase
+				//Begin Optional Statistics Phase
+				else if (this.app.gamePhase === "STATS") {
+					s.background(0);
+					s.tint(255, 0, 128, 80+(1+s.cos(this.delay/5.5))*30);
+					s.image(imgTwo, 0, 0, s.height * 1.6, s.height);
+					s.textFont(titleFont);
+					s.fill(255,255);
+					s.stroke(0);
+					s.textAlign(s.CENTER);
+					s.textSize(si*2);
+					s.text("STATISTICS", s.width/2, s.height/8.8)
 
-				//End Phase 3
+					  s.stroke(255);
+					for(let r = 0; r < 6 ; r = r + 1){
+						s.line(s.width/15,s.height/6+r*s.height/6.5,s.width-s.width/15,s.height/6+r*s.height/6.5)
+					}
+					s.textAlign(s.LEFT);
+				}
+
+
+
 				//Begin Spectator Mode
 				if (this.app.clientState === "SPECTATOR" || this.app.clientState === "DEFEATED_PLAYER") {
 
