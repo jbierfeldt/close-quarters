@@ -2,7 +2,6 @@ import p5 from 'p5';
 
 import * as Units from '../shared/Unit.js';
 import * as Projectiles from '../shared/Projectile.js';
-import * as Sprite from './Sprites.js';
 
 const tempConfig = {
 	canvasX: 1000,

@@ -185,6 +185,7 @@ class App {
 			this.gameRoom = data.gameRoom;
 			this.playerNumber = data.playerNumber;
 			this.clientState = data.clientState;
+			this.clientAlias = data.alias;
 
 			debug.log(1, `clientGamePhase: ${data.clientGamePhase}`);
 
@@ -384,7 +385,22 @@ class App {
 	}
 
 	sendAssignPlayerToSpot (playerSpot) {
+		// to be used when players can change their playerSpot
+	}
 
+	sendSetAlias (aliasString) {
+
+		// only allow word letters, numbers, and underscores
+		let cleanString = aliasString.replace(/[^\w]/gi, ''); 
+
+		// limit length to 12 characters
+		if (cleanString.length > 12) {
+			cleanString = cleanString.slice(0, 12);
+		}
+
+		this.socket.emit('setClientAlias', {
+			alias: cleanString
+		});
 	}
 
 	sendAssignAIToSpot (playerSpot) {
@@ -528,6 +544,7 @@ class App {
 			'gameRoom': this.gameRoom,
 			'clientState': this.clientState,
 			'playerNumber': this.playerNumber,
+			'alias': this.clientAlias,
 			'turnNumber': this.turnNumber,
 		}
 
@@ -609,6 +626,7 @@ app.init();
 
 // secret reset for production games
 window.resetGame = app.sendResetGame.bind(app);
+window.setAlias = app.sendSetAlias.bind(app);
 
 window.printStatus = function () {
 	console.log("callback: ", app.waitOnInfoCallback, "clientInfo: ", app.loadedClientInfoFromServer, "roomstate: ", app.loadedRoomStateFromServer);
