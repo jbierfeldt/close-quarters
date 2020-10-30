@@ -2,7 +2,6 @@ import p5 from 'p5';
 
 import * as Units from '../shared/Unit.js';
 import * as Projectiles from '../shared/Projectile.js';
-import * as Sprite from './Sprites.js';
 
 const tempConfig = {
 	canvasX: 1000,
@@ -98,7 +97,7 @@ export default class Display {
 			let alpha = 0;
 			let input;
 			let allowNewID = 1;
-			let loading = false; //Whether The Loading Screen Should Be Displayed. 
+			let loading = false; //Whether The Loading Screen Should Be Displayed.
 			let showMenu = false;
 
 
@@ -268,37 +267,52 @@ export default class Display {
 
 				else if (this.app.gamePhase === "MATCHMAKING") {
 					input.style('display', 'block');
-					input.position(3 * wi / 5 + si / 10, he / 4.65);
-					input.size(si * 4, he / 20);
+					input.position(3 * wi / 5 + si * 1.6, he / 6.7);
+					input.size(si * 2.6, he / 20);
 					input.style('font-size', '28px');
 					input.style('background-color', 'transparent');
 					input.style('border-color', 'white');
-					input.style('color', '#B0C4F3');
+					input.style('color', 'white');
 					input.style('text-transform', 'uppercase');
 					input.style('font-family', "Monaco");
 
 					displayMatchmaking(this.app.matchmakingData, wi, he, si, this.delay, this.playerColors);
-					s.textAlign(s.LEFT);
-					s.stroke(0);
-					s.textSize(si * .8);
-					s.fill(152, 255, 152, 255);
-					s.text("Create", 3 * wi / 5 + si / 2, he / 3 + si * 1.55);
-					s.fill(210, 130, 240, 255);
-					s.text("Join", 3 * wi / 5 + si * 1.15, he / 4 + he / 3.025);
-					s.fill(230, 100);
-					s.noFill();
-					s.stroke(255);
-					s.rect(3 * wi / 5, he / 4 + he / 8.25, si * 4, si * 1.1);
-
-					s.rect(wi / 2 - wi/8, he / 4 + 2.65 * he / 6, wi/4, he/12);
 					s.textAlign(s.CENTER);
-					if (s.mouseIsPressed && s.mouseX < 3 * wi / 5 + si * 4 && s.mouseX > 3 * wi / 5 && s.mouseY < he / 4 + he / 8.25 + si * 1.1 && s.mouseY > he / 4 + he / 8.25) {
+
+					s.noStroke();
+					s.fill(255,55);
+					if(s.mouseX < (3*wi/4) && s.mouseX > (wi/4) && s.mouseY > (he/10+(1)*8*he/60) && s.mouseY < (he/10+(2)*8*he/60)){
+						s.rect(wi/4, (he/10+(1)*8*he/60), wi/2, (1)*8*he/60);
+						if(s.mouseIsPressed){
+							this.app.sendCreateRoom();
+						}
+					}
+					if(s.mouseX < (3*wi/4) && s.mouseX > (wi/4) && s.mouseY > (he/10+(2)*8*he/60) && s.mouseY < (he/10+(3)*8*he/60)){
+						s.rect(wi/4, (he/10+(2)*8*he/60), wi/2, (1)*8*he/60);
+						if(s.mouseIsPressed){
+							this.app.sendJoinOpenGame();
+						}
+					}
+					if(s.mouseX < (3*wi/4) && s.mouseX > (wi/4) && s.mouseY > (he/10+(3)*8*he/60) && s.mouseY < (he/10+(4)*8*he/60)){
+						s.rect(wi/4, (he/10+(3)*8*he/60), wi/2, (1)*8*he/60);
+						if(s.mouseIsPressed){
+						//	this.app.sendJoinOpenGame();
+						}
+					}
+					if(s.mouseX < (3*wi/4) && s.mouseX > (wi/4) && s.mouseY > (he/10+(4)*8*he/60) && s.mouseY < (he/10+(5)*8*he/60)){
+						s.rect(wi/4, (he/10+(4)*8*he/60), wi/2, (1)*8*he/60);
+						if(s.mouseIsPressed){
+						//	this.app.sendJoinOpenGame();
+						}
+					}
+
+				/*	if (s.mouseIsPressed && s.mouseX < 3 * wi / 5 + si * 4 && s.mouseX > 3 * wi / 5 && s.mouseY < he / 4 + he / 8.25 + si * 1.1 && s.mouseY > he / 4 + he / 8.25) {
 						this.app.sendCreateRoom();
-					}
-					s.rect(3 * wi / 5, he / 4 + he / 3.45, si * 4, si * 1.1);
-					if (s.mouseIsPressed && s.mouseX < 3 * wi / 5 + si * 4 && s.mouseX > 3 * wi / 5 && s.mouseY < he / 4 + he / 3.45 + si * 1.1 && s.mouseY > he / 4 + he / 3.45) {
+					}*/
+					//s.rect(3 * wi / 5, he / 4 + he / 3.45, si * 4, si * 1.1);
+				/*	if (s.mouseIsPressed && s.mouseX < 3 * wi / 5 + si * 4 && s.mouseX > 3 * wi / 5 && s.mouseY < he / 4 + he / 3.45 + si * 1.1 && s.mouseY > he / 4 + he / 3.45) {
 						this.app.sendJoinOpenGame();
-					}
+					}*/
 
 					let gameID = input.value();
 
@@ -309,11 +323,11 @@ export default class Display {
 
 						}
 						if (this.successfulJoinedGame === false) {
-							s.fill(255, 0, 128, 255);
-							s.textSize(si / 2);
+							s.fill(255,255);
+							s.textSize(si * .5);
 							s.stroke(0);
 							s.textFont(standardFont);
-							s.text("Room Not Found", wi / 2 + si * 5, he / 3 - si * .7);
+							s.text("Room Not Found", wi / 2 + si * 11, he / 6);
 						}
 					}
 					else {
@@ -1565,22 +1579,7 @@ export default class Display {
 				return finalArray;
 			}
 
-			function displayMatchmaking(size, player, pColors) {
 
-				s.background(0);
-				s.textFont(titleFont);
-				s.textSize(size);
-				s.strokeWeight(2);
-				s.stroke(0);
-				s.fill(255, 0, 128, 255);
-				s.textAlign(s.CENTER);
-				s.text("Join Game", width / 4, height / 4);
-				s.text("Create New Game", 3 * width / 4, height / 4);
-				s.text("Play Now", 2 * width / 4, height / 4);
-				s.fill(176, 196, 243, 255);
-				s.text("As a master tactition, you are ready to command electromagnetic machines in a war of ", width / 2, height / 2);
-				s.textAlign(s.LEFT);
-			}
 
 			class Flame {
 
@@ -1636,10 +1635,15 @@ export default class Display {
 				s.background(0);
 				let lightningTrigger = s.int(delay);
 
-				s.tint(255, 0, 128, 70+(1+s.cos(delay/5))*35);
+				s.tint(255, 0, 128, 70+(1+s.cos(delay/3.5))*60);
 				s.image(imgTwo, 0, 0, height * 1.6, height);
 				s.noTint();
-
+				s.stroke(255);
+				s.noFill();
+				s.rect(width/4,height/10,width/2,8*height/10);
+				for(let r = 1; r < 6; r = r + 1){
+					s.line(width/4,height/10+(r)*8*height/60,3*width/4,height/10+(r)*8*height/60);
+				}
 				s.textFont(titleFont);
 				s.strokeWeight(1);
 				s.stroke(0);
@@ -1648,17 +1652,25 @@ export default class Display {
 				s.textSize(size * 2);
 				s.text("Matchmaking", width / 2, height / 12);
 				s.stroke(255);
-				s.line(width / 4, height / 10, 3 * width / 4, height / 10);
+				//s.line(width / 4, height / 10, 3 * width / 4, height / 10);
 				s.stroke(0);
-				s.textSize(size);
-				s.fill(176, 196, 243, 255);
-				s.text("Enter Game Code", width * 2 / 5, height / 4);
-				s.fill(152, 255, 152, 255);
-				s.text("New Lobby", width * 2 / 5, height / 4 + height / 6);
-				s.fill(210, 130, 240, 255);
-				s.text("Hot Seat", width * 2 / 5, height / 4 + 2 * height / 6);
-				s.fill(255, 255);
-				s.text("How To Play", width / 2, height / 4 + 3 * height / 6);
+				s.textSize(size*1.2);
+					s.fill(255, 255);
+			//	s.fill(176, 196, 243, 255);
+				s.text("Enter Game Code:", width * 2.3 / 5, 3.69 * height / 20);
+				//s.fill(152, 255, 152, 255);
+			//	s.text("New Lobby", width * 2 / 5, height / 4 + height / 6);
+			//	s.fill(210, 130, 240, 255);
+				//s.text("Hot Seat", width * 2 / 5, height / 4 + 2 * height / 6);
+				s.text("Create New Lobby", width / 2, 6.37 * height / 20);
+
+				s.text("Join Hot Seat", width / 2, 9.04 * height / 20);
+
+				s.text("How To Play", width / 2, 11.7 * height / 20);
+
+				s.text("Wesley Arcade", width / 2, 14.4 * height / 20);
+
+				s.text(" Players Online", width / 2, 17.1 * height / 20);
 				//s.textAlign(s.LEFT);
 			}
 
