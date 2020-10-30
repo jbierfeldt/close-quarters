@@ -40,7 +40,7 @@ export default class BasicAI {
 			return false;
 		}
 	}
-	
+
 	isValidCoord(x, y) {
 		try {
 			if (this.tempBoard[y][x]) {
@@ -203,8 +203,10 @@ export default class BasicAI {
 					credits = credits - creditCost;
 				}
 			} else {
-				this.generateOrders();
-				return false;
+
+				newUnitCoord = this.game.getRandomCoordInPlayerRegion(this.playerNumber, 0, zone);
+				//this.generateOrders();
+				//return false;
 			}
 			/*if(credits == 1){
 				saveCredits = Math.floor(Math.random()*2);
