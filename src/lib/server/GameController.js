@@ -256,6 +256,7 @@ export default class GameController {
 			if (this.playerSpots[i] && !this.playerSpots[i].isAI) {
 				playerSpots[i] = {
 					playerType: 'Human',
+					alias: this.playerSpots[i].alias,
 					gamePhase: this.playerSpots[i].clientGamePhase,
 					ordersSubmitted: this.playerSpots[i].ordersSubmitted
 				}

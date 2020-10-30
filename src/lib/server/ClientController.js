@@ -11,6 +11,7 @@ export default class ClientController {
 		this.socket = null;
 		this.gameController = null;
 		this.playerNumber = null;
+		this.alias = null; // player set 'username' string
 
 		this.isAI = false;
 		this.connectionState = 'ONLINE'; // ONLINE, OFFLINE, RECONNECTING
@@ -91,6 +92,10 @@ export default class ClientController {
 
 		this.socket.on('connection', () => {
 			console.log('client ' + this.id + 'connect');
+		})
+
+		this.socket.on('setClientAlias', (data) => {
+			this.setAlias(data.alias);
 		})
 
 		this.socket.on('printServerData', () => {
@@ -200,6 +205,11 @@ export default class ClientController {
 		this.sendClientInfo();
 	}
 
+	setAlias (alias) {
+		this.alias = alias;
+		this.sendClientInfo();
+	}
+
 	setGamePhase (gamePhase) {
 		this.socket.emit('updateClientGamePhase', {
 			newPhase: gamePhase
@@ -255,6 +265,7 @@ export default class ClientController {
 		this.socket.emit("updateClientInfo", {
 			'clientID': this.id,
 			'socketID': this.socket.id,
+			'alias': this.alias,
 			'gameRoom': (this.gameController ? this.gameController.id : null),
 			'token': this.token,
 			'clientState': this.clientState,
