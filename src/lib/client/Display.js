@@ -96,6 +96,7 @@ export default class Display {
 			let gameOver = 0;
 			let alpha = 0;
 			let input;
+			let alias;
 			let allowNewID = 1;
 			let loading = false; //Whether The Loading Screen Should Be Displayed.
 			let showMenu = false;
@@ -125,6 +126,7 @@ export default class Display {
 				s.frameRate(60);
 				//input = s.createInput();
 				input = s.createInput();
+				alias = s.createInput();
 
 
 			}
@@ -135,6 +137,7 @@ export default class Display {
 
 				//input = null;
 				input.style('display', 'none');
+				alias.style('display', 'none');
 				s.cursor(s.CROSS);
 
 				let transitioning = 0;
@@ -239,28 +242,56 @@ export default class Display {
 					s.textAlign(s.CENTER);
 					s.text("Close", s.width / 2, s.height / 2.4);
 					s.text("Quarters", s.width / 2, s.height / 1.6);
-					if (this.delay > 100) {
-						s.textSize(wi / 15);
-						if (s.sin(s.radians(3 * this.integerRising)) > -0.45) {
+					let id = alias.value();
+					if (this.delay > 50) {
+						s.textSize(wi / 20);
+					//	if (s.sin(s.radians(3 * this.integerRising)) > -0.45) {
 							s.fill(210, 130, 240, 201);
-							s.text("Click To Begin", s.width / 2, s.height / 1.15);
+
+						if(id.length === 0){
+							s.text("Enter An Alias:", s.width / 2.5, s.height / 1.15);
 						}
+						else{
+							s.text("Confirm", s.width / 2.2, s.height / 1.15);
+						}
+							alias.style('display', 'block');
+							alias.position(3.1 * wi / 5 , 5.7*s.height/7);
+							alias.size(si * 5, he / 15);
+							alias.style('font-size', '28px');
+							//alias.style('background-color', 'transparent');
+							alias.style('background-color', 'black');
+							alias.style('border-color', '#d382f0');
+							alias.style('color', '#d382f0');
+							alias.style('text-transform', 'uppercase');
+							alias.style('font-family', "Monaco");
+
+					/*		if(id.length > 0){
+								s.text("Confirm", s.width / 1.1, s.height / 1.15);
+							}*/
+					//	}
 					}
 					s.textAlign(s.LEFT);
 					s.textSize(wi / 9);
 					//buttonScale sets the size of the buttons(dependent on their overall number)
-					if (s.mouseIsPressed) {
+				if(id.length > 0 && s.mouseX > (-si*3.5 + s.width / 2.2) && s.mouseX < (si*3.5 + s.width / 2.2) && s.mouseY > s.height / 1.25 && s.mouseY < s.height / 1.15){
+					s.stroke(0);
+					s.fill(255,100);
+					s.rect(s.width / 2.2-si*3.5,s.height / 1.25, si*7, si*1.7);
 
-					//	if (!debug.enabled) {
+					if (s.mouseIsPressed) {
+				//	if (alias.value()) {
+						this.app.sendSetAlias(id);
+						if (!debug.enabled) {
 							s.fullscreen(true);
 							s.resizeCanvas(window.screen.height * 1.5, window.screen.height);
-				//		}
+						}
 						buttonMaker = 1;
 						buttonMakerTwo = 1;
 						this.app.setGamePhase("MATCHMAKING");
 						s.mouseIsPressed = false;
 						unitButtons = [];
 					}
+				}
 					//Exit this phase and move to the Battle Phase if the mouse is pressed(button trigger to be added)
 
 				}
