@@ -14,6 +14,8 @@ export default class BasicAI {
 
 		this.tempBoard = [];
 		this.baseCount = 0;
+		this.baseCoordsOne = [];
+		this.baseCoordsTwo = [];
 	}
 
 	createOrder(orderType, args) {
@@ -81,10 +83,11 @@ export default class BasicAI {
 		let zone = 0;
 		let unitSelected = 0;
 
+
 		if (this.game.turnNumber === 1 && this.baseCount < 2) {
 			// create two bases on turn 1
-			this.createAIBase();
-			this.createAIBase();
+			this.baseCoordsOne = this.createAIBase();
+			this.baseCoordsTwo = this.createAIBase();
 		}
 
 		while (credits > 0) {
@@ -171,12 +174,23 @@ export default class BasicAI {
 									i = targetSpots.length;
 									breakPoint = 0;
 								}
+							 if(breakPoint > 8000 && gameObj.player !== this.playerNumber && gameObj.objCategory === "Units"){
+								 this.createOrder('createUnit', {
+									 unitType: unitName,
+									 player: this.playerNumber,
+									 x: newUnitCoord[0],
+									 y: newUnitCoord[1]
+								 });
+								 this.addPlaceholderAtCoord(newUnitCoord[0], newUnitCoord[1]);
+								 credits = credits - creditCost;
+								 i = targetSpots.length;
+								 breakPoint = 0;
+							 }
 							}
 							else {
 								breakPoint = breakPoint + 1;
 							}
 						}
-
 					}
 					else {
 						this.createOrder('createUnit', {
@@ -189,7 +203,6 @@ export default class BasicAI {
 						credits = credits - creditCost;
 						breakPoint = 0;
 					}
-
 				}
 				else {
 
@@ -202,8 +215,11 @@ export default class BasicAI {
 					this.addPlaceholderAtCoord(newUnitCoord[0], newUnitCoord[1]);
 					credits = credits - creditCost;
 				}
-			} else {
-
+			} else if(breakPoint > 10000){
+					return true;
+			}
+			else{
+				breakPoint = breakPoint + 1;
 				newUnitCoord = this.game.getRandomCoordInPlayerRegion(this.playerNumber, 0, zone);
 				//this.generateOrders();
 				//return false;
@@ -222,7 +238,8 @@ export default class BasicAI {
 		let baseZones = [0, 0, 0, 1, 1];
 		let zone = baseZones[Math.floor(Math.random() * baseZones.length)];
 		let secondBaseCoord = this.game.getRandomCoordInPlayerRegion(this.playerNumber, 0, zone);
-
+		let baseCoordinates = [];
+		while(baseCoordinates.length < 1){
 		if (this.game.isCoordInPlayerRegion(secondBaseCoord[0], secondBaseCoord[1], this.playerNumber) &&
 			this.game.isCoordInPlayerRegion(secondBaseCoord[0] + 1, secondBaseCoord[1], this.playerNumber) &&
 			this.game.isCoordInPlayerRegion(secondBaseCoord[0], secondBaseCoord[1] + 1, this.playerNumber) &&
@@ -243,11 +260,13 @@ export default class BasicAI {
 			this.addPlaceholderAtCoord(secondBaseCoord[0], secondBaseCoord[1]+1);
 			this.addPlaceholderAtCoord(secondBaseCoord[0]+1, secondBaseCoord[1]+1);
 			this.baseCount++;
-			return true;
+			baseCoordinates = [secondBaseCoord[0], secondBaseCoord[1]];
+			return baseCoordinates;
 		} else {
-			this.createAIBase();
-			return false;
+			secondBaseCoord = this.game.getRandomCoordInPlayerRegion(this.playerNumber, 0, zone);
+		//	this.createAIBase();
+		//	return false;
+			}
 		}
-
 	}
 }
