@@ -205,8 +205,7 @@ export default class BasicAI {
 					}
 				}
 				else {
-
-					this.createOrder('createUnit', {
+					  this.createOrder('createUnit', {
 						unitType: unitName,
 						player: this.playerNumber,
 						x: newUnitCoord[0],
@@ -221,8 +220,6 @@ export default class BasicAI {
 			else{
 				breakPoint = breakPoint + 1;
 				newUnitCoord = this.game.getRandomCoordInPlayerRegion(this.playerNumber, 0, zone);
-				//this.generateOrders();
-				//return false;
 			}
 			/*if(credits == 1){
 				saveCredits = Math.floor(Math.random()*2);

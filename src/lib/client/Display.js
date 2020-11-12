@@ -66,6 +66,7 @@ export default class Display {
 			let bSubmit;
 			let bLeaveMatch;
 			let bFullScreen;
+			let bStatsPage
 			let unitButtons = []; //List of the Buttons for unit creation
 			let buttonMaker = 1; //Variable so buttons only get created once
 			let buttonMakerTwo = 1;
@@ -136,7 +137,7 @@ export default class Display {
 			//The draw function loops continuously while the sketch is active
 			//Different screens of the game are portioned off using trigger variables and user input to move between them
 			s.draw = () => {
-				//DEBUG this.app.setGamePhase("STATS");
+
 
 				//Ensure that the input boxes do not display by default
 				input.style('display', 'none');
@@ -189,7 +190,8 @@ export default class Display {
 					unitButtons = [];
 
 					bLeaveMatch = new Buttoned(wi*2/7, he/4-si, wi*3/7, si * 2, "Leave Match", this.app.setGamePhase);
-					bFullScreen = new Buttoned(wi*2/7, he/4-si+he/8, wi*3/7, si * 2, "Toggle Full Screen", this.app.setGamePhase);;
+					bFullScreen = new Buttoned(wi*2/7, he/4-si+he/8, wi*3/7, si * 2, "Toggle Full Screen", this.app.setGamePhase);
+					bStatsPage = new Buttoned(wi*2/7, he/4-si+2*he/8, wi*3/7, si * 2, "Statistics", this.app.setGamePhase);
 					bPhaseOne = new Buttoned(wi - si * 5.55, si * 2.9, si * 5.1, si * 1.1, "Deploy Machines", this.app.setGamePhase);
 					bPhaseThree = new Buttoned(wi / 3.2 + submitShifterX, he / 1.65 - submitShifterY, si * 6.1, si * 1.1, "Review Board", this.app.setGamePhase);
 					bSubmit = new Buttoned(wi / 3.2 + submitShifterX, he / 1.85 - submitShifterY, si * 5, si * 1.1, "Submit Turn", this.app.sendSubmitTurn);
@@ -951,6 +953,8 @@ export default class Display {
 					s.line(0,he/4+he/8,wi*2/7,he/4+he/8);
 					s.line(wi*5/7,he/4+he/8,wi,he/4+he/8);
 					bLeaveMatch.drawButton();
+					bFullScreen.drawButton();
+
 					s.textAlign(s.CENTER);
 					s.textSize(si*1.15);
 					s.fill(255);
@@ -958,14 +962,15 @@ export default class Display {
 					s.textFont(titleFont);
 					s.text("Leave Game", wi/2-4, he/4 + si*.4);
 					s.text("Toggle Full Screen", wi/2-4, he/4 + si*.4 + he/8);
+				//	s.text("Statistics", wi/2-4, he/4 + 2*si*.4 + he/8);
 					s.textAlign(s.LEFT);
-					bFullScreen.drawButton();
+					//bFullScreen.drawButton();
 					if (s.mouseIsPressed) {
 						if (bLeaveMatch.isInRange(s.mouseX, s.mouseY)) {
 							this.app.sendClearSpot(this.app.playerNumber);
 							showMenu = false;
 						}
-						if (bFullScreen.isInRange(s.mouseX, s.mouseY)) {
+						else if (bFullScreen.isInRange(s.mouseX, s.mouseY)) {
 							let fs = s.fullscreen();
 
 							if(s.height !== window.screen.height){
@@ -978,10 +983,8 @@ export default class Display {
 								s.resizeCanvas(tempConfig.canvasX, tempConfig.canvasY);
 								//s.resizeCanvas(100, 100);
 						}
-
 						buttonMaker = 1;
 						buttonMakerTwo = 1;
-
 					}
 					s.mouseIsPressed = false;
 				}
@@ -1170,13 +1173,11 @@ export default class Display {
 
 								if(s.height != window.screen.height){
 									s.fullscreen(true);
-									//s.resizeCanvas(tempConfig.canvasX, tempConfig.canvasY);
 									s.resizeCanvas(window.screen.height * 1.5, window.screen.height);
 							}
 							else{
 									s.fullscreen(false);
 									s.resizeCanvas(tempConfig.canvasX, tempConfig.canvasY);
-									//s.resizeCanvas(100, 100);
 							}
 							buttonMaker = 1;
 							buttonMakerTwo = 1;
@@ -1407,7 +1408,7 @@ export default class Display {
 				//Begin Optional Statistics Phase
 				else if (this.app.gamePhase === "STATS") {
 					s.background(0);
-					s.tint(255, 0, 128, 80+(1+s.cos(this.delay/5.5))*30);
+					s.tint(105, 105, 105, 80+(1+s.cos(this.delay/5.5))*30);
 					s.image(imgTwo, 0, 0, s.height * 1.6, s.height);
 					s.textFont(titleFont);
 					s.fill(255,255);
@@ -1415,11 +1416,89 @@ export default class Display {
 					s.textAlign(s.CENTER);
 					s.textSize(si*2);
 					s.text("STATISTICS", s.width/2, s.height/8.8)
+					s.textSize(si);
 
-					  s.stroke(255);
 					for(let r = 0; r < 6 ; r = r + 1){
+						s.stroke(255);
 						s.line(s.width/15,s.height/6+r*s.height/6.5,s.width-s.width/15,s.height/6+r*s.height/6.5)
+						for(let c = 0; c < 7; c = c + 1){
+							s.stroke(255);
+							s.line(s.width/15+(c*13/6)*s.width/15,s.height/6,s.width/15+(c*13/6)*s.width/15,s.height/6+5*s.height/6.5)
+							s.stroke(0);
+							if(c === 0){
+								if(r === 0){
+									s.text("PLAYER",s.width/15+((c+.5)*13/6)*s.width/15,s.height/6+(r+.6)*s.height/6.5);
+								}
+								else if (r < 5){
+									s.fill(this.playerColors[r - 1][0], this.playerColors[r - 1][1], this.playerColors[r - 1][2], 255);
+									s.text(this.app.playerSpotsInGameRoom[r].playerType, s.width/15+((c+.5)*13/6)*s.width/15,s.height/6+(r+.6)*s.height/6.5)
+								}
+							}
+							else if(c === 1){
+								if(r === 0){
+									s.textSize(si/1.5);
+									s.text("Units",s.width/15+((c+.5)*13/6)*s.width/15,s.height/6+(r+.5)*s.height/6.5);
+									s.text("Killed",s.width/15+((c+.5)*13/6)*s.width/15,s.height/6+(r+.7)*s.height/6.5);
+									s.textSize(si);
+								}
+								else if (r < 5){
+									s.fill(this.playerColors[r - 1][0], this.playerColors[r - 1][1], this.playerColors[r - 1][2], 255);
+									s.text(this.app.game.players[r-1].unitsKilledTotal, s.width/15+((c+.5)*13/6)*s.width/15,s.height/6+(r+.6)*s.height/6.5)
+								}
+							}
+							else if(c === 2){
+								if(r === 0){
+									s.textSize(si/1.5);
+									s.text("Units",s.width/15+((c+.5)*13/6)*s.width/15,s.height/6+(r+.5)*s.height/6.5);
+									s.text("Lost",s.width/15+((c+.5)*13/6)*s.width/15,s.height/6+(r+.7)*s.height/6.5);
+									s.textSize(si);
+								}
+								else if (r < 5){
+									s.fill(this.playerColors[r - 1][0], this.playerColors[r - 1][1], this.playerColors[r - 1][2], 255);
+									s.text(this.app.game.players[r-1].unitsLostTotal, s.width/15+((c+.5)*13/6)*s.width/15,s.height/6+(r+.6)*s.height/6.5)
+								}
+							}
+							else if(c === 3){
+								if(r === 0){
+									s.textSize(si/1.5);
+									s.text("Damage",s.width/15+((c+.5)*13/6)*s.width/15,s.height/6+(r+.5)*s.height/6.5);
+									s.text("Dealt",s.width/15+((c+.5)*13/6)*s.width/15,s.height/6+(r+.7)*s.height/6.5);
+									s.textSize(si);
+								}
+								else if (r < 5){
+									s.fill(this.playerColors[r - 1][0], this.playerColors[r - 1][1], this.playerColors[r - 1][2], 255);
+									s.text(this.app.game.players[r-1].damageDealtTotal, s.width/15+((c+.5)*13/6)*s.width/15,s.height/6+(r+.6)*s.height/6.5)
+								}
+							}
+							else if(c === 4){
+								if(r === 0){
+									s.textSize(si/1.5);
+									s.text("Credits",s.width/15+((c+.5)*13/6)*s.width/15,s.height/6+(r+.5)*s.height/6.5);
+									s.text("Earned",s.width/15+((c+.5)*13/6)*s.width/15,s.height/6+(r+.7)*s.height/6.5);
+									s.textSize(si);
+								}
+								else if (r < 5){
+									s.fill(this.playerColors[r - 1][0], this.playerColors[r - 1][1], this.playerColors[r - 1][2], 255);
+									s.text(this.app.game.players[r-1].creditsEarnedTotal, s.width/15+((c+.5)*13/6)*s.width/15,s.height/6+(r+.6)*s.height/6.5)
+								}
+							}
+							else if(c === 5){
+								if(r === 0){
+									s.textSize(si/1.5);
+									s.text("Favorite",s.width/15+((c+.5)*13/6)*s.width/15,s.height/6+(r+.5)*s.height/6.5);
+									s.text("Unit",s.width/15+((c+.5)*13/6)*s.width/15,s.height/6+(r+.7)*s.height/6.5);
+									s.textSize(si);
+								}
+								else if (r < 5){
+									s.fill(this.playerColors[r - 1][0], this.playerColors[r - 1][1], this.playerColors[r - 1][2], 255);
+									s.textSize(si/1.8);
+									s.text(this.app.game.players[r-1].frequentUnit, s.width/15+((c+.5)*13/6)*s.width/15,s.height/6+(r+.6)*s.height/6.5)
+									s.textSize(si);
+								}
+							}
+						}
 					}
+
 					s.textAlign(s.LEFT);
 				}
 
@@ -1646,8 +1725,8 @@ export default class Display {
 				s.stroke(0);
 				s.fill(255, 255);
 				s.textAlign(s.CENTER);
-				s.textSize(size * 2);
-				s.text("Matchmaking", width / 2, height / 12);
+				s.textSize(size * 1.6);
+				s.text("Matchmaking", width / 2, height / 13);
 				s.stroke(255);
 				//s.line(width / 4, height / 10, 3 * width / 4, height / 10);
 				s.stroke(0);

@@ -160,6 +160,7 @@ export default class Game {
 				let newUnit = new Units[unitType](player);
 				this.registerGameObject(newUnit);
 				this.addObjectAtCoord(newUnit, x, y);
+				this.players[player-1].unitsPlaced.push(unitType);
 				this.players[player-1].credits = this.players[player-1].credits - Units[unitType].cost;
 				return true;
 			}
@@ -897,6 +898,24 @@ runSimulation(ticksPerTurn = tempConfig.ticksPerTurn) {
 		this.players[p].damageDealtTotal = this.players[p].damageDealtTotal + this.players[p].damageDealtThisTurn;
 		this.players[p].unitsKilledTotal = this.players[p].unitsKilledTotal + this.players[p].unitsKilledThisTurn;
 		this.players[p].unitsLostTotal = this.players[p].unitsLostTotal + this.players[p].unitsLostThisTurn;
+		let mf = 1;
+		let m = 0;
+		let item;
+		for (let i=0; i<this.players[p].unitsPlaced.length; i++)
+		{
+		        for (let j=i; j<this.players[p].unitsPlaced.length; j++)
+		        {
+		                if (this.players[p].unitsPlaced[i] == this.players[p].unitsPlaced[j])
+		                 m++;
+		                if (mf<m)
+		                {
+		                  mf=m;
+		                  item = this.players[p].unitsPlaced[i];
+		                }
+		        }
+		        m=0;
+		}
+		this.players[p].frequentUnit = item;
 	}
 
 	this.currentTurnInitialState = this.createGameSnapshot();

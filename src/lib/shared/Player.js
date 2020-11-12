@@ -28,6 +28,9 @@ export default class Player {
 		this.unitsLostTotal = 0;
 		this.unitsKilledTotal = 0;
 		this.creditsEarnedTotal = 0;
+
+		this.unitsPlaced = [];
+		this.frequentUnit = "";
 	}
 
 }
