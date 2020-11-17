@@ -66,7 +66,8 @@ export default class Display {
 			let bSubmit;
 			let bLeaveMatch;
 			let bFullScreen;
-			let bStatsPage
+			let bCloseMenu;
+			let bStatsPage;
 			let unitButtons = []; //List of the Buttons for unit creation
 			let buttonMaker = 1; //Variable so buttons only get created once
 			let buttonMakerTwo = 1;
@@ -93,6 +94,7 @@ export default class Display {
 			let hoverObject;
 			let fullBoardTrigger = 0;
 			let gameOver = 0;
+			let postGameMenuTimer = 0;
 			let alpha = 0;
 			let input;
 			let alias;
@@ -191,7 +193,9 @@ export default class Display {
 
 					bLeaveMatch = new Buttoned(wi*2/7, he/4-si, wi*3/7, si * 2, "Leave Match", this.app.setGamePhase);
 					bFullScreen = new Buttoned(wi*2/7, he/4-si+he/8, wi*3/7, si * 2, "Toggle Full Screen", this.app.setGamePhase);
-					bStatsPage = new Buttoned(wi*2/7, he/4-si+2*he/8, wi*3/7, si * 2, "Statistics", this.app.setGamePhase);
+					bCloseMenu = new Buttoned(wi*2/7, he/4-si+2*he/8, wi*3/7, si * 2, "Toggle Full Screen", this.app.setGamePhase);
+
+					bStatsPage = new Buttoned(wi*2/7, he/4-si+he/8, wi*3/7, si * 2, "Statistics", this.app.setGamePhase);
 					bPhaseOne = new Buttoned(wi - si * 5.55, si * 2.9, si * 5.1, si * 1.1, "Deploy Machines", this.app.setGamePhase);
 					bPhaseThree = new Buttoned(wi / 3.2 + submitShifterX, he / 1.65 - submitShifterY, si * 6.1, si * 1.1, "Review Board", this.app.setGamePhase);
 					bSubmit = new Buttoned(wi / 3.2 + submitShifterX, he / 1.85 - submitShifterY, si * 5, si * 1.1, "Submit Turn", this.app.sendSubmitTurn);
@@ -358,6 +362,7 @@ export default class Display {
 					}
 				}
 				else if (this.app.gamePhase === "LOBBY" && this.app.clientState !== 'SPECTATOR') {
+
 					//Lobby Phase where users add computer players and wait for others to join their game
 					sideBarGrowth = 0.8;
 					sideBarMenu = true;
@@ -651,7 +656,6 @@ export default class Display {
 							counter = counter + 1;
 						}
 
-
 						for (let i = 0; i < unitButtons.length; i = i + 1) {
 							unitButtons[i].drawButton();
 							if (unitButtons[i].isPressed == true) {
@@ -942,27 +946,31 @@ export default class Display {
 						s.keyIsPressed = false;
 					}
 				}
-				if(showMenu === true){
+				if(showMenu === true && this.app.postGameMenu === false){
 					s.noStroke();
-					s.fill(0,190);
-					s.rect(0,0,wi,he);
+					s.fill(0, 190);
+					s.rect(0, 0, wi, he);
 					s.stroke(255);
 					s.strokeWeight(2);
-					s.line(0,he/4,wi*2/7,he/4);
-					s.line(wi*5/7,he/4,wi,he/4);
-					s.line(0,he/4+he/8,wi*2/7,he/4+he/8);
-					s.line(wi*5/7,he/4+he/8,wi,he/4+he/8);
+					s.line(0, he / 4, wi * 2 / 7, he / 4);
+					s.line(wi * 5 / 7, he / 4, wi, he / 4);
+					s.line(0, he / 4 + he / 8, wi * 2 / 7, he / 4 + he / 8);
+					s.line(wi * 5 / 7, he / 4 + he / 8, wi, he / 4 + he / 8);
+					s.line(0, he / 4 + 2 * he / 8, wi * 2 / 7, he / 4 + 2 * he / 8);
+					s.line(wi * 5 / 7 , he / 4 + 2 * he / 8, wi , he / 4 + 2 * he / 8);
 					bLeaveMatch.drawButton();
 					bFullScreen.drawButton();
+					bCloseMenu.drawButton();
 
 					s.textAlign(s.CENTER);
 					s.textSize(si*1.15);
 					s.fill(255);
 					s.stroke(0);
 					s.textFont(titleFont);
-					s.text("Leave Game", wi/2-4, he/4 + si*.4);
-					s.text("Toggle Full Screen", wi/2-4, he/4 + si*.4 + he/8);
-				//	s.text("Statistics", wi/2-4, he/4 + 2*si*.4 + he/8);
+					s.text("Leave Game", wi / 2 - 4, he / 4 + si * .4);
+					s.text("Toggle Full Screen", wi / 2 - 4, he / 4 + si * .4 + he / 8);
+					s.text("Close Menu", wi / 2-4, he / 4 + si*.4 + 2 * he / 8);
+
 					s.textAlign(s.LEFT);
 					//bFullScreen.drawButton();
 					if (s.mouseIsPressed) {
@@ -985,6 +993,9 @@ export default class Display {
 						}
 						buttonMaker = 1;
 						buttonMakerTwo = 1;
+					}
+					else if (bCloseMenu.isInRange(s.mouseX, s.mouseY)) {
+						showMenu = false;
 					}
 					s.mouseIsPressed = false;
 				}
@@ -1079,13 +1090,15 @@ export default class Display {
 						}
 					}
 					else if (this.simulationDisplayTurn.tick[this.t].players[p].victoryCondition == 1) {
+						if(gameOver === 0){
+							postGameMenuTimer = 0;
+						}
 						gameOver = 1;
 						//Victory Sequence, fix it.
 						s.strokeWeight(1);
 						s.noFill();
 						let refx = s.width / 2;
 						let refy = s.height / 2;
-						s.noFill();
 						let theta = 0;
 						let phase = 0;
 						let meh = 0;
@@ -1117,6 +1130,10 @@ export default class Display {
 						s.stroke(0);
 						s.text("Player " + (p + 1), wi / 4, he / 2.2);
 						s.text("Is Victorious", wi / 13, he / 1.5);
+						postGameMenuTimer = postGameMenuTimer + 1;
+						if(postGameMenuTimer > 800){
+							this.app.postGameMenu = true;
+						}
 					}
 				}
 			}
@@ -1143,50 +1160,62 @@ export default class Display {
 						//this.app.sendClearSpot(this.app.playerNumber);
 						}
 					}
-					if(showMenu === true){
+					if(showMenu === true && this.app.postGameMenu === false){
 						s.noStroke();
-						s.fill(0,190);
-						s.rect(0,0,wi,he);
+						s.fill(0, 190);
+						s.rect(0, 0, wi, he);
 						s.stroke(255);
 						s.strokeWeight(2);
-						s.line(0,he/4,wi*2/7,he/4);
-						s.line(wi*5/7,he/4,wi,he/4);
-						s.line(0,he/4+he/8,wi*2/7,he/4+he/8);
-						s.line(wi*5/7,he/4+he/8,wi,he/4+he/8);
+						s.line(0, he / 4, wi * 2 / 7, he / 4);
+						s.line(wi * 5 / 7, he / 4, wi, he / 4);
+						s.line(0, he / 4 + he / 8, wi * 2 / 7, he / 4 + he / 8);
+						s.line(wi * 5 / 7, he / 4 + he / 8, wi, he / 4 + he / 8);
+						s.line(0, he / 4 + 2 * he / 8, wi * 2 / 7, he / 4 + 2 * he / 8);
+						s.line(wi * 5 / 7 , he / 4 + 2 * he / 8, wi , he / 4 + 2 * he / 8);
 						bLeaveMatch.drawButton();
+						bFullScreen.drawButton();
+						bCloseMenu.drawButton();
+
 						s.textAlign(s.CENTER);
 						s.textSize(si*1.15);
 						s.fill(255);
 						s.stroke(0);
 						s.textFont(titleFont);
-						s.text("Leave Game", wi/2-4, he/4 + si*.4);
-						s.text("Toggle Full Screen", wi/2-4, he/4 + si*.4 + he/8);
+						s.text("Leave Game", wi / 2 - 4, he / 4 + si * .4);
+						s.text("Toggle Full Screen", wi / 2 - 4, he / 4 + si * .4 + he / 8);
+						s.text("Close Menu", wi / 2-4, he / 4 + si*.4 + 2 * he / 8);
+
 						s.textAlign(s.LEFT);
-						bFullScreen.drawButton();
+						//bFullScreen.drawButton();
 						if (s.mouseIsPressed) {
 							if (bLeaveMatch.isInRange(s.mouseX, s.mouseY)) {
 								this.app.sendClearSpot(this.app.playerNumber);
 								showMenu = false;
 							}
-							if (bFullScreen.isInRange(s.mouseX, s.mouseY)) {
+							else if (bFullScreen.isInRange(s.mouseX, s.mouseY)) {
 								let fs = s.fullscreen();
 
-								if(s.height != window.screen.height){
+								if(s.height !== window.screen.height){
 									s.fullscreen(true);
+									//s.resizeCanvas(tempConfig.canvasX, tempConfig.canvasY);
 									s.resizeCanvas(window.screen.height * 1.5, window.screen.height);
 							}
 							else{
 									s.fullscreen(false);
 									s.resizeCanvas(tempConfig.canvasX, tempConfig.canvasY);
+									//s.resizeCanvas(100, 100);
 							}
 							buttonMaker = 1;
 							buttonMakerTwo = 1;
+						}
+						else if (bCloseMenu.isInRange(s.mouseX, s.mouseY)) {
+							showMenu = false;
 						}
 						s.mouseIsPressed = false;
 					}
 				}
 			}
-			else if (this.app.gamePhase == "REVIEW" && this.app.game.players[this.app.playerNumber - 1].victoryCondition != -1) {
+			else if (this.app.gamePhase === "REVIEW" && this.app.game.players[this.app.playerNumber - 1].victoryCondition !== -1) {
 				if (sideBarGrowth > 0.8) {
 					sideBarGrowth = sideBarGrowth - .003;
 				}
@@ -1199,26 +1228,26 @@ export default class Display {
 				this.t = Object.keys(this.simulationDisplayTurn.tick).length;
 				drawGrid(wi, he, si, this.playerColors);
 					for (let p = 0; p < 4; p = p + 1) {
-						if (this.app.game.players[p].victoryCondition == -1) {
-							if (p == 1) {
+						if (this.app.game.players[p].victoryCondition === -1) {
+							if (p === 1) {
 								s.translate(0, he / 2);
 							}
-							else if (p == 2) {
+							else if (p === 2) {
 								s.translate(wi / 2, 0);
 							}
-							else if (p == 3) {
+							else if (p === 3) {
 								s.translate(wi / 2, he / 2);
 							}
 							s.fill(0, 220);
 							s.noStroke();
 							s.rect(0, 0, wi / 2, he / 2);
-							if (p == 1) {
+							if (p === 1) {
 								s.translate(0, -he / 2);
 							}
-							else if (p == 2) {
+							else if (p === 2) {
 								s.translate(-wi / 2, 0);
 							}
-							else if (p == 3) {
+							else if (p === 3) {
 								s.translate(-wi / 2, -he / 2);
 							}
 						}
@@ -1248,13 +1277,13 @@ export default class Display {
 					for (let p = 0; p < 4; p = p + 1) {
 						if (this.app.game.players[p].victoryCondition == -1) {
 							s.textFont(titleFont);
-							if (p == 1) {
+							if (p === 1) {
 								s.translate(0, he / 2);
 							}
-							else if (p == 2) {
+							else if (p === 2) {
 								s.translate(wi / 2, 0);
 							}
-							else if (p == 3) {
+							else if (p === 3) {
 								s.translate(wi / 2, he / 2);
 							}
 							s.textSize(si * 1.6);
@@ -1263,13 +1292,13 @@ export default class Display {
 							s.text("Defeated", wi / 8, he / 4);
 							if (this.app.game.players[p].victoryCondition == -1) {
 								s.textFont(titleFont);
-								if (p == 1) {
+								if (p === 1) {
 									s.translate(0, -he / 2);
 								}
-								else if (p == 2) {
+								else if (p === 2) {
 									s.translate(-wi / 2, 0);
 								}
-								else if (p == 3) {
+								else if (p === 3) {
 									s.translate(-wi / 2, -he / 2);
 								}
 							}
@@ -1286,7 +1315,7 @@ export default class Display {
 					s.noStroke();
 					s.rect(wi, 0, s.width - wi, he);
 					s.rect(0, he, s.width, s.width - he);
-					if (sideBarMenu == true) {
+					if (sideBarMenu === true) {
 						s.textSize(si * 1.05);
 						s.fill(this.playerColors[this.app.playerNumber - 1][0], this.playerColors[this.app.playerNumber - 1][1], this.playerColors[this.app.playerNumber - 1][2], 255);
 						s.stroke(0);
@@ -1312,7 +1341,7 @@ export default class Display {
 
 						for (let a = 0; a < 4; a = a + 1) {
 							s.fill(this.playerColors[a][0], this.playerColors[a][1], this.playerColors[a][2], this.playerColors[a][3]);
-							if (this.app.game.players[a].victoryCondition == - 1) {
+							if (this.app.game.players[a].victoryCondition === - 1) {
 								s.text("Defeated", wi + wi * .125, si * 10 + a * si);
 							}
 							else {
@@ -1355,38 +1384,46 @@ export default class Display {
 						//this.app.sendClearSpot(this.app.playerNumber);
 						}
 					}
-					if(showMenu === true){
+					if(showMenu === true && this.app.postGameMenu === false){
+						
 						wi = s.width;
 						si = wi / 30;
-						he = si * 20;
+						he = s.height;
 						s.noStroke();
-						s.fill(0,190);
-						s.rect(0,0,wi,he);
+						s.fill(0, 190);
+						s.rect(0, 0, wi, he);
 						s.stroke(255);
 						s.strokeWeight(2);
-						s.line(0,he/4,wi*2/7,he/4);
-						s.line(wi*5/7,he/4,wi,he/4);
-						s.line(0,he/4+he/8,wi*2/7,he/4+he/8);
-						s.line(wi*5/7,he/4+he/8,wi,he/4+he/8);
+						s.line(0, he / 4, wi * 2 / 7, he / 4);
+						s.line(wi * 5 / 7, he / 4, wi, he / 4);
+						s.line(0, he / 4 + he / 8, wi * 2 / 7, he / 4 + he / 8);
+						s.line(wi * 5 / 7, he / 4 + he / 8, wi, he / 4 + he / 8);
+						s.line(0, he / 4 + 2 * he / 8, wi * 2 / 7, he / 4 + 2 * he / 8);
+						s.line(wi * 5 / 7 , he / 4 + 2 * he / 8, wi , he / 4 + 2 * he / 8);
 						bLeaveMatch.drawButton();
+						bFullScreen.drawButton();
+						bCloseMenu.drawButton();
+
 						s.textAlign(s.CENTER);
 						s.textSize(si*1.15);
 						s.fill(255);
 						s.stroke(0);
 						s.textFont(titleFont);
-						s.text("Leave Game", wi/2-4, he/4 + si*.4);
-						s.text("Toggle Full Screen", wi/2-4, he/4 + si*.4 + he/8);
+						s.text("Leave Game", wi / 2 - 4, he / 4 + si * .4);
+						s.text("Toggle Full Screen", wi / 2 - 4, he / 4 + si * .4 + he / 8);
+						s.text("Close Menu", wi / 2-4, he / 4 + si*.4 + 2 * he / 8);
+
 						s.textAlign(s.LEFT);
-						bFullScreen.drawButton();
+						//bFullScreen.drawButton();
 						if (s.mouseIsPressed) {
 							if (bLeaveMatch.isInRange(s.mouseX, s.mouseY)) {
 								this.app.sendClearSpot(this.app.playerNumber);
 								showMenu = false;
 							}
-							if (bFullScreen.isInRange(s.mouseX, s.mouseY)) {
+							else if (bFullScreen.isInRange(s.mouseX, s.mouseY)) {
 								let fs = s.fullscreen();
 
-								if(s.height != window.screen.height){
+								if(s.height !== window.screen.height){
 									s.fullscreen(true);
 									//s.resizeCanvas(tempConfig.canvasX, tempConfig.canvasY);
 									s.resizeCanvas(window.screen.height * 1.5, window.screen.height);
@@ -1399,9 +1436,11 @@ export default class Display {
 							buttonMaker = 1;
 							buttonMakerTwo = 1;
 						}
+						else if (bCloseMenu.isInRange(s.mouseX, s.mouseY)) {
+							showMenu = false;
+						}
 						s.mouseIsPressed = false;
 					}
-
 				}
 				}
 				//End Review Phase
@@ -1503,7 +1542,43 @@ export default class Display {
 				}
 
 
+				if(this.app.postGameMenu === true){
+					s.noStroke();
+					s.fill(0,190);
+					s.rect(0,0,wi,he);
+					s.stroke(255);
+					s.strokeWeight(2);
+					s.line(0,he/4,wi*2/7,he/4);
+					s.line(wi*5/7,he/4,wi,he/4);
+					s.line(0,he/4+he/8,wi*2/7,he/4+he/8);
+					s.line(wi*5/7,he/4+he/8,wi,he/4+he/8);
+					bLeaveMatch.drawButton();
+					bStatsPage.drawButton();
 
+					s.textAlign(s.CENTER);
+					s.textSize(si*1.15);
+					s.fill(255);
+					s.stroke(0);
+					s.textFont(titleFont);
+					s.text("Leave Game", wi/2-4, he/4 + si*.4);
+					s.text("Statistics", wi/2-4, he/4 + si*.4 + he/8);
+				//	s.text("Statistics", wi/2-4, he/4 + 2*si*.4 + he/8);
+					s.textAlign(s.LEFT);
+					//bFullScreen.drawButton();
+					if (s.mouseIsPressed) {
+						if (bLeaveMatch.isInRange(s.mouseX, s.mouseY)) {
+							this.app.sendClearSpot(this.app.playerNumber);
+							this.app.postGameMenu = false;
+						}
+						else if (bStatsPage.isInRange(s.mouseX, s.mouseY)) {
+							this.app.setGamePhase("STATS");
+							this.app.postGameMenu = false;
+					}
+					s.mouseIsPressed = false;
+				}
+
+
+				}
 				//Begin Spectator Mode
 				if (this.app.clientState === "SPECTATOR" || this.app.clientState === "DEFEATED_PLAYER") {
 
@@ -1517,12 +1592,12 @@ export default class Display {
 					s.textAlign(s.LEFT);
 				}
 				//Load Screen Logic Below
-				if (this.app.turnIsIn == true) {
+				if (this.app.turnIsIn === true) {
 
 					runLoadScreen(255);
 
 				}
-				if (this.app.simulationRun == true) {
+				if (this.app.simulationRun === true) {
 					this.app.turnIsIn = false;
 					this.app.simulationRun = false;
 				}
@@ -1555,7 +1630,7 @@ export default class Display {
 					s.noFill();
 					s.strokeWeight(3);
 					s.rect(this.xx, this.yy, this.xlen, this.ylen);
-					if (this.isPressed == true) {
+					if (this.isPressed === true) {
 						s.stroke(255, 255, 255, 255);
 						s.fill(255, 255, 255, 100);
 						s.rect(this.xx, this.yy, this.xlen, this.ylen);
@@ -1590,27 +1665,27 @@ export default class Display {
 				let counter = 0;
 				let upperDistance = 30;
 				let lowerDistance = 1;
-				if (unitName == "Oscillator") {
+				if (unitName === "Oscillator") {
 					upperDistance = 2;
 				}
-				else if (unitName == "Resonator") {
+				else if (unitName === "Resonator") {
 					lowerDistance = 6;
 					upperDistance = 19;
 				}
-				else if (unitName == "Tripwire") {
+				else if (unitName === "Tripwire") {
 					//lowerDistance = 5;
 					upperDistance = 6;
 				}
-				else if (unitName == "Ballast") {
+				else if (unitName === "Ballast") {
 					//lowerDistance = 5;
 					upperDistance = 2;
 				}
-				else if (unitName == "RedShifter") {
+				else if (unitName === "RedShifter") {
 					lowerDistance = 12;
 
 					//upperDistance = 2;
 				}
-				else if (unitName == "BeamSplitter") {
+				else if (unitName === "BeamSplitter") {
 					upperDistance = 9;
 					//upperDistance = 2;
 				}
@@ -1623,7 +1698,7 @@ export default class Display {
 						xx = xx + 1;
 					}
 				}
-				if (unitName == "BeamSplitter") {
+				if (unitName === "BeamSplitter") {
 					let turningPoint = 8;
 					if (player == 1) {
 						for (let i = 1; i < 25; i = i + 1) {
@@ -1655,52 +1730,6 @@ export default class Display {
 				return finalArray;
 			}
 
-
-
-			class Flame {
-
-				constructor(x, y) {
-					this.length = 0;
-					this.x = x;
-					this.y = y;
-
-					this.orientationOne = Math.floor(Math.random() * 3) - 1;
-					this.orientationTwo = Math.floor(Math.random() * 3) - 1;
-					if (this.orientationOne == 0 && this.orientationTwo == 0) {
-						this.orientationOne = 1;
-					}
-					//if()
-					//this.secondpriorx=0;
-				}
-				checkCoordinates(x, y, width, height) {
-					if (x < 0 || x > width || y < 0 || y > height) {
-						this.orientationOne = Math.floor(Math.random() * 3) - 1;
-						this.orientationTwo = Math.floor(Math.random() * 3) - 1;
-						if (this.orientationOne == 0 && this.orientationTwo == 0) {
-							this.orientationTwo = 1;
-						}
-						this.x = Math.floor(Math.random() * width);
-						this.y = Math.floor(Math.random() * height);
-					}
-				}
-				render(size, speed, width, height) {
-
-					//Make sure the asteroids have a lot less mass so they don't fall in as easily
-					this.length = size * 3;
-					this.speed = speed;
-					this.x = this.x + this.orientationOne * speed;
-					this.y = this.y + this.orientationTwo * speed;
-					for (let l = 0; l < this.length; l = l + 1) {
-						s.fill(255, 0, 128, 255 - 255 * l / this.length);
-						s.strokeWeight(1);
-						s.stroke(0);
-						s.noStroke();
-						s.ellipse(this.x - l * this.orientationOne, this.y - l * this.orientationTwo, 3 - l / 20, 3 - l / 20);
-					}
-					this.checkCoordinates(this.x, this.y, width, height);
-
-				}
-			}
 			function displayLobby(gameRoom, data, width, height, size, delay) {
 				s.textSize(si);
 				for (let p = 0; p < 4; p = p + 1) {
@@ -1804,13 +1833,13 @@ export default class Display {
 						s.textAlign(s.LEFT);
 						s.fill(pColors[hoverObject.player - 1][0], pColors[hoverObject.player - 1][1], pColors[hoverObject.player - 1][2], pColors[hoverObject.player - 1][3]);
 
-						if (hoverObject.objCategory == "Units") {
+						if (hoverObject.objCategory === "Units") {
 
 							s.textSize(si / 3.8);
 							s.stroke(0);
 
 							s.text("Damage Dealt: " + (hoverObject.damageDealt), hoverX * si + si * 1.3, hoverY * si + si * 3.1);
-							if (hoverObject.lifeSpan == 0) {
+							if (hoverObject.lifeSpan === 0) {
 								s.text("Turns Active: " + 1, hoverX * si + si * 1.3, hoverY * si + si * 3.6);
 							}
 							else {
@@ -1824,7 +1853,7 @@ export default class Display {
 								s.fill(255, 240, 0, 85);
 								s.noStroke();
 								s.rect(pt[i][0] * si, pt[i][1] * si, si);
-								if (pt.length == 1) {
+								if (pt.length === 1) {
 									s.fill(255, 85);
 									s.stroke(0, 85);
 									s.textSize(wi / 40);
@@ -1878,67 +1907,67 @@ export default class Display {
 
 			function drawDisplayObject(displayObject, x, y, size, colors, a) {
 
-				if (displayObject.identifier == "Base") {
+				if (displayObject.identifier === "Base") {
 					drawBase(x, y, displayObject.player, size, displayObject.health, displayObject.maxHealth, colors);
 				}
-				if (displayObject.identifier == "Ray") {
+				if (displayObject.identifier === "Ray") {
 					drawRayTracer(x, y, displayObject.player, size, displayObject.health, Units["RayTracer"].maxHealth, colors);
 				}
-				if (displayObject.identifier == "Red") {
+				if (displayObject.identifier === "Red") {
 					drawRedShifter(x, y, displayObject.player, size, displayObject.health, Units["RayTracer"].maxHealth, colors);
 				}
-				if (displayObject.identifier == "Osc") {
+				if (displayObject.identifier === "Osc") {
 					drawOscillator(x, y, displayObject.player, size, displayObject.health, Units["Oscillator"].maxHealth, colors);
 				}
-				if (displayObject.identifier == "Mag") {
+				if (displayObject.identifier === "Mag") {
 					drawMaglev(x, y, displayObject.player, size, displayObject.health, Units["Maglev"].maxHealth, colors);
 				}
-				if (displayObject.identifier == "Jug") {
+				if (displayObject.identifier === "Jug") {
 					drawJuggernode(x, y, displayObject.player, size, displayObject.health, Units["Juggernode"].maxHealth, colors);
 				}
-				if (displayObject.identifier == "Bea") {
+				if (displayObject.identifier === "Bea") {
 					drawBeamSplitter(x, y, displayObject.player, size, displayObject.health, Units["Ballast"].maxHealth, colors);
 				}
-				if (displayObject.identifier == "Bal") {
+				if (displayObject.identifier === "Bal") {
 					drawBallast(x, y, displayObject.player, size, displayObject.health, Units["Ballast"].maxHealth, colors);
 				}
-				if (displayObject.identifier == "Tri") {
+				if (displayObject.identifier === "Tri") {
 					drawTripwire(x, y, displayObject.player, size, displayObject.health, Units["Tripwire"].maxHealth, colors, displayObject.tripped);
 				}
-				if (displayObject.identifier == "Cir") {
+				if (displayObject.identifier === "Cir") {
 					drawResonator(x, y, displayObject.player, size, displayObject.health, Units["Resonator"].maxHealth, colors);
 				}
-				if (displayObject.identifier == "Int") {
+				if (displayObject.identifier === "Int") {
 					drawIntegrator(x, y, displayObject.player, size, displayObject.health, Units["Integrator"].maxHealth, colors, displayObject.lifeSpan);
 				}
-				if (displayObject.identifier == "JugProj") {
+				if (displayObject.identifier === "JugProj") {
 					drawJuggernodeProjectile(x, y, displayObject.player, size, colors, displayObject.orientation, displayObject.damage, a);
 				}
-				if (displayObject.identifier == "RayProj") {
+				if (displayObject.identifier === "RayProj") {
 					drawRayTracerProjectile(x, y, displayObject.player, size, colors, displayObject.orientation, a);
 				}
-				if (displayObject.identifier == "RedProj") {
+				if (displayObject.identifier === "RedProj") {
 					drawRedShifterProjectile(x, y, displayObject.player, size, colors, displayObject.orientation, displayObject.damage, displayObject.distance, a);
 				}
-				if (displayObject.identifier == "OscProj") {
+				if (displayObject.identifier === "OscProj") {
 					drawOscillatorProjectile(x, y, displayObject.player, size, colors, displayObject.orientation, a);
 				}
-				if (displayObject.identifier == "MagProj") {
+				if (displayObject.identifier === "MagProj") {
 					drawMaglevProjectile(x, y, displayObject.player, size, colors, displayObject.orientation, displayObject.damage, a);
 				}
-				if (displayObject.identifier == "BeaProj") {
+				if (displayObject.identifier === "BeaProj") {
 					drawBeamSplitterProjectile(x, y, displayObject.player, size, colors, displayObject.orientation, displayObject.damage, a);
 				}
-				if (displayObject.identifier == "BalProj") {
+				if (displayObject.identifier === "BalProj") {
 					drawBallastProjectile(x, y, displayObject.player, size, colors, displayObject.damage, a);
 				}
-				if (displayObject.identifier == "TriProj") {
+				if (displayObject.identifier === "TriProj") {
 					drawTripwireProjectile(x, y, displayObject.player, size, colors, displayObject.orientation, displayObject.damage, a);
 				}
-				if (displayObject.identifier == "CirProj") {
+				if (displayObject.identifier === "CirProj") {
 					drawResonatorProjectile(x, y, displayObject.player, size, colors, displayObject.orientation, displayObject.damage, a);
 				}
-				if (displayObject.identifier == "IntProj") {
+				if (displayObject.identifier === "IntProj") {
 					drawIntegratorProjectile(x, y, displayObject.player, size, colors, displayObject.orientation, displayObject.damage, a);
 				}
 			}
