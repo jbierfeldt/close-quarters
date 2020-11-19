@@ -402,20 +402,21 @@ export default class Display {
 
 						if (this.app.playerSpotsInGameRoom[p + 1].playerType === 'Human') {
 
-							s.stroke(255);
-							s.fill(0);
-							s.rect(wi / 4 - si * 2, he / 4 - si / 2, si * 4, si);
-							s.textFont(titleFont);
-							s.fill(255);
-							s.stroke(0);
-							s.textSize(si / 1.4);
+
 
 							if((this.app.playerNumber - 1) !== p){
+								s.stroke(255);
+								s.fill(0);
+								s.rect(wi / 4 - si * 2, he / 4 - si / 2, si * 4, si);
+								s.textFont(titleFont);
+								s.fill(255);
+								s.stroke(0);
+								s.textSize(si / 1.4);
 								s.text("REMOVE", wi / 4 - si * 1.45, he / 4 + si / 5);
 								if (s.mouseIsPressed && s.mouseX < wi / 4 - si * 2 + si * 4 + offsetX && s.mouseX > wi / 4 - si * 2 + offsetX && s.mouseY < he / 4 - si / 2 + si + offsetY && s.mouseY > he / 4 - si / 2 + offsetY) {
 									this.app.sendClearSpot(p + 1);
 								}
-						}
+							}
 						}
 						else if (this.app.playerSpotsInGameRoom[p + 1].playerType !== 'AI') {
 							s.noStroke();
