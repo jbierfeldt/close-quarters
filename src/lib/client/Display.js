@@ -400,7 +400,7 @@ export default class Display {
 						s.strokeWeight(1);
 						s.noFill()
 
-						if (this.app.playerSpotsInGameRoom[p + 1].playerType === 'Human' && (this.app.playerNumber - 1) !== p ) {
+						if (this.app.playerSpotsInGameRoom[p + 1].playerType === 'Human') {
 
 							s.stroke(255);
 							s.fill(0);
@@ -409,11 +409,13 @@ export default class Display {
 							s.fill(255);
 							s.stroke(0);
 							s.textSize(si / 1.4);
-							s.text("REMOVE", wi / 4 - si * 1.45, he / 4 + si / 5);
 
-							if (s.mouseIsPressed && s.mouseX < wi / 4 - si * 2 + si * 4 + offsetX && s.mouseX > wi / 4 - si * 2 + offsetX && s.mouseY < he / 4 - si / 2 + si + offsetY && s.mouseY > he / 4 - si / 2 + offsetY) {
-								this.app.sendClearSpot(p + 1);
-							}
+							if((this.app.playerNumber - 1) !== p){
+								s.text("REMOVE", wi / 4 - si * 1.45, he / 4 + si / 5);
+								if (s.mouseIsPressed && s.mouseX < wi / 4 - si * 2 + si * 4 + offsetX && s.mouseX > wi / 4 - si * 2 + offsetX && s.mouseY < he / 4 - si / 2 + si + offsetY && s.mouseY > he / 4 - si / 2 + offsetY) {
+									this.app.sendClearSpot(p + 1);
+								}
+						}
 						}
 						else if (this.app.playerSpotsInGameRoom[p + 1].playerType !== 'AI') {
 							s.noStroke();
