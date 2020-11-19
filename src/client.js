@@ -418,9 +418,7 @@ class App {
 	}
 
 	sendLeaveGame () {
-		this.socket.emit('leaveGame', {
-			playerSpot: playerSpot
-		});
+		this.socket.emit('leaveGame');
 	}
 
 	sendStartGame () {

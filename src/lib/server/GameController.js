@@ -98,17 +98,22 @@ export default class GameController {
 			return false;
 		}	}
 
+	removeClientFromGameRoom (clientController) {
+		if (clientController.playerNumber !== null) {
+			this.removeClientFromSpot(clientController, clientController.playerNumber);
+		}
+
+			clientController.onLeaveGameRoom();
+
+			this.sendRoomStateToAll();
+	}
+
 	removeClientFromSpot (clientController, playerSpot) {
 		// check if clientController is already in playerSpot
 		if (this.playerSpots[playerSpot] === clientController) {
 
 			// remove client from desired spot
 			this.playerSpots[playerSpot] = null;
-
-			// send client back to match making
-			clientController.onLeaveGameRoom();
-
-			this.sendRoomStateToAll();
 
 			return true;
 		} else {
@@ -118,7 +123,7 @@ export default class GameController {
 
 	clearSpot (playerSpot) {
 		if (this.playerSpots[playerSpot] instanceof ClientController) {
-			this.removeClientFromSpot(this.playerSpots[playerSpot], playerSpot);
+			this.removeClientFromGameRoom(this.playerSpots[playerSpot]);
 		} else {
 			this.playerSpots[playerSpot] = null;
 			this.sendRoomStateToAll();
