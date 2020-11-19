@@ -54,7 +54,6 @@ export default class GameController {
 
 				// TODO MAKE BEHAVE AS A NUMBER
 
-				
 				this.assignAIToSpot(playerNumber);
 				this.playerSpots[clientController.playerNumber].tempBoard = JSON.parse(JSON.stringify(this.game.board));
 				this.playerSpots[clientController.playerNumber].generateOrders(0);

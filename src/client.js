@@ -417,6 +417,12 @@ class App {
 		});
 	}
 
+	sendLeaveGame () {
+		this.socket.emit('leaveGame', {
+			playerSpot: playerSpot
+		});
+	}
+
 	sendStartGame () {
 		this.socket.emit('startGame');
 	}
