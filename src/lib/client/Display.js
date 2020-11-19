@@ -8,7 +8,7 @@ const tempConfig = {
 	canvasY: 666,
 	size: 33.33333
 }
-
+//GENERAL CLEANUP
 export default class Display {
 
 	constructor(app = undefined, engine = undefined, stage = new Object) {
@@ -19,7 +19,6 @@ export default class Display {
 		this.playerColors = [[255, 0, 128, 255], [176, 196, 243, 255], [152, 255, 152, 255], [210, 130, 240, 255]];
 		this.unitList = [];
 		this.delay = 0;
-		this.integerRising = 0;
 		this.board = [[]];
 		this.t = 1;
 		this.successfulJoinedGame = null;
@@ -67,6 +66,8 @@ export default class Display {
 			let bSubmit;
 			let bLeaveMatch;
 			let bFullScreen;
+			let bCloseMenu;
+			let bStatsPage;
 			let unitButtons = []; //List of the Buttons for unit creation
 			let buttonMaker = 1; //Variable so buttons only get created once
 			let buttonMakerTwo = 1;
@@ -92,8 +93,8 @@ export default class Display {
 			let possibleTargets = [];
 			let hoverObject;
 			let fullBoardTrigger = 0;
-			let justTriggered = 1;
 			let gameOver = 0;
+			let postGameMenuTimer = 0;
 			let alpha = 0;
 			let input;
 			let alias;
@@ -101,7 +102,10 @@ export default class Display {
 			let loading = false; //Whether The Loading Screen Should Be Displayed.
 			let showMenu = false;
 
-
+			//Variables for the width, height, and side length of game tiles - changes with screen resizing
+			let he;
+			let wi;
+			let si;
 			p5.disableFriendlyErrors = true;
 			//Preload the fonts and other assets below
 			s.preload = () => {
@@ -127,6 +131,7 @@ export default class Display {
 				//input = s.createInput();
 				input = s.createInput();
 				alias = s.createInput();
+				s.cursor(s.CROSS); //Tested but keep an eye on this.
 
 
 			}
@@ -135,41 +140,42 @@ export default class Display {
 			//Different screens of the game are portioned off using trigger variables and user input to move between them
 			s.draw = () => {
 
-				//input = null;
+
+				//Ensure that the input boxes do not display by default
 				input.style('display', 'none');
 				alias.style('display', 'none');
-				s.cursor(s.CROSS);
 
-				let transitioning = 0;
-				//The below variables to be filled in by the size of the players current window
-				let wi = s.width; //The width of the canvas
-				let he = s.height; //The height of the canvas
-				let si = s.width / 30; //the side length of each cell in canvas
+				//The below variables to be filled in by the size of the players current browser window
+				wi = s.width; //The width of the canvas
+				he = s.height; //The height of the canvas
+				si = s.width / 30; //the side length of each cell in canvas
+
+				//The below variables track the x and y of the mouse in order to respond to user movement
 				hoverX = s.int(s.mouseX / si);
 				hoverY = s.int(s.mouseY / si);
 
-			//	bStartMatch = new Buttoned(wi - si * 5.55, si * 11.5, si * 5.1, si * 1.1, "Start Match", this.app.sendStartGame);
-
-				//Delay serves as a variable that has a constant increment for animation
+				//Delay serves as a variable that has a constant increment for animation purposes, deltaTime is a p5js variable that tracks the time it takes for the prior frame to render
+				//deltaTime is used to adjust the animation rate according to the current framerate of each local machine.
 				this.delay = this.delay + .19 + s.deltaTime / 425;
-				this.integerRising = this.integerRising + 1;
-
-				//playerShifter shifts the Button Menu if the player is on the right side of the screen
-				playerShifter = 0;
-				submitShifterX = 0;
-				submitShifterY = 0;
 
 				if (this.app.playerNumber > 2) {
+					//playerShifter shifts the Button Menu depending on player number
 					playerShifter = s.width / 2;
 				}
+
 				if (buttonMakerTwo === 1) {
-
+					//The start match button is created one time initially and then recreated upon a screen resizing
 					bStartMatch = new Buttoned(wi - si * 5.55, si * 11.5, si * 5.1, si * 1.1, "Start Match", this.app.sendStartGame);
-
 				}
+
 				buttonMakerTwo = 0;
 
 				if(this.app.playerNumber && buttonMaker == 1){
+					//The remaining buttons are created one time initially and then recreated upon a screen resizing
+					playerShifter = 0;
+					submitShifterX = 0;
+					submitShifterY = 0;
+
 					if (this.app.playerNumber == 2) {
 						submitShifterX = 0;
 						submitShifterY = he / 2;
@@ -182,11 +188,15 @@ export default class Display {
 						submitShifterX = wi / 2;
 						submitShifterY = he / 2;
 					}
+
 					unitButtons = [];
+
 					bLeaveMatch = new Buttoned(wi*2/7, he/4-si, wi*3/7, si * 2, "Leave Match", this.app.setGamePhase);
-					bFullScreen = new Buttoned(wi*2/7, he/4-si+he/8, wi*3/7, si * 2, "Toggle Full Screen", this.app.setGamePhase);;
+					bFullScreen = new Buttoned(wi*2/7, he/4-si+he/8, wi*3/7, si * 2, "Toggle Full Screen", this.app.setGamePhase);
+					bCloseMenu = new Buttoned(wi*2/7, he/4-si+2*he/8, wi*3/7, si * 2, "Toggle Full Screen", this.app.setGamePhase);
+
+					bStatsPage = new Buttoned(wi*2/7, he/4-si+he/8, wi*3/7, si * 2, "Statistics", this.app.setGamePhase);
 					bPhaseOne = new Buttoned(wi - si * 5.55, si * 2.9, si * 5.1, si * 1.1, "Deploy Machines", this.app.setGamePhase);
-					//bStartMatch = new Buttoned(wi - si * 5.55, si * 11.5, si * 5.1, si * 1.1, "Start Match", this.app.sendStartGame);
 					bPhaseThree = new Buttoned(wi / 3.2 + submitShifterX, he / 1.65 - submitShifterY, si * 6.1, si * 1.1, "Review Board", this.app.setGamePhase);
 					bSubmit = new Buttoned(wi / 3.2 + submitShifterX, he / 1.85 - submitShifterY, si * 5, si * 1.1, "Submit Turn", this.app.sendSubmitTurn);
 					bBase = new Buttoned(wi / 2 + si - playerShifter, si * buttonScale * 2, wi / 2 - si * 2, si * buttonScale * 3, "Base", this.app.sendCreateBase);
@@ -211,21 +221,21 @@ export default class Display {
 					unitButtons.push(bResonator);
 					bIntegrator = new Buttoned(wi / 2 + si - playerShifter, si * 3 + buttonScale * si * 9, wi / 2 - si * 2, si * buttonScale, "Integrator", this.app.sendCreateUnit);
 					unitButtons.push(bIntegrator);
+
 					buttonMaker = 0;
 			}
 
-				//Sets the default text font and its size
-				s.textFont(titleFont);
-				s.textSize(wi / 9);
 
-				//Phase begins at 0 via the constructor of Display(see above)
-				//Phase 0 is the Title Sccreen, Phase 1 is Unit Placement, and Phase 2 is the Battle Phase
+
+				//The Game Begins in the Title phase
 				if (this.app.gamePhase == "TITLE") {
+					//Sets the default text font and its size
+					s.textFont(titleFont);
+					s.textSize(wi / 9);
 
-
-					//this.app.sendJoinGame;
 					titleSequence(wi, he, this.delay, si / 2);
-					//Display the game title on top of the title sequence
+
+					//Display the game title on top of the title sequence visuals
 					if (this.delay > 25) {
 						s.stroke(0, (this.delay - 25) * 2.9);
 						s.fill(255, 0, 128, (this.delay - 25) * 2.9);
@@ -242,11 +252,13 @@ export default class Display {
 					s.textAlign(s.CENTER);
 					s.text("Close", s.width / 2, s.height / 2.4);
 					s.text("Quarters", s.width / 2, s.height / 1.6);
+
 					let id = alias.value();
-					if (this.delay > 50) {
+
+					if (this.delay > 15) {
+						//Trigger the input box and instructions for player username
 						s.textSize(wi / 20);
-					//	if (s.sin(s.radians(3 * this.integerRising)) > -0.45) {
-							s.fill(210, 130, 240, 201);
+						s.fill(210, 130, 240, 201);
 
 						if(id.length === 0){
 							s.text("Enter An Alias:", s.width / 2.5, s.height / 1.15);
@@ -258,45 +270,38 @@ export default class Display {
 							alias.position(3.1 * wi / 5 , 5.7*s.height/7);
 							alias.size(si * 5, he / 15);
 							alias.style('font-size', '28px');
-							//alias.style('background-color', 'transparent');
 							alias.style('background-color', 'black');
 							alias.style('border-color', '#d382f0');
 							alias.style('color', '#d382f0');
 							alias.style('text-transform', 'uppercase');
 							alias.style('font-family', "Monaco");
-
-					/*		if(id.length > 0){
-								s.text("Confirm", s.width / 1.1, s.height / 1.15);
-							}*/
-					//	}
 					}
 					s.textAlign(s.LEFT);
 					s.textSize(wi / 9);
-					//buttonScale sets the size of the buttons(dependent on their overall number)
-				if(id.length > 0 && s.mouseX > (-si*3.5 + s.width / 2.2) && s.mouseX < (si*3.5 + s.width / 2.2) && s.mouseY > s.height / 1.25 && s.mouseY < s.height / 1.15){
-					s.stroke(0);
-					s.fill(255,100);
-					s.rect(s.width / 2.2-si*3.5,s.height / 1.25, si*7, si*1.7);
+					if(id.length > 0 && s.mouseX > (-si * 3.5 + s.width / 2.2) && s.mouseX < (si * 3.5 + s.width / 2.2) && s.mouseY > s.height / 1.25 && s.mouseY < s.height / 1.15){
+						s.stroke(0);
+						s.fill(255,100);
+						s.rect(s.width / 2.2-si*3.5,s.height / 1.25, si*7, si*1.7);
 
-					if (s.mouseIsPressed) {
-				//	if (alias.value()) {
-						this.app.sendSetAlias(id);
-						if (!debug.enabled) {
-							s.fullscreen(true);
-							s.resizeCanvas(window.screen.height * 1.5, window.screen.height);
+						if (s.mouseIsPressed) {
+							//Trigger when the player presses confirm and save their username, move to the matchmaking phase
+							this.app.sendSetAlias(id);
+
+							if (!debug.enabled) {
+								s.fullscreen(true);
+								s.resizeCanvas(window.screen.height * 1.5, window.screen.height);
+							}
+
+							buttonMaker = 1;
+							buttonMakerTwo = 1;
+							this.app.setGamePhase("MATCHMAKING");
+							s.mouseIsPressed = false;
+							unitButtons = [];
 						}
-						buttonMaker = 1;
-						buttonMakerTwo = 1;
-						this.app.setGamePhase("MATCHMAKING");
-						s.mouseIsPressed = false;
-						unitButtons = [];
 					}
 				}
-					//Exit this phase and move to the Battle Phase if the mouse is pressed(button trigger to be added)
-
-				}
-
 				else if (this.app.gamePhase === "MATCHMAKING") {
+					//Matchmaking Phase where users can learn more about the game or enter into a lobby
 					input.style('display', 'block');
 					input.position(3 * wi / 5 + si * 1.6, he / 6.7);
 					input.size(si * 2.6, he / 20);
@@ -308,42 +313,34 @@ export default class Display {
 					input.style('font-family', "Monaco");
 
 					displayMatchmaking(this.app.matchmakingData, wi, he, si, this.delay, this.playerColors);
-					s.textAlign(s.CENTER);
 
+					s.textAlign(s.CENTER);
 					s.noStroke();
-					s.fill(255,55);
-					if(s.mouseX < (3*wi/4) && s.mouseX > (wi/4) && s.mouseY > (he/10+(1)*8*he/60) && s.mouseY < (he/10+(2)*8*he/60)){
-						s.rect(wi/4, (he/10+(1)*8*he/60), wi/2, (1)*8*he/60);
+					s.fill(255, 55);
+
+					if(s.mouseX < (3 * wi / 4) && s.mouseX > (wi / 4) && s.mouseY > (he / 10 + (1) * 8 * he / 60) && s.mouseY < (he / 10 + (2) * 8 * he / 60)){
+						s.rect(wi / 4, (he / 10 + (1) * 8 * he / 60), wi / 2, (1) * 8 * he / 60);
 						if(s.mouseIsPressed){
 							this.app.sendCreateRoom();
 						}
 					}
-					if(s.mouseX < (3*wi/4) && s.mouseX > (wi/4) && s.mouseY > (he/10+(2)*8*he/60) && s.mouseY < (he/10+(3)*8*he/60)){
-						s.rect(wi/4, (he/10+(2)*8*he/60), wi/2, (1)*8*he/60);
+					else if(s.mouseX < (3 * wi / 4) && s.mouseX > (wi / 4) && s.mouseY > (he / 10 + (2) * 8 * he / 60) && s.mouseY < (he / 10 + (3) * 8 * he / 60)){
+						s.rect(wi / 4, (he / 10 + (2) * 8 * he / 60), wi / 2, (1) * 8 * he / 60);
 						if(s.mouseIsPressed){
 							this.app.sendJoinOpenGame();
 						}
 					}
-					if(s.mouseX < (3*wi/4) && s.mouseX > (wi/4) && s.mouseY > (he/10+(3)*8*he/60) && s.mouseY < (he/10+(4)*8*he/60)){
-						s.rect(wi/4, (he/10+(3)*8*he/60), wi/2, (1)*8*he/60);
+					else if(s.mouseX < (3 * wi / 4) && s.mouseX > (wi / 4) && s.mouseY > (he / 10 + (3) * 8 * he / 60) && s.mouseY < (he / 10 + (4) * 8 * he / 60)){
+						s.rect(wi / 4, (he / 10 + (3) * 8 * he / 60), wi / 2, (1) * 8 * he / 60);
+						if(s.mouseIsPressed){
+						}
+					}
+					else if(s.mouseX < (3 * wi / 4) && s.mouseX > (wi / 4) && s.mouseY > (he / 10 + (4) * 8 * he / 60) && s.mouseY < (he / 10 + (5) * 8 * he / 60)){
+						s.rect(wi / 4, (he / 10 + (4) * 8 * he / 60), wi / 2, (1) * 8 * he / 60);
 						if(s.mouseIsPressed){
 						//	this.app.sendJoinOpenGame();
 						}
 					}
-					if(s.mouseX < (3*wi/4) && s.mouseX > (wi/4) && s.mouseY > (he/10+(4)*8*he/60) && s.mouseY < (he/10+(5)*8*he/60)){
-						s.rect(wi/4, (he/10+(4)*8*he/60), wi/2, (1)*8*he/60);
-						if(s.mouseIsPressed){
-						//	this.app.sendJoinOpenGame();
-						}
-					}
-
-				/*	if (s.mouseIsPressed && s.mouseX < 3 * wi / 5 + si * 4 && s.mouseX > 3 * wi / 5 && s.mouseY < he / 4 + he / 8.25 + si * 1.1 && s.mouseY > he / 4 + he / 8.25) {
-						this.app.sendCreateRoom();
-					}*/
-					//s.rect(3 * wi / 5, he / 4 + he / 3.45, si * 4, si * 1.1);
-				/*	if (s.mouseIsPressed && s.mouseX < 3 * wi / 5 + si * 4 && s.mouseX > 3 * wi / 5 && s.mouseY < he / 4 + he / 3.45 + si * 1.1 && s.mouseY > he / 4 + he / 3.45) {
-						this.app.sendJoinOpenGame();
-					}*/
 
 					let gameID = input.value();
 
@@ -351,10 +348,9 @@ export default class Display {
 						if (allowNewID == 1) {
 							this.app.sendJoinGame(gameID);
 							allowNewID = 0;
-
 						}
 						if (this.successfulJoinedGame === false) {
-							s.fill(255,255);
+							s.fill(255, 255);
 							s.textSize(si * .5);
 							s.stroke(0);
 							s.textFont(standardFont);
@@ -366,9 +362,8 @@ export default class Display {
 					}
 				}
 				else if (this.app.gamePhase === "LOBBY" && this.app.clientState !== 'SPECTATOR') {
-					//	window.sdf = input;
-					// input.remove();
 
+					//Lobby Phase where users add computer players and wait for others to join their game
 					sideBarGrowth = 0.8;
 					sideBarMenu = true;
 					wi = s.width * sideBarGrowth;
@@ -376,29 +371,32 @@ export default class Display {
 					he = si * 20;
 					let offsetX = 0;
 					let offsetY = 0;
+
 					drawGrid(wi, he, si, this.playerColors);
+
 					for (let p = 0; p < 4; p = p + 1) {
-						if (p == 1) {
+						if (p === 1) {
 							s.translate(0, he / 2);
 							offsetX = 0;
 							offsetY = he / 2;
 						}
-						else if (p == 2) {
+						else if (p === 2) {
 							s.translate(wi / 2, 0);
 							offsetX = wi / 2;
 							offsetY = 0;
 						}
-						else if (p == 3) {
+						else if (p === 3) {
 							s.translate(wi / 2, he / 2);
 							offsetX = wi / 2;
 							offsetY = he / 2;
 						}
-						s.strokeWeight(10);
+
 						s.stroke(255, 255);
 						s.strokeWeight(1);
 						s.noFill()
-						if (this.app.playerSpotsInGameRoom[p + 1].playerType == 'Human') {
-							//s.rect(0, 0, si * 15, si * 10);
+
+						if (this.app.playerSpotsInGameRoom[p + 1].playerType === 'Human') {
+
 							s.stroke(255);
 							s.fill(0);
 							s.rect(wi / 4 - si * 2, he / 4 - si / 2, si * 4, si);
@@ -407,16 +405,17 @@ export default class Display {
 							s.stroke(0);
 							s.textSize(si / 1.4);
 							s.text("REMOVE", wi / 4 - si * 1.45, he / 4 + si / 5);
+
 							if (s.mouseIsPressed && s.mouseX < wi / 4 - si * 2 + si * 4 + offsetX && s.mouseX > wi / 4 - si * 2 + offsetX && s.mouseY < he / 4 - si / 2 + si + offsetY && s.mouseY > he / 4 - si / 2 + offsetY) {
 								this.app.sendClearSpot(p + 1);
 							}
 						}
-						else if (this.app.playerSpotsInGameRoom[p + 1].playerType != 'AI') {
+						else if (this.app.playerSpotsInGameRoom[p + 1].playerType !== 'AI') {
 							s.noStroke();
 							s.fill(0, 150);
 							s.rect(0, 0, si * 15, si * 10);
 						}
-						if (this.app.playerSpotsInGameRoom[p + 1].playerType == 'Open') {
+						if (this.app.playerSpotsInGameRoom[p + 1].playerType === 'Open') {
 							s.stroke(255);
 							s.fill(0);
 							s.rect(wi / 4 - si * 2, he / 4 - si / 2, si * 4, si);
@@ -429,7 +428,7 @@ export default class Display {
 								this.app.sendAssignAIToSpot(p + 1);
 							}
 						}
-						if (this.app.playerSpotsInGameRoom[p + 1].playerType == 'AI') {
+						if (this.app.playerSpotsInGameRoom[p + 1].playerType === 'AI') {
 							s.stroke(255);
 							s.fill(0);
 							s.rect(wi / 4 - si * 2, he / 4 - si / 2, si * 4, si);
@@ -471,15 +470,6 @@ export default class Display {
 						}
 						s.textAlign(s.LEFT);
 					}
-
-					//Tooltip Section
-					hoverX = s.int(s.mouseX / si);
-					hoverY = s.int(s.mouseY / si);
-
-					//HoverSquares
-					/*	s.fill(255,100);
-							s.noStroke();
-							s.rect(hoverX*si,hoverY*si,si,si);*/
 
 					///SIDE BAR FOR REVIEW MODE
 					s.textFont(titleFont);
@@ -530,9 +520,7 @@ export default class Display {
 						s.textAlign(s.CENTER);
 						s.text("Join Code", wi + wi * .125, si * 9);
 						s.line(wi + wi * .1, si * 8.5, s.width - wi * .1, si * 8.5)
-						s.stroke(255);
 						s.fill(this.playerColors[this.app.playerNumber - 1][0], this.playerColors[this.app.playerNumber - 1][1], this.playerColors[this.app.playerNumber - 1][2], 255);
-
 						s.stroke(0);
 						s.textFont(standardFont);
 						s.textSize(si * .89);
@@ -558,22 +546,22 @@ export default class Display {
 					}
 				}
 				else if (this.app.gamePhase === "PLACEMENT" && this.app.clientState !== 'SPECTATOR' && this.app.clientState !== 'DEFEATED_PLAYER' && this.app.turnIsIn !== true) {
-				//	if (buttonMaker === 1) {
-						if (this.app.playerNumber == 2) {
-							submitShifterX = 0;
-							submitShifterY = he / 2;
-						}
-						else if (this.app.playerNumber == 3) {
-							submitShifterX = wi / 2;
-							submitShifterY = 0;
-						}
-						else if (this.app.playerNumber == 4) {
-							submitShifterX = wi / 2;
-							submitShifterY = he / 2;
-						}
+					s.textFont(titleFont);
+					s.textSize(wi / 9);
 
+					if (this.app.playerNumber == 2) {
+						submitShifterX = 0;
+						submitShifterY = he / 2;
+					}
+					else if (this.app.playerNumber == 3) {
+						submitShifterX = wi / 2;
+						submitShifterY = 0;
+					}
+					else if (this.app.playerNumber == 4) {
+						submitShifterX = wi / 2;
+						submitShifterY = he / 2;
+					}
 
-					justTriggered = 1;
 					this.t = 1;
 					animate = 0;
 
@@ -602,20 +590,13 @@ export default class Display {
 						s.rect(0, 0, wi, he / 2);
 						s.rect(0, he / 2, wi / 2, he / 2);
 					}
-					//s.rect(wi/4 - wi/8 + submitShifterX, he - si * 1.5 - submitShifterY, wi/4, si * 1);
 					s.strokeWeight(1);
 					s.fill(255);
 					s.stroke(0);
 					s.textSize(si * .4);
 					s.textAlign(s.CENTER);
-				//	s.textSize
 					s.text("Press 'M' To Access Game Menu", wi/4 - wi/8 + submitShifterX+wi/8, he - si * 0.8 - submitShifterY);
 					s.textAlign(s.LEFT);
-			/*		if (s.mouseIsPressed && s.mouseX < wi/4 - wi/8 + submitShifterX + wi*4 && s.mouseX > wi/4 - wi/8 + submitShifterX && s.mouseY < si * 3.5 + si * 1.5 && s.mouseY > si * 3.5) {
-					//	this.app.sendClearSpot(this.app.playerNumber);
-				}*/
-
-
 					if (this.app.game.players[this.app.playerNumber - 1].baseCount < 2 && this.app.game.turnNumber === 1) {
 						bBase.drawButton();
 						s.fill(255);
@@ -675,7 +656,6 @@ export default class Display {
 							counter = counter + 1;
 						}
 
-
 						for (let i = 0; i < unitButtons.length; i = i + 1) {
 							unitButtons[i].drawButton();
 							if (unitButtons[i].isPressed == true) {
@@ -684,8 +664,6 @@ export default class Display {
 
 							}
 						}
-						//drawUnitMenu(this.playerColors,this.app.playerNumber, buttonScale);
-
 						if (s.mouseIsPressed) {
 							if (this.app.turnNumber > 1) {
 								if (bPhaseThree.isInRange(s.mouseX, s.mouseY)) {
@@ -701,10 +679,11 @@ export default class Display {
 								}
 								else if (bSubmit.isPressed === true && bSubmit.confirmed === true && counter > 40) {
 									bSubmit.isPressed = false;
-									//bSubmit.confirmed = false;
 									bSubmit.submission();
 									bSubmit.func.call(this.app);
-									//break
+									//TESTING // DEBUG:
+									bSubmit.submitted = false;
+									bSubmit.confirmed = false;
 								}
 							}
 							currentButtonPressed = newButtonPressed;
@@ -957,7 +936,6 @@ export default class Display {
 						}
 					}
 					if(s.keyIsPressed ){
-						//console.log(s.keyCode);
 						if(s.keyCode === 77){
 							if(showMenu === true){
 								showMenu = false;
@@ -966,199 +944,200 @@ export default class Display {
 							showMenu = true;
 						}
 						s.keyIsPressed = false;
-						//this.app.sendClearSpot(this.app.playerNumber);
-						}
 					}
-					if(showMenu === true){
-						s.noStroke();
-						s.fill(0,190);
-						s.rect(0,0,wi,he);
-						s.stroke(255);
-						s.strokeWeight(2);
-						s.line(0,he/4,wi*2/7,he/4);
-						s.line(wi*5/7,he/4,wi,he/4);
-						s.line(0,he/4+he/8,wi*2/7,he/4+he/8);
-						s.line(wi*5/7,he/4+he/8,wi,he/4+he/8);
-						bLeaveMatch.drawButton();
-						s.textAlign(s.CENTER);
-						s.textSize(si*1.15);
-						s.fill(255);
-						s.stroke(0);
-						s.textFont(titleFont);
-						s.text("Leave Game", wi/2-4, he/4 + si*.4);
-						s.text("Toggle Full Screen", wi/2-4, he/4 + si*.4 + he/8);
-						s.textAlign(s.LEFT);
-						bFullScreen.drawButton();
-						if (s.mouseIsPressed) {
-							if (bLeaveMatch.isInRange(s.mouseX, s.mouseY)) {
-								this.app.sendClearSpot(this.app.playerNumber);
-								showMenu = false;
-							}
-							if (bFullScreen.isInRange(s.mouseX, s.mouseY)) {
-								let fs = s.fullscreen();
-
-								if(s.height != window.screen.height){
-									s.fullscreen(true);
-									//s.resizeCanvas(tempConfig.canvasX, tempConfig.canvasY);
-									s.resizeCanvas(window.screen.height * 1.5, window.screen.height);
-							}
-							else{
-									s.fullscreen(false);
-									s.resizeCanvas(tempConfig.canvasX, tempConfig.canvasY);
-									//s.resizeCanvas(100, 100);
-							}
-
-							buttonMaker = 1;
-							buttonMakerTwo = 1;
-
-						}
-						s.mouseIsPressed = false;
-					}
-
 				}
-					//Bug Fix: Underneath buttons need to be disabled
+				if(showMenu === true && this.app.postGameMenu === false){
+					s.noStroke();
+					s.fill(0, 190);
+					s.rect(0, 0, wi, he);
+					s.stroke(255);
+					s.strokeWeight(2);
+					s.line(0, he / 4, wi * 2 / 7, he / 4);
+					s.line(wi * 5 / 7, he / 4, wi, he / 4);
+					s.line(0, he / 4 + he / 8, wi * 2 / 7, he / 4 + he / 8);
+					s.line(wi * 5 / 7, he / 4 + he / 8, wi, he / 4 + he / 8);
+					s.line(0, he / 4 + 2 * he / 8, wi * 2 / 7, he / 4 + 2 * he / 8);
+					s.line(wi * 5 / 7 , he / 4 + 2 * he / 8, wi , he / 4 + 2 * he / 8);
+					bLeaveMatch.drawButton();
+					bFullScreen.drawButton();
+					bCloseMenu.drawButton();
 
-			}
+					s.textAlign(s.CENTER);
+					s.textSize(si*1.15);
+					s.fill(255);
+					s.stroke(0);
+					s.textFont(titleFont);
+					s.text("Leave Game", wi / 2 - 4, he / 4 + si * .4);
+					s.text("Toggle Full Screen", wi / 2 - 4, he / 4 + si * .4 + he / 8);
+					s.text("Close Menu", wi / 2-4, he / 4 + si*.4 + 2 * he / 8);
 
-				else if (this.app.gamePhase == "SIMULATION" || this.app.clientState === 'SPECTATOR' || this.app.clientState === 'DEFEATED_PLAYER') {
-					bSubmit.submitted = false;
-					bSubmit.confirmed = false;
-					if (animate >= 10 && this.t < (Object.keys(this.simulationDisplayTurn.tick).length - 1)) {
-						this.t = this.t + 1; //Leaves User On Final Tick #
-						animate = 0;
-					}
-
-					if (this.t < Object.keys(this.simulationDisplayTurn.tick).length && this.t > 0) {
-						drawGrid(wi, he, si, this.playerColors);
-						for (let p = 0; p < 4; p = p + 1) {
-							if (this.simulationDisplayTurn.tick[this.t].players[p].victoryCondition == - 1) {
-								if (p == 1) {
-									s.translate(0, he / 2);
-								}
-								else if (p == 2) {
-									s.translate(wi / 2, 0);
-								}
-								else if (p == 3) {
-									s.translate(wi / 2, he / 2);
-								}
-								s.fill(0, 220);
-								s.noStroke();
-								s.rect(0, 0, wi / 2, he / 2);
-								if (p == 1) {
-									s.translate(0, -he / 2);
-								}
-								else if (p == 2) {
-									s.translate(-wi / 2, 0);
-								}
-								else if (p == 3) {
-									s.translate(-wi / 2, -he / 2);
-								}
-							}
+					s.textAlign(s.LEFT);
+					//bFullScreen.drawButton();
+					if (s.mouseIsPressed) {
+						if (bLeaveMatch.isInRange(s.mouseX, s.mouseY)) {
+							this.app.sendClearSpot(this.app.playerNumber);
+							showMenu = false;
 						}
-						b = this.simulationDisplayTurn.tick[this.t].board;
-						for (var k = 0; k < b.length; k = k + 1) {
-							for (var l = 0; l < b[k].length; l = l + 1) {
-								if (b[k][l].length != 0) {
-									for (var m = 0; m < b[k][l].length; m = m + 1) {
-										let displayObject = this.simulationDisplayTurn.tick[this.t].gameObjects.get(b[k][l][m]);
-										if (displayObject !== undefined) {
+						else if (bFullScreen.isInRange(s.mouseX, s.mouseY)) {
+							let fs = s.fullscreen();
 
-											drawDisplayObject(displayObject, l, k, si, this.playerColors, animate);
-											if (displayObject.objCategory === "Units" || displayObject.objCategory === "Bases") {
+							if(s.height !== window.screen.height){
+								s.fullscreen(true);
+								//s.resizeCanvas(tempConfig.canvasX, tempConfig.canvasY);
+								s.resizeCanvas(window.screen.height * 1.5, window.screen.height);
+						}
+						else{
+								s.fullscreen(false);
+								s.resizeCanvas(tempConfig.canvasX, tempConfig.canvasY);
+								//s.resizeCanvas(100, 100);
+						}
+						buttonMaker = 1;
+						buttonMakerTwo = 1;
+					}
+					else if (bCloseMenu.isInRange(s.mouseX, s.mouseY)) {
+						showMenu = false;
+					}
+					s.mouseIsPressed = false;
+				}
+			}
+		}//Bug Fix: Underneath buttons need to be disabled
+		else if (this.app.gamePhase == "SIMULATION" || this.app.clientState === 'SPECTATOR' || this.app.clientState === 'DEFEATED_PLAYER') {
 
-												if (displayObject.collidedWith.length > 0) {
-													if (displayObject.collidedWith[0] == true) {
-
-														drawCollision(l, k, si, displayObject.collidedWith[1], animate, this.playerColors);
-													}
-												}
+			if (animate >= 10 && this.t < (Object.keys(this.simulationDisplayTurn.tick).length - 1)) {
+				this.t = this.t + 1; //Leaves User On Final Tick #
+				animate = 0;
+			}
+			drawGrid(wi, he, si, this.playerColors);
+			if (this.t < Object.keys(this.simulationDisplayTurn.tick).length && this.t > 0) {
+				//drawGrid(wi, he, si, this.playerColors);
+				for (let p = 0; p < 4; p = p + 1) {
+					if (this.simulationDisplayTurn.tick[this.t].players[p].victoryCondition == - 1) {
+						if (p == 1) {
+							s.translate(0, he / 2);
+						}
+						else if (p == 2) {
+							s.translate(wi / 2, 0);
+						}
+						else if (p == 3) {
+							s.translate(wi / 2, he / 2);
+						}
+						s.fill(0, 220);
+						s.noStroke();
+						s.rect(0, 0, wi / 2, he / 2);
+						if (p == 1) {
+							s.translate(0, -he / 2);
+						}
+						else if (p == 2) {
+							s.translate(-wi / 2, 0);
+						}
+						else if (p == 3) {
+							s.translate(-wi / 2, -he / 2);
+						}
+					}
+				}
+				b = this.simulationDisplayTurn.tick[this.t].board;
+				for (var k = 0; k < b.length; k = k + 1) {
+					for (var l = 0; l < b[k].length; l = l + 1) {
+						if (b[k][l].length != 0) {
+							for (var m = 0; m < b[k][l].length; m = m + 1) {
+								let displayObject = this.simulationDisplayTurn.tick[this.t].gameObjects.get(b[k][l][m]);
+								if (displayObject !== undefined) {
+									drawDisplayObject(displayObject, l, k, si, this.playerColors, animate);
+									if (displayObject.objCategory === "Units" || displayObject.objCategory === "Bases") {
+										if (displayObject.collidedWith.length > 0) {
+											if (displayObject.collidedWith[0] == true) {
+												drawCollision(l, k, si, displayObject.collidedWith[1], animate, this.playerColors);
 											}
 										}
 									}
 								}
 							}
 						}
-						//Tooltip Section
-						hoverX = s.int(s.mouseX / si);
-						hoverY = s.int(s.mouseY / si);
-						if (hoverX >= 0 && hoverX < 30 && hoverY >= 0 && hoverY < 20) {
-							tooltip(hoverX, hoverY, b, this.t, wi, he, si, this.playerColors, this.simulationDisplayTurn, this.app);
+					}
+				}
+				//Tooltip Section
+				if (hoverX >= 0 && hoverX < 30 && hoverY >= 0 && hoverY < 20) {
+					tooltip(hoverX, hoverY, b, this.t, wi, he, si, this.playerColors, this.simulationDisplayTurn, this.app);
+				}
+
+				for (let p = 0; p < 4; p = p + 1) {
+					if (this.simulationDisplayTurn.tick[this.t].players[p].victoryCondition == - 1) {
+						s.textFont(titleFont);
+						if (p == 1) {
+							s.translate(0, he / 2);
 						}
-						for (let p = 0; p < 4; p = p + 1) {
-							if (this.simulationDisplayTurn.tick[this.t].players[p].victoryCondition == - 1) {
-
-								s.textFont(titleFont);
-								if (p == 1) {
-									s.translate(0, he / 2);
-								}
-								else if (p == 2) {
-									s.translate(wi / 2, 0);
-								}
-								else if (p == 3) {
-									s.translate(wi / 2, he / 2);
-								}
-								s.textSize(si * 1.6);
-								s.fill(this.playerColors[p][0], this.playerColors[p][1], this.playerColors[p][2], 255);
-								s.stroke(0);
-								s.text("Defeated", wi / 8, he / 4);
-								if (this.simulationDisplayTurn.tick[this.t].players[p].victoryCondition == - 1) {
-									s.textFont(titleFont);
-									if (p == 1) {
-										s.translate(0, -he / 2);
-									}
-									else if (p == 2) {
-										s.translate(-wi / 2, 0);
-									}
-									else if (p == 3) {
-										s.translate(-wi / 2, -he / 2);
-									}
-								}
+						else if (p == 2) {
+							s.translate(wi / 2, 0);
+						}
+						else if (p == 3) {
+							s.translate(wi / 2, he / 2);
+						}
+						s.textSize(si * 1.6);
+						s.fill(this.playerColors[p][0], this.playerColors[p][1], this.playerColors[p][2], 255);
+						s.stroke(0);
+						s.text("Defeated", wi / 8, he / 4);
+						if (this.simulationDisplayTurn.tick[this.t].players[p].victoryCondition == - 1) {
+							s.textFont(titleFont);
+							if (p == 1) {
+								s.translate(0, -he / 2);
 							}
-
-							else if (this.simulationDisplayTurn.tick[this.t].players[p].victoryCondition == 1) {
-								gameOver = 1;
-								//Victory Sequence, fix it.
-								s.strokeWeight(1);
-								s.noFill();
-								let refx = s.width / 2;
-								let refy = s.height / 2;
-								s.noFill();
-								let theta = 0;
-								let phase = 0;
-								let meh = 0;
-								let osx = 0;
-								let osy = 0;
-								let wave = 12;
-								let rad = 360;
-								let radius = s.height / 4 + s.height * s.sin(s.radians(this.delay));
-								for (let i = 0; i < rad; i = i + 1) {
-									s.stroke(255, 20);
-									theta = i * (360 / rad);
-									phase = ((Math.PI) / rad);
-									meh = (radius * 1.5 + 11.5) * s.sin(wave * theta + phase) * s.cos(phase);
-									osx = (s.width / 25 + meh) * s.cos(theta);
-									osy = (s.width / 25 + meh) * s.sin(theta);
-									s.strokeWeight(8);
-									s.point(osx + refx, osy + refy);
-									s.strokeWeight(6);
-									s.point(osx + refx, osy + refy);
-									s.strokeWeight(3);
-									s.point(osx + refx, osy + refy);
-									s.stroke(255, 255);
-									s.strokeWeight(1);
-									s.point(osx + refx, osy + refy);
-								}
-								s.textFont(titleFont);
-								s.textSize(si * 3.6);
-								s.fill(255, 255);
-								s.stroke(0);
-								s.text("Player " + (p + 1), wi / 4, he / 2.2);
-								s.text("Is Victorious", wi / 13, he / 1.5);
+							else if (p == 2) {
+								s.translate(-wi / 2, 0);
+							}
+							else if (p == 3) {
+								s.translate(-wi / 2, -he / 2);
 							}
 						}
 					}
-					//IMPORTANT - ANIMATION SPEED
-					animate = animate + (.65 + s.deltaTime / 70);
+					else if (this.simulationDisplayTurn.tick[this.t].players[p].victoryCondition == 1) {
+						if(gameOver === 0){
+							postGameMenuTimer = 0;
+						}
+						gameOver = 1;
+						//Victory Sequence, fix it.
+						s.strokeWeight(1);
+						s.noFill();
+						let refx = s.width / 2;
+						let refy = s.height / 2;
+						let theta = 0;
+						let phase = 0;
+						let meh = 0;
+						let osx = 0;
+						let osy = 0;
+						let wave = 12;
+						let rad = 360;
+						let radius = s.height / 4 + s.height * s.sin(s.radians(this.delay));
+						for (let i = 0; i < rad; i = i + 1) {
+							s.stroke(255, 20);
+							theta = i * (360 / rad);
+							phase = ((Math.PI) / rad);
+							meh = (radius * 1.5 + 11.5) * s.sin(wave * theta + phase) * s.cos(phase);
+							osx = (s.width / 25 + meh) * s.cos(theta);
+							osy = (s.width / 25 + meh) * s.sin(theta);
+							s.strokeWeight(8);
+							s.point(osx + refx, osy + refy);
+							s.strokeWeight(6);
+							s.point(osx + refx, osy + refy);
+							s.strokeWeight(3);
+							s.point(osx + refx, osy + refy);
+							s.stroke(255, 255);
+							s.strokeWeight(1);
+							s.point(osx + refx, osy + refy);
+						}
+						s.textFont(titleFont);
+						s.textSize(si * 3.6);
+						s.fill(255, 255);
+						s.stroke(0);
+						s.text("Player " + (p + 1), wi / 4, he / 2.2);
+						s.text("Is Victorious", wi / 13, he / 1.5);
+						postGameMenuTimer = postGameMenuTimer + 1;
+						if(postGameMenuTimer > 800){
+							this.app.postGameMenu = true;
+						}
+					}
+				}
+			}
+			animate = animate + (.65 + s.deltaTime / 70);//IMPORTANT - ANIMATION SPEED
 
 					if (this.t === Object.keys(this.simulationDisplayTurn.tick).length - 1) {
 						this.app.onSimulationPhaseEnd();
@@ -1181,35 +1160,42 @@ export default class Display {
 						//this.app.sendClearSpot(this.app.playerNumber);
 						}
 					}
-					if(showMenu === true){
+					if(showMenu === true && this.app.postGameMenu === false){
 						s.noStroke();
-						s.fill(0,190);
-						s.rect(0,0,wi,he);
+						s.fill(0, 190);
+						s.rect(0, 0, wi, he);
 						s.stroke(255);
 						s.strokeWeight(2);
-						s.line(0,he/4,wi*2/7,he/4);
-						s.line(wi*5/7,he/4,wi,he/4);
-						s.line(0,he/4+he/8,wi*2/7,he/4+he/8);
-						s.line(wi*5/7,he/4+he/8,wi,he/4+he/8);
+						s.line(0, he / 4, wi * 2 / 7, he / 4);
+						s.line(wi * 5 / 7, he / 4, wi, he / 4);
+						s.line(0, he / 4 + he / 8, wi * 2 / 7, he / 4 + he / 8);
+						s.line(wi * 5 / 7, he / 4 + he / 8, wi, he / 4 + he / 8);
+						s.line(0, he / 4 + 2 * he / 8, wi * 2 / 7, he / 4 + 2 * he / 8);
+						s.line(wi * 5 / 7 , he / 4 + 2 * he / 8, wi , he / 4 + 2 * he / 8);
 						bLeaveMatch.drawButton();
+						bFullScreen.drawButton();
+						bCloseMenu.drawButton();
+
 						s.textAlign(s.CENTER);
 						s.textSize(si*1.15);
 						s.fill(255);
 						s.stroke(0);
 						s.textFont(titleFont);
-						s.text("Leave Game", wi/2-4, he/4 + si*.4);
-						s.text("Toggle Full Screen", wi/2-4, he/4 + si*.4 + he/8);
+						s.text("Leave Game", wi / 2 - 4, he / 4 + si * .4);
+						s.text("Toggle Full Screen", wi / 2 - 4, he / 4 + si * .4 + he / 8);
+						s.text("Close Menu", wi / 2-4, he / 4 + si*.4 + 2 * he / 8);
+
 						s.textAlign(s.LEFT);
-						bFullScreen.drawButton();
+						//bFullScreen.drawButton();
 						if (s.mouseIsPressed) {
 							if (bLeaveMatch.isInRange(s.mouseX, s.mouseY)) {
 								this.app.sendClearSpot(this.app.playerNumber);
 								showMenu = false;
 							}
-							if (bFullScreen.isInRange(s.mouseX, s.mouseY)) {
+							else if (bFullScreen.isInRange(s.mouseX, s.mouseY)) {
 								let fs = s.fullscreen();
 
-								if(s.height != window.screen.height){
+								if(s.height !== window.screen.height){
 									s.fullscreen(true);
 									//s.resizeCanvas(tempConfig.canvasX, tempConfig.canvasY);
 									s.resizeCanvas(window.screen.height * 1.5, window.screen.height);
@@ -1219,52 +1205,49 @@ export default class Display {
 									s.resizeCanvas(tempConfig.canvasX, tempConfig.canvasY);
 									//s.resizeCanvas(100, 100);
 							}
-
 							buttonMaker = 1;
 							buttonMakerTwo = 1;
-
+						}
+						else if (bCloseMenu.isInRange(s.mouseX, s.mouseY)) {
+							showMenu = false;
 						}
 						s.mouseIsPressed = false;
 					}
-
 				}
-
+			}
+			else if (this.app.gamePhase === "REVIEW" && this.app.game.players[this.app.playerNumber - 1].victoryCondition !== -1) {
+				if (sideBarGrowth > 0.8) {
+					sideBarGrowth = sideBarGrowth - .003;
 				}
-
-				///REVIEW BOARD PHASE
-				else if (this.app.gamePhase == "REVIEW" && this.app.game.players[this.app.playerNumber - 1].victoryCondition != -1) {
-					if (sideBarGrowth > 0.8) {
-						sideBarGrowth = sideBarGrowth - .003;
-					}
-					else {
-						sideBarMenu = true;
-					}
-					wi = s.width * sideBarGrowth;
-					si = wi / 30;
-					he = si * 20;
-					this.t = Object.keys(this.simulationDisplayTurn.tick).length;
-					drawGrid(wi, he, si, this.playerColors);
+				else {
+					sideBarMenu = true;
+				}
+				wi = s.width * sideBarGrowth;
+				si = wi / 30;
+				he = si * 20;
+				this.t = Object.keys(this.simulationDisplayTurn.tick).length;
+				drawGrid(wi, he, si, this.playerColors);
 					for (let p = 0; p < 4; p = p + 1) {
-						if (this.app.game.players[p].victoryCondition == -1) {
-							if (p == 1) {
+						if (this.app.game.players[p].victoryCondition === -1) {
+							if (p === 1) {
 								s.translate(0, he / 2);
 							}
-							else if (p == 2) {
+							else if (p === 2) {
 								s.translate(wi / 2, 0);
 							}
-							else if (p == 3) {
+							else if (p === 3) {
 								s.translate(wi / 2, he / 2);
 							}
 							s.fill(0, 220);
 							s.noStroke();
 							s.rect(0, 0, wi / 2, he / 2);
-							if (p == 1) {
+							if (p === 1) {
 								s.translate(0, -he / 2);
 							}
-							else if (p == 2) {
+							else if (p === 2) {
 								s.translate(-wi / 2, 0);
 							}
-							else if (p == 3) {
+							else if (p === 3) {
 								s.translate(-wi / 2, -he / 2);
 							}
 						}
@@ -1279,19 +1262,12 @@ export default class Display {
 										if (displayObject.objCategory != "Projectiles") {
 											drawDisplayObject(displayObject, l, k, si, this.playerColors, animate);
 										}
-										/*if(displayObject.objCategory === "Units" || displayObject.objCategory === "Bases"){
-											if(displayObject.collidedWith.length > 0){
-											if(displayObject.collidedWith[0] == true){
-											//	drawCollision(l,k, si, displayObject.collidedWith[1], animate, this.playerColors);
-											}
-										}
-									}*/
+
 									}
 								}
 							}
 						}
 					}
-					//Tooltip Section
 					hoverX = s.int(s.mouseX / si);
 					hoverY = s.int(s.mouseY / si);
 					if (hoverX >= 0 && hoverX < 30 && hoverY >= 0 && hoverY < 20) {
@@ -1301,13 +1277,13 @@ export default class Display {
 					for (let p = 0; p < 4; p = p + 1) {
 						if (this.app.game.players[p].victoryCondition == -1) {
 							s.textFont(titleFont);
-							if (p == 1) {
+							if (p === 1) {
 								s.translate(0, he / 2);
 							}
-							else if (p == 2) {
+							else if (p === 2) {
 								s.translate(wi / 2, 0);
 							}
-							else if (p == 3) {
+							else if (p === 3) {
 								s.translate(wi / 2, he / 2);
 							}
 							s.textSize(si * 1.6);
@@ -1316,13 +1292,13 @@ export default class Display {
 							s.text("Defeated", wi / 8, he / 4);
 							if (this.app.game.players[p].victoryCondition == -1) {
 								s.textFont(titleFont);
-								if (p == 1) {
+								if (p === 1) {
 									s.translate(0, -he / 2);
 								}
-								else if (p == 2) {
+								else if (p === 2) {
 									s.translate(-wi / 2, 0);
 								}
-								else if (p == 3) {
+								else if (p === 3) {
 									s.translate(-wi / 2, -he / 2);
 								}
 							}
@@ -1339,7 +1315,7 @@ export default class Display {
 					s.noStroke();
 					s.rect(wi, 0, s.width - wi, he);
 					s.rect(0, he, s.width, s.width - he);
-					if (sideBarMenu == true) {
+					if (sideBarMenu === true) {
 						s.textSize(si * 1.05);
 						s.fill(this.playerColors[this.app.playerNumber - 1][0], this.playerColors[this.app.playerNumber - 1][1], this.playerColors[this.app.playerNumber - 1][2], 255);
 						s.stroke(0);
@@ -1365,7 +1341,7 @@ export default class Display {
 
 						for (let a = 0; a < 4; a = a + 1) {
 							s.fill(this.playerColors[a][0], this.playerColors[a][1], this.playerColors[a][2], this.playerColors[a][3]);
-							if (this.app.game.players[a].victoryCondition == - 1) {
+							if (this.app.game.players[a].victoryCondition === - 1) {
 								s.text("Defeated", wi + wi * .125, si * 10 + a * si);
 							}
 							else {
@@ -1408,38 +1384,46 @@ export default class Display {
 						//this.app.sendClearSpot(this.app.playerNumber);
 						}
 					}
-					if(showMenu === true){
+					if(showMenu === true && this.app.postGameMenu === false){
+						
 						wi = s.width;
 						si = wi / 30;
-						he = si * 20;
+						he = s.height;
 						s.noStroke();
-						s.fill(0,190);
-						s.rect(0,0,wi,he);
+						s.fill(0, 190);
+						s.rect(0, 0, wi, he);
 						s.stroke(255);
 						s.strokeWeight(2);
-						s.line(0,he/4,wi*2/7,he/4);
-						s.line(wi*5/7,he/4,wi,he/4);
-						s.line(0,he/4+he/8,wi*2/7,he/4+he/8);
-						s.line(wi*5/7,he/4+he/8,wi,he/4+he/8);
+						s.line(0, he / 4, wi * 2 / 7, he / 4);
+						s.line(wi * 5 / 7, he / 4, wi, he / 4);
+						s.line(0, he / 4 + he / 8, wi * 2 / 7, he / 4 + he / 8);
+						s.line(wi * 5 / 7, he / 4 + he / 8, wi, he / 4 + he / 8);
+						s.line(0, he / 4 + 2 * he / 8, wi * 2 / 7, he / 4 + 2 * he / 8);
+						s.line(wi * 5 / 7 , he / 4 + 2 * he / 8, wi , he / 4 + 2 * he / 8);
 						bLeaveMatch.drawButton();
+						bFullScreen.drawButton();
+						bCloseMenu.drawButton();
+
 						s.textAlign(s.CENTER);
 						s.textSize(si*1.15);
 						s.fill(255);
 						s.stroke(0);
 						s.textFont(titleFont);
-						s.text("Leave Game", wi/2-4, he/4 + si*.4);
-						s.text("Toggle Full Screen", wi/2-4, he/4 + si*.4 + he/8);
+						s.text("Leave Game", wi / 2 - 4, he / 4 + si * .4);
+						s.text("Toggle Full Screen", wi / 2 - 4, he / 4 + si * .4 + he / 8);
+						s.text("Close Menu", wi / 2-4, he / 4 + si*.4 + 2 * he / 8);
+
 						s.textAlign(s.LEFT);
-						bFullScreen.drawButton();
+						//bFullScreen.drawButton();
 						if (s.mouseIsPressed) {
 							if (bLeaveMatch.isInRange(s.mouseX, s.mouseY)) {
 								this.app.sendClearSpot(this.app.playerNumber);
 								showMenu = false;
 							}
-							if (bFullScreen.isInRange(s.mouseX, s.mouseY)) {
+							else if (bFullScreen.isInRange(s.mouseX, s.mouseY)) {
 								let fs = s.fullscreen();
 
-								if(s.height != window.screen.height){
+								if(s.height !== window.screen.height){
 									s.fullscreen(true);
 									//s.resizeCanvas(tempConfig.canvasX, tempConfig.canvasY);
 									s.resizeCanvas(window.screen.height * 1.5, window.screen.height);
@@ -1452,13 +1436,149 @@ export default class Display {
 							buttonMaker = 1;
 							buttonMakerTwo = 1;
 						}
+						else if (bCloseMenu.isInRange(s.mouseX, s.mouseY)) {
+							showMenu = false;
+						}
 						s.mouseIsPressed = false;
 					}
-
 				}
 				}
+				//End Review Phase
+				//Begin Optional Statistics Phase
+				else if (this.app.gamePhase === "STATS") {
+					s.background(0);
+					s.tint(105, 105, 105, 80+(1+s.cos(this.delay/5.5))*30);
+					s.image(imgTwo, 0, 0, s.height * 1.6, s.height);
+					s.textFont(titleFont);
+					s.fill(255,255);
+					s.stroke(0);
+					s.textAlign(s.CENTER);
+					s.textSize(si*2);
+					s.text("STATISTICS", s.width/2, s.height/8.8)
+					s.textSize(si);
 
-				//End Phase 3
+					for(let r = 0; r < 6 ; r = r + 1){
+						s.stroke(255);
+						s.line(s.width/15,s.height/6+r*s.height/6.5,s.width-s.width/15,s.height/6+r*s.height/6.5)
+						for(let c = 0; c < 7; c = c + 1){
+							s.stroke(255);
+							s.line(s.width/15+(c*13/6)*s.width/15,s.height/6,s.width/15+(c*13/6)*s.width/15,s.height/6+5*s.height/6.5)
+							s.stroke(0);
+							if(c === 0){
+								if(r === 0){
+									s.text("PLAYER",s.width/15+((c+.5)*13/6)*s.width/15,s.height/6+(r+.6)*s.height/6.5);
+								}
+								else if (r < 5){
+									s.fill(this.playerColors[r - 1][0], this.playerColors[r - 1][1], this.playerColors[r - 1][2], 255);
+									s.text(this.app.playerSpotsInGameRoom[r].playerType, s.width/15+((c+.5)*13/6)*s.width/15,s.height/6+(r+.6)*s.height/6.5)
+								}
+							}
+							else if(c === 1){
+								if(r === 0){
+									s.textSize(si/1.5);
+									s.text("Units",s.width/15+((c+.5)*13/6)*s.width/15,s.height/6+(r+.5)*s.height/6.5);
+									s.text("Killed",s.width/15+((c+.5)*13/6)*s.width/15,s.height/6+(r+.7)*s.height/6.5);
+									s.textSize(si);
+								}
+								else if (r < 5){
+									s.fill(this.playerColors[r - 1][0], this.playerColors[r - 1][1], this.playerColors[r - 1][2], 255);
+									s.text(this.app.game.players[r-1].unitsKilledTotal, s.width/15+((c+.5)*13/6)*s.width/15,s.height/6+(r+.6)*s.height/6.5)
+								}
+							}
+							else if(c === 2){
+								if(r === 0){
+									s.textSize(si/1.5);
+									s.text("Units",s.width/15+((c+.5)*13/6)*s.width/15,s.height/6+(r+.5)*s.height/6.5);
+									s.text("Lost",s.width/15+((c+.5)*13/6)*s.width/15,s.height/6+(r+.7)*s.height/6.5);
+									s.textSize(si);
+								}
+								else if (r < 5){
+									s.fill(this.playerColors[r - 1][0], this.playerColors[r - 1][1], this.playerColors[r - 1][2], 255);
+									s.text(this.app.game.players[r-1].unitsLostTotal, s.width/15+((c+.5)*13/6)*s.width/15,s.height/6+(r+.6)*s.height/6.5)
+								}
+							}
+							else if(c === 3){
+								if(r === 0){
+									s.textSize(si/1.5);
+									s.text("Damage",s.width/15+((c+.5)*13/6)*s.width/15,s.height/6+(r+.5)*s.height/6.5);
+									s.text("Dealt",s.width/15+((c+.5)*13/6)*s.width/15,s.height/6+(r+.7)*s.height/6.5);
+									s.textSize(si);
+								}
+								else if (r < 5){
+									s.fill(this.playerColors[r - 1][0], this.playerColors[r - 1][1], this.playerColors[r - 1][2], 255);
+									s.text(this.app.game.players[r-1].damageDealtTotal, s.width/15+((c+.5)*13/6)*s.width/15,s.height/6+(r+.6)*s.height/6.5)
+								}
+							}
+							else if(c === 4){
+								if(r === 0){
+									s.textSize(si/1.5);
+									s.text("Credits",s.width/15+((c+.5)*13/6)*s.width/15,s.height/6+(r+.5)*s.height/6.5);
+									s.text("Earned",s.width/15+((c+.5)*13/6)*s.width/15,s.height/6+(r+.7)*s.height/6.5);
+									s.textSize(si);
+								}
+								else if (r < 5){
+									s.fill(this.playerColors[r - 1][0], this.playerColors[r - 1][1], this.playerColors[r - 1][2], 255);
+									s.text(this.app.game.players[r-1].creditsEarnedTotal, s.width/15+((c+.5)*13/6)*s.width/15,s.height/6+(r+.6)*s.height/6.5)
+								}
+							}
+							else if(c === 5){
+								if(r === 0){
+									s.textSize(si/1.5);
+									s.text("Favorite",s.width/15+((c+.5)*13/6)*s.width/15,s.height/6+(r+.5)*s.height/6.5);
+									s.text("Unit",s.width/15+((c+.5)*13/6)*s.width/15,s.height/6+(r+.7)*s.height/6.5);
+									s.textSize(si);
+								}
+								else if (r < 5){
+									s.fill(this.playerColors[r - 1][0], this.playerColors[r - 1][1], this.playerColors[r - 1][2], 255);
+									s.textSize(si/1.8);
+									s.text(this.app.game.players[r-1].frequentUnit, s.width/15+((c+.5)*13/6)*s.width/15,s.height/6+(r+.6)*s.height/6.5)
+									s.textSize(si);
+								}
+							}
+						}
+					}
+
+					s.textAlign(s.LEFT);
+				}
+
+
+				if(this.app.postGameMenu === true){
+					s.noStroke();
+					s.fill(0,190);
+					s.rect(0,0,wi,he);
+					s.stroke(255);
+					s.strokeWeight(2);
+					s.line(0,he/4,wi*2/7,he/4);
+					s.line(wi*5/7,he/4,wi,he/4);
+					s.line(0,he/4+he/8,wi*2/7,he/4+he/8);
+					s.line(wi*5/7,he/4+he/8,wi,he/4+he/8);
+					bLeaveMatch.drawButton();
+					bStatsPage.drawButton();
+
+					s.textAlign(s.CENTER);
+					s.textSize(si*1.15);
+					s.fill(255);
+					s.stroke(0);
+					s.textFont(titleFont);
+					s.text("Leave Game", wi/2-4, he/4 + si*.4);
+					s.text("Statistics", wi/2-4, he/4 + si*.4 + he/8);
+				//	s.text("Statistics", wi/2-4, he/4 + 2*si*.4 + he/8);
+					s.textAlign(s.LEFT);
+					//bFullScreen.drawButton();
+					if (s.mouseIsPressed) {
+						if (bLeaveMatch.isInRange(s.mouseX, s.mouseY)) {
+							this.app.sendClearSpot(this.app.playerNumber);
+							this.app.postGameMenu = false;
+						}
+						else if (bStatsPage.isInRange(s.mouseX, s.mouseY)) {
+							this.app.setGamePhase("STATS");
+							this.app.postGameMenu = false;
+					}
+					s.mouseIsPressed = false;
+				}
+
+
+				}
 				//Begin Spectator Mode
 				if (this.app.clientState === "SPECTATOR" || this.app.clientState === "DEFEATED_PLAYER") {
 
@@ -1472,12 +1592,12 @@ export default class Display {
 					s.textAlign(s.LEFT);
 				}
 				//Load Screen Logic Below
-				if (this.app.turnIsIn == true) {
+				if (this.app.turnIsIn === true) {
 
 					runLoadScreen(255);
 
 				}
-				if (this.app.simulationRun == true) {
+				if (this.app.simulationRun === true) {
 					this.app.turnIsIn = false;
 					this.app.simulationRun = false;
 				}
@@ -1510,7 +1630,7 @@ export default class Display {
 					s.noFill();
 					s.strokeWeight(3);
 					s.rect(this.xx, this.yy, this.xlen, this.ylen);
-					if (this.isPressed == true) {
+					if (this.isPressed === true) {
 						s.stroke(255, 255, 255, 255);
 						s.fill(255, 255, 255, 100);
 						s.rect(this.xx, this.yy, this.xlen, this.ylen);
@@ -1545,27 +1665,27 @@ export default class Display {
 				let counter = 0;
 				let upperDistance = 30;
 				let lowerDistance = 1;
-				if (unitName == "Oscillator") {
+				if (unitName === "Oscillator") {
 					upperDistance = 2;
 				}
-				else if (unitName == "Resonator") {
+				else if (unitName === "Resonator") {
 					lowerDistance = 6;
 					upperDistance = 19;
 				}
-				else if (unitName == "Tripwire") {
+				else if (unitName === "Tripwire") {
 					//lowerDistance = 5;
 					upperDistance = 6;
 				}
-				else if (unitName == "Ballast") {
+				else if (unitName === "Ballast") {
 					//lowerDistance = 5;
 					upperDistance = 2;
 				}
-				else if (unitName == "RedShifter") {
+				else if (unitName === "RedShifter") {
 					lowerDistance = 12;
 
 					//upperDistance = 2;
 				}
-				else if (unitName == "BeamSplitter") {
+				else if (unitName === "BeamSplitter") {
 					upperDistance = 9;
 					//upperDistance = 2;
 				}
@@ -1578,7 +1698,7 @@ export default class Display {
 						xx = xx + 1;
 					}
 				}
-				if (unitName == "BeamSplitter") {
+				if (unitName === "BeamSplitter") {
 					let turningPoint = 8;
 					if (player == 1) {
 						for (let i = 1; i < 25; i = i + 1) {
@@ -1610,52 +1730,6 @@ export default class Display {
 				return finalArray;
 			}
 
-
-
-			class Flame {
-
-				constructor(x, y) {
-					this.length = 0;
-					this.x = x;
-					this.y = y;
-
-					this.orientationOne = Math.floor(Math.random() * 3) - 1;
-					this.orientationTwo = Math.floor(Math.random() * 3) - 1;
-					if (this.orientationOne == 0 && this.orientationTwo == 0) {
-						this.orientationOne = 1;
-					}
-					//if()
-					//this.secondpriorx=0;
-				}
-				checkCoordinates(x, y, width, height) {
-					if (x < 0 || x > width || y < 0 || y > height) {
-						this.orientationOne = Math.floor(Math.random() * 3) - 1;
-						this.orientationTwo = Math.floor(Math.random() * 3) - 1;
-						if (this.orientationOne == 0 && this.orientationTwo == 0) {
-							this.orientationTwo = 1;
-						}
-						this.x = Math.floor(Math.random() * width);
-						this.y = Math.floor(Math.random() * height);
-					}
-				}
-				render(size, speed, width, height) {
-
-					//Make sure the asteroids have a lot less mass so they don't fall in as easily
-					this.length = size * 3;
-					this.speed = speed;
-					this.x = this.x + this.orientationOne * speed;
-					this.y = this.y + this.orientationTwo * speed;
-					for (let l = 0; l < this.length; l = l + 1) {
-						s.fill(255, 0, 128, 255 - 255 * l / this.length);
-						s.strokeWeight(1);
-						s.stroke(0);
-						s.noStroke();
-						s.ellipse(this.x - l * this.orientationOne, this.y - l * this.orientationTwo, 3 - l / 20, 3 - l / 20);
-					}
-					this.checkCoordinates(this.x, this.y, width, height);
-
-				}
-			}
 			function displayLobby(gameRoom, data, width, height, size, delay) {
 				s.textSize(si);
 				for (let p = 0; p < 4; p = p + 1) {
@@ -1680,8 +1754,8 @@ export default class Display {
 				s.stroke(0);
 				s.fill(255, 255);
 				s.textAlign(s.CENTER);
-				s.textSize(size * 2);
-				s.text("Matchmaking", width / 2, height / 12);
+				s.textSize(size * 1.6);
+				s.text("Matchmaking", width / 2, height / 13);
 				s.stroke(255);
 				//s.line(width / 4, height / 10, 3 * width / 4, height / 10);
 				s.stroke(0);
@@ -1759,13 +1833,13 @@ export default class Display {
 						s.textAlign(s.LEFT);
 						s.fill(pColors[hoverObject.player - 1][0], pColors[hoverObject.player - 1][1], pColors[hoverObject.player - 1][2], pColors[hoverObject.player - 1][3]);
 
-						if (hoverObject.objCategory == "Units") {
+						if (hoverObject.objCategory === "Units") {
 
 							s.textSize(si / 3.8);
 							s.stroke(0);
 
 							s.text("Damage Dealt: " + (hoverObject.damageDealt), hoverX * si + si * 1.3, hoverY * si + si * 3.1);
-							if (hoverObject.lifeSpan == 0) {
+							if (hoverObject.lifeSpan === 0) {
 								s.text("Turns Active: " + 1, hoverX * si + si * 1.3, hoverY * si + si * 3.6);
 							}
 							else {
@@ -1779,7 +1853,7 @@ export default class Display {
 								s.fill(255, 240, 0, 85);
 								s.noStroke();
 								s.rect(pt[i][0] * si, pt[i][1] * si, si);
-								if (pt.length == 1) {
+								if (pt.length === 1) {
 									s.fill(255, 85);
 									s.stroke(0, 85);
 									s.textSize(wi / 40);
@@ -1833,67 +1907,67 @@ export default class Display {
 
 			function drawDisplayObject(displayObject, x, y, size, colors, a) {
 
-				if (displayObject.identifier == "Base") {
+				if (displayObject.identifier === "Base") {
 					drawBase(x, y, displayObject.player, size, displayObject.health, displayObject.maxHealth, colors);
 				}
-				if (displayObject.identifier == "Ray") {
+				if (displayObject.identifier === "Ray") {
 					drawRayTracer(x, y, displayObject.player, size, displayObject.health, Units["RayTracer"].maxHealth, colors);
 				}
-				if (displayObject.identifier == "Red") {
+				if (displayObject.identifier === "Red") {
 					drawRedShifter(x, y, displayObject.player, size, displayObject.health, Units["RayTracer"].maxHealth, colors);
 				}
-				if (displayObject.identifier == "Osc") {
+				if (displayObject.identifier === "Osc") {
 					drawOscillator(x, y, displayObject.player, size, displayObject.health, Units["Oscillator"].maxHealth, colors);
 				}
-				if (displayObject.identifier == "Mag") {
+				if (displayObject.identifier === "Mag") {
 					drawMaglev(x, y, displayObject.player, size, displayObject.health, Units["Maglev"].maxHealth, colors);
 				}
-				if (displayObject.identifier == "Jug") {
+				if (displayObject.identifier === "Jug") {
 					drawJuggernode(x, y, displayObject.player, size, displayObject.health, Units["Juggernode"].maxHealth, colors);
 				}
-				if (displayObject.identifier == "Bea") {
+				if (displayObject.identifier === "Bea") {
 					drawBeamSplitter(x, y, displayObject.player, size, displayObject.health, Units["Ballast"].maxHealth, colors);
 				}
-				if (displayObject.identifier == "Bal") {
+				if (displayObject.identifier === "Bal") {
 					drawBallast(x, y, displayObject.player, size, displayObject.health, Units["Ballast"].maxHealth, colors);
 				}
-				if (displayObject.identifier == "Tri") {
+				if (displayObject.identifier === "Tri") {
 					drawTripwire(x, y, displayObject.player, size, displayObject.health, Units["Tripwire"].maxHealth, colors, displayObject.tripped);
 				}
-				if (displayObject.identifier == "Cir") {
+				if (displayObject.identifier === "Cir") {
 					drawResonator(x, y, displayObject.player, size, displayObject.health, Units["Resonator"].maxHealth, colors);
 				}
-				if (displayObject.identifier == "Int") {
+				if (displayObject.identifier === "Int") {
 					drawIntegrator(x, y, displayObject.player, size, displayObject.health, Units["Integrator"].maxHealth, colors, displayObject.lifeSpan);
 				}
-				if (displayObject.identifier == "JugProj") {
+				if (displayObject.identifier === "JugProj") {
 					drawJuggernodeProjectile(x, y, displayObject.player, size, colors, displayObject.orientation, displayObject.damage, a);
 				}
-				if (displayObject.identifier == "RayProj") {
+				if (displayObject.identifier === "RayProj") {
 					drawRayTracerProjectile(x, y, displayObject.player, size, colors, displayObject.orientation, a);
 				}
-				if (displayObject.identifier == "RedProj") {
+				if (displayObject.identifier === "RedProj") {
 					drawRedShifterProjectile(x, y, displayObject.player, size, colors, displayObject.orientation, displayObject.damage, displayObject.distance, a);
 				}
-				if (displayObject.identifier == "OscProj") {
+				if (displayObject.identifier === "OscProj") {
 					drawOscillatorProjectile(x, y, displayObject.player, size, colors, displayObject.orientation, a);
 				}
-				if (displayObject.identifier == "MagProj") {
+				if (displayObject.identifier === "MagProj") {
 					drawMaglevProjectile(x, y, displayObject.player, size, colors, displayObject.orientation, displayObject.damage, a);
 				}
-				if (displayObject.identifier == "BeaProj") {
+				if (displayObject.identifier === "BeaProj") {
 					drawBeamSplitterProjectile(x, y, displayObject.player, size, colors, displayObject.orientation, displayObject.damage, a);
 				}
-				if (displayObject.identifier == "BalProj") {
+				if (displayObject.identifier === "BalProj") {
 					drawBallastProjectile(x, y, displayObject.player, size, colors, displayObject.damage, a);
 				}
-				if (displayObject.identifier == "TriProj") {
+				if (displayObject.identifier === "TriProj") {
 					drawTripwireProjectile(x, y, displayObject.player, size, colors, displayObject.orientation, displayObject.damage, a);
 				}
-				if (displayObject.identifier == "CirProj") {
+				if (displayObject.identifier === "CirProj") {
 					drawResonatorProjectile(x, y, displayObject.player, size, colors, displayObject.orientation, displayObject.damage, a);
 				}
-				if (displayObject.identifier == "IntProj") {
+				if (displayObject.identifier === "IntProj") {
 					drawIntegratorProjectile(x, y, displayObject.player, size, colors, displayObject.orientation, displayObject.damage, a);
 				}
 			}

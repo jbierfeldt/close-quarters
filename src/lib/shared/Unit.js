@@ -99,7 +99,7 @@ export class RayTracer extends Unit {
 		// reset firing
 		this.firing = false;
 		// Ray Tracer fires every 4 ticks
-		if (tick%12 === 0) {
+		if (tick%14 === 0) {
 			if(this.player==1 || this.player==2){
 				this.startAttack([1,0]);
 
@@ -108,7 +108,7 @@ export class RayTracer extends Unit {
 				this.startAttack([-1,0]);
 			}
 		}
-		else if (tick%6 === 0){
+		else if (tick%7 === 0){
 			if(this.player==1 || this.player==3){
 				this.startAttack([0,1]);
 			}
@@ -159,7 +159,6 @@ export class RedShifter extends Unit {
 		//initialize a project object and pass in the direction based on the tick
 		this.firing = true;
 	  let direction = 1 + Math.floor(Math.random()*3);
-	//let direction =1;
 		if(direction === 1){
 			if(this.player == 1){
 				this.projArr[0]  = new Projectiles.RedBullet(this.player, [1,0], 1, this.id);
@@ -213,7 +212,6 @@ export class RedShifter extends Unit {
 				this.projArr[0]  = new Projectiles.RedBullet(this.player, [0,-1], 1, this.id);
 				this.projArr[1]  = new Projectiles.RedBullet(this.player, [-1,0], 1, this.id);
 			}
-
 		}
 
 		debug.log(0, "    Unit " + this.id + "  is firing Projectile " + this.firing.id);
@@ -234,11 +232,9 @@ export class RedShifter extends Unit {
 		}
 
 	}
-
 	serialize () {
 		return super.serialize.call(this);
 	}
-
 }
 
 export class Oscillator extends Unit {
@@ -265,6 +261,7 @@ export class Oscillator extends Unit {
 		3: [[-1,1]],
 		4: [[-1,-1]]
 	}
+
 	static description = "The Oscillator is an inexpensive defensive unit that generates a single, powerful projectile at the start of each round. The charge begins diagonally and then acts as a random mover until hitting a target.";
 
 	static createFromSerialized (props) {
@@ -287,7 +284,6 @@ export class Oscillator extends Unit {
 			this.lifeSpan = this.lifeSpan + 1;
 		}
 		this.collidedWith = [false, 4];
-		// reset firing
 		this.firing = false;
 		// Oscillator fires at the beginning of the turn
 		if (tick === 1) {
@@ -355,7 +351,7 @@ export class Juggernode extends Unit {
 		this.collidedWith = [false, 4];
 		this.firing=false;
 		let direction = 1+Math.floor(Math.random()*3);
-		if (tick%10 === 0) {
+		if (tick%20 === 0) {
 			if(direction === 1){
 				if(this.player==1){
 					this.startAttack([1,1]);
@@ -470,7 +466,7 @@ export class Maglev extends Unit {
 		// reset firing
 		this.firing = false;
 
-		if (tick % 14 === 0) {
+		if (tick % 15 === 0) {
 			this.startAttack();
 		}
 	}
@@ -700,7 +696,7 @@ export class Resonator extends Unit {
 		}
 		this.collidedWith = [false, 4];
 		this.firing=false;
-		if(tick % 16 === 0){
+		if(tick % 17 === 0){
 			let rando = Math.random()*3;
 			if(rando < 1){
 				if(this.player == 1 || this.player == 2){
@@ -749,7 +745,6 @@ export class Integrator extends Unit {
 		this.player = player;
 		this.health = health;
 		this.firing = firing;
-
 		this.identifier="Int";
 		this.projArr = [];
 		this.collidedWith = collidedWith;
@@ -820,21 +815,21 @@ export class Integrator extends Unit {
 				else if(i == 3){
 					orient = [-2,1];
 				}
-						}
-				if(this.player == 4){
-						if(i == 0){
-							orient = [-2,-1];
-						}
-						else if(i == 1){
-							orient = [1,-2];
-						}
-						else if(i == 2){
-							orient = [-1,-2];
-						}
-						else if(i == 3){
-							orient = [-2,1];
-						}
+			}
+			if(this.player == 4){
+					if(i == 0){
+						orient = [-2,-1];
 					}
+					else if(i == 1){
+						orient = [1,-2];
+					}
+					else if(i == 2){
+						orient = [-1,-2];
+					}
+					else if(i == 3){
+						orient = [-2,1];
+					}
+				}
 		this.projArr[i]  = new Projectiles.IntBullet(this.player, orient, 1, pC, this.lifeSpan, this.id);
 	 }
 	}
@@ -846,9 +841,8 @@ export class Integrator extends Unit {
 		super.update(tick);
 		this.collidedWith = [false, 4];
 		this.firing=false;
-		if(tick % 15 === 0){
+		if(tick % 14 === 0){
 			this.startAttack(projCount);
-			//let rando = Math.random()*3;
 		  }
 	}
 

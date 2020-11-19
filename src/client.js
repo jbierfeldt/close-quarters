@@ -20,6 +20,7 @@ class App {
 		this.socket = undefined;
 		this.gameRoom = undefined;
 
+		this.postGameMenu = false;
 		this.gamePhase = undefined;
 		this.currentTurnOrders = [];
 
@@ -217,7 +218,8 @@ class App {
 		})
 
 		this.socket.on('gameOver', (data) => {
-			this.setGamePhase('MATCHMAKING');
+			//this.setGamePhase('MATCHMAKING');
+			this.postGameMenu = true;
 			debug.log(1, "NO REMAINING ACTIVE HUMAN PLAYERS ");
 		})
 
@@ -391,7 +393,7 @@ class App {
 	sendSetAlias (aliasString) {
 
 		// only allow word letters, numbers, and underscores
-		let cleanString = aliasString.replace(/[^\w]/gi, ''); 
+		let cleanString = aliasString.replace(/[^\w]/gi, '');
 
 		// limit length to 12 characters
 		if (cleanString.length > 12) {
