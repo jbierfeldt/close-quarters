@@ -139,7 +139,7 @@ export default class Display {
 			//The draw function loops continuously while the sketch is active
 			//Different screens of the game are portioned off using trigger variables and user input to move between them
 			s.draw = () => {
-
+				this.app.setGamePhase("STATS");
 
 				//Ensure that the input boxes do not display by default
 				input.style('display', 'none');
@@ -181,16 +181,17 @@ export default class Display {
 						submitShifterY = he / 2;
 					}
 					else if (this.app.playerNumber == 3) {
+						playerShifter = s.width / 2;
 						submitShifterX = wi / 2;
 						submitShifterY = 0;
 					}
 					else if (this.app.playerNumber == 4) {
+						playerShifter = s.width / 2;
 						submitShifterX = wi / 2;
 						submitShifterY = he / 2;
 					}
 
 					unitButtons = [];
-
 					bLeaveMatch = new Buttoned(wi*2/7, he/4-si, wi*3/7, si * 2, "Leave Match", this.app.setGamePhase);
 					bFullScreen = new Buttoned(wi*2/7, he/4-si+he/8, wi*3/7, si * 2, "Toggle Full Screen", this.app.setGamePhase);
 					bCloseMenu = new Buttoned(wi*2/7, he/4-si+2*he/8, wi*3/7, si * 2, "Toggle Full Screen", this.app.setGamePhase);
@@ -1385,7 +1386,7 @@ export default class Display {
 						}
 					}
 					if(showMenu === true && this.app.postGameMenu === false){
-						
+
 						wi = s.width;
 						si = wi / 30;
 						he = s.height;
@@ -1449,6 +1450,15 @@ export default class Display {
 					s.background(0);
 					s.tint(105, 105, 105, 80+(1+s.cos(this.delay/5.5))*30);
 					s.image(imgTwo, 0, 0, s.height * 1.6, s.height);
+					s.noFill();
+					s.stroke(255);
+					s.text("EXIT", 8.15 * s.width / 10, 1.85 * s.height / 20);
+					s.rect(8 * s.width / 10, 1 * s.height / 25, 1 * s.width / 10, 1 * s.width / 20);
+					if (s.mouseIsPressed && s.mouseX < 8 * s.width / 10 + 1 * s.width / 10 && s.mouseX > 8 * s.width / 10 && s.mouseY < 1 * s.height / 25 + 1 * s.width / 20 && s.mouseY > 1 * s.height / 25) {
+						this.app.sendLeaveGame();
+					}
+					//this.app.sendLeaveGame();
+					//this.app.sendClearSpot()
 					s.textFont(titleFont);
 					s.fill(255,255);
 					s.stroke(0);
