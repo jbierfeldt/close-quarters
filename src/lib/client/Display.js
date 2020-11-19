@@ -139,7 +139,14 @@ export default class Display {
 			//The draw function loops continuously while the sketch is active
 			//Different screens of the game are portioned off using trigger variables and user input to move between them
 			s.draw = () => {
-				this.app.setGamePhase("STATS");
+				if(s.keyIsPressed ){
+					if(s.keyCode === 77){
+					this.app.setGamePhase("STATS");
+					s.keyIsPressed = false;
+				}
+			}
+
+
 
 				//Ensure that the input boxes do not display by default
 				input.style('display', 'none');
@@ -494,7 +501,7 @@ export default class Display {
 						s.textSize(si * .7);
 						s.text("Leave Room", wi + si * 1.5, si * 4.5);
 						if (s.mouseIsPressed && s.mouseX < wi + si * 1.2 + si * 5 && s.mouseX > wi + si * 1.2 && s.mouseY < si * 3.5 + si * 1.5 && s.mouseY > si * 3.5) {
-							this.app.sendClearSpot(this.app.playerNumber);
+							this.app.sendLeaveGame();
 						}
 						bStartMatch.drawButton();
 						if (this.startButtonEnabled === true) {
@@ -976,7 +983,7 @@ export default class Display {
 					//bFullScreen.drawButton();
 					if (s.mouseIsPressed) {
 						if (bLeaveMatch.isInRange(s.mouseX, s.mouseY)) {
-							this.app.sendClearSpot(this.app.playerNumber);
+							this.app.sendLeaveGame();
 							showMenu = false;
 						}
 						else if (bFullScreen.isInRange(s.mouseX, s.mouseY)) {
@@ -1158,7 +1165,7 @@ export default class Display {
 							showMenu = true;
 						}
 						s.keyIsPressed = false;
-						//this.app.sendClearSpot(this.app.playerNumber);
+
 						}
 					}
 					if(showMenu === true && this.app.postGameMenu === false){
@@ -1190,7 +1197,7 @@ export default class Display {
 						//bFullScreen.drawButton();
 						if (s.mouseIsPressed) {
 							if (bLeaveMatch.isInRange(s.mouseX, s.mouseY)) {
-								this.app.sendClearSpot(this.app.playerNumber);
+								this.app.sendLeaveGame();
 								showMenu = false;
 							}
 							else if (bFullScreen.isInRange(s.mouseX, s.mouseY)) {
@@ -1382,7 +1389,7 @@ export default class Display {
 							showMenu = true;
 						}
 						s.keyIsPressed = false;
-						//this.app.sendClearSpot(this.app.playerNumber);
+
 						}
 					}
 					if(showMenu === true && this.app.postGameMenu === false){
@@ -1418,7 +1425,7 @@ export default class Display {
 						//bFullScreen.drawButton();
 						if (s.mouseIsPressed) {
 							if (bLeaveMatch.isInRange(s.mouseX, s.mouseY)) {
-								this.app.sendClearSpot(this.app.playerNumber);
+								this.app.sendLeaveGame();
 								showMenu = false;
 							}
 							else if (bFullScreen.isInRange(s.mouseX, s.mouseY)) {
@@ -1457,8 +1464,6 @@ export default class Display {
 					if (s.mouseIsPressed && s.mouseX < 8 * s.width / 10 + 1 * s.width / 10 && s.mouseX > 8 * s.width / 10 && s.mouseY < 1 * s.height / 25 + 1 * s.width / 20 && s.mouseY > 1 * s.height / 25) {
 						this.app.sendLeaveGame();
 					}
-					//this.app.sendLeaveGame();
-					//this.app.sendClearSpot()
 					s.textFont(titleFont);
 					s.fill(255,255);
 					s.stroke(0);
@@ -1577,7 +1582,7 @@ export default class Display {
 					//bFullScreen.drawButton();
 					if (s.mouseIsPressed) {
 						if (bLeaveMatch.isInRange(s.mouseX, s.mouseY)) {
-							this.app.sendClearSpot(this.app.playerNumber);
+							this.app.sendLeaveGame();
 							this.app.postGameMenu = false;
 						}
 						else if (bStatsPage.isInRange(s.mouseX, s.mouseY)) {
