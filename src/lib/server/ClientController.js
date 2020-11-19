@@ -197,6 +197,10 @@ export default class ClientController {
 			this.gameController.startGame();
 		});
 
+		this.socket.on('leaveGame', (data) => {
+			this.gameController.clearSpot(data.playerSpot);
+		});
+
 	}
 
 	setPlayerNumber (playerNumber) {
