@@ -140,14 +140,11 @@ export default class Display {
 			//Different screens of the game are portioned off using trigger variables and user input to move between them
 			s.draw = () => {
 				if(s.keyIsPressed ){
-					if(s.keyCode === 77){
+					if(s.keyCode === 88){
 					this.app.setGamePhase("STATS");
 					s.keyIsPressed = false;
 				}
 			}
-
-
-
 				//Ensure that the input boxes do not display by default
 				input.style('display', 'none');
 				alias.style('display', 'none');
@@ -403,7 +400,7 @@ export default class Display {
 						s.strokeWeight(1);
 						s.noFill()
 
-						if (this.app.playerSpotsInGameRoom[p + 1].playerType === 'Human') {
+						if (this.app.playerSpotsInGameRoom[p + 1].playerType === 'Human' && (this.app.playerNumber - 1) !== p ) {
 
 							s.stroke(255);
 							s.fill(0);
