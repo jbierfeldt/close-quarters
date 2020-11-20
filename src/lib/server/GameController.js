@@ -51,12 +51,14 @@ export default class GameController {
 			// if game is in progress, replace player with an AI
 			if (this.gameStatus === "IN_PROGRESS") {
 				let playerNumber = Number(clientController.playerNumber)
-				console.log("assign ai to", playerNumber);
 
 				this.assignAIToSpot(playerNumber);
-				this.playerSpots[clientController.playerNumber].tempBoard = JSON.parse(JSON.stringify(this.game.board));
-				this.playerSpots[clientController.playerNumber].generateOrders(0);
-				this.playerSpots[clientController.playerNumber].ordersSubmitted = true;
+				// if AI isn't defeated
+				if (this.game.players[playerNumber - 1].victoryCondition !== -1) {
+					this.playerSpots[clientController.playerNumber].tempBoard = JSON.parse(JSON.stringify(this.game.board));
+					this.playerSpots[clientController.playerNumber].generateOrders(0);
+					this.playerSpots[clientController.playerNumber].ordersSubmitted = true;
+				}
 			}
 		}
 
