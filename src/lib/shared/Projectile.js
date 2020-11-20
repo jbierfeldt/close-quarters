@@ -229,7 +229,7 @@ export class CirBullet extends Projectile {
 		super.update(tick);
 		this.firing=false;
 		if(this.distance === 1){
-			this.damage = 35;
+			this.damage = 30;
 			this.firing=true;
 			for(let i = 0; i < 4; i = i + 1){
 				if(i == 0){
