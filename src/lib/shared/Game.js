@@ -259,7 +259,7 @@ collideProjWithObject(proj, obj, x, y) {
 
 		// COLLIDE WITH UNIT
 		case "Units":
-		console.log(proj.id, "( player", proj.player, ") hit ", obj.id, " ( player", obj.player, ")", obj.health);
+		// console.log(proj.id, "( player", proj.player, ") hit ", obj.id, " ( player", obj.player, ")", obj.health);
 
 		if (proj.player !== obj.player) {
 			if(proj.damage > 0){
@@ -301,7 +301,7 @@ collideProjWithObject(proj, obj, x, y) {
 
 		// COLLIDE WITH BASE
 		case "Bases":
-		console.log(proj.id, "( player", proj.player, ") hit ", obj.id, " ( player", obj.player, ")", obj.health);
+		// console.log(proj.id, "( player", proj.player, ") hit ", obj.id, " ( player", obj.player, ")", obj.health);
 		if (proj.player !== obj.player) {
 			if(proj.damage > 0){
 				obj.collidedWith = [true, proj];
@@ -766,7 +766,7 @@ runSimulation(ticksPerTurn = tempConfig.ticksPerTurn) {
 		this.players[i].unitsKilledThisTurn = 0;
 		this.players[i].creditsEarnedThisTurn = 0;
 	}
-	console.log("Running simulation for turn " + this.turnNumber);
+	console.log(this.id+ ": Running simulation for turn " + this.turnNumber);
 	this.history.turn[this.turnNumber] = {
 		'tick': {}
 	};
@@ -775,7 +775,7 @@ runSimulation(ticksPerTurn = tempConfig.ticksPerTurn) {
 	for (let tick = 1; tick <= ticksPerTurn; tick++) {
 		this.numberOfProjectiles = this.tempNumberOfProjectiles;
 		this.tempNumberOfProjectiles = 0;
-		debug.log(0, "Processing tick #" + tick);
+		// debug.log(0, "Processing tick #" + tick);
 
 		// enable movement at beginning of tick
 		this.gameObjects.forEach( (value, key, ownerMap) => {
@@ -873,7 +873,7 @@ runSimulation(ticksPerTurn = tempConfig.ticksPerTurn) {
 		for (let i = 0; i < 4; i++) {
 			// if not already defeated and if no more bases
 			if (this.players[i].victoryCondition !== -1 && this.players[i].baseCount == 0) {
-				console.log("Player " + i + " Defeated at tick "+ tick);
+				console.log(this.id + ": Player " + i + " Defeated at tick "+ tick);
 				this.players[i].victoryCondition = -1;
 				this.clearProjectiles(i+1);
 				this.clearUnits(i+1);

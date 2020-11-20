@@ -407,17 +407,17 @@ export default class GameController {
 	}
 
 	printGameRoomInformation() {
-		console.log("\n Client Controllers:")
-		for (let i = 0; i < this.clientControllers.length; i++) {
-			console.log(this.clientControllers[i].id, this.clientControllers[i].playerNumber, this.clientControllers[i].clientState);
-			for (let j = 0; j < this.clientControllers[i].socket.eventNames().length; j++) {
-				console.log('\u21B3', this.clientControllers[i].socket.eventNames()[j]);
-			}
-		}
+		// console.log("\n Client Controllers:")
+		// for (let i = 0; i < this.clientControllers.length; i++) {
+		// 	console.log(this.clientControllers[i].id, this.clientControllers[i].playerNumber, this.clientControllers[i].clientState);
+		// 	for (let j = 0; j < this.clientControllers[i].socket.eventNames().length; j++) {
+		// 		console.log('\u21B3', this.clientControllers[i].socket.eventNames()[j]);
+		// 	}
+		// }
 		console.log("\nPlayerSpots")
 		for (let i = 1; i <= 4; i++) {
 			if (this.playerSpots[i]) {
-				console.log(i, `${this.playerSpots[i].id} - ${this.playerSpots[i].connectionState}`);
+				console.log(i, `${this.playerSpots[i].id} - ${this.playerSpots[i].connectionState} - ${this.playerSpots[i].ordersSubmitted}`);
 			} else {
 				console.log(i, this.playerSpots[i])
 			};
