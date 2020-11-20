@@ -67,7 +67,6 @@ class App {
 		} else {
 			const phase = data.clientGamePhase;
 			this.waitOnInfoCallback = () => {
-				console.log("no here", this.playerSpotsInGameRoom);
 				if (this.loadedRoomStateFromServer && this.loadedClientInfoFromServer) {
 					this.setGamePhase(phase);
 					this.waitOnInfoCallback = undefined;
@@ -633,6 +632,15 @@ app.init();
 // secret reset for production games
 window.resetGame = app.sendResetGame.bind(app);
 window.setAlias = app.sendSetAlias.bind(app);
+
+window.debug.enableCallback = () => {
+	app.updateDebugInfo();
+	document.getElementById("debug-pane").style["display"] =  'inherit';
+}
+
+window.debug.disableCallback = () => {
+	document.getElementById("debug-pane").style["display"] =  'none';
+}
 
 window.printStatus = function () {
 	console.log("callback: ", app.waitOnInfoCallback, "clientInfo: ", app.loadedClientInfoFromServer, "roomstate: ", app.loadedRoomStateFromServer);
