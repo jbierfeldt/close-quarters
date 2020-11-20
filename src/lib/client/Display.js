@@ -1754,15 +1754,21 @@ export default class Display {
 			function displayMatchmaking(data, width, height, size, delay, pColors) {
 				s.background(0);
 				let lightningTrigger = s.int(delay);
-
-				s.tint(255, 0, 128, 70+(1+s.cos(delay/3.5))*60);
+				s.tint(255, 0, 128, 70 + (1 + s.cos(delay / 3.5)) * 60);
 				s.image(imgTwo, 0, 0, height * 1.6, height);
 				s.noTint();
 				s.stroke(255);
 				s.noFill();
-				s.rect(width/4,height/10,width/2,8*height/10);
+				s.rect(width / 4, height / 10, width / 2, 8 * height / 10);
+				s.line(width / 4 - width / 15, height / 10 - 4 * height / 60 + (1 * 2) * 4 * height / 60, width / 4 - width / 15, height / 10 - 4 * height / 60 + (6 * 2) * 4 * height / 60);
 				for(let r = 1; r < 6; r = r + 1){
-					s.line(width/4,height/10+(r)*8*height/60,3*width/4,height/10+(r)*8*height/60);
+					s.line(width / 4 - width / 15, height / 10 - 4 * height / 60 + (r * 2) * 4 * height / 60, width / 4, height / 10 - 4 * height / 60 + (r * 2) * 4 * height / 60);
+					s.line(width / 4 - width / 15, height / 10 - 4 * height / 60 + ((r + 1) * 2) * 4 * height / 60, width / 4, height / 10 - 4 * height / 60 + ((r + 1) * 2) * 4 * height / 60);
+
+					s.line(3 * width / 4 + width / 15, height / 10 - 4 * height / 60 + (r * 2) * 4 * height / 60, 3 * width / 4, height / 10 - 4 * height / 60 + (r * 2) * 4 * height / 60);
+					s.line(3 * width / 4 + width / 15, height / 10 - 4 * height / 60 + ((r + 1) * 2) * 4 * height / 60, 3 * width / 4, height / 10 - 4 * height / 60 + ((r + 1) * 2) * 4 * height / 60);
+
+					s.line(width / 4, height / 10 + (r) * 8 * height / 60, 3 * width / 4, height / 10 + (r) * 8 * height / 60);
 				}
 				s.textFont(titleFont);
 				s.strokeWeight(1);
