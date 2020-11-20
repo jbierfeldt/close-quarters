@@ -2,7 +2,9 @@ export class DEBUG {
 
 	constructor(enabled = false, debugLevel = 0) {
 		this.enabled = (enabled == 'true');
-		this.debugLevel = debugLevel;
+    this.debugLevel = debugLevel;
+    this.enableCallback = undefined;
+    this.disableCallback = undefined;
 	}
 
 	log(level, ...messages) {
@@ -15,10 +17,18 @@ export class DEBUG {
   
   enable() {
     this.enabled = true;
+
+    if (this.enableCallback) {
+      this.enableCallback.call();
+    }
   }
 
   disable() {
     this.enabled = false;
+
+    if (this.disableCallback) {
+      this.disableCallback.call();
+    }
   }
 }
 
