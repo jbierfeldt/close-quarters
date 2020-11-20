@@ -369,6 +369,13 @@ export default class Display {
 
 				}
 				else if (this.app.gamePhase === "LOBBY" && this.app.clientState !== 'SPECTATOR') {
+					
+					if(bSubmit.submitted === true){
+						bSubmit.submitted = false;
+					}
+					if(bSubmit.confirmed === true){
+						bSubmit.confirmed = false;
+					}
 
 					//Lobby Phase where users add computer players and wait for others to join their game
 					sideBarGrowth = 0.8;
@@ -1155,6 +1162,7 @@ export default class Display {
 						bSubmit.confirmed = false;
 
 						this.app.onSimulationPhaseEnd();
+
 						if (gameOver == 0 && this.app.clientState !== "SPECTATOR" && this.app.clientState !== "DEFEATED_PLAYER") {
 							this.app.setGamePhase("REVIEW");
 							sideBarGrowth = 1;

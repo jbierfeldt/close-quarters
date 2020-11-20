@@ -239,7 +239,7 @@ export class RedShifter extends Unit {
 
 export class Oscillator extends Unit {
 
-	constructor(player, health = 250, firing = false, id, collidedWith = [false, 4], lifeSpan = 0, damageDealt = 0)  {
+	constructor(player, health = 225, firing = false, id, collidedWith = [false, 4], lifeSpan = 0, damageDealt = 0)  {
 		super(id);
 		this.lifeSpan = lifeSpan;
 		this.player = player;
@@ -253,7 +253,7 @@ export class Oscillator extends Unit {
 		this.damageDealt = damageDealt;
 	}
 
-	static maxHealth = 250;
+	static maxHealth = 225;
 	static cost = 1;
 	static orientations = {
 		1: [[1,1]],
