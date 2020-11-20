@@ -688,9 +688,13 @@ clearProjectiles (player) {
 	// if given a player number, only clear projeciles of that player
 	for (let i = 0; i < this.board.length; i++)  {
 		for (let j = 0; j < this.board[i].length; j++) {
-			if (this.board[i][j].length != 0) {
+			let objsToClear = [...this.board[i][j]];
+				if (objsToClear.length != 0) {
+					for (let k = 0; k < objsToClear.length; k++) {
+					let gameObj = this.gameObjects.get(objsToClear[k]); // game obj to be updated
+		/*	if (this.board[i][j].length != 0) {
 				for (let k = 0; k < this.board[i][j].length; k++) {
-					let gameObj = this.gameObjects.get(this.board[i][j][k]); // game obj to be updated
+					let gameObj = this.gameObjects.get(this.board[i][j][k]); // game obj to be updated*/
 					if (player) {
 						if (gameObj.objCategory === "Projectiles" && gameObj.player == player) {
 							this.deleteObjectAtCoord(gameObj, j, i);
@@ -898,22 +902,21 @@ runSimulation(ticksPerTurn = tempConfig.ticksPerTurn) {
 		this.players[p].damageDealtTotal = this.players[p].damageDealtTotal + this.players[p].damageDealtThisTurn;
 		this.players[p].unitsKilledTotal = this.players[p].unitsKilledTotal + this.players[p].unitsKilledThisTurn;
 		this.players[p].unitsLostTotal = this.players[p].unitsLostTotal + this.players[p].unitsLostThisTurn;
-		let mf = 1;
+		let mf = 0;
+		//let mf = 1;
 		let m = 0;
 		let item;
-		for (let i=0; i<this.players[p].unitsPlaced.length; i++)
-		{
-		        for (let j=i; j<this.players[p].unitsPlaced.length; j++)
-		        {
-		                if (this.players[p].unitsPlaced[i] == this.players[p].unitsPlaced[j])
-		                 m++;
-		                if (mf<m)
-		                {
-		                  mf=m;
-		                  item = this.players[p].unitsPlaced[i];
-		                }
-		        }
-		        m=0;
+		for (let i=0; i < this.players[p].unitsPlaced.length; i++) {
+			for (let j=i; j<this.players[p].unitsPlaced.length; j++) {
+				if (this.players[p].unitsPlaced[i] == this.players[p].unitsPlaced[j]) {
+					m++;
+				}
+					if (mf<m) {
+						mf=m;
+						item = this.players[p].unitsPlaced[i];
+					}
+				}
+				m=0;
 		}
 		this.players[p].frequentUnit = item;
 	}
