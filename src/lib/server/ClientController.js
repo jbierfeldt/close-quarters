@@ -38,7 +38,7 @@ export default class ClientController {
 
 		if (this.gameController !== null) {
 
-			this.gameController.disconnectClientController(this);
+			this.gameController.onClientControllerDisconnect(this);
 
 			// leave socket.io room
 			this.socket.leave(this.gameController.id)
@@ -61,7 +61,7 @@ export default class ClientController {
 
 		if (this.gameController !== null) {
 
-			this.gameController.disconnectClientController(this);
+			this.gameController.onClientControllerDisconnect(this);
 
 			// leave socket.io room
 			this.socket.leave(this.gameController.id)
