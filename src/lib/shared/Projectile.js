@@ -321,7 +321,7 @@ export class BeaBullet extends Projectile {
 	constructor(player, initialOrientation = [0, 0], initialSpeed = 0, unit, distance = 0, id)  {
 		super(player, initialOrientation, initialSpeed, unit, id);
 		this.identifier = "BeaProj";
-		this.damage = 35;
+		this.damage = 30;
 		this.ableToBeDestroyed = true;
 		this.dump = false;
 		this.distance = distance;

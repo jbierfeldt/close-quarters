@@ -202,8 +202,8 @@ export default class Display {
 
 					bStatsPage = new Buttoned(wi*2/7, he/4-si+he/8, wi*3/7, si * 2, "Statistics", this.app.setGamePhase);
 					bPhaseOne = new Buttoned(wi - si * 5.55, si * 2.9, si * 5.1, si * 1.1, "Deploy Machines", this.app.setGamePhase);
-					bPhaseThree = new Buttoned(wi / 3.2 + submitShifterX, he / 1.65 - submitShifterY, si * 6.1, si * 1.1, "Review Board", this.app.setGamePhase);
-					bSubmit = new Buttoned(wi / 3.2 + submitShifterX, he / 1.85 - submitShifterY, si * 5, si * 1.1, "Submit Turn", this.app.sendSubmitTurn);
+					bPhaseThree = new Buttoned(wi / 3.4 + submitShifterX, he / 1.65 - submitShifterY, si * 6.1, si * 1.1, "Review Board", this.app.setGamePhase);
+					bSubmit = new Buttoned(wi / 3.4 + submitShifterX, he / 1.815 - submitShifterY, si * 6.1, si * 1.1, "Submit Turn", this.app.sendSubmitTurn);
 					bBase = new Buttoned(wi / 2 + si - playerShifter, si * buttonScale * 2, wi / 2 - si * 2, si * buttonScale * 3, "Base", this.app.sendCreateBase);
 					//Unit Buttons Below
 					bRayTracer = new Buttoned(wi / 2 + si - playerShifter, si * 3, wi / 2 - si * 2, si * buttonScale, "RayTracer", this.app.sendCreateUnit);
@@ -306,6 +306,7 @@ export default class Display {
 					}
 				}
 				else if (this.app.gamePhase === "MATCHMAKING") {
+					displayMatchmaking(this.app.matchmakingData, wi, he, si, this.delay, this.playerColors);
 					//Matchmaking Phase where users can learn more about the game or enter into a lobby
 					input.style('display', 'block');
 					input.position(3 * wi / 5 + si * 1.6, he / 6.7);
@@ -317,7 +318,7 @@ export default class Display {
 					input.style('text-transform', 'uppercase');
 					input.style('font-family', "Monaco");
 
-					displayMatchmaking(this.app.matchmakingData, wi, he, si, this.delay, this.playerColors);
+
 
 					s.textAlign(s.CENTER);
 					s.noStroke();
@@ -365,6 +366,7 @@ export default class Display {
 					else {
 						allowNewID = 1;
 					}
+
 				}
 				else if (this.app.gamePhase === "LOBBY" && this.app.clientState !== 'SPECTATOR') {
 
@@ -637,11 +639,12 @@ export default class Display {
 					}
 					else {
 						s.textSize(wi / 40);
+						s.textAlign(s.CENTER);
 						if (this.app.turnNumber > 1) {
 							bPhaseThree.drawButton();
 							s.fill(255);
 							s.stroke(0);
-							s.text("Review Board", bPhaseThree.xx + si / 5, bPhaseThree.yy + si / 1.25);
+							s.text("Review Board", bPhaseThree.xx + si * 3.05, bPhaseThree.yy + si / 1.25);
 						}
 						if (bSubmit.submitted === false) {
 							bSubmit.drawButton();
@@ -649,21 +652,21 @@ export default class Display {
 						if (bSubmit.confirmed === false) {
 							s.fill(255);
 							s.stroke(0);
-							s.text("Submit Turn", bSubmit.xx + si / 5, bSubmit.yy + si / 1.25);
+							s.text("Submit Turn", bPhaseThree.xx + si * 3.05, bSubmit.yy + si / 1.25);
 							counter = 0;
 						}
 						else if (bSubmit.submitted === true) {
 							s.fill(this.playerColors[this.app.playerNumber - 1][0], this.playerColors[this.app.playerNumber - 1][1], this.playerColors[this.app.playerNumber - 1][2], this.playerColors[this.app.playerNumber - 1][3]);
 							s.stroke(0);
-							s.text("Submitted", bSubmit.xx + si / 2, bSubmit.yy + si / 1.25);
+							s.text("Submitted", bPhaseThree.xx + si * 3.05, bSubmit.yy + si / 1.25);
 						}
 						else {
 							s.fill(this.playerColors[this.app.playerNumber - 1][0], this.playerColors[this.app.playerNumber - 1][1], this.playerColors[this.app.playerNumber - 1][2], this.playerColors[this.app.playerNumber - 1][3]);
 							s.stroke(0);
-							s.text("Confirm", bSubmit.xx + si * .9, bSubmit.yy + si / 1.25);
+							s.text("Confirm", bPhaseThree.xx + si * 3.05, bSubmit.yy + si / 1.25);
 							counter = counter + 1;
 						}
-
+						s.textAlign(s.LEFT);
 						for (let i = 0; i < unitButtons.length; i = i + 1) {
 							unitButtons[i].drawButton();
 							if (unitButtons[i].isPressed == true) {
@@ -690,8 +693,8 @@ export default class Display {
 									bSubmit.submission();
 									bSubmit.func.call(this.app);
 									//TESTING // DEBUG:
-									bSubmit.submitted = false;
-									bSubmit.confirmed = false;
+									//bSubmit.submitted = false;
+									//bSubmit.confirmed = false;
 								}
 							}
 							currentButtonPressed = newButtonPressed;
@@ -1148,6 +1151,9 @@ export default class Display {
 			animate = animate + (.65 + s.deltaTime / 70);//IMPORTANT - ANIMATION SPEED
 
 					if (this.t === Object.keys(this.simulationDisplayTurn.tick).length - 1) {
+						bSubmit.submitted = false;
+						bSubmit.confirmed = false;
+
 						this.app.onSimulationPhaseEnd();
 						if (gameOver == 0 && this.app.clientState !== "SPECTATOR" && this.app.clientState !== "DEFEATED_PLAYER") {
 							this.app.setGamePhase("REVIEW");
@@ -1753,20 +1759,60 @@ export default class Display {
 			}
 			function displayMatchmaking(data, width, height, size, delay, pColors) {
 				s.background(0);
+				//s.translate(0, height/20);
 				let lightningTrigger = s.int(delay);
 				s.tint(255, 0, 128, 70 + (1 + s.cos(delay / 3.5)) * 60);
 				s.image(imgTwo, 0, 0, height * 1.6, height);
+
 				s.noTint();
-				s.stroke(255);
+
+				//GLOW Begins
+		/*		for(let g = 1; g  < 15 ; g = g + 1){
+			  s.strokeWeight(g);
+				s.stroke(255,40-g*2.5);
 				s.noFill();
 				s.rect(width / 4, height / 10, width / 2, 8 * height / 10);
-				s.line(width / 4 - width / 15, height / 10 - 4 * height / 60 + (1 * 2) * 4 * height / 60, width / 4 - width / 15, height / 10 - 4 * height / 60 + (6 * 2) * 4 * height / 60);
+			//	s.line(width / 4 - width / 15, height / 10 - 4 * height / 60 + (1 * 2) * 4 * height / 60, width / 4 - width / 15, height / 10 - 4 * height / 60 + (6 * 2) * 4 * height / 60);
 				for(let r = 1; r < 6; r = r + 1){
-					s.line(width / 4 - width / 15, height / 10 - 4 * height / 60 + (r * 2) * 4 * height / 60, width / 4, height / 10 - 4 * height / 60 + (r * 2) * 4 * height / 60);
+				/*	s.line(width / 4 - width / 15, height / 10 - 4 * height / 60 + (r * 2) * 4 * height / 60, width / 4, height / 10 - 4 * height / 60 + (r * 2) * 4 * height / 60);
 					s.line(width / 4 - width / 15, height / 10 - 4 * height / 60 + ((r + 1) * 2) * 4 * height / 60, width / 4, height / 10 - 4 * height / 60 + ((r + 1) * 2) * 4 * height / 60);
 
 					s.line(3 * width / 4 + width / 15, height / 10 - 4 * height / 60 + (r * 2) * 4 * height / 60, 3 * width / 4, height / 10 - 4 * height / 60 + (r * 2) * 4 * height / 60);
-					s.line(3 * width / 4 + width / 15, height / 10 - 4 * height / 60 + ((r + 1) * 2) * 4 * height / 60, 3 * width / 4, height / 10 - 4 * height / 60 + ((r + 1) * 2) * 4 * height / 60);
+					s.line(3 * width / 4 + width / 15, height / 10 - 4 * height / 60 + ((r + 1) * 2) * 4 * height / 60, 3 * width / 4, height / 10 - 4 * height / 60 + ((r + 1) * 2) * 4 * height / 60);*/
+
+			/*		s.line(width / 4, height / 10 + (r) * 8 * height / 60, 3 * width / 4, height / 10 + (r) * 8 * height / 60);
+				}
+}*/
+
+        s.strokeWeight(15);
+
+ 				s.translate(width/110, height/110);
+				s.stroke(0,180);
+ 				s.noFill();
+ 				s.rect(width / 4, height / 10, width / 2, 8 * height / 10);
+			//	s.line(width / 4 - width / 15, height / 10 - 4 * height / 60 + (1 * 2) * 4 * height / 60, width / 4 - width / 15, height / 10 - 4 * height / 60 + (6 * 2) * 4 * height / 60);
+				for(let r = 1; r < 6; r = r + 1){
+// 				/*	s.line(width / 4 - width / 15, height / 10 - 4 * height / 60 + (r * 2) * 4 * height / 60, width / 4, height / 10 - 4 * height / 60 + (r * 2) * 4 * height / 60);
+// 					s.line(width / 4 - width / 15, height / 10 - 4 * height / 60 + ((r + 1) * 2) * 4 * height / 60, width / 4, height / 10 - 4 * height / 60 + ((r + 1) * 2) * 4 * height / 60);
+//
+// 					s.line(3 * width / 4 + width / 15, height / 10 - 4 * height / 60 + (r * 2) * 4 * height / 60, 3 * width / 4, height / 10 - 4 * height / 60 + (r * 2) * 4 * height / 60);
+// 					s.line(3 * width / 4 + width / 15, height / 10 - 4 * height / 60 + ((r + 1) * 2) * 4 * height / 60, 3 * width / 4, height / 10 - 4 * height / 60 + ((r + 1) * 2) * 4 * height / 60);*/
+//
+ 					s.line(width / 4, height / 10 + (r) * 8 * height / 60, 3 * width / 4, height / 10 + (r) * 8 * height / 60);
+			}
+				s.translate(-width/110, -height/110);
+
+				s.strokeWeight(2);
+				s.stroke(255);
+				s.noFill();
+				s.rect(width / 4, height / 10, width / 2, 8 * height / 10);
+			//	s.line(width / 4 - width / 15, height / 10 - 4 * height / 60 + (1 * 2) * 4 * height / 60, width / 4 - width / 15, height / 10 - 4 * height / 60 + (6 * 2) * 4 * height / 60);
+				for(let r = 1; r < 6; r = r + 1){
+				/*	s.line(width / 4 - width / 15, height / 10 - 4 * height / 60 + (r * 2) * 4 * height / 60, width / 4, height / 10 - 4 * height / 60 + (r * 2) * 4 * height / 60);
+					s.line(width / 4 - width / 15, height / 10 - 4 * height / 60 + ((r + 1) * 2) * 4 * height / 60, width / 4, height / 10 - 4 * height / 60 + ((r + 1) * 2) * 4 * height / 60);
+
+					s.line(3 * width / 4 + width / 15, height / 10 - 4 * height / 60 + (r * 2) * 4 * height / 60, 3 * width / 4, height / 10 - 4 * height / 60 + (r * 2) * 4 * height / 60);
+					s.line(3 * width / 4 + width / 15, height / 10 - 4 * height / 60 + ((r + 1) * 2) * 4 * height / 60, 3 * width / 4, height / 10 - 4 * height / 60 + ((r + 1) * 2) * 4 * height / 60);*/
 
 					s.line(width / 4, height / 10 + (r) * 8 * height / 60, 3 * width / 4, height / 10 + (r) * 8 * height / 60);
 				}
@@ -1798,6 +1844,7 @@ export default class Display {
 
 				s.text(" Players Online", width / 2, 17.1 * height / 20);
 				//s.textAlign(s.LEFT);
+				//s.translate(0, -height/20);
 			}
 
 			function tooltip(hoverX, hoverY, b, tick, wi, he, si, pColors, sdt, app) {

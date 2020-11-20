@@ -404,7 +404,7 @@ export class Juggernode extends Unit {
 
 export class Maglev extends Unit {
 
-	constructor(player, health = 275, firing = false, id, collidedWith = [false, 4], lifeSpan = 0, damageDealt = 0)  {
+	constructor(player, health = 350, firing = false, id, collidedWith = [false, 4], lifeSpan = 0, damageDealt = 0)  {
 		super(id);
 		this.lifeSpan = lifeSpan;
 		this.player = player;
@@ -418,7 +418,7 @@ export class Maglev extends Unit {
 		this.damageDealt = damageDealt;
 	}
 
-  static maxHealth = 275;
+  static maxHealth = 350;
 	static cost = 3;
 	static orientations = {
 		1: [[-1,-1],[-1,0],[-1,1],[0,-1],[0,1],[1,0],[1,1],[1,-1]],
@@ -466,7 +466,7 @@ export class Maglev extends Unit {
 		// reset firing
 		this.firing = false;
 
-		if (tick % 15 === 0) {
+		if (tick % 30 === 0) {
 			this.startAttack();
 		}
 	}
