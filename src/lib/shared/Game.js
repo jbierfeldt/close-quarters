@@ -903,7 +903,6 @@ runSimulation(ticksPerTurn = tempConfig.ticksPerTurn) {
 		this.players[p].unitsKilledTotal = this.players[p].unitsKilledTotal + this.players[p].unitsKilledThisTurn;
 		this.players[p].unitsLostTotal = this.players[p].unitsLostTotal + this.players[p].unitsLostThisTurn;
 		let mf = 0;
-		//let mf = 1;
 		let m = 0;
 		let item;
 		for (let i=0; i < this.players[p].unitsPlaced.length; i++) {
