@@ -41,7 +41,7 @@ export default class GameController {
 	}
 
 	// function to be run when a clientController disconnects
-	disconnectClientController (clientController) {
+	onClientControllerDisconnect (clientController) {
 
 		// remove outgoing client from playerSpot
 		if (this.playerSpots[clientController.playerNumber] === clientController) {
@@ -52,12 +52,13 @@ export default class GameController {
 			if (this.gameStatus === "IN_PROGRESS") {
 				let playerNumber = Number(clientController.playerNumber)
 
-				// TODO MAKE BEHAVE AS A NUMBER
-
 				this.assignAIToSpot(playerNumber);
-				this.playerSpots[clientController.playerNumber].tempBoard = JSON.parse(JSON.stringify(this.game.board));
-				this.playerSpots[clientController.playerNumber].generateOrders(0);
-				this.playerSpots[clientController.playerNumber].ordersSubmitted = true;
+				// if AI isn't defeated
+				if (this.game.players[playerNumber - 1].victoryCondition !== -1) {
+					this.playerSpots[clientController.playerNumber].tempBoard = JSON.parse(JSON.stringify(this.game.board));
+					this.playerSpots[clientController.playerNumber].generateOrders(0);
+					this.playerSpots[clientController.playerNumber].ordersSubmitted = true;
+				}
 			}
 		}
 
@@ -99,26 +100,10 @@ export default class GameController {
 		}	}
 
 	removeClientFromGameRoom (clientController) {
-		if (clientController.playerNumber !== null) {
-			this.removeClientFromSpot(clientController, clientController.playerNumber);
-		}
 
 			clientController.onLeaveGameRoom();
 
 			this.sendRoomStateToAll();
-	}
-
-	removeClientFromSpot (clientController, playerSpot) {
-		// check if clientController is already in playerSpot
-		if (this.playerSpots[playerSpot] === clientController) {
-
-			// remove client from desired spot
-			this.playerSpots[playerSpot] = null;
-
-			return true;
-		} else {
-			return false;
-		}
 	}
 
 	clearSpot (playerSpot) {
