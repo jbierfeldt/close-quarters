@@ -139,12 +139,7 @@ export default class Display {
 			//The draw function loops continuously while the sketch is active
 			//Different screens of the game are portioned off using trigger variables and user input to move between them
 			s.draw = () => {
-				if(s.keyIsPressed ){
-					if(s.keyCode === 88){
-					this.app.setGamePhase("STATS");
-					s.keyIsPressed = false;
-				}
-			}
+				
 				//Ensure that the input boxes do not display by default
 				input.style('display', 'none');
 				alias.style('display', 'none');
