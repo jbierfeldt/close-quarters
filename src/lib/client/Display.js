@@ -283,6 +283,24 @@ export default class Display {
 					}
 					s.textAlign(s.LEFT);
 					s.textSize(wi / 9);
+					if(id.length > 0 && s.keyIsPressed){
+
+						if(s.keyCode === 13){
+							this.app.sendSetAlias(id);
+
+							if (!debug.enabled) {
+								s.fullscreen(true);
+								s.resizeCanvas(window.screen.height * 1.5, window.screen.height);
+							}
+
+							buttonMaker = 1;
+							buttonMakerTwo = 1;
+							this.app.setGamePhase("MATCHMAKING");
+							s.mouseIsPressed = false;
+							unitButtons = [];
+						s.keyIsPressed = false;
+					}
+				}
 					if(id.length > 0 && s.mouseX > (-si * 3.5 + s.width / 2.2) && s.mouseX < (si * 3.5 + s.width / 2.2) && s.mouseY > s.height / 1.25 && s.mouseY < s.height / 1.15){
 						s.stroke(0);
 						s.fill(255,100);
@@ -369,7 +387,7 @@ export default class Display {
 
 				}
 				else if (this.app.gamePhase === "LOBBY" && this.app.clientState !== 'SPECTATOR') {
-					
+
 					if(bSubmit.submitted === true){
 						bSubmit.submitted = false;
 					}
@@ -1155,7 +1173,7 @@ export default class Display {
 					}
 				}
 			}
-			animate = animate + (.65 + s.deltaTime / 70);//IMPORTANT - ANIMATION SPEED
+			animate = animate + (.6 + s.deltaTime / 70);//IMPORTANT - ANIMATION SPEED
 
 					if (this.t === Object.keys(this.simulationDisplayTurn.tick).length - 1) {
 						bSubmit.submitted = false;
@@ -1248,6 +1266,7 @@ export default class Display {
 				si = wi / 30;
 				he = si * 20;
 				this.t = Object.keys(this.simulationDisplayTurn.tick).length;
+				//if(s.mouseX >)
 				drawGrid(wi, he, si, this.playerColors);
 					for (let p = 0; p < 4; p = p + 1) {
 						if (this.app.game.players[p].victoryCondition === -1) {
