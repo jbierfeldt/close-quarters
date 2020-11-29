@@ -396,8 +396,8 @@ class App {
 		let cleanString = aliasString.replace(/[^\w]/gi, '');
 
 		// limit length to 12 characters
-		if (cleanString.length > 12) {
-			cleanString = cleanString.slice(0, 12);
+		if (cleanString.length > 8) {
+			cleanString = cleanString.slice(0, 8);
 		}
 
 		this.socket.emit('setClientAlias', {

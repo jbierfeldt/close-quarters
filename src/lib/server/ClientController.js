@@ -260,7 +260,7 @@ export default class ClientController {
 	}
 
 	sendClientState() {
-		console.log("sending client state", this.id, this.clientState);
+		// console.log("sending client state", this.id, this.clientState);
 		this.socket.emit("updateClientState", {
 			'clientState': this.clientState
 		});
