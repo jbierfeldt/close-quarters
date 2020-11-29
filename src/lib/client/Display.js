@@ -139,6 +139,14 @@ export default class Display {
 			//The draw function loops continuously while the sketch is active
 			//Different screens of the game are portioned off using trigger variables and user input to move between them
 			s.draw = () => {
+				if(s.keyIsPressed){
+
+					if(s.keyCode === 13){
+						this.app.setGamePhase("STATS");
+					}
+				}
+
+
 
 				//Ensure that the input boxes do not display by default
 				input.style('display', 'none');
@@ -475,10 +483,11 @@ export default class Display {
 						s.stroke(0);
 						s.textAlign(s.CENTER);
 						if ((this.app.playerNumber - 1) === p) {
-							s.text("YOU", wi / 4, he / 4.7);
+							s.text(this.app.playerSpotsInGameRoom[p + 1].alias, wi / 4, he / 4.15);
+							//s.text("YOU", wi / 4, he / 4.3);
 						}
 						else if (this.app.playerSpotsInGameRoom[p + 1].playerType == 'Human') {
-							s.text("HUMAN", wi / 4, he / 4.7);
+							s.text(this.app.playerSpotsInGameRoom[p + 1].alias, wi / 4, he / 4.7);
 						}
 						if (this.app.playerSpotsInGameRoom[p + 1].playerType == 'AI') {
 							s.text("COMPUTER", wi / 4, he / 4.7);
@@ -1518,7 +1527,14 @@ export default class Display {
 								}
 								else if (r < 5){
 									s.fill(this.playerColors[r - 1][0], this.playerColors[r - 1][1], this.playerColors[r - 1][2], 255);
-									s.text(this.app.playerSpotsInGameRoom[r].playerType, s.width/15+((c+.5)*13/6)*s.width/15,s.height/6+(r+.6)*s.height/6.5)
+									s.textSize(si/1.5);
+									if (this.app.playerSpotsInGameRoom[r].playerType == 'Human') {
+										s.text(this.app.playerSpotsInGameRoom[r].alias,  s.width/15+((c+.5)*13/6)*s.width/15,s.height/6+(r+.6)*s.height/6.5);
+									}
+									else{
+									s.text(this.app.playerSpotsInGameRoom[r].playerType, s.width/15+((c+.5)*13/6)*s.width/15,s.height/6+(r+.6)*s.height/6.5);
+								  }
+									s.textSize(si);
 								}
 							}
 							else if(c === 1){
@@ -1579,7 +1595,7 @@ export default class Display {
 								else if (r < 5){
 									s.fill(this.playerColors[r - 1][0], this.playerColors[r - 1][1], this.playerColors[r - 1][2], 255);
 									s.textSize(si/1.8);
-									s.text(this.app.game.players[r-1].frequentUnit, s.width/15+((c+.5)*13/6)*s.width/15,s.height/6+(r+.6)*s.height/6.5)
+									s.text(this.app.game.players[r-1].frequentUnit, s.width/15.9+((c+.5)*13/6)*s.width/15,s.height/6+(r+.6)*s.height/6.5)
 									s.textSize(si);
 								}
 							}
