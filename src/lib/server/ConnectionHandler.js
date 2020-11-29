@@ -101,6 +101,16 @@ export default class ConnectionHandler {
 		return openGame;
 	}
 
+	getOnlinePlayerCount () {
+		let count = 0;
+		for (const [key, value] of this.clientControllers.entries()) {
+			if (value.connectionState === 'ONLINE') {
+				count++;
+			}
+		  }
+		return count;
+	}
+
 	createGameRoom() {
 		for (let i = 0; i < 1; i++) {
 				let newGameID = createID(5);

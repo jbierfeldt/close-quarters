@@ -254,7 +254,8 @@ export default class ClientController {
 			}
 		});
 		this.socket.emit("updateLobbyInfo", JSON.stringify({
-			'gameRooms': gameRooms
+			'gameRooms': gameRooms,
+			'onlinePlayerCount': this.connectionHandler.getOnlinePlayerCount()
 		}));
 	}
 
