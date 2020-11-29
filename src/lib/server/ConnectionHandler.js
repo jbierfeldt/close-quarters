@@ -60,7 +60,7 @@ export default class ConnectionHandler {
 
 				socket.disconnect(true);
 
-				console.log(`disconnecting ${socket.id} because of timeout`);
+				// console.log(`disconnecting ${socket.id} because of timeout`);
 			}
 			socket._connectTimer = setTimeout(disconnectCallback, 20000);
 

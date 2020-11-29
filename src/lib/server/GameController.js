@@ -78,8 +78,6 @@ export default class GameController {
 
 			// if game has already started, delete it
 			if (this.gameStatus !== 'LOBBY') {
-				console.log('destroy');
-				console.log(this.connectionHandler);
 				this.connectionHandler.destroyGameRoom(this.id);
 			}
 		}
@@ -366,7 +364,6 @@ export default class GameController {
 		for (let i = 1; i <= 4; i++) {
 			if (this.playerSpots[i].ordersToExecute.length > 0) {
 				for (let j = 0; j < this.playerSpots[i].ordersToExecute.length; j++) {
-					console.log(i, this.playerSpots[i].ordersToExecute[j]);
 					this.executeOrder(this.playerSpots[i].ordersToExecute[j]);
 				}
 			}
@@ -437,7 +434,7 @@ export default class GameController {
 		try {
 			this[order.orderType](order.args);
 		} catch (e) {
-			console.log("Order didn't execute", order);
+			// console.log("Order didn't execute", order);
 		}
 	}
 
