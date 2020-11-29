@@ -139,7 +139,7 @@ export default class Display {
 			//The draw function loops continuously while the sketch is active
 			//Different screens of the game are portioned off using trigger variables and user input to move between them
 			s.draw = () => {
-				
+
 				//Ensure that the input boxes do not display by default
 				input.style('display', 'none');
 				alias.style('display', 'none');
@@ -293,7 +293,7 @@ export default class Display {
 							this.app.setGamePhase("MATCHMAKING");
 							s.mouseIsPressed = false;
 							unitButtons = [];
-						s.keyIsPressed = false;
+							s.keyIsPressed = false;
 					}
 				}
 					if(id.length > 0 && s.mouseX > (-si * 3.5 + s.width / 2.2) && s.mouseX < (si * 3.5 + s.width / 2.2) && s.mouseY > s.height / 1.25 && s.mouseY < s.height / 1.15){
@@ -309,7 +309,6 @@ export default class Display {
 								s.fullscreen(true);
 								s.resizeCanvas(window.screen.height * 1.5, window.screen.height);
 							}
-
 							buttonMaker = 1;
 							buttonMakerTwo = 1;
 							this.app.setGamePhase("MATCHMAKING");
@@ -331,11 +330,10 @@ export default class Display {
 					input.style('text-transform', 'uppercase');
 					input.style('font-family', "Monaco");
 
-
-
 					s.textAlign(s.CENTER);
 					s.noStroke();
 					s.fill(255, 55);
+				  //he = he * 1.25;
 
 					if(s.mouseX < (3 * wi / 4) && s.mouseX > (wi / 4) && s.mouseY > (he / 10 + (1) * 8 * he / 60) && s.mouseY < (he / 10 + (2) * 8 * he / 60)){
 						s.rect(wi / 4, (he / 10 + (1) * 8 * he / 60), wi / 2, (1) * 8 * he / 60);
@@ -360,7 +358,6 @@ export default class Display {
 						//	this.app.sendJoinOpenGame();
 						}
 					}
-
 					let gameID = input.value();
 
 					if (gameID.length == 5) {
@@ -379,7 +376,7 @@ export default class Display {
 					else {
 						allowNewID = 1;
 					}
-
+					//he = 20 * he / 21;
 				}
 				else if (this.app.gamePhase === "LOBBY" && this.app.clientState !== 'SPECTATOR') {
 
@@ -566,13 +563,14 @@ export default class Display {
 						s.textSize(si * 1.7);
 						s.textFont(standardFont);
 						scroller = this.delay / 250;
-						s.text("Common Unit: ", -s.width + 3 * s.width * (scroller - Math.floor(scroller)), s.height - si * 1.7);
-						scroller = (this.delay + 60) / 250;
+						s.text("Waiting on Players...", -s.width + 3 * s.width * (scroller - Math.floor(scroller)), s.height - si * 1.7);
+					/*	scroller = (this.delay + 60) / 250;
 						s.text("Starting Cores: 2", -s.width + 3 * s.width * (scroller - Math.floor(scroller)), s.height - si * 1.7);
 						scroller = (this.delay + 120) / 250;
 						s.text("Games Active: ", -s.width + 3 * s.width * (scroller - Math.floor(scroller)), s.height - si * 1.7);
 						scroller = (this.delay - 60) / 250;
 						s.text("Starting Credits: 7", -s.width + 3 * s.width * (scroller - Math.floor(scroller)), s.height - si * 1.7);
+						*/
 					}
 				}
 				else if (this.app.gamePhase === "PLACEMENT" && this.app.clientState !== 'SPECTATOR' && this.app.clientState !== 'DEFEATED_PLAYER' && this.app.turnIsIn !== true) {
@@ -631,8 +629,15 @@ export default class Display {
 						bBase.drawButton();
 						s.fill(255);
 						s.stroke(0);
-						s.textSize(wi / 26.5);
-						s.text("Place Core", wi / 2 + si * 4.25 - playerShifter, si * buttonScale * 3.7);
+						s.textSize(wi / 28.5);
+						s.textAlign(s.CENTER);
+						if (this.app.game.players[this.app.playerNumber - 1].baseCount == 0){
+							s.text("Place First Core", 3 * wi / 4 - playerShifter, si * buttonScale * 3.7);
+						}
+						else{
+							s.text("Place Second Core", 3 * wi / 4 - playerShifter, si * buttonScale * 3.7);
+						}
+						s.textAlign(s.LEFT);
 						if (s.mouseIsPressed) {
 							if (bBase.isInRange(s.mouseX, s.mouseY)) {
 								bBase.buttonHasBeenPressed();
@@ -1785,9 +1790,7 @@ export default class Display {
 				let lightningTrigger = s.int(delay);
 				s.tint(255, 0, 128, 70 + (1 + s.cos(delay / 3.5)) * 60);
 				s.image(imgTwo, 0, 0, height * 1.6, height);
-
 				s.noTint();
-
 				//GLOW Begins
 		/*		for(let g = 1; g  < 15 ; g = g + 1){
 			  s.strokeWeight(g);
@@ -1808,7 +1811,7 @@ export default class Display {
 
         s.strokeWeight(15);
 
- 				s.translate(width/110, height/110);
+ 				s.translate(width/120, height/120);
 				s.stroke(0,180);
  				s.noFill();
  				s.rect(width / 4, height / 10, width / 2, 8 * height / 10);
@@ -1822,7 +1825,7 @@ export default class Display {
 //
  					s.line(width / 4, height / 10 + (r) * 8 * height / 60, 3 * width / 4, height / 10 + (r) * 8 * height / 60);
 			}
-				s.translate(-width/110, -height/110);
+				s.translate(-width/120, -height/120);
 
 				s.strokeWeight(2);
 				s.stroke(255);
@@ -1843,19 +1846,33 @@ export default class Display {
 				s.stroke(0);
 				s.fill(255, 255);
 				s.textAlign(s.CENTER);
+				s.translate(width/120, height/120);
+				s.stroke(0);
+				s.textSize(size * 1.6);
+				s.fill(0, 255);
+				s.text("Matchmaking", width / 2, height / 13);
+				s.textSize(size * 1.2);
+				s.translate()
+
+				s.text("Enter Game Code:", width * 2.3 / 5, 3.69 * height / 20);
+
+				s.text("Create New Lobby", width / 2, 6.37 * height / 20);
+
+				s.text("Join Hot Seat", width / 2, 9.04 * height / 20);
+
+				s.text("How To Play", width / 2, 11.7 * height / 20);
+
+				s.text("Wesley Arcade", width / 2, 14.4 * height / 20);
+
+				s.text(" Players Online", width / 2, 17.1 * height / 20);
+
+				s.translate(-width/120, -height/120);
+				s.fill(255, 255);
 				s.textSize(size * 1.6);
 				s.text("Matchmaking", width / 2, height / 13);
-				s.stroke(255);
-				//s.line(width / 4, height / 10, 3 * width / 4, height / 10);
-				s.stroke(0);
-				s.textSize(size*1.2);
-					s.fill(255, 255);
-			//	s.fill(176, 196, 243, 255);
+				s.textSize(size * 1.2);
 				s.text("Enter Game Code:", width * 2.3 / 5, 3.69 * height / 20);
-				//s.fill(152, 255, 152, 255);
-			//	s.text("New Lobby", width * 2 / 5, height / 4 + height / 6);
-			//	s.fill(210, 130, 240, 255);
-				//s.text("Hot Seat", width * 2 / 5, height / 4 + 2 * height / 6);
+
 				s.text("Create New Lobby", width / 2, 6.37 * height / 20);
 
 				s.text("Join Hot Seat", width / 2, 9.04 * height / 20);
@@ -2136,11 +2153,10 @@ export default class Display {
 				drawRayTracer(16.9, 3.15, 0, siz, Units["RayTracer"].maxHealth, Units["RayTracer"].maxHealth, pColors);
 				s.fill(255);
 				s.text("Ray Tracer", wid / 2 + siz * 3.75, siz * 4);
-				s.text(Units["RayTracer"].maxHealth, wid / 2 + siz * 10.45, siz * 4);
-				s.stroke(0);
-				s.fill(255);
-
-				s.text(Units["RayTracer"].cost, wid / 2 + siz * 12.85, siz * 4);
+				s.textAlign(s.CENTER);
+				s.text(Units["RayTracer"].maxHealth, wid / 2 + siz * 11, siz * 4);
+				s.text(Units["RayTracer"].cost, wid / 2 + siz * 13, siz * 4);
+				s.textAlign(s.LEFT);
 
 				//Oscillator Button Decoration
 				s.translate(0, scale * siz * 1);
@@ -2151,8 +2167,10 @@ export default class Display {
 
 				s.fill(255);
 				s.text("Red Shifter", wid / 2 + siz * 3.75, siz * 4);
-				s.text(Units["RedShifter"].maxHealth, wid / 2 + siz * 10.45, siz * 4);
-				s.text(Units["RedShifter"].cost, wid / 2 + siz * 12.85, siz * 4);
+				s.textAlign(s.CENTER);
+				s.text(Units["RedShifter"].maxHealth, wid / 2 + siz * 11, siz * 4);
+				s.text(Units["RedShifter"].cost, wid / 2 + siz * 13, siz * 4);
+				s.textAlign(s.LEFT);
 
 
 				s.translate(0, -scale * siz * 1);
@@ -2165,9 +2183,10 @@ export default class Display {
 
 				s.fill(255);
 				s.text("Oscillator", wid / 2 + siz * 3.75, siz * 4);
-				s.text(Units["Oscillator"].maxHealth, wid / 2 + siz * 10.45, siz * 4);
-				s.text(Units["Oscillator"].cost, wid / 2 + siz * 12.85, siz * 4);
-
+				s.textAlign(s.CENTER);
+				s.text(Units["Oscillator"].maxHealth, wid / 2 + siz * 11, siz * 4);
+				s.text(Units["Oscillator"].cost, wid / 2 + siz * 13, siz * 4);
+				s.textAlign(s.LEFT);
 
 				s.translate(0, -scale * siz * 2);
 				//Ballast Button Decoration
@@ -2179,8 +2198,10 @@ export default class Display {
 
 				s.fill(255);
 				s.text("Beam Splitter", wid / 2 + siz * 3.75, siz * 4)
-				s.text(Units["BeamSplitter"].maxHealth, wid / 2 + siz * 10.45, siz * 4)
-				s.text(Units["BeamSplitter"].cost, wid / 2 + siz * 12.85, siz * 4);
+				s.textAlign(s.CENTER);
+				s.text(Units["BeamSplitter"].maxHealth, wid / 2 + siz * 11, siz * 4);
+				s.text(Units["BeamSplitter"].cost, wid / 2 + siz * 13, siz * 4);
+				s.textAlign(s.LEFT);
 
 				s.translate(0, -scale * siz * 3);
 
@@ -2193,8 +2214,10 @@ export default class Display {
 
 				s.fill(255);
 				s.text("Ballast", wid / 2 + siz * 3.75, siz * 4)
-				s.text(Units["Ballast"].maxHealth, wid / 2 + siz * 10.45, siz * 4)
-				s.text(Units["Ballast"].cost, wid / 2 + siz * 12.85, siz * 4);
+				s.textAlign(s.CENTER);
+				s.text(Units["Ballast"].maxHealth, wid / 2 + siz * 11, siz * 4);
+				s.text(Units["Ballast"].cost, wid / 2 + siz * 13, siz * 4);
+				s.textAlign(s.LEFT);
 
 				s.translate(0, -scale * siz * 4);
 				//Juggernode Button Decoration
@@ -2207,8 +2230,10 @@ export default class Display {
 
 				s.fill(255);
 				s.text("Juggernode", wid / 2 + siz * 3.75, siz * 4)
-				s.text(Units["Juggernode"].maxHealth, wid / 2 + siz * 10.45, siz * 4)
-				s.text(Units["Juggernode"].cost, wid / 2 + siz * 12.85, siz * 4);
+				s.textAlign(s.CENTER);
+				s.text(Units["Juggernode"].maxHealth, wid / 2 + siz * 11, siz * 4);
+				s.text(Units["Juggernode"].cost, wid / 2 + siz * 13, siz * 4);
+				s.textAlign(s.LEFT);
 
 				s.translate(0, -scale * siz * 5);
 				s.translate(0, scale * siz * 6);
@@ -2218,8 +2243,10 @@ export default class Display {
 				drawTripwire(16.9, 3.15, 0, siz, 400, 400, pColors);
 				s.fill(255);
 				s.text("Tripwire", wid / 2 + siz * 3.75, siz * 4)
-				s.text(Units["Tripwire"].maxHealth, wid / 2 + siz * 10.45, siz * 4)
-				s.text(Units["Tripwire"].cost, wid / 2 + siz * 12.85, siz * 4);
+				s.textAlign(s.CENTER);
+				s.text(Units["Tripwire"].maxHealth, wid / 2 + siz * 11, siz * 4);
+				s.text(Units["Tripwire"].cost, wid / 2 + siz * 13, siz * 4);
+				s.textAlign(s.LEFT);
 				s.translate(0, -scale * siz * 6);
 				//Maglev Button Decoration
 				s.translate(0, scale * siz * 7);
@@ -2230,8 +2257,10 @@ export default class Display {
 				drawMaglev(16.9, 3.15, 4, siz, 400, 400, pColors);
 				s.fill(255);
 				s.text("Maglev", wid / 2 + siz * 3.75, siz * 4)
-				s.text(Units["Maglev"].maxHealth, wid / 2 + siz * 10.45, siz * 4);
-				s.text(Units["Maglev"].cost, wid / 2 + siz * 12.85, siz * 4);
+				s.textAlign(s.CENTER);
+				s.text(Units["Maglev"].maxHealth, wid / 2 + siz * 11, siz * 4);
+				s.text(Units["Maglev"].cost, wid / 2 + siz * 13, siz * 4);
+				s.textAlign(s.LEFT);
 				s.noFill();
 				s.translate(0, -scale * siz * 7);
 				//Circuit Breaker Button Decoration
@@ -2243,8 +2272,10 @@ export default class Display {
 				drawResonator(16.9, 3.15, 4, siz, 400, 400, pColors);
 				s.fill(255);
 				s.text("Resonator", wid / 2 + siz * 3.75, siz * 4);
-				s.text(Units["Resonator"].maxHealth, wid / 2 + siz * 10.45, siz * 4);
-				s.text(Units["Resonator"].cost, wid / 2 + siz * 12.85, siz * 4);
+				s.textAlign(s.CENTER);
+				s.text(Units["Resonator"].maxHealth, wid / 2 + siz * 11, siz * 4);
+				s.text(Units["Resonator"].cost, wid / 2 + siz * 13, siz * 4);
+				s.textAlign(s.LEFT);
 				s.noFill();
 				s.stroke(255);
 				s.translate(0, -scale * siz * 8);
@@ -2257,8 +2288,10 @@ export default class Display {
 				drawIntegrator(16.9, 3.15, 4, siz, 400, 400, pColors);
 				s.fill(255);
 				s.text("Integrator", wid / 2 + siz * 3.75, siz * 4)
-				s.text(Units["Integrator"].maxHealth, wid / 2 + siz * 10.45, siz * 4)
-				s.text(Units["Integrator"].cost, wid / 2 + siz * 12.85, siz * 4);
+				s.textAlign(s.CENTER);
+				s.text(Units["Integrator"].maxHealth, wid / 2 + siz * 11, siz * 4);
+				s.text(Units["Integrator"].cost, wid / 2 + siz * 13, siz * 4);
+				s.textAlign(s.LEFT);
 				s.noFill();
 				s.stroke(255);
 

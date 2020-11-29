@@ -421,10 +421,10 @@ export class Maglev extends Unit {
   static maxHealth = 350;
 	static cost = 3;
 	static orientations = {
-		1: [[-1,-1],[-1,0],[-1,1],[0,-1],[0,1],[1,0],[1,1],[1,-1]],
-		2: [[-1,-1],[-1,0],[-1,1],[0,-1],[0,1],[1,0],[1,1],[1,-1]],
-		3: [[-1,-1],[-1,0],[-1,1],[0,-1],[0,1],[1,0],[1,1],[1,-1]],
-		4: [[-1,-1],[-1,0],[-1,1],[0,-1],[0,1],[1,0],[1,1],[1,-1]]
+		1: [[-1,1],[0,1],[1,0],[1,1],[1,-1]],
+		2: [[-1,-1],[0,-1],[1,0],[1,1],[1,-1]],
+		3: [[-1,-1],[-1,0],[-1,1],[0,1],[1,1]],
+		4: [[-1,-1],[-1,0],[-1,1],[0,-1],[1,-1]]
 	}
 	static description = "The Maglev is an offensive powerhouse that emits magnetic pulses in all directions. These strikes begin with a high base damage that fades as they travel.";
 
@@ -434,21 +434,51 @@ export class Maglev extends Unit {
 
 	startAttack(tick){
 		this.firing = true;
+		this.projArr = [];
 		let firingChoice = Math.floor(Math.random()*2);
 		let i = 0;
 		for(let a = -1; a < 2; a = a + 1){
 			for(let b = -1; b < 2; b = b + 1){
 				if(a !== 0 || b !== 0){
 					if(firingChoice == 0){
-						if(a === 0 || b === 0){
+						if(a == 0 || b == 0){
+							if(this.player == 1 && (a === -1 || b === -1)){
+
+							}
+							else if(this.player == 2 && (a === -1 || b === 1)){
+
+							}
+							else if(this.player == 3 && (a === 1 || b === -1)){
+
+							}
+							else if(this.player == 4 && (a === 1 || b === 1)){
+
+							}
+							else{
 							this.projArr[i] = new Projectiles.MagBullet(this.player, [a,b], 1, this.id);
 							i = i + 1;
 						}
+
+						}
 					}
-					if(firingChoice == 1){
-						if(a !== 0  && b !== 0){
-							this.projArr[i] = new Projectiles.MagBullet(this.player, [a,b], 1, this.id);
-							i = i + 1;
+					else if(firingChoice == 1){
+						if(a != 0  && b != 0){
+							if(this.player == 1 && (a === -1 && b === -1)){
+
+							}
+							else if(this.player == 2 && (a === -1 && b === 1)){
+
+							}
+							else if(this.player == 3 && (a === 1 && b === -1)){
+
+							}
+							else if(this.player == 4 && (a === 1 && b === 1)){
+
+							}
+							else{
+								this.projArr[i] = new Projectiles.MagBullet(this.player, [a,b], 1, this.id);
+								i = i + 1;
+							}
 						}
 					}
 
