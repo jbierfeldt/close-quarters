@@ -286,7 +286,7 @@ export class Oscillator extends Unit {
 		this.collidedWith = [false, 4];
 		this.firing = false;
 		// Oscillator fires at the beginning of the turn
-		if (tick === 1) {
+		if (tick === 2) {
 			if(this.player == 1){
 				this.startAttack([1,1]);
 			}
