@@ -101,6 +101,7 @@ export default class Display {
 			let allowNewID = 1;
 			let loading = false; //Whether The Loading Screen Should Be Displayed.
 			let showMenu = false;
+			let simulationCountdown = 0;
 
 			//Variables for the width, height, and side length of game tiles - changes with screen resizing
 			let he;
@@ -139,15 +140,7 @@ export default class Display {
 			//The draw function loops continuously while the sketch is active
 			//Different screens of the game are portioned off using trigger variables and user input to move between them
 			s.draw = () => {
-				if(s.keyIsPressed){
-
-					if(s.keyCode === 13){
-						this.app.setGamePhase("STATS");
-					}
-				}
-
-
-
+				
 				//Ensure that the input boxes do not display by default
 				input.style('display', 'none');
 				alias.style('display', 'none');
@@ -404,7 +397,7 @@ export default class Display {
 					let offsetX = 0;
 					let offsetY = 0;
 
-					drawGrid(wi, he, si, this.playerColors);
+					drawGrid(wi, he, si, this.playerColors, 150);
 
 					for (let p = 0; p < 4; p = p + 1) {
 						if (p === 1) {
@@ -847,7 +840,7 @@ export default class Display {
 						drawQuarterGrid(this.stage.grid, this.playerColors, this.app.playerNumber);
 					}
 					else {
-						drawGrid(wi, he, si, this.playerColors);
+						drawGrid(wi, he, si, this.playerColors, 150);
 					}
 					let board = this.app.game.board;
 					for (var k = 0; k < board.length; k = k + 1) {
@@ -1045,16 +1038,20 @@ export default class Display {
 					s.mouseIsPressed = false;
 				}
 			}
+			simulationCountdown = 0;
 		}//Bug Fix: Underneath buttons need to be disabled
 		else if (this.app.gamePhase == "SIMULATION" || this.app.clientState === 'SPECTATOR' || this.app.clientState === 'DEFEATED_PLAYER') {
+			if(simulationCountdown < 150){
 
+			}
+			else{
 			if (animate >= 10 && this.t < (Object.keys(this.simulationDisplayTurn.tick).length - 1)) {
 				this.t = this.t + 1; //Leaves User On Final Tick #
 				animate = 0;
 			}
-			drawGrid(wi, he, si, this.playerColors);
+		}
+			drawGrid(wi, he, si, this.playerColors, simulationCountdown);
 			if (this.t < Object.keys(this.simulationDisplayTurn.tick).length && this.t > 0) {
-				//drawGrid(wi, he, si, this.playerColors);
 				for (let p = 0; p < 4; p = p + 1) {
 					if (this.simulationDisplayTurn.tick[this.t].players[p].victoryCondition == - 1) {
 						if (p == 1) {
@@ -1263,6 +1260,23 @@ export default class Display {
 						s.mouseIsPressed = false;
 					}
 				}
+				if(simulationCountdown < 150){
+					s.textSize(si * 3);
+					s.textFont(titleFont);
+					s.fill(255);
+					s.textAlign(s.CENTER);
+					if(simulationCountdown < 50){
+						s.text("THREE", wi/2, he/1.8125);
+					}
+					else if(simulationCountdown < 100){
+						s.text("TWO", wi/2, he/1.8125);
+					}
+					else{
+						s.text("ONE", wi/2, he/1.8125);
+					}
+					s.textAlign(s.LEFT);
+					simulationCountdown = simulationCountdown + 1;
+				}
 			}
 			else if (this.app.gamePhase === "REVIEW" && this.app.game.players[this.app.playerNumber - 1].victoryCondition !== -1) {
 				if (sideBarGrowth > 0.8) {
@@ -1275,8 +1289,8 @@ export default class Display {
 				si = wi / 30;
 				he = si * 20;
 				this.t = Object.keys(this.simulationDisplayTurn.tick).length;
-				//if(s.mouseX >)
-				drawGrid(wi, he, si, this.playerColors);
+
+				drawGrid(wi, he, si, this.playerColors, 150);
 					for (let p = 0; p < 4; p = p + 1) {
 						if (this.app.game.players[p].victoryCondition === -1) {
 							if (p === 1) {
@@ -1532,7 +1546,7 @@ export default class Display {
 										s.text(this.app.playerSpotsInGameRoom[r].alias,  s.width/15+((c+.5)*13/6)*s.width/15,s.height/6+(r+.6)*s.height/6.5);
 									}
 									else{
-									s.text(this.app.playerSpotsInGameRoom[r].playerType, s.width/15+((c+.5)*13/6)*s.width/15,s.height/6+(r+.6)*s.height/6.5);
+										s.text(this.app.playerSpotsInGameRoom[r].playerType, s.width/15+((c+.5)*13/6)*s.width/15,s.height/6+(r+.6)*s.height/6.5);
 								  }
 									s.textSize(si);
 								}
@@ -2364,10 +2378,10 @@ export default class Display {
 
 
 
-			function drawGrid(wi, he, si, pColors) {
+			function drawGrid(wi, he, si, pColors, countDown) {
 				s.image(imgTwo, 0, 0, s.height * 1.6, s.height);
 				s.noStroke();
-				let opacity = 227;
+				let opacity = 227*(countDown/150);
 				//s.fill(pColors[0][0],pColors[0][1],pColors[0][2],pColors[0][3]);
 				s.fill(pColors[0][0], pColors[0][1], pColors[0][2], opacity);
 				s.rect(0, 0, wi / 2, he / 2);
@@ -2445,9 +2459,9 @@ export default class Display {
 				for (let angle = 0; angle < 360; angle = angle + 120) {
 					s.strokeWeight(2);
 					s.rotate(s.radians(angle));
-					s.scale(1.4);
+					s.scale(1.3);
 					s.triangle(0, size / 10, size / 8, size / 6, -size / 8, size / 6);
-					s.scale(1 / 1.4);
+					s.scale(1 / 1.3);
 					s.rotate(-s.radians(angle));
 					//s.strokeWeight(1);
 					s.rotate(s.radians(angle + 30));
@@ -2456,6 +2470,7 @@ export default class Display {
 					s.rotate(-s.radians(angle + 30));
 				}
 				s.noFill();
+				s.strokeWeight(3);
 				s.ellipse(0, 0, size / 1.3, size / 1.3);
 				s.translate(-x * size - size / 2, -y * size - size / 2);
 				//	s.translate(0,-size/25);
