@@ -130,6 +130,14 @@ export default class ConnectionHandler {
 
 	destroyGameRoom(gameID) {
 		this.gameControllers.delete(gameID);
+
+		// also remove from openGames
+		this.openGames = this.openGames.filter( (member) => {
+			if (member === gameID) {
+				return false;
+			}
+			return true
+		});
 	}
 
 	registerMiddleware() {
