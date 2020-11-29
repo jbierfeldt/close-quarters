@@ -117,7 +117,8 @@ export default class ConnectionHandler {
 
 				let newGame = new GameController({
 					id: newGameID,
-					IO_INSTANCE: this.io
+					IO_INSTANCE: this.io,
+					connectionHandler: this
 				});
 				newGame.init();
 
@@ -125,6 +126,10 @@ export default class ConnectionHandler {
 
 				return newGameID;
 			}
+	}
+
+	destroyGameRoom(gameID) {
+		this.gameControllers.delete(gameID);
 	}
 
 	registerMiddleware() {

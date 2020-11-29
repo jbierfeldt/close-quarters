@@ -6,10 +6,11 @@ import ClientController from './ClientController.js';
 
 export default class GameController {
 
-	constructor({ id, IO_INSTANCE }) {
+	constructor({ id, IO_INSTANCE, connectionHandler }) {
 		this.id = id;
 		this.game = new Game();
 		this.io = IO_INSTANCE;
+		this.connectionHandler = connectionHandler;
 
 		this.clientControllers = [];
 
@@ -72,9 +73,17 @@ export default class GameController {
 
 		this.checkAllOrdersSubmitted();
 
-		// remove clientController from this.clientControllers
-		// check if any existing clientControllers, if not, destruct
-		// (likely achieved through telling the connectionHandler to delete)
+		// check if any existing clientControllers
+		if (this.clientControllers.length === 0) {
+
+			// if game has already started, delete it
+			if (this.gameStatus !== 'LOBBY') {
+				console.log('destroy');
+				console.log(this.connectionHandler);
+				this.connectionHandler.destroyGameRoom(this.id);
+			}
+		}
+
 	}
 
 	assignClientToSpot (clientController, playerSpot) {
