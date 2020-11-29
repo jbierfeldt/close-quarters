@@ -140,7 +140,7 @@ export default class Display {
 			//The draw function loops continuously while the sketch is active
 			//Different screens of the game are portioned off using trigger variables and user input to move between them
 			s.draw = () => {
-				
+
 				//Ensure that the input boxes do not display by default
 				input.style('display', 'none');
 				alias.style('display', 'none');
@@ -2381,7 +2381,7 @@ export default class Display {
 			function drawGrid(wi, he, si, pColors, countDown) {
 				s.image(imgTwo, 0, 0, s.height * 1.6, s.height);
 				s.noStroke();
-				let opacity = 227*(countDown/150);
+				let opacity = 50 + 177*(countDown/150);
 				//s.fill(pColors[0][0],pColors[0][1],pColors[0][2],pColors[0][3]);
 				s.fill(pColors[0][0], pColors[0][1], pColors[0][2], opacity);
 				s.rect(0, 0, wi / 2, he / 2);
