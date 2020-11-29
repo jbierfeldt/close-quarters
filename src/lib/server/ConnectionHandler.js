@@ -101,13 +101,24 @@ export default class ConnectionHandler {
 		return openGame;
 	}
 
+	getOnlinePlayerCount () {
+		let count = 0;
+		for (const [key, value] of this.clientControllers.entries()) {
+			if (value.connectionState === 'ONLINE') {
+				count++;
+			}
+		  }
+		return count;
+	}
+
 	createGameRoom() {
 		for (let i = 0; i < 1; i++) {
 				let newGameID = createID(5);
 
 				let newGame = new GameController({
 					id: newGameID,
-					IO_INSTANCE: this.io
+					IO_INSTANCE: this.io,
+					connectionHandler: this
 				});
 				newGame.init();
 
@@ -115,6 +126,10 @@ export default class ConnectionHandler {
 
 				return newGameID;
 			}
+	}
+
+	destroyGameRoom(gameID) {
+		this.gameControllers.delete(gameID);
 	}
 
 	registerMiddleware() {

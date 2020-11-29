@@ -42,7 +42,7 @@ class App {
 		this.simulationRun = false;
 
 		this.waitOnInfoCallback = undefined;
-		this.waitOnSimulationPhaseEndCallback = undefined;
+		this.waitOnSimulationPhaseEndCallbacks = [];
 	}
 
 	init() {
@@ -169,10 +169,10 @@ class App {
 
 			// put new clientState in callback to be set
 			// at the end of the next simulation phase
-			this.waitOnSimulationPhaseEndCallback = () => {
+			this.waitOnSimulationPhaseEndCallbacks.push(() => {
 				this.clientState = data.clientState;
 				this.updateDebugInfo();
-			}
+			})
 
 		})
 
@@ -217,11 +217,12 @@ class App {
 		})
 
 		this.socket.on('gameOver', (data) => {
-			//this.setGamePhase('MATCHMAKING');
-			this.postGameMenu = true;
-			debug.log(1, "NO REMAINING ACTIVE HUMAN PLAYERS ");
-		})
 
+			this.waitOnSimulationPhaseEndCallbacks.push(() => {
+				this.postGameMenu = true;
+				debug.log(1, "NO REMAINING ACTIVE HUMAN PLAYERS ");
+			})
+		})
 	}
 
 	createOrder (orderType, args) {
@@ -480,9 +481,12 @@ class App {
 	}
 
 	onSimulationPhaseEnd () {
-		if (this.waitOnSimulationPhaseEndCallback) {
-			this.waitOnSimulationPhaseEndCallback();
-			this.waitOnSimulationPhaseEndCallback = undefined;
+		if (this.waitOnSimulationPhaseEndCallbacks.length > 0) {
+			for (let i = 0; i < this.waitOnSimulationPhaseEndCallbacks.length; i++) {
+				let callback = this.waitOnSimulationPhaseEndCallbacks.pop();
+				callback.call();
+			}
+			this.waitOnSimulationPhaseEndCallback = [];
 		}
 	}
 

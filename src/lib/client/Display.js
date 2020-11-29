@@ -1881,7 +1881,7 @@ export default class Display {
 
 				s.text("Wesley Arcade", width / 2, 14.4 * height / 20);
 
-				s.text(" Players Online", width / 2, 17.1 * height / 20);
+				s.text(" Players Online: " + data.onlinePlayerCount, width / 2, 17.1 * height / 20);
 				//s.textAlign(s.LEFT);
 				//s.translate(0, -height/20);
 			}
