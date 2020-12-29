@@ -170,25 +170,27 @@ export default class Display {
 
 				buttonMakerTwo = 0;
 
-				if(this.app.playerNumber && buttonMaker == 1){
+				//if(this.app.playerNumber && buttonMaker == 1){
+				if(buttonMaker == 1){
 					//The remaining buttons are created one time initially and then recreated upon a screen resizing
 					playerShifter = 0;
 					submitShifterX = 0;
 					submitShifterY = 0;
-
-					if (this.app.playerNumber == 2) {
-						submitShifterX = 0;
-						submitShifterY = he / 2;
-					}
-					else if (this.app.playerNumber == 3) {
-						playerShifter = s.width / 2;
-						submitShifterX = wi / 2;
-						submitShifterY = 0;
-					}
-					else if (this.app.playerNumber == 4) {
-						playerShifter = s.width / 2;
-						submitShifterX = wi / 2;
-						submitShifterY = he / 2;
+					if(this.app.playerNumber){
+						if (this.app.playerNumber == 2) {
+							submitShifterX = 0;
+							submitShifterY = he / 2;
+						}
+						else if (this.app.playerNumber == 3) {
+							playerShifter = s.width / 2;
+							submitShifterX = wi / 2;
+							submitShifterY = 0;
+						}
+						else if (this.app.playerNumber == 4) {
+							playerShifter = s.width / 2;
+							submitShifterX = wi / 2;
+							submitShifterY = he / 2;
+						}
 					}
 
 					unitButtons = [];
@@ -284,10 +286,10 @@ export default class Display {
 						if(s.keyCode === 13){
 							this.app.sendSetAlias(id);
 
-							if (!debug.enabled) {
+						/*	if (!debug.enabled) {
 								s.fullscreen(true);
 								s.resizeCanvas(window.screen.height * 1.5, window.screen.height);
-							}
+							}*/
 
 							buttonMaker = 1;
 							buttonMakerTwo = 1;
