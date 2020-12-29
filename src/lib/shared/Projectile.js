@@ -180,7 +180,7 @@ export class BalBullet extends Projectile {
 	constructor(player, initialOrientation = [0, 0], initialSpeed = 0, unit, created = 5, id)  {
 		super(player, initialOrientation, initialSpeed, unit, id);
 		this.identifier = "BalProj";
-		this.damage = 12;
+		this.damage = 13;
 		this.created = created;
 		this.ableToBeDestroyed = false;
 		this.dump = false;

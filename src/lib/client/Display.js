@@ -1266,13 +1266,13 @@ export default class Display {
 					s.fill(255);
 					s.textAlign(s.CENTER);
 					if(simulationCountdown < 50){
-						s.text("THREE", wi/2, he/1.8125);
+						s.text("3", wi/2, he/1.8125);
 					}
 					else if(simulationCountdown < 100){
-						s.text("TWO", wi/2, he/1.8125);
+						s.text("2", wi/2, he/1.8125);
 					}
 					else{
-						s.text("ONE", wi/2, he/1.8125);
+						s.text("1", wi/2, he/1.8125);
 					}
 					s.textAlign(s.LEFT);
 					simulationCountdown = simulationCountdown + 1;
@@ -2381,7 +2381,7 @@ export default class Display {
 			function drawGrid(wi, he, si, pColors, countDown) {
 				s.image(imgTwo, 0, 0, s.height * 1.6, s.height);
 				s.noStroke();
-				let opacity = 50 + 177*(countDown/150);
+				let opacity = 100 + 127*(countDown/150);
 				//s.fill(pColors[0][0],pColors[0][1],pColors[0][2],pColors[0][3]);
 				s.fill(pColors[0][0], pColors[0][1], pColors[0][2], opacity);
 				s.rect(0, 0, wi / 2, he / 2);
