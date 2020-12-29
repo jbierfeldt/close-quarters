@@ -883,7 +883,7 @@ export class Integrator extends Unit {
 
 export class BeamSplitter extends Unit {
 
-	constructor(player, health = 75, firing = false, id, collidedWith = [false, 4], lifeSpan = 0, damageDealt = 0)  {
+	constructor(player, health = 125, firing = false, id, collidedWith = [false, 4], lifeSpan = 0, damageDealt = 0)  {
 		super(id);
 		this.lifeSpan = lifeSpan;
 		this.player = player;
@@ -897,7 +897,7 @@ export class BeamSplitter extends Unit {
 		this.damageDealt = damageDealt;
 	}
 
-	static maxHealth = 75;
+	static maxHealth = 125;
 	static cost = 2;
 
 	//Methodology is player then x then y in each subArray
