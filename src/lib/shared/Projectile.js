@@ -80,7 +80,7 @@ export class RedBullet extends Projectile {
 	update(tick) {
 		super.update(tick);
 		if(this.distance >= 10){
-			this.damage = 30;
+			this.damage = 30 + (this.distance - 10) * 3;
 		}
 		else{
 			this.damage = 0;
