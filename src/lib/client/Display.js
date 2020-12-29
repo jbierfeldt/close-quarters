@@ -2182,6 +2182,7 @@ export default class Display {
 				s.rect(siz * 16.9, siz * 3.15, siz, siz);
 				drawRayTracer(16.9, 3.15, 0, siz, Units["RayTracer"].maxHealth, Units["RayTracer"].maxHealth, pColors);
 				s.fill(255);
+				s.strokeWeight(3);
 				s.text("Ray Tracer", wid / 2 + siz * 3.75, siz * 4);
 				s.textAlign(s.CENTER);
 				s.text(Units["RayTracer"].maxHealth, wid / 2 + siz * 11, siz * 4);
@@ -2191,11 +2192,13 @@ export default class Display {
 				//Oscillator Button Decoration
 				s.translate(0, scale * siz * 1);
 				s.stroke(0);
+				s.strokeWeight(2);
 				s.fill(pColors[player - 1][0], pColors[player - 1][1], pColors[player - 1][2], 255);
 				s.rect(siz * 16.9, siz * 3.15, siz, siz);
 				drawRedShifter(16.9, 3.15, 0, siz, Units["RedShifter"].maxHealth, Units["RedShifter"].maxHealth, pColors);
 
 				s.fill(255);
+				s.strokeWeight(3);
 				s.text("Red Shifter", wid / 2 + siz * 3.75, siz * 4);
 				s.textAlign(s.CENTER);
 				s.text(Units["RedShifter"].maxHealth, wid / 2 + siz * 11, siz * 4);
@@ -2206,11 +2209,12 @@ export default class Display {
 				s.translate(0, -scale * siz * 1);
 				s.translate(0, scale * siz * 2);
 				s.stroke(0);
+				s.strokeWeight(2);
 				s.fill(pColors[player - 1][0], pColors[player - 1][1], pColors[player - 1][2], 255);
 				s.rect(siz * 16.9, siz * 3.15, siz, siz);
 				drawOscillator(16.9, 3.15, 0, siz, Units["Oscillator"].maxHealth, Units["Oscillator"].maxHealth, pColors);
 
-
+				s.strokeWeight(3);
 				s.fill(255);
 				s.text("Oscillator", wid / 2 + siz * 3.75, siz * 4);
 				s.textAlign(s.CENTER);
@@ -2222,11 +2226,13 @@ export default class Display {
 				//Ballast Button Decoration
 				s.translate(0, scale * siz * 3);
 				s.stroke(0);
+				s.strokeWeight(2);
 				s.fill(pColors[player - 1][0], pColors[player - 1][1], pColors[player - 1][2], 255);
 				s.rect(siz * 16.9, siz * 3.15, siz, siz);
 				drawBeamSplitter(16.9, 3.15, 0, siz, Units["BeamSplitter"].maxHealth, Units["BeamSplitter"].maxHealth, pColors);
 
 				s.fill(255);
+				s.strokeWeight(3);
 				s.text("Beam Splitter", wid / 2 + siz * 3.75, siz * 4)
 				s.textAlign(s.CENTER);
 				s.text(Units["BeamSplitter"].maxHealth, wid / 2 + siz * 11, siz * 4);
@@ -2243,6 +2249,7 @@ export default class Display {
 				drawBallast(16.9, 3.15, 0, siz, Units["Ballast"].maxHealth, Units["Ballast"].maxHealth, pColors);
 
 				s.fill(255);
+				s.strokeWeight(3);
 				s.text("Ballast", wid / 2 + siz * 3.75, siz * 4)
 				s.textAlign(s.CENTER);
 				s.text(Units["Ballast"].maxHealth, wid / 2 + siz * 11, siz * 4);
@@ -2259,6 +2266,7 @@ export default class Display {
 				drawJuggernode(16.9, 3.15, 4, siz, 400, 400, pColors);
 
 				s.fill(255);
+				s.strokeWeight(3);
 				s.text("Juggernode", wid / 2 + siz * 3.75, siz * 4)
 				s.textAlign(s.CENTER);
 				s.text(Units["Juggernode"].maxHealth, wid / 2 + siz * 11, siz * 4);
@@ -2268,10 +2276,14 @@ export default class Display {
 				s.translate(0, -scale * siz * 5);
 				s.translate(0, scale * siz * 6);
 				s.stroke(0);
+				s.strokeWeight(2);
 				s.fill(pColors[player - 1][0], pColors[player - 1][1], pColors[player - 1][2], 255);
 				s.rect(siz * 16.9, siz * 3.15, siz, siz);
 				drawTripwire(16.9, 3.15, 0, siz, 400, 400, pColors);
+
 				s.fill(255);
+				s.stroke(0);
+				s.strokeWeight(3);
 				s.text("Tripwire", wid / 2 + siz * 3.75, siz * 4)
 				s.textAlign(s.CENTER);
 				s.text(Units["Tripwire"].maxHealth, wid / 2 + siz * 11, siz * 4);
@@ -2285,7 +2297,9 @@ export default class Display {
 				s.fill(pColors[player - 1][0], pColors[player - 1][1], pColors[player - 1][2], 255);
 				s.rect(siz * 16.9, siz * 3.15, siz, siz);
 				drawMaglev(16.9, 3.15, 4, siz, 400, 400, pColors);
+
 				s.fill(255);
+				s.strokeWeight(3);
 				s.text("Maglev", wid / 2 + siz * 3.75, siz * 4)
 				s.textAlign(s.CENTER);
 				s.text(Units["Maglev"].maxHealth, wid / 2 + siz * 11, siz * 4);
@@ -2300,7 +2314,9 @@ export default class Display {
 				s.fill(pColors[player - 1][0], pColors[player - 1][1], pColors[player - 1][2], 255);
 				s.rect(siz * 16.9, siz * 3.15, siz, siz);
 				drawResonator(16.9, 3.15, 4, siz, 400, 400, pColors);
+
 				s.fill(255);
+				s.strokeWeight(3);
 				s.text("Resonator", wid / 2 + siz * 3.75, siz * 4);
 				s.textAlign(s.CENTER);
 				s.text(Units["Resonator"].maxHealth, wid / 2 + siz * 11, siz * 4);
@@ -2316,7 +2332,9 @@ export default class Display {
 				s.fill(pColors[player - 1][0], pColors[player - 1][1], pColors[player - 1][2], 255);
 				s.rect(siz * 16.9, siz * 3.15, siz, siz);
 				drawIntegrator(16.9, 3.15, 4, siz, 400, 400, pColors);
+
 				s.fill(255);
+				s.strokeWeight(3);
 				s.text("Integrator", wid / 2 + siz * 3.75, siz * 4)
 				s.textAlign(s.CENTER);
 				s.text(Units["Integrator"].maxHealth, wid / 2 + siz * 11, siz * 4);
@@ -2420,7 +2438,7 @@ export default class Display {
 
 			function drawRayTracer(x, y, player, size, health, max, pColors) {
 				s.stroke(0);
-				s.strokeWeight(2);
+				s.strokeWeight(2*(size/(s.width/30)));
 				s.translate(x * size + size / 2, y * size + size / 2);
 				let angle = 0;
 				s.rotate(s.radians(angle));
@@ -2457,7 +2475,7 @@ export default class Display {
 				s.fill(0);
 				s.translate(x * size + size / 2, y * size + size / 2);
 				for (let angle = 0; angle < 360; angle = angle + 120) {
-					s.strokeWeight(2);
+					s.strokeWeight(2*(size/(s.width/30)));
 					s.rotate(s.radians(angle));
 					s.scale(1.3);
 					s.triangle(0, size / 10, size / 8, size / 6, -size / 8, size / 6);
@@ -2470,7 +2488,7 @@ export default class Display {
 					s.rotate(-s.radians(angle + 30));
 				}
 				s.noFill();
-				s.strokeWeight(3);
+				s.strokeWeight(2*(size/(s.width/30)));
 				s.ellipse(0, 0, size / 1.3, size / 1.3);
 				s.translate(-x * size - size / 2, -y * size - size / 2);
 				//	s.translate(0,-size/25);
@@ -2479,7 +2497,7 @@ export default class Display {
 			function drawMaglev(x, y, player, size, health, max, pColors) {
 				s.stroke(0);
 				s.noFill();
-				s.strokeWeight(2);
+				s.strokeWeight(2*(size/(s.width/30)));
 				s.beginShape();
 				for (let i = 0; i <= 361; i = i + 20) {
 					s.curveVertex(size / 2 + size * x + (size / 3) * s.sin(7 * s.radians(i) + Math.PI / 2), size / 2 + size * y + (size / 2.5) * s.sin(s.radians(i)));
@@ -2489,7 +2507,7 @@ export default class Display {
 
 			function drawResonator(x, y, player, size, health, max, pColors) {
 				s.stroke(0);
-				s.strokeWeight(2);
+				s.strokeWeight(2*(size/(s.width/30)));
 				s.noFill();
 				s.translate(size * x + size / 2, size * y + size / 2);
 				let c = 0;
@@ -2512,7 +2530,7 @@ export default class Display {
 				}
 				s.fill(0);
 				s.stroke(0);
-				s.strokeWeight(1);
+				s.strokeWeight(1*(size/(s.width/30)));
 				s.translate(size * x + size / 2, size * y + size / 2);
 				s.beginShape();
 				s.vertex(-size / 6, size / 2.4);
@@ -2523,7 +2541,7 @@ export default class Display {
 				s.vertex(size / 6, size / 2.4);
 				s.vertex(-size / 6, size / 2.4);
 				s.endShape();
-				s.strokeWeight(2);
+				s.strokeWeight(2*(size/(s.width/30)));
 				for (let l = 2 * size / 12.5; l < size / 1.6; l = l + size / 12.5) {
 					s.line(-size / 12, -size / 6 + l, size / 12, -size / 5 + l);
 				}
@@ -2535,7 +2553,7 @@ export default class Display {
 			function drawTripwire(x, y, player, size, health, max, pColors, tripped) {
 				let iconSize = size / 3;
 				s.stroke(0);
-				s.strokeWeight(1);
+				s.strokeWeight(1*(size/(s.width/30)));
 				s.fill(0);
 				s.translate(x * size + size / 2, y * size + size / 2);
 				s.translate(0, iconSize / 2);
@@ -2568,7 +2586,7 @@ export default class Display {
 
 			function drawJuggernode(x, y, player, size, health, max, pColors) {
 				s.stroke(0);
-				s.strokeWeight(2);
+				s.strokeWeight(2*(size/(s.width/30)));
 				s.translate(x * size + size / 2, y * size + size / 2);
 				for (let angle = 0; angle < 360; angle = angle + 60) {
 					s.rotate(s.radians(angle));
@@ -2587,7 +2605,7 @@ export default class Display {
 			function drawBeamSplitter(x, y, player, size, health, max, pColors) {
 
 				s.stroke(0);
-				s.strokeWeight(2);
+				s.strokeWeight(2*(size/(s.width/30)));
 				s.fill(255);
 				let refy = y * size;
 
@@ -2603,7 +2621,6 @@ export default class Display {
 			}
 
 			function drawBallast(x, y, player, size, health, max, pColors) {
-				s.fill(0);
 				s.stroke(0);
 				s.strokeWeight(0);
 				s.fill(0);
@@ -2615,7 +2632,6 @@ export default class Display {
 				s.vertex(x * size + size / 4, y * size + size / 2);
 				s.vertex(x * size + size / 3, y * size + 3 * size / 4);
 				s.endShape();
-
 			}
 
 			function titleSequence(width, height, delay, scale) {
