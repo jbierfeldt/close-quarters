@@ -308,10 +308,10 @@ export default class Display {
 							//Trigger when the player presses confirm and save their username, move to the matchmaking phase
 							this.app.sendSetAlias(id);
 
-							if (!debug.enabled) {
+							/*if (!debug.enabled) {
 								s.fullscreen(true);
 								s.resizeCanvas(window.screen.height * 1.5, window.screen.height);
-							}
+							}*/
 							buttonMaker = 1;
 							buttonMakerTwo = 1;
 							this.app.setGamePhase("MATCHMAKING");
