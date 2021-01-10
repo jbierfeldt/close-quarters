@@ -32,6 +32,8 @@ export default class Display {
 		let sketch = (s) => {
 
 			//Variable declarations prior to the draw loop & setup
+
+			let dragging = 0;
 			let scroller = 0;
 			let titleFont;
 			let standardFont;
@@ -46,7 +48,7 @@ export default class Display {
 			let value = false;
 
 			//Button Declarations
-
+			let scrubber;
 			let bPhaseOne;
 			let bStartMatch;
 			let bPhaseThree;
@@ -194,6 +196,8 @@ export default class Display {
 					}
 
 					unitButtons = [];
+					scrubber = new Scrubber(wi * 7.15 / 10, he * 8.05 / 10, si * 2.5, si/2.2);
+
 					bLeaveMatch = new Buttoned(wi*2/7, he/4-si, wi*3/7, si * 2, "Leave Match", this.app.setGamePhase);
 					bFullScreen = new Buttoned(wi*2/7, he/4-si+he/8, wi*3/7, si * 2, "Toggle Full Screen", this.app.setGamePhase);
 					bCloseMenu = new Buttoned(wi*2/7, he/4-si+2*he/8, wi*3/7, si * 2, "Toggle Full Screen", this.app.setGamePhase);
@@ -312,6 +316,7 @@ export default class Display {
 								s.fullscreen(true);
 								s.resizeCanvas(window.screen.height * 1.5, window.screen.height);
 							}*/
+
 							buttonMaker = 1;
 							buttonMakerTwo = 1;
 							this.app.setGamePhase("MATCHMAKING");
@@ -1290,7 +1295,9 @@ export default class Display {
 				wi = s.width * sideBarGrowth;
 				si = wi / 30;
 				he = si * 20;
-				this.t = Object.keys(this.simulationDisplayTurn.tick).length;
+				//this.t = Object.keys(this.simulationDisplayTurn.tick).length;
+				let scrubDiff = ((7.15 * s.width/10) / 40);
+				this.t = 1 + s.int(scrubber.xx/scrubDiff);
 
 				drawGrid(wi, he, si, this.playerColors, 150);
 					for (let p = 0; p < 4; p = p + 1) {
@@ -1325,9 +1332,9 @@ export default class Display {
 								for (var m = 0; m < b[k][l].length; m = m + 1) {
 									let displayObject = this.simulationDisplayTurn.tick[this.t].gameObjects.get(b[k][l][m]);
 									if (displayObject !== undefined) {
-										if (displayObject.objCategory != "Projectiles") {
+										//if (displayObject.objCategory != "Projectiles") {
 											drawDisplayObject(displayObject, l, k, si, this.playerColors, animate);
-										}
+										//}
 
 									}
 								}
@@ -1508,7 +1515,27 @@ export default class Display {
 						s.mouseIsPressed = false;
 					}
 				}
+
+				if(sideBarMenu){ //Only trigger the drag bar once the screen has shrunk and review mode is officially underway.
+					if(dragging === 1){
+						scrubber.scrubberIsPressed();
+						scrubber.moveScrubber(s.mouseX);
+						//if(scrubber.isInRange(s.mouseX, s.mouseY) === false){
+						if(s.mouseIsDragged === false || s.mouseIsPressed === true){
+							dragging = 0;
+						}
+					}
+					else{
+						scrubber.isPressed = false;
+					}
+					if(s.mouseIsPressed && scrubber.isInRange(s.mouseX, s.mouseY)){
+						dragging = 1;
+					}
+					scrubber.drawScrubber();
+
+					//this.t = this.t
 				}
+		}
 				//End Review Phase
 				//Begin Optional Statistics Phase
 				else if (this.app.gamePhase === "STATS") {
@@ -1693,6 +1720,58 @@ export default class Display {
 
 
 			//FUNCTIONS BELOW THIS LINE
+			class Scrubber{
+				constructor(x, y, xlen, ylen) {
+					this.isPressed = false;
+					this.xx = x;
+					this.yy = y;
+					this.xlen = xlen;
+					this.ylen = ylen;
+				}
+				drawScrubber() {
+					s.stroke(0, 255);
+					s.fill(255,255)
+					s.strokeWeight(3);
+					s.rect(this.xx, this.yy, this.xlen, this.ylen);
+
+					if (this.isPressed === true) {
+						s.stroke(0, 255);
+						s.fill(155, 155, 155, 155);
+						s.rect(this.xx, this.yy, this.xlen, this.ylen);
+					}
+					s.strokeWeight(1);
+					s.textFont(standardFont);
+					s.fill(0);
+					s.textSize(si/2.2)
+					s.textAlign(s.CENTER);
+					s.text("TIMELINE", this.xx + this.xlen/2, this.yy + this.ylen/1.3);
+					s.textAlign(s.LEFT);
+				}
+				moveScrubber(mouseX){
+					//If loop with the min and max point of the bar.
+					if((mouseX - (this.xlen / 2)) <= 0){
+						this.xx = 0;
+					}
+					else if((mouseX - (this.xlen / 2)) > 7.15 * s.width/10){
+						this.xx = 7.15 * s.width / 10;
+					}
+					else{
+						this.xx = mouseX - (this.xlen / 2);
+					}
+				}
+				scrubberIsPressed(){
+					this.isPressed = true;
+				}
+				isInRange(x, y) {
+					if (x < (this.xx + this.xlen) && x > this.xx && y > this.yy && y < (this.yy + this.ylen)) {
+						return true;
+					}
+					else {
+						return false;
+					}
+				}
+			}
+
 			class Buttoned {
 				constructor(x, y, xlen, ylen, text, func) {
 					this.isPressed = false;
