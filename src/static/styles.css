@@ -1,0 +1,59 @@
+@font-face {
+    font-family: "Volt";
+    src: url(volt.ttf);
+}
+
+@font-face {
+    font-family: "ISB";
+    src: url(ISB.ttf);
+}
+
+.title {
+    font-family: 'Volt';
+}
+
+.stylized {
+    font-family: 'Volt';
+}
+
+body {
+    font-family: 'ISB';
+}
+
+.section {
+    padding: 0;
+}
+
+section.is-dark {
+    background-color: #363636;
+    color: #fff;
+}
+
+.card {
+    height: 100%;
+    display:flex;
+    flex-direction: column;
+}
+
+.card-footer {
+    margin-top: auto;
+}
+
+span.active-text {
+    color: red;
+}
+
+.sticky-pane {
+    position: -webkit-sticky; /* Safari */
+    position: sticky;
+    top: 5vh;
+}
+
+.instruction-pane .block {
+    display: flex;
+    justify-content: center;    
+}
+
+#pp-nav li .active span, .pp-slidesNav .active span {
+    background: white;
+}

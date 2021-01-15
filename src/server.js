@@ -38,6 +38,10 @@ app.get('/', function(request, response) {
 	response.sendFile(path.join(__dirname, 'index.html'));
 });
 
+app.get('/info', function(request, response) {
+	response.sendFile(path.join(__dirname, 'howtoplay.html'));
+});
+
 server.listen(port, () => {
 	console.log('Server listening at port %d', port);
 });
