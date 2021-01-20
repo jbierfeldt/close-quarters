@@ -1,5 +1,5 @@
 import { DEBUG, createID } from '../shared/utilities.js';
-const debug = new DEBUG(process.env.DEBUG, 0);
+const debug = new DEBUG(process.env.DEBUG, 3);
 
 export default class ClientController {
 

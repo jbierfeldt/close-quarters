@@ -32,7 +32,7 @@ export default class Display {
 		let sketch = (s) => {
 
 			//Variable declarations prior to the draw loop & setup
-
+			let newGame = 0;
 			let dragging = 0;
 			let scroller = 0;
 			let titleFont;
@@ -205,7 +205,8 @@ export default class Display {
 					bStatsPage = new Buttoned(wi*2/7, he/4-si+he/8, wi*3/7, si * 2, "Statistics", this.app.setGamePhase);
 					bPhaseOne = new Buttoned(wi - si * 5.55, si * 2.9, si * 5.1, si * 1.1, "Deploy Machines", this.app.setGamePhase);
 					bPhaseThree = new Buttoned(wi / 3.4 + submitShifterX, he / 1.65 - submitShifterY, si * 6.1, si * 1.1, "Review Board", this.app.setGamePhase);
-					bSubmit = new Buttoned(wi / 3.4 + submitShifterX, he / 1.815 - submitShifterY, si * 6.1, si * 1.1, "Submit Turn", this.app.sendSubmitTurn);
+					debug.log(3, submitShifterY);
+					bSubmit = new Buttoned(wi / 3.4 + submitShifterX, he / 1.815 - submitShifterY, si * 6.1, si * 1.1, "Submit Orders", this.app.sendSubmitTurn);
 					bBase = new Buttoned(wi / 2 + si - playerShifter, si * buttonScale * 2, wi / 2 - si * 2, si * buttonScale * 3, "Base", this.app.sendCreateBase);
 					//Unit Buttons Below
 					bRayTracer = new Buttoned(wi / 2 + si - playerShifter, si * 3, wi / 2 - si * 2, si * buttonScale, "RayTracer", this.app.sendCreateUnit);
@@ -387,6 +388,8 @@ export default class Display {
 					//he = 20 * he / 21;
 				}
 				else if (this.app.gamePhase === "LOBBY" && this.app.clientState !== 'SPECTATOR') {
+
+					newGame = 0;
 
 					if(bSubmit.submitted === true){
 						bSubmit.submitted = false;
@@ -583,6 +586,7 @@ export default class Display {
 					}
 				}
 				else if (this.app.gamePhase === "PLACEMENT" && this.app.clientState !== 'SPECTATOR' && this.app.clientState !== 'DEFEATED_PLAYER' && this.app.turnIsIn !== true) {
+
 					s.textFont(titleFont);
 					s.textSize(wi / 9);
 
@@ -598,6 +602,11 @@ export default class Display {
 						submitShifterX = wi / 2;
 						submitShifterY = he / 2;
 					}
+					if(newGame === 0){
+						buttonMaker = 1;
+						buttonMakerTwo = 1;
+					}
+					newGame = 1;
 
 					this.t = 1;
 					animate = 0;
@@ -686,7 +695,7 @@ export default class Display {
 						if (bSubmit.confirmed === false) {
 							s.fill(255);
 							s.stroke(0);
-							s.text("Submit Turn", bPhaseThree.xx + si * 3.05, bSubmit.yy + si / 1.25);
+							s.text("Submit Orders", bPhaseThree.xx + si * 3.05, bSubmit.yy + si / 1.25);
 							counter = 0;
 						}
 						else if (bSubmit.submitted === true) {
@@ -738,8 +747,7 @@ export default class Display {
 									unitButtons[i].buttonHasBeenPressed();
 									newButtonPressed = i;
 									//currentButtonPressed = i;
-									debug.log(3, currentButtonPressed);
-									debug.log(3, newButtonPressed);
+
 								}
 
 								if (currentButtonPressed != newButtonPressed) {
@@ -1516,7 +1524,9 @@ export default class Display {
 					}
 				}
 
-				if(sideBarMenu){ //Only trigger the drag bar once the screen has shrunk and review mode is officially underway.
+				if(sideBarMenu){
+					 //Only trigger the drag bar once the screen has shrunk and review mode is officially underway.
+					 //Draw the backdrop, grey line
 					if(dragging === 1){
 						scrubber.scrubberIsPressed();
 						scrubber.moveScrubber(s.mouseX);
@@ -1729,6 +1739,13 @@ export default class Display {
 					this.ylen = ylen;
 				}
 				drawScrubber() {
+					s.stroke(180, 255);
+					if(this.isPressed){
+						s.fill(180, 255);
+						s.triangle(0, this.yy + this.ylen/2, this.xlen/5, this.yy, this.xlen/5, this.yy + this.ylen);
+						s.triangle(7.15 * s.width/10 + this.xlen, this.yy + this.ylen/2, 7.15 * s.width/10 + this.xlen - this.xlen/5, this.yy, 7.15 * s.width/10 + this.xlen - this.xlen/5, this.yy + this.ylen);
+					}
+					s.line(0, this.yy + this.ylen/2, 7.15 * s.width/10 + this.xlen, this.yy + this.ylen/2);
 					s.stroke(0, 255);
 					s.fill(255,255)
 					s.strokeWeight(3);
@@ -2058,10 +2075,10 @@ export default class Display {
 
 							s.text("Damage Dealt: " + (hoverObject.damageDealt), hoverX * si + si * 1.3, hoverY * si + si * 3.1);
 							if (hoverObject.lifeSpan === 0) {
-								s.text("Turns Active: " + 1, hoverX * si + si * 1.3, hoverY * si + si * 3.6);
+								s.text("Rounds Active: " + 1, hoverX * si + si * 1.3, hoverY * si + si * 3.6);
 							}
 							else {
-								s.text("Turns Active: " + hoverObject.lifeSpan, hoverX * si + si * 1.3, hoverY * si + si * 3.6);
+								s.text("Rounds Active: " + hoverObject.lifeSpan, hoverX * si + si * 1.3, hoverY * si + si * 3.6);
 							}
 						}
 						s.translate(si * 5 * transX, si * 4 * transY);
