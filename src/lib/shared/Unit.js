@@ -708,7 +708,7 @@ export class Resonator extends Unit {
 		4: [[-1,0],[0,-1],[-1,-1]]
 	}
 
-	static description = "The Resonator is a resiliant, catapult-style machine that delivers severe damage in an area once reaching its destination. The sheer power of the attack causes erratic projectile fire that travels in a random direction and hits a random number of spaces away.";
+	static description = "The Resonator is a resiliant, area-of-effect damage dealing, catapult-style machine that delivers severe damage in an area once reaching its destination. The sheer power of the attack causes erratic projectile fire that travels in a random direction and hits a random number of spaces away.";
 
 	static createFromSerialized (props) {
 		return new Resonator(props.player, props.health, props.firing, props.id, props.collidedWith, props.lifeSpan, props.damageDealt)
@@ -794,7 +794,7 @@ export class Integrator extends Unit {
 		4: [[-2,-1],[1,-2],[-1,-2],[-2,1]]
 	}
 
-	static description = "The Integrator is a high-potential machine that gains strength with each turn it remains active. Its beams fires less frequently than other units, but cover four paths with total certainty.";
+	static description = "The Integrator is a high-potential machine that gains strength with each round it remains active. Its beams fires less frequently than other units, but cover four paths with total certainty.";
 
 	static createFromSerialized (props) {
 		return new Integrator(props.player, props.health, props.firing, props.id, props.collidedWith, props.lifeSpan, props.damageDealt);
