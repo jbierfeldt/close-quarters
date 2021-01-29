@@ -57,3 +57,29 @@ span.active-text {
 #pp-nav li .active span, .pp-slidesNav .active span {
     background: white;
 }
+
+section.video .hero-head {
+    background-color: #363636;
+    z-index: 1;
+}
+
+section.video .hero-body .container {
+    background-color: #36363690;
+    padding: 2em;
+    border-radius: 4px;
+}
+
+section.video .hero-body .title {
+    font-size: 3rem;
+}
+
+section.video .hero-footer {
+    z-index: 1;
+    text-align: center;
+    margin-bottom: 2em;
+}
+
+.block img {
+    max-width: 100%;
+    height: auto;
+}

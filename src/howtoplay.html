@@ -16,12 +16,17 @@
 <body>
     <div id="pagepiling">
         <div class="section">
-            <section class="hero is-dark is-fullheight">
+            <section class="hero is-dark is-fullheight video">
                 <!-- Hero head: will stick at the top -->
+                <div class="hero-video">
+                    <video playsinline="" muted="" autoplay="" loop="" poster="/static/media/poster.png" id="bgvid">
+                        <source src="/static/media/cc_promo_video.mp4" type="video/mp4">
+                    </video>
+                </div>
                 <div class="hero-head">
                     <header class="navbar">
                         <div class="container">
-                            <div class="navbar-brand">
+                            <!-- <div class="navbar-brand">
                                 <a class="navbar-item stylized">
                                     Close Quarters
                                 </a>
@@ -30,14 +35,14 @@
                                     <span></span>
                                     <span></span>
                                 </span>
-                            </div>
+                            </div> -->
                             <div id="navbarMenuHeroC" class="navbar-menu">
                                 <div class="navbar-end">
-                                    <a class="navbar-item is-active">
+                                    <a class="navbar-item section-link" data-target="how-to" href="#how-to">
                                         How to Play
                                     </a>
-                                    <a class="navbar-item">
-                                        About us
+                                    <a class="navbar-item" href="#units">
+                                        Units
                                     </a>
                                     <span class="navbar-item">
                                         <a class="button is-dark is-inverted">
@@ -64,9 +69,13 @@
                         </h2>
                     </div>
                 </div>
+
+                <div class="hero-footer">
+                    Scroll down to learn more
+                </div>
             </section>
         </div>
-        <div class="section pp-scrollable">
+        <div class="section pp-scrollable" id="how-to">
             <section class="hero is-dark is-fullheight">
                 <!-- Hero head: will stick at the top -->
                 <div class="hero-head">
@@ -87,7 +96,7 @@
                                         In Close Quarters, the main goal is simple: Be the last player standing. The first player to destroy all of the power cores of the other players wins!
                                     </div>
                                     <div class="block">
-                                        <img src="static/screens/action.png">
+                                        <div class="block-img"><img src="static/screens/action.png"></div>
                                     </div>    
                                     <div class="block">
                                         To do that, you'll spend each round buying and placing various units in your quarter of the board. You want to deploy units in such a way that you protect your own power cores, while also dealing maximum damage to those of your enemies.
@@ -128,7 +137,7 @@
                                         When the game first starts, the first thing you'll do is place both of your power cores somewhere in your quarter of the board. (Hint: You need to protect your cores as best you can from enemy fire, so it's best to try to put them away from the center of the action.)
                                     </div>
                                     <div class="block">
-                                        <img src="static/screens/phase1-base.png">
+                                        <div class="block-img"><img src="static/screens/phase1-base.png"></div>
                                     </div>
                                     <div class="block">
                                         After placing your cores, you'll start placing units. Each unit has a different health, cost, and method of doing damage. You can find the health and cost in the unit table. To read more about the unit's method, click on the unit to pull up its description. You can also check out the units section of this site.
@@ -137,19 +146,19 @@
                                         To place a unit on the board, click it on the table, mouse your mouse over the tile of the board you'd like to place it, and then click again. If you have enough credits to purchase that unit, it'll show up on the board.
                                     </div>
                                     <div class="block">
-                                        <img src="static/screens/unitlist.png">
+                                        <div class="block-img"><img src="static/screens/unitlist.png"></div>
                                     </div>
                                     <div class="block">
                                         The number of credits that you currently have is indicated by the Volt symbol underneath the "Submit Orders" and "Review Board" buttons. You start the game with 7 credits, and units cost either 1, 2, or 3 credits. You'll automatically receive 5 credits per round, and you can earn even more by doing large amounts of damage to enemy bases. Any credits that you don't spend during a placement phase automatically roll over to the next round.
                                     </div>
                                     <div class="block">
-                                        <img src="static/screens/credits.png">
+                                        <div class="block-img"><img src="static/screens/credits.png"></div>
                                     </div>
                                     <div class="block">
                                         While you are placing your units, you'll be able to see the state of the board as it was at the end of the last round, but you won't be able to see what the other players are currently doing. Likewise, they will not be able to see what you are currently doing. But you'll find out soon! Once you have finished placing your units, press the "submit orders" button. Make sure you are satisfied with your placements, however, because once you submit, your orders are final!
                                     </div>
                                     <div class="block">
-                                        <img src="static/screens/makingturn.png">
+                                        <div class="block-img"><img src="static/screens/makingturn.png"></div>
                                     </div>
                                     <div class="block">
                                         Once all players have submitted their orders, the game will automatically move to the next phase: the simulation phase.
@@ -189,7 +198,7 @@
                                         watch the action play out. Sit back and relax, there's nothing to do here but watch and see what havok your units are wrecking (or what havok is being wrecked on yours!)
                                     </div>
                                     <div class="block">
-                                        <img src="static/screens/phase2.gif">
+                                        <div class="block-img"><img src="static/screens/phase2.gif"></div>
                                     </div>
                                     <div class="block">
                                         Action happening too fast for you to follow? Don't worry, because you'll get a chance to review it again and inspect in closer detail in the next phase: the review phase.
@@ -230,7 +239,7 @@
                                         unit placement for the next round.
                                     </div>
                                     <div class="block">
-                                        <img src="static/screens/phase3.png">
+                                        <div class="block-img"><img src="static/screens/phase3.png"></div>
                                     </div>
                                     <div class="block">
                                         A scrolling display at the bottom of the screen informs you about how much damage your machines dealt, how many machines you destroyed, how many machines you lost, and other useful statistics.
@@ -239,7 +248,7 @@
                                         Missed something during the action and want to review? Click and drag the "timeline" bar back and forth to scrub through the previous round to get a better look at what exactly happened.
                                     </div>
                                     <div class="block">
-                                        <img src="static/screens/timeline.png">
+                                        <div class="block-img"><img src="static/screens/timeline.png"></div>
                                     </div>
                                     <div class="block">
                                         When you are done reviewing, click "Deploy Machines" to return to the placement phase and start the whole process anew. You can toggle back and forth between the review and placement phase freely by pressing the corresponding buttons.
@@ -252,7 +261,7 @@
             </section>
         </div>
 
-        <div class="section pp-scrollable">
+        <div class="section pp-scrollable" id="units">
             <section class="hero is-dark is-fullheight">
                 <div class="hero-body">
                     <div class="container">
@@ -642,7 +651,9 @@
     crossorigin="anonymous"></script>
 <script>
     $(document).ready(function () {
-        $('#pagepiling').pagepiling();
+        $('#pagepiling').pagepiling({
+            anchors: ['home', 'how-to', 'blank1', 'blank2', 'blank3', 'units']
+        });
     });
 </script>
 
