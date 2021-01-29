@@ -34,11 +34,11 @@ app.set('port', port);
 app.use('/static', express.static(__dirname + '/static'));
 
 // Routing
-app.get('/', function(request, response) {
+app.get('/play', function(request, response) {
 	response.sendFile(path.join(__dirname, 'index.html'));
 });
 
-app.get('/info', function(request, response) {
+app.get('/', function(request, response) {
 	response.sendFile(path.join(__dirname, 'howtoplay.html'));
 });
 
