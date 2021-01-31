@@ -287,7 +287,6 @@ export default class Display {
 					s.textAlign(s.LEFT);
 					s.textSize(wi / 9);
 					if(id.length > 0 && s.keyIsPressed){
-
 						if(s.keyCode === 13){
 							this.app.sendSetAlias(id);
 
@@ -1304,7 +1303,8 @@ export default class Display {
 				si = wi / 30;
 				he = si * 20;
 				//this.t = Object.keys(this.simulationDisplayTurn.tick).length;
-				let scrubDiff = ((7.15 * s.width/10) / 40);
+				let scrubDiff = ((7.15 * s.width/10) / 99);
+				//scrubber.xx = (7.15 * s.width/10);
 				this.t = 1 + s.int(scrubber.xx/scrubDiff);
 
 				drawGrid(wi, he, si, this.playerColors, 150);
@@ -1340,9 +1340,9 @@ export default class Display {
 								for (var m = 0; m < b[k][l].length; m = m + 1) {
 									let displayObject = this.simulationDisplayTurn.tick[this.t].gameObjects.get(b[k][l][m]);
 									if (displayObject !== undefined) {
-										//if (displayObject.objCategory != "Projectiles") {
+										if (displayObject.objCategory != "Projectiles" || this.t < 100) {
 											drawDisplayObject(displayObject, l, k, si, this.playerColors, animate);
-										//}
+										}
 
 									}
 								}
