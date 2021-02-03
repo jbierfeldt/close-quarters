@@ -358,12 +358,13 @@ export default class Display {
 					else if(s.mouseX < (3 * wi / 4) && s.mouseX > (wi / 4) && s.mouseY > (he / 10 + (3) * 8 * he / 60) && s.mouseY < (he / 10 + (4) * 8 * he / 60)){
 						s.rect(wi / 4, (he / 10 + (3) * 8 * he / 60), wi / 2, (1) * 8 * he / 60);
 						if(s.mouseIsPressed){
+							window.open('http://www.closequarters.xyz/#how-to', '_blank');
 						}
 					}
 					else if(s.mouseX < (3 * wi / 4) && s.mouseX > (wi / 4) && s.mouseY > (he / 10 + (4) * 8 * he / 60) && s.mouseY < (he / 10 + (5) * 8 * he / 60)){
 						s.rect(wi / 4, (he / 10 + (4) * 8 * he / 60), wi / 2, (1) * 8 * he / 60);
 						if(s.mouseIsPressed){
-						//	this.app.sendJoinOpenGame();
+							window.open('http://www.elixarcade.com', '_blank');
 						}
 					}
 					let gameID = input.value();
@@ -1990,16 +1991,16 @@ export default class Display {
 
 				s.text("How To Play", width / 2, 11.7 * height / 20);
 
-				s.text("Wesley Arcade", width / 2, 14.4 * height / 20);
+				s.text("ElixArcade", width / 2, 14.4 * height / 20);
 
-				s.text(" Players Online", width / 2, 17.1 * height / 20);
+				s.text("Players Online", width / 2, 17.1 * height / 20);
 
 				s.translate(-width/120, -height/120);
 				s.fill(255, 255);
 				s.textSize(size * 1.6);
 				s.text("Matchmaking", width / 2, height / 13);
 				s.textSize(size * 1.2);
-				s.text("Enter Game Code:", width * 2.3 / 5, 3.69 * height / 20);
+				s.text("Enter Join Code:", width * 2.3 / 5, 3.69 * height / 20);
 
 				s.text("Create New Lobby", width / 2, 6.37 * height / 20);
 
@@ -2007,9 +2008,9 @@ export default class Display {
 
 				s.text("How To Play", width / 2, 11.7 * height / 20);
 
-				s.text("Wesley Arcade", width / 2, 14.4 * height / 20);
+				s.text("ElixArcade", width / 2, 14.4 * height / 20);
 
-				s.text(" Players Online: " + data.onlinePlayerCount, width / 2, 17.1 * height / 20);
+				s.text("Players Online: " + data.onlinePlayerCount, width / 2, 17.1 * height / 20);
 				//s.textAlign(s.LEFT);
 				//s.translate(0, -height/20);
 			}
