@@ -83,3 +83,7 @@ section.video .hero-footer {
     max-width: 100%;
     height: auto;
 }
+
+.block a {
+    color: #3273dc !important;
+}
