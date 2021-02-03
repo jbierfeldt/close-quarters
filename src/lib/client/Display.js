@@ -1982,7 +1982,7 @@ export default class Display {
 				s.textSize(size * 1.2);
 				s.translate()
 
-				s.text("Enter Game Code:", width * 2.3 / 5, 3.69 * height / 20);
+				s.text("Enter Join Code:", width * 2.3 / 5, 3.69 * height / 20);
 
 				s.text("Create New Lobby", width / 2, 6.37 * height / 20);
 
