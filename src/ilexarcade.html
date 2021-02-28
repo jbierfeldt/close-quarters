@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>ILEX ARCADE</title>
+    <meta name="description" content="A return to the ">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pagePiling.js/1.5.6/jquery.pagepiling.min.css"
+        integrity="sha512-W9OWS8dgpQBw5Hb+tbMto1BMsHvYOXT/AFBGvASCPUJleaEdpOAN5lzgj9RrTbo3YrlR+m9xdOBccp8F+SFyQg=="
+        crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.1/css/bulma.min.css">
+    <link rel="stylesheet" href="static/styles.css">
+</head>
+
+<body>
+    <div id="pagepiling">
+        <div class="section">
+            <section class="hero is-dark is-fullheight video">
+                <!-- Hero head: will stick at the top -->
+                <div class="hero-video">
+                    <video playsinline="" muted="" autoplay="" loop="" poster="static/media/poster.png" id="bgvid">
+                        <source src="static/StarStream.mp4" type="video/mp4">
+                    </video>
+                </div>
+                <div class="hero-head">
+                    <header class="navbar">
+                        <div class="container">
+                            <!-- <div class="navbar-brand">
+                                <a class="navbar-item stylized">
+                                    Close Quarters
+                                </a>
+                                <span class="navbar-burger" data-target="navbarMenuHeroC">
+                                    <span></span>
+                                    <span></span>
+                                    <span></span>
+                                </span>
+                            </div> -->
+                            <div id="navbarMenuHeroC" class="navbar-menu">
+                                <div class="navbar-end">
+                                  <span class="navbar-item">
+                                      <a class="button is-dark is-inverted" href="#games">
+                                          <span class="icon">
+                                              <i class="fas fa-atom"></i>
+                                          </span>
+                                          <span>Games</span>
+                                      </a>
+                                  </span>
+
+                                    <a class="navbar-item" href="/play">
+                                        Mission
+                                    </a>
+                                    <a class="navbar-item section-link" data-target="how-to" href="#how-to">
+                                        Contact
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </header>
+                </div>
+
+                <!-- Hero content: will be in the middle -->
+                <div class="hero-body">
+                    <div class="container has-text-centered">
+                        <h1 class="title">
+                            ILEX ARCADE
+                        </h1>
+                        <h2 class="subtitle">
+                            A return to...
+                        </h2>
+                    </div>
+                </div>
+
+            </section>
+        </div>
+        <!-- <div class="section pp-scrollable" id="how-to">
+            <section class="hero is-dark is-fullheight">
+            
+                <div class="hero-head">
+                    <h1 class="title">
+                        How to Play
+                    </h1>
+                </div>
+
+
+                <div class="hero-body">
+                    <div class="container">
+                        <div class="columns">
+                            <div class="column is-one-quarter is-hidden-mobile">
+                            </div>
+                            <div class="column is-three-quarters instruction-pane">
+                                <div class="box">
+                                    <div class="block">
+                                        In Close Quarters, the objective is simple: Be the last player standing. The first player to destroy all of the power cores of the other players wins!
+                                    </div>
+                                    <div class="block">
+                                        <div class="block-img"><img src="static/screens/action.png"></div>
+                                    </div>
+                                    <div class="block">
+                                        To do that, you'll spend each round buying and placing various units in your quadrant of the board. You want to deploy units in a way that protects your own power cores, while also dealing maximum damage to those of your enemies.
+                                    </div>
+                                    <div class="block">
+                                        The action of the game takes place in three phases: A placement phase, a simulation phase, and a review phase.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div> -->
+        <div class="section pp-scrollable">
+            <section class="hero is-dark is-fullheight">
+                <!-- Hero head: will stick at the top -->
+                <div class="hero-head">
+                    <h1 class="title">
+                        How to Play
+                    </h1>
+                </div>
+
+                <!-- Hero content: will be in the middle -->
+                <div class="hero-body">
+                    <div class="container">
+                        <div class="columns">
+                            <div class="column is-one-quarter is-hidden-mobile">
+                                <div class="box sticky-pane">
+                                    <div class="block"><span class="active-text">1. Place units</span></div>
+                                    <div class="block">2. Watch simulation</div>
+                                    <div class="block">3. Review board and repeat</div>
+                                </div>
+                            </div>
+                            <div class="column is-three-quarters instruction-pane">
+                                <div class="box">
+                                    <div class="block">
+                                        When the game starts, the first thing you will do is place both of your power cores somewhere in your quadrant. (Hint: You need to protect your cores as best you can from enemy fire, so it's best to try to put them away from the center of the board)
+                                    </div>
+                                    <div class="block">
+                                        <div class="block-img"><img src="static/screens/phase1-base.png"></div>
+                                    </div>
+                                    <div class="block">
+                                        <div>After placing your cores, you'll start placing units. Each unit has a different health, cost, and method of doing damage. You can find the health and cost in the unit table. To read more about the unit's method, click on the unit to pull up its description. You can also check out the <a href="#games">units section</a> of this site.</div>
+                                    </div>
+                                    <div class="block">
+                                        To place a unit on the board, click it on the table, move your mouse over the tile of the board you'd like to place it on, and then click again. If you have enough credits to purchase that unit, it'll show up on the board. While hovering a potential unit placement over the board, you'll see yellow squares highlighting the potential attack paths of that unit, allowing you to easily coordinate your placements to do maximum damage to your opponents.
+                                    </div>
+                                    <div class="block">
+                                        <div class="block-img"><img src="static/screens/unitlist.png"></div>
+                                    </div>
+                                    <div class="block">
+                                        The number of credits that you currently have is indicated by the Volt symbol underneath the "Submit Orders" and "Review Board" buttons. You start the game with 7 credits, and units cost either 1, 2, or 3 credits. You'll automatically receive 5 credits per round, and you can earn 1 credit for every 200 damage dealt to other players' power cores in a given turn. Any credits that you don't spend during a placement phase automatically roll over to the next round.
+                                    </div>
+                                    <div class="block">
+                                        <div class="block-img"><img src="static/screens/credits.png"></div>
+                                    </div>
+                                    <div class="block">
+                                        While you are placing your units, you'll be able to see the state of the board as it was at the end of the last round, but you won't be able to see what the other players are currently doing. Likewise, they will not be able to see what you are currently doing. But you'll find out soon! Once you have finished placing your units, press the "submit orders" button. Make sure you are satisfied with your placements, however, because once you submit, your orders are final.
+                                    </div>
+                                    <div class="block">
+                                        <div class="block-img"><img src="static/screens/makingturn.png"></div>
+                                    </div>
+                                    <div class="block">
+                                        Once all players have submitted their orders, the game will automatically move to the next phase: the simulation phase.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <div class="section pp-scrollable">
+            <section class="hero is-dark is-fullheight">
+                <!-- Hero head: will stick at the top -->
+                <div class="hero-head">
+                    <h1 class="title">
+                        How to Play
+                    </h1>
+                </div>
+
+                <!-- Hero content: will be in the middle -->
+                <div class="hero-body">
+                    <div class="container">
+                        <div class="columns">
+                            <div class="column is-one-quarter is-hidden-mobile">
+                                <div class="box sticky-pane">
+                                    <div class="block">1. Place units</div>
+                                    <div class="block"><span class="active-text">2. Watch simulation</span></div>
+                                    <div class="block">3. Review board and repeat</div>
+                                </div>
+                            </div>
+                            <div class="column is-three-quarters instruction-pane">
+                                <div class="box">
+                                    <div class="block">
+                                        In the second phase of the game, after everyone has submitted their orders, you will
+                                        watch the action play out. Sit back and relax, there's nothing to do here but watch and see what havok your units are wreaking.
+                                    </div>
+                                    <div class="block">
+                                        <div class="block-img"><img src="static/screens/phase2.gif"></div>
+                                    </div>
+                                    <div class="block">
+                                        Action happening too fast for you to follow? Don't worry, because you'll get a chance to review it again and inspect in closer detail in the next phase: the review phase.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <div class="section pp-scrollable">
+            <section class="hero is-dark is-fullheight">
+                <!-- Hero head: will stick at the top -->
+                <div class="hero-head">
+                    <h1 class="title">
+                        How to Play
+                    </h1>
+                </div>
+
+                <!-- Hero content: will be in the middle -->
+                <div class="hero-body">
+                    <div class="container">
+                        <div class="columns">
+                            <div class="column is-one-quarter is-hidden-mobile">
+                                <div class="box sticky-pane">
+                                    <div class="block">1. Place units</div>
+                                    <div class="block">2. Watch simulation</div>
+                                    <div class="block"><span class="active-text">3. Review board and repeat</span></div>
+                                </div>
+                            </div>
+                            <div class="column is-three-quarters instruction-pane">
+                                <div class="box">
+                                    <div class="block">
+                                        In the third phase of the game, you get on opportunity to review the board,
+                                        see what happened during the last round, and use that information to inform your
+                                        unit placement for the next round.
+                                    </div>
+                                    <div class="block">
+                                        <div class="block-img"><img src="static/screens/phase3.png"></div>
+                                    </div>
+                                    <div class="block">
+                                        A scrolling display at the bottom of the screen informs you about how much damage your machines dealt, how many machines you destroyed, how many machines you lost, and other useful statistics.
+                                    </div>
+                                    <div class="block">
+                                        Missed something during the action and want to review? Click and drag the "timeline" bar back and forth to scrub through the previous round to get a better look at what exactly happened.
+                                    </div>
+                                    <div class="block">
+                                        <div class="block-img"><img src="static/screens/timeline.png"></div>
+                                    </div>
+                                    <div class="block">
+                                        When you are done reviewing, click "Deploy Machines" to return to the placement phase and start the whole process anew. You can toggle back and forth between the review and placement phase freely by pressing the corresponding buttons.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <div class="section pp-scrollable" id="games">
+            <section class="hero is-dark is-fullheight">
+                <div class="hero-body">
+                    <div class="container">
+                        <div class="columns is-mobile is-multiline">
+                            <div class="column is-full-mobile is-one-half-tablet is-three-fifths-desktop is-offset-one-fifth-desktop">
+                                <div class="card">
+                                    <!-- <header class="card-header">
+                                        <p class="card-header-title">
+                                          Ray Tracer
+                                        </p>
+                                    </header> -->
+                                    <div class="card-image">
+                                        <figure class="image is-4by1">
+                                            <img src="static/CQLogoTwo.png"
+                                                alt="CQLogo">
+                                        </figure>
+                                    </div>
+                                    <div class="card-content">
+                                        <p class="description">
+Close Quarters is a multiplayer strategy game....                                       </p>
+                                    </div>
+                                    <footer class="card-footer">
+                                        <p class="card-footer-item">
+                                            <span>
+                                                Players: 1-4
+                                            </span>
+                                        </p>
+                                        <p class="card-footer-item">
+                                            <span>
+                                                Average Match Length: 20 Minutes
+                                            </span>
+                                        </p>
+                                        <!-- <p class="card-footer-item">
+                                            <span>
+                                                Damage: 10
+                                            </span>
+                                        </p> -->
+                                    </footer>
+                                </div>
+                            </div>
+
+
+                            <div class="column is-full-mobile is-one-half-tablet is-three-fifths-desktop is-offset-one-fifth-desktop">
+                                <div class="card">
+                                    <!-- <header class="card-header">
+                                        <p class="card-header-title">
+                                          Ray Tracer
+                                        </p>
+                                    </header> -->
+                                    <div class="card-image">
+                                        <figure class="image is-4by1">
+                                            <img src="static/SingularityLogo.png"
+                                                alt="CQLogo">
+                                        </figure>
+                                    </div>
+                                    <div class="card-content">
+                                        <p class="description">
+  Close Quarters is a multiplayer strategy game....                                       </p>
+                                    </div>
+                                    <footer class="card-footer">
+                                        <p class="card-footer-item">
+                                            <span>
+                                                Players: 1-4
+                                            </span>
+                                        </p>
+                                        <p class="card-footer-item">
+                                            <span>
+                                                Average Match Length: 20 Minutes
+                                            </span>
+                                        </p>
+                                        <!-- <p class="card-footer-item">
+                                            <span>
+                                                Damage: 10
+                                            </span>
+                                        </p> -->
+                                    </footer>
+                                </div>
+                            </div>
+
+
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+</body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"
+    integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg=="
+    crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pagePiling.js/1.5.6/jquery.pagepiling.min.js"
+    integrity="sha512-FcXc9c211aHVJEHxoj2fNFeT8+wUESf/4mUDIR7c31ccLF3Y6m+n+Wsoq4dp2sCnEEDVmjhuXX6TfYNJO6AG6A=="
+    crossorigin="anonymous"></script>
+<script>
+    $(document).ready(function () {
+        $('#pagepiling').pagepiling({
+            anchors: ['home', 'how-to', 'blank1', 'blank2', 'blank3', 'games']
+        });
+    });
+</script>
+
+</html>
