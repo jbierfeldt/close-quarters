@@ -1993,7 +1993,7 @@ export default class Display {
 
 				s.text("ElixArcade", width / 2, 14.4 * height / 20);
 
-				s.text("Players Online", width / 2, 17.1 * height / 20);
+				s.text("Feedback Form", width / 2, 17.1 * height / 20);
 
 				s.translate(-width/120, -height/120);
 				s.fill(255, 255);
@@ -2010,7 +2010,8 @@ export default class Display {
 
 				s.text("ElixArcade", width / 2, 14.4 * height / 20);
 
-				s.text("Players Online: " + data.onlinePlayerCount, width / 2, 17.1 * height / 20);
+				//s.text("Players Online: " + data.onlinePlayerCount, width / 2, 17.1 * height / 20);
+				s.text("Feedback Form", width / 2, 17.1 * height / 20);
 				//s.textAlign(s.LEFT);
 				//s.translate(0, -height/20);
 			}
