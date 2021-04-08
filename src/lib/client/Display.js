@@ -3,12 +3,14 @@ import p5 from 'p5';
 import * as Units from '../shared/Unit.js';
 import * as Projectiles from '../shared/Projectile.js';
 
+//GENERAL CLEANUP - IN PROGRESS
+// tempConfig sizes the frame, updated upon user action in the menu.
 const tempConfig = {
 	canvasX: 1000,
 	canvasY: 666,
 	size: 33.33333
 }
-//GENERAL CLEANUP
+
 export default class Display {
 
 	constructor(app = undefined, engine = undefined, stage = new Object) {
@@ -129,18 +131,23 @@ export default class Display {
 
 			//Create the canvas based on the size of the user window
 			s.setup = () => {
-				s.createCanvas(tempConfig.canvasX, tempConfig.canvasY);
+				let cnv = s.createCanvas(tempConfig.canvasX, tempConfig.canvasY);
+				let cnvX = (s.windowWidth-tempConfig.canvasX)/2;
+				let cnvY = (s.windowHeight-tempConfig.canvasY)/2;
+				cnv.position(cnvX,cnvY);
 				s.frameRate(60);
-				//input = s.createInput();
+
 				input = s.createInput();
 				alias = s.createInput();
-				s.cursor(s.CROSS); //Tested but keep an eye on this.
+
+				s.cursor(s.CROSS); //Make a more appealing cursor for users
 
 
 			}
 
 			//The draw function loops continuously while the sketch is active
-			//Different screens of the game are portioned off using trigger variables and user input to move between them
+			//Different screens of the game are portioned off using trigger variables and user input affects game-level variables move between them
+
 			s.draw = () => {
 
 				//Ensure that the input boxes do not display by default
@@ -275,8 +282,8 @@ export default class Display {
 							s.text("Confirm", s.width / 2.2, s.height / 1.15);
 						}
 							alias.style('display', 'block');
-							alias.position(3.1 * wi / 5 , 5.7*s.height/7);
-							alias.size(si * 5, he / 15);
+							alias.position(3.5 * s.width / 5 , 5.95*s.height/7);
+							alias.size(si * 5, s.height / 15);
 							alias.style('font-size', '28px');
 							alias.style('background-color', 'black');
 							alias.style('border-color', '#d382f0');
@@ -329,7 +336,7 @@ export default class Display {
 					displayMatchmaking(this.app.matchmakingData, wi, he, si, this.delay, this.playerColors);
 					//Matchmaking Phase where users can learn more about the game or enter into a lobby
 					input.style('display', 'block');
-					input.position(3 * wi / 5 + si * 1.6, he / 6.7);
+					input.position(3.35 * wi / 5 + si * 1.6, he / 5.7);
 					input.size(si * 2.6, he / 20);
 					input.style('font-size', '28px');
 					input.style('background-color', 'transparent');
@@ -1914,10 +1921,10 @@ export default class Display {
 				}
 			}
 			function displayMatchmaking(data, width, height, size, delay, pColors) {
-				s.background(0);
+				s.background(255, 0, 128);
 				//s.translate(0, height/20);
 				let lightningTrigger = s.int(delay);
-				s.tint(255, 0, 128, 70 + (1 + s.cos(delay / 3.5)) * 60);
+				s.tint(152, 255, 152, 90 + (1 + s.cos(delay / 5.5)) * 60);
 				s.image(imgTwo, 0, 0, height * 1.6, height);
 				s.noTint();
 				//GLOW Begins
@@ -1938,10 +1945,10 @@ export default class Display {
 				}
 }*/
 
-        s.strokeWeight(15);
+        s.strokeWeight(10);
 
- 				s.translate(width/120, height/120);
-				s.stroke(0,180);
+ 				s.translate(width / 170, height / 170);
+				s.stroke(0,255);
  				s.noFill();
  				s.rect(width / 4, height / 10, width / 2, 8 * height / 10);
 			//	s.line(width / 4 - width / 15, height / 10 - 4 * height / 60 + (1 * 2) * 4 * height / 60, width / 4 - width / 15, height / 10 - 4 * height / 60 + (6 * 2) * 4 * height / 60);
@@ -1954,7 +1961,7 @@ export default class Display {
 //
  					s.line(width / 4, height / 10 + (r) * 8 * height / 60, 3 * width / 4, height / 10 + (r) * 8 * height / 60);
 			}
-				s.translate(-width/120, -height/120);
+				s.translate(-width / 170, -height / 170);
 
 				s.strokeWeight(2);
 				s.stroke(255);
@@ -1975,13 +1982,12 @@ export default class Display {
 				s.stroke(0);
 				s.fill(255, 255);
 				s.textAlign(s.CENTER);
-				s.translate(width/120, height/120);
+				s.translate(width / 190, height / 190);
 				s.stroke(0);
 				s.textSize(size * 1.6);
 				s.fill(0, 255);
 				s.text("Matchmaking", width / 2, height / 13);
 				s.textSize(size * 1.2);
-				s.translate()
 
 				s.text("Enter Join Code:", width * 2.3 / 5, 3.69 * height / 20);
 
@@ -1995,7 +2001,7 @@ export default class Display {
 
 				s.text("Feedback Form", width / 2, 17.1 * height / 20);
 
-				s.translate(-width/120, -height/120);
+				s.translate(-width / 190, -height / 190);
 				s.fill(255, 255);
 				s.textSize(size * 1.6);
 				s.text("Matchmaking", width / 2, height / 13);
@@ -2735,11 +2741,9 @@ export default class Display {
 			}
 
 			function titleSequence(width, height, delay, scale) {
-				//Add purple lightning
 				delay = delay / 1.2;
 				s.background(0);
 				s.translate(width / 2, height / 2);
-				s.noStroke();
 				s.noFill();
 				s.stroke(176, 196, 243, 255);
 				s.strokeWeight(2);
@@ -2754,7 +2758,6 @@ export default class Display {
 					}
 				}
 
-
 				for (var angle = delay * 3; angle < delay * 3 + 360; angle = angle + 30) {
 					let titleX = (height / 3 + 90 * s.cos(3.14 * s.radians(delay))) * s.cos(s.radians(angle)) - 0;
 					let titleY = (height / 3 + 2 * s.tan(3.14 * s.radians(delay / 20))) * s.sin(s.radians(angle)) + 0;
@@ -2762,6 +2765,7 @@ export default class Display {
 					for (let o = 255; o > 0; o = o - 5) {
 						s.fill(152, 255, 152, o);
 						s.ellipse(titleX * 1.2, titleY, height / 12 - o * height / (255 * 12), height / 12 - o * height / (255 * 12));
+
 					}
 				}
 				s.translate(-width / 2, -height / 2);
