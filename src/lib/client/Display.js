@@ -116,7 +116,6 @@ export default class Display {
 			s.preload = () => {
 				titleFont = s.loadFont('static/volt.ttf');
 				standardFont = s.loadFont('static/ISB.ttf');
-				//img = s.loadImage('static/CCBolt.png');
 				imgTwo = s.loadImage('static/CBoard3.png');
 				imgThree = s.loadImage('static/P1_Core.png');
 				imgFour = s.loadImage('static/P2_Core.png');
@@ -135,6 +134,7 @@ export default class Display {
 				let cnvX = (s.windowWidth-tempConfig.canvasX)/2;
 				let cnvY = (s.windowHeight-tempConfig.canvasY)/2;
 				cnv.position(cnvX,cnvY);
+				
 				s.frameRate(60);
 
 				input = s.createInput();
@@ -159,7 +159,7 @@ export default class Display {
 				he = s.height; //The height of the canvas
 				si = s.width / 30; //the side length of each cell in canvas
 
-				//The below variables track the x and y of the mouse in order to respond to user movement
+				//The below variables track the x and y of the mouse in order to respond to user movement, based on the game grid.
 				hoverX = s.int(s.mouseX / si);
 				hoverY = s.int(s.mouseY / si);
 
@@ -276,14 +276,14 @@ export default class Display {
 						s.fill(210, 130, 240, 201);
 
 						if(id.length === 0){
-							s.text("Enter An Alias:", s.width / 2.5, s.height / 1.15);
+							s.text("Enter An Alias:", wi / 2.5, he/ 1.15);
 						}
 						else{
-							s.text("Confirm", s.width / 2.2, s.height / 1.15);
+							s.text("Confirm", wi / 2.2, he / 1.15);
 						}
 							alias.style('display', 'block');
-							alias.position(3.5 * s.width / 5 , 5.95*s.height/7);
-							alias.size(si * 5, s.height / 15);
+							alias.position(3.3 * ((window.screen.width - wi)/2), 5.95 * he / 7);
+							alias.size(si * 5, wi / 15);
 							alias.style('font-size', '28px');
 							alias.style('background-color', 'black');
 							alias.style('border-color', '#d382f0');
@@ -295,6 +295,7 @@ export default class Display {
 					s.textSize(wi / 9);
 					if(id.length > 0 && s.keyIsPressed){
 						if(s.keyCode === 13){
+							//Trigger when the player presses confirm and save their username, move to the matchmaking phase
 							this.app.sendSetAlias(id);
 
 						/*	if (!debug.enabled) {
@@ -334,7 +335,7 @@ export default class Display {
 				}
 				else if (this.app.gamePhase === "MATCHMAKING") {
 					displayMatchmaking(this.app.matchmakingData, wi, he, si, this.delay, this.playerColors);
-					//Matchmaking Phase where users can learn more about the game or enter into a lobby
+					//Matchmaking Phase where users can learn more about the game or enter into a game lobby
 					input.style('display', 'block');
 					input.position(3.35 * wi / 5 + si * 1.6, he / 5.7);
 					input.size(si * 2.6, he / 20);
@@ -348,7 +349,6 @@ export default class Display {
 					s.textAlign(s.CENTER);
 					s.noStroke();
 					s.fill(255, 55);
-				  //he = he * 1.25;
 
 					if(s.mouseX < (3 * wi / 4) && s.mouseX > (wi / 4) && s.mouseY > (he / 10 + (1) * 8 * he / 60) && s.mouseY < (he / 10 + (2) * 8 * he / 60)){
 						s.rect(wi / 4, (he / 10 + (1) * 8 * he / 60), wi / 2, (1) * 8 * he / 60);
@@ -374,6 +374,12 @@ export default class Display {
 							window.open('http://www.elixarcade.com', '_blank');
 						}
 					}
+					else if(s.mouseX < (3 * wi / 4) && s.mouseX > (wi / 4) && s.mouseY > (he / 10 + (5) * 8 * he / 60) && s.mouseY < (he / 10 + (6) * 8 * he / 60)){
+						s.rect(wi / 4, (he / 10 + (5) * 8 * he / 60), wi / 2, (1) * 8 * he / 60);
+						if(s.mouseIsPressed){
+							window.open('https://docs.google.com/forms/d/e/1FAIpQLScO_DebkUroCzDBPut1cCGw-R3VtrxYSx_sL2qZH7ViLZV25A/viewform', '_blank');
+						}
+					}
 					let gameID = input.value();
 
 					if (gameID.length == 5) {
@@ -392,7 +398,6 @@ export default class Display {
 					else {
 						allowNewID = 1;
 					}
-					//he = 20 * he / 21;
 				}
 				else if (this.app.gamePhase === "LOBBY" && this.app.clientState !== 'SPECTATOR') {
 
@@ -581,10 +586,11 @@ export default class Display {
 						//Scrolling Bar;
 						s.textSize(si * 1.7);
 						s.textFont(standardFont);
-						scroller = this.delay / 250;
+						scroller = -this.delay / 250;
 						s.text("Waiting on Players...", -s.width + 3 * s.width * (scroller - Math.floor(scroller)), s.height - si * 1.7);
-					/*	scroller = (this.delay + 60) / 250;
-						s.text("Starting Cores: 2", -s.width + 3 * s.width * (scroller - Math.floor(scroller)), s.height - si * 1.7);
+						scroller = -(this.delay - 100) / 250;
+						s.text("'Start Match' Begins The Game", -s.width + 3 * s.width * (scroller - Math.floor(scroller)), s.height - si * 1.7);
+						/*
 						scroller = (this.delay + 120) / 250;
 						s.text("Games Active: ", -s.width + 3 * s.width * (scroller - Math.floor(scroller)), s.height - si * 1.7);
 						scroller = (this.delay - 60) / 250;
@@ -884,7 +890,6 @@ export default class Display {
 
 					if (hoverX >= 0 && hoverX < 30 && hoverY >= 0 && hoverY < 20) {
 						if (board[hoverY][hoverX].length != 0) {
-
 							if (this.app.playerNumber == 1 && hoverX <= 14 && hoverY < 10 && hoverX < 30 && hoverY < 20) {
 								tooltip(hoverX, hoverY, board, this.t, wi, he, si, this.playerColors, this.simulationDisplayTurn, this.app);
 							}
@@ -1421,7 +1426,10 @@ export default class Display {
 						s.textSize(si * 1.25);
 						s.textAlign(s.CENTER);
 						s.text("Score", wi + wi * .125, si * 8.5);
-					//	s.line(wi + wi * .1, si * 8.5, s.width - wi * .1, si * 8.5)
+						s.stroke(255);
+						s.strokeWeight(1);
+						s.line(wi + wi * .2, si * 8.7, s.width - wi * .2, si * 8.7);
+					 //s.strokeWeight(1);
 						s.stroke(255);
 						s.fill(255, 100);
 						s.stroke(0);
@@ -1922,7 +1930,6 @@ export default class Display {
 			}
 			function displayMatchmaking(data, width, height, size, delay, pColors) {
 				s.background(255, 0, 128);
-				//s.translate(0, height/20);
 				let lightningTrigger = s.int(delay);
 				s.tint(152, 255, 152, 90 + (1 + s.cos(delay / 5.5)) * 60);
 				s.image(imgTwo, 0, 0, height * 1.6, height);
@@ -1946,19 +1953,11 @@ export default class Display {
 }*/
 
         s.strokeWeight(10);
-
  				s.translate(width / 170, height / 170);
 				s.stroke(0,255);
  				s.noFill();
  				s.rect(width / 4, height / 10, width / 2, 8 * height / 10);
-			//	s.line(width / 4 - width / 15, height / 10 - 4 * height / 60 + (1 * 2) * 4 * height / 60, width / 4 - width / 15, height / 10 - 4 * height / 60 + (6 * 2) * 4 * height / 60);
 				for(let r = 1; r < 6; r = r + 1){
-// 				/*	s.line(width / 4 - width / 15, height / 10 - 4 * height / 60 + (r * 2) * 4 * height / 60, width / 4, height / 10 - 4 * height / 60 + (r * 2) * 4 * height / 60);
-// 					s.line(width / 4 - width / 15, height / 10 - 4 * height / 60 + ((r + 1) * 2) * 4 * height / 60, width / 4, height / 10 - 4 * height / 60 + ((r + 1) * 2) * 4 * height / 60);
-//
-// 					s.line(3 * width / 4 + width / 15, height / 10 - 4 * height / 60 + (r * 2) * 4 * height / 60, 3 * width / 4, height / 10 - 4 * height / 60 + (r * 2) * 4 * height / 60);
-// 					s.line(3 * width / 4 + width / 15, height / 10 - 4 * height / 60 + ((r + 1) * 2) * 4 * height / 60, 3 * width / 4, height / 10 - 4 * height / 60 + ((r + 1) * 2) * 4 * height / 60);*/
-//
  					s.line(width / 4, height / 10 + (r) * 8 * height / 60, 3 * width / 4, height / 10 + (r) * 8 * height / 60);
 			}
 				s.translate(-width / 170, -height / 170);
@@ -1967,14 +1966,7 @@ export default class Display {
 				s.stroke(255);
 				s.noFill();
 				s.rect(width / 4, height / 10, width / 2, 8 * height / 10);
-			//	s.line(width / 4 - width / 15, height / 10 - 4 * height / 60 + (1 * 2) * 4 * height / 60, width / 4 - width / 15, height / 10 - 4 * height / 60 + (6 * 2) * 4 * height / 60);
 				for(let r = 1; r < 6; r = r + 1){
-				/*	s.line(width / 4 - width / 15, height / 10 - 4 * height / 60 + (r * 2) * 4 * height / 60, width / 4, height / 10 - 4 * height / 60 + (r * 2) * 4 * height / 60);
-					s.line(width / 4 - width / 15, height / 10 - 4 * height / 60 + ((r + 1) * 2) * 4 * height / 60, width / 4, height / 10 - 4 * height / 60 + ((r + 1) * 2) * 4 * height / 60);
-
-					s.line(3 * width / 4 + width / 15, height / 10 - 4 * height / 60 + (r * 2) * 4 * height / 60, 3 * width / 4, height / 10 - 4 * height / 60 + (r * 2) * 4 * height / 60);
-					s.line(3 * width / 4 + width / 15, height / 10 - 4 * height / 60 + ((r + 1) * 2) * 4 * height / 60, 3 * width / 4, height / 10 - 4 * height / 60 + ((r + 1) * 2) * 4 * height / 60);*/
-
 					s.line(width / 4, height / 10 + (r) * 8 * height / 60, 3 * width / 4, height / 10 + (r) * 8 * height / 60);
 				}
 				s.textFont(titleFont);
