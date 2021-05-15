@@ -90,6 +90,7 @@ export default class Display {
 			let imgEight;  //Background texture for matchmaking
 
 
+			let matchMakingCounter = 0;
 			let col_high;
 			let col_med;
 			let col_low;
@@ -106,6 +107,7 @@ export default class Display {
 			let loading = false; //Whether The Loading Screen Should Be Displayed.
 			let showMenu = false;
 			let simulationCountdown = 0;
+			let colorChanger = 0;
 
 			//Variables for the width, height, and side length of game tiles - changes with screen resizing
 			let he;
@@ -134,11 +136,23 @@ export default class Display {
 				let cnvX = (s.windowWidth-tempConfig.canvasX)/2;
 				let cnvY = (s.windowHeight-tempConfig.canvasY)/2;
 				cnv.position(cnvX,cnvY);
-				
+
 				s.frameRate(60);
 
 				input = s.createInput();
 				alias = s.createInput();
+			//	input.style('display', 'block');
+				input.position(3.7 * s.width / 5, s.height / 5.2);
+				input.style('background-color', 'transparent');
+				input.style('border', 'none');
+				input.size(s.width/11, s.width/27);
+
+				alias.position(s.width/1.4, 7.85*s.height/9);
+				alias.style('background-color', 'transparent');
+				alias.style('border', 'none');
+
+				alias.size(s.width/9, s.width/27);
+
 
 				s.cursor(s.CROSS); //Make a more appealing cursor for users
 
@@ -149,10 +163,19 @@ export default class Display {
 			//Different screens of the game are portioned off using trigger variables and user input affects game-level variables move between them
 
 			s.draw = () => {
-
+				if(this.app.gamePhase !== "TITLE"){
+					alias.hide();
+				}
+				else{
+					alias.show();
+				}
+				if(this.app.gamePhase !== "MATCHMAKING" && this.app.gamePhase !== "TITLE"){
+					input.hide();
+				}
+				else{
+					input.show();
+				}
 				//Ensure that the input boxes do not display by default
-				input.style('display', 'none');
-				alias.style('display', 'none');
 
 				//The below variables to be filled in by the size of the players current browser window
 				wi = s.width; //The width of the canvas
@@ -244,6 +267,7 @@ export default class Display {
 
 				//The Game Begins in the Title phase
 				if (this.app.gamePhase == "TITLE") {
+
 					//Sets the default text font and its size
 					s.textFont(titleFont);
 					s.textSize(wi / 9);
@@ -281,15 +305,16 @@ export default class Display {
 						else{
 							s.text("Confirm", wi / 2.2, he / 1.15);
 						}
-							alias.style('display', 'block');
-							alias.position(3.3 * ((window.screen.width - wi)/2), 5.95 * he / 7);
-							alias.size(si * 5, wi / 15);
+						alias.style('display', 'block');
+						alias.style('border', 'solid');
 							alias.style('font-size', '28px');
 							alias.style('background-color', 'black');
 							alias.style('border-color', '#d382f0');
 							alias.style('color', '#d382f0');
 							alias.style('text-transform', 'uppercase');
 							alias.style('font-family', "Monaco");
+
+
 					}
 					s.textAlign(s.LEFT);
 					s.textSize(wi / 9);
@@ -297,11 +322,6 @@ export default class Display {
 						if(s.keyCode === 13){
 							//Trigger when the player presses confirm and save their username, move to the matchmaking phase
 							this.app.sendSetAlias(id);
-
-						/*	if (!debug.enabled) {
-								s.fullscreen(true);
-								s.resizeCanvas(window.screen.height * 1.5, window.screen.height);
-							}*/
 
 							buttonMaker = 1;
 							buttonMakerTwo = 1;
@@ -334,11 +354,19 @@ export default class Display {
 					}
 				}
 				else if (this.app.gamePhase === "MATCHMAKING") {
-					displayMatchmaking(this.app.matchmakingData, wi, he, si, this.delay, this.playerColors);
+					matchMakingCounter = matchMakingCounter + 1;
+					if(s.sin(matchMakingCounter*s.PI/20) === -1){
+						if(colorChanger > 2){
+							colorChanger = 0;
+						}
+						else{
+							colorChanger = colorChanger + 1;
+						}
+				}
+					displayMatchmaking(this.app.matchmakingData, wi, he, si, matchMakingCounter, this.playerColors, colorChanger);
 					//Matchmaking Phase where users can learn more about the game or enter into a game lobby
-					input.style('display', 'block');
-					input.position(3.35 * wi / 5 + si * 1.6, he / 5.7);
-					input.size(si * 2.6, he / 20);
+					input.style('border', 'solid');
+					input.style('display', 'block')
 					input.style('font-size', '28px');
 					input.style('background-color', 'transparent');
 					input.style('border-color', 'white');
@@ -1928,29 +1956,14 @@ export default class Display {
 
 				}
 			}
-			function displayMatchmaking(data, width, height, size, delay, pColors) {
-				s.background(255, 0, 128);
-				let lightningTrigger = s.int(delay);
-				s.tint(152, 255, 152, 90 + (1 + s.cos(delay / 5.5)) * 60);
+			function displayMatchmaking(data, width, height, size, delay, pColors, cc) {
+				s.background(0);
+
+				//console(colorChanger);
+				s.tint(pColors[cc][0], pColors[cc][1], pColors[cc][2], 70 + (1 + s.sin(delay*s.PI/20)) * 80);
 				s.image(imgTwo, 0, 0, height * 1.6, height);
 				s.noTint();
 				//GLOW Begins
-		/*		for(let g = 1; g  < 15 ; g = g + 1){
-			  s.strokeWeight(g);
-				s.stroke(255,40-g*2.5);
-				s.noFill();
-				s.rect(width / 4, height / 10, width / 2, 8 * height / 10);
-			//	s.line(width / 4 - width / 15, height / 10 - 4 * height / 60 + (1 * 2) * 4 * height / 60, width / 4 - width / 15, height / 10 - 4 * height / 60 + (6 * 2) * 4 * height / 60);
-				for(let r = 1; r < 6; r = r + 1){
-				/*	s.line(width / 4 - width / 15, height / 10 - 4 * height / 60 + (r * 2) * 4 * height / 60, width / 4, height / 10 - 4 * height / 60 + (r * 2) * 4 * height / 60);
-					s.line(width / 4 - width / 15, height / 10 - 4 * height / 60 + ((r + 1) * 2) * 4 * height / 60, width / 4, height / 10 - 4 * height / 60 + ((r + 1) * 2) * 4 * height / 60);
-
-					s.line(3 * width / 4 + width / 15, height / 10 - 4 * height / 60 + (r * 2) * 4 * height / 60, 3 * width / 4, height / 10 - 4 * height / 60 + (r * 2) * 4 * height / 60);
-					s.line(3 * width / 4 + width / 15, height / 10 - 4 * height / 60 + ((r + 1) * 2) * 4 * height / 60, 3 * width / 4, height / 10 - 4 * height / 60 + ((r + 1) * 2) * 4 * height / 60);*/
-
-			/*		s.line(width / 4, height / 10 + (r) * 8 * height / 60, 3 * width / 4, height / 10 + (r) * 8 * height / 60);
-				}
-}*/
 
         s.strokeWeight(10);
  				s.translate(width / 170, height / 170);

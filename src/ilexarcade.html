@@ -1,6 +1,6 @@
 <!DOCTYPE html>
-<html>
 
+<html>
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -27,20 +27,11 @@
                 <div class="hero-head">
                     <header class="navbar">
                         <div class="container">
-                            <!-- <div class="navbar-brand">
-                                <a class="navbar-item stylized">
-                                    Close Quarters
-                                </a>
-                                <span class="navbar-burger" data-target="navbarMenuHeroC">
-                                    <span></span>
-                                    <span></span>
-                                    <span></span>
-                                </span>
-                            </div> -->
-                            <div id="navbarMenuHeroC" class="navbar-menu">
+
+                            <div id="navbarMenuHeroC" class="navbar-menu is-dark">
                                 <div class="navbar-end">
                                   <span class="navbar-item">
-                                      <a class="button is-dark is-inverted" href="#games">
+                                      <a class="button is-dark is-inverted" data-target="games" href="#games">
                                           <span class="icon">
                                               <i class="fas fa-atom"></i>
                                           </span>
@@ -48,10 +39,10 @@
                                       </a>
                                   </span>
 
-                                    <a class="navbar-item" href="/play">
+                                    <a class="navbar-item section-link" data-target="mission" href="#mission">
                                         Mission
                                     </a>
-                                    <a class="navbar-item section-link" data-target="how-to" href="#how-to">
+                                    <a class="navbar-item section-link" data-target="games" href="#games">
                                         Contact
                                     </a>
                                 </div>
@@ -254,6 +245,92 @@ Singularity is a single-player navigation game with a Global Leaderboard. Pilots
                 </div>
             </section>
         </div>
+        <div class="section pp-scrollable" id="mission">
+            <section class="hero is-dark is-fullheight">
+                <div class="hero-body">
+                    <div class="container">
+                        <div class="columns is-mobile is-multiline">
+                            <div class="column is-full-mobile is-one-half-tablet is-three-fifths-desktop is-offset-one-fifth-desktop">
+                                <div class="card">
+                                    <!-- <header class="card-header">
+                                        <p class="card-header-title">
+                                          Ray Tracer
+                                        </p>
+                                    </header> -->
+                                    <div class="card-image">
+                                        <figure class="image is-4by1">
+                                            <img src="static/CQLogoTwo.png"
+                                                alt="CQLogo">
+                                        </figure>
+                                    </div>
+                                    <div class="card-content">
+                                        <p class="description">
+Close Quarters is a multiplayer strategy game....                                       </p>
+                                    </div>
+                                    <footer class="card-footer">
+                                        <p class="card-footer-item">
+                                            <span>
+                                                Players: 1-4
+                                            </span>
+                                        </p>
+                                        <p class="card-footer-item">
+                                            <span>
+                                                Average Match Length: 20 Minutes
+                                            </span>
+                                        </p>
+                                        <!-- <p class="card-footer-item">
+                                            <span>
+                                                Damage: 10
+                                            </span>
+                                        </p> -->
+                                    </footer>
+                                </div>
+                            </div>
+
+
+                            <div class="column is-full-mobile is-one-half-tablet is-three-fifths-desktop is-offset-one-fifth-desktop">
+                                <div class="card">
+                                    <!-- <header class="card-header">
+                                        <p class="card-header-title">
+                                          Ray Tracer
+                                        </p>
+                                    </header> -->
+                                    <div class="card-image">
+                                        <figure class="image is-4by1">
+                                            <img src="static/SingularityLogo.png"
+                                                alt="CQLogo">
+                                        </figure>
+                                    </div>
+                                    <div class="card-content">
+                                        <p class="description">
+Singularity is a single-player navigation game with a Global Leaderboard. Pilots select a craft and try to navigate between black holes and asteroids in order to reach an exit portal.                                       </p>
+                                    </div>
+                                    <footer class="card-footer">
+                                        <p class="card-footer-item">
+                                            <span>
+                                                Players: 1
+                                            </span>
+                                        </p>
+                                        <p class="card-footer-item">
+                                            <span>
+                                                Average Match Length: 3 Minutes
+                                            </span>
+                                        </p>
+                                        <!-- <p class="card-footer-item">
+                                            <span>
+                                                Damage: 10
+                                            </span>
+                                        </p> -->
+                                    </footer>
+                                </div>
+                            </div>
+
+
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
     </div>
 </body>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"
@@ -265,7 +342,7 @@ Singularity is a single-player navigation game with a Global Leaderboard. Pilots
 <script>
     $(document).ready(function () {
         $('#pagepiling').pagepiling({
-            anchors: ['home', 'how-to', 'blank1', 'blank2', 'blank3', 'games']
+            anchors: ['home', 'games', 'mission', 'contact', 'blank3']
         });
     });
 </script>
