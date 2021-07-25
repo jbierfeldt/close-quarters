@@ -113,8 +113,10 @@ export default class Display {
 			let he;
 			let wi;
 			let si;
+
 			p5.disableFriendlyErrors = true;
-			//Preload the fonts and other assets below
+
+			//Preload the fonts and static other assets below
 			s.preload = () => {
 				titleFont = s.loadFont('static/volt.ttf');
 				standardFont = s.loadFont('static/ISB.ttf');
@@ -141,18 +143,16 @@ export default class Display {
 
 				input = s.createInput();
 				alias = s.createInput();
-			//	input.style('display', 'block');
-				input.position(3.7 * s.width / 5, s.height / 5.2);
+				input.position(3.7 * s.width / 5, s.height/ 5.2);
 				input.style('background-color', 'transparent');
 				input.style('border', 'none');
 				input.size(s.width/11, s.width/27);
 
-				alias.position(s.width/1.4, 7.85*s.height/9);
+				alias.position((s.windowWidth - cnvX)/2, 7.85 * s.windowHeight/9);
 				alias.style('background-color', 'transparent');
 				alias.style('border', 'none');
 
 				alias.size(s.width/9, s.width/27);
-
 
 				s.cursor(s.CROSS); //Make a more appealing cursor for users
 
@@ -163,6 +163,7 @@ export default class Display {
 			//Different screens of the game are portioned off using trigger variables and user input affects game-level variables move between them
 
 			s.draw = () => {
+				//Ensure that the input boxes do not display by default
 				if(this.app.gamePhase !== "TITLE"){
 					alias.hide();
 				}
@@ -175,7 +176,7 @@ export default class Display {
 				else{
 					input.show();
 				}
-				//Ensure that the input boxes do not display by default
+
 
 				//The below variables to be filled in by the size of the players current browser window
 				wi = s.width; //The width of the canvas
@@ -202,7 +203,6 @@ export default class Display {
 
 				buttonMakerTwo = 0;
 
-				//if(this.app.playerNumber && buttonMaker == 1){
 				if(buttonMaker == 1){
 					//The remaining buttons are created one time initially and then recreated upon a screen resizing
 					playerShifter = 0;
@@ -259,8 +259,8 @@ export default class Display {
 					unitButtons.push(bResonator);
 					bIntegrator = new Buttoned(wi / 2 + si - playerShifter, si * 3 + buttonScale * si * 9, wi / 2 - si * 2, si * buttonScale, "Integrator", this.app.sendCreateUnit);
 					unitButtons.push(bIntegrator);
-
 					buttonMaker = 0;
+					
 			}
 
 
