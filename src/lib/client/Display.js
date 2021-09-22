@@ -143,12 +143,13 @@ export default class Display {
 
 				input = s.createInput();
 				alias = s.createInput();
-				input.position(3.7 * s.width / 5, s.height/ 5.2);
+				input.position(4.7 * s.width / 5, s.height * .5);
 				input.style('background-color', 'transparent');
 				input.style('border', 'none');
 				input.size(s.width/11, s.width/27);
 
-				alias.position((s.windowWidth - cnvX)/2, 7.85 * s.windowHeight/9);
+        alias.position(.85 * s.width, .9 * s.height);
+				//alias.position((s.windowWidth - cnvX)/2, 7.85 * s.windowHeight/9);
 				alias.style('background-color', 'transparent');
 				alias.style('border', 'none');
 
@@ -260,7 +261,7 @@ export default class Display {
 					bIntegrator = new Buttoned(wi / 2 + si - playerShifter, si * 3 + buttonScale * si * 9, wi / 2 - si * 2, si * buttonScale, "Integrator", this.app.sendCreateUnit);
 					unitButtons.push(bIntegrator);
 					buttonMaker = 0;
-					
+
 			}
 
 
