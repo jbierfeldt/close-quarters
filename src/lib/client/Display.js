@@ -140,7 +140,7 @@ export default class Display {
 				cnv.position(cnvX,cnvY);
 
 				s.frameRate(60);
-
+				//Set up the input resources which will reside in the Dom
 				input = s.createInput();
 				alias = s.createInput();
 				input.position(4.7 * s.width / 5, s.height * .5);
@@ -148,7 +148,7 @@ export default class Display {
 				input.style('border', 'none');
 				input.size(s.width/11, s.width/27);
 
-        alias.position(.85 * s.width, .9 * s.height);
+        alias.position(.74 * s.width, .868 * s.height);
 				//alias.position((s.windowWidth - cnvX)/2, 7.85 * s.windowHeight/9);
 				alias.style('background-color', 'transparent');
 				alias.style('border', 'none');
@@ -170,12 +170,15 @@ export default class Display {
 				}
 				else{
 					alias.show();
+					alias.position(.63 * s.width + (s.windowWidth - s.width)/2, .81 * s.height + (s.windowHeight - s.height)/2);
 				}
 				if(this.app.gamePhase !== "MATCHMAKING" && this.app.gamePhase !== "TITLE"){
 					input.hide();
 				}
 				else{
 					input.show();
+					input.position(.64 * s.width + (s.windowWidth - s.width)/2, .135 * s.height + (s.windowHeight - s.height)/2);
+
 				}
 
 
@@ -301,7 +304,7 @@ export default class Display {
 						s.fill(210, 130, 240, 201);
 
 						if(id.length === 0){
-							s.text("Enter An Alias:", wi / 2.5, he/ 1.15);
+							s.text("Enter An Alias:", wi / 2.5, he / 1.15);
 						}
 						else{
 							s.text("Confirm", wi / 2.2, he / 1.15);
