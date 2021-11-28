@@ -2581,7 +2581,63 @@ export default class Display {
 			}
 
 			function drawRedShifter(x, y, player, size, health, max, pColors) {
-				s.image(imgSeven, size * x + size / 80, size * y + size / 80, size - size / 40, size - size / 40);
+				//s.image(imgSeven, size * x + size / 80, size * y + size / 80, size - size / 40, size - size / 40);
+				s.translate(x * size + size / 2, y * size + size / 2);
+				s.rotate(Math.PI/2);
+				s.translate(-(x * size + size / 2), -(y * size + size / 2));
+				s.noStroke();
+				s.fill(255);
+				s.ellipse(x * size + size / 2, y * size + size / 2, size/1.4, size/4);
+				s.fill(0);
+				//s.triangle(x * size + size / 2, y * size + size / 5, x * size + size / 2, y * size + 4 * size / 5, x * size + size / 10, y * size + size /2 );
+				//s.triangle(x * size + size / 2, y * size + size / 5, x * size + size / 2, y * size + 4 * size / 5, x * size + size * 9 / 10, y * size + size /2 );
+
+				s.noFill();
+				s.strokeWeight(2);
+				s.stroke(0);
+				s.beginShape();
+				s.curveVertex(x * size + size / 10, y * size + size / 2);
+
+				for(let a = 0; a < 14; a = a + 1){
+					s.curveVertex(x * size + size / 10 + a * size / 20, y * size + size / 2 + s.sqrt(a * size / 20));
+				}
+				s.endShape();
+
+				s.beginShape();
+				s.curveVertex(x * size + size / 10, y * size + size / 2);
+
+				for(let a = 0; a < 14; a = a + 1){
+					s.curveVertex(x * size + size / 10 + a * size / 20, y * size + size / 2 - s.sqrt(a * size / 20));
+				}
+				s.endShape();
+
+				s.beginShape();
+				s.curveVertex(x * size +  9 * size / 10, y * size + size / 2);
+
+				for(let a = 0; a < 14; a = a + 1){
+					s.curveVertex(x * size + size * 9 / 10 - a * size / 20, y * size + size / 2 + s.sqrt(a * size / 20));
+				}
+				s.endShape();
+
+				s.beginShape();
+				s.curveVertex(x * size + 9 * size / 10, y * size + size / 2);
+
+				for(let a = 0; a < 14; a = a + 1){
+					s.curveVertex(x * size + size * 9 / 10 - a * size / 20, y * size + size / 2 - s.sqrt(a * size / 20));
+				}
+				s.endShape();
+				for(let c = 4; c > 1; c = c - 1){
+					s.line(x * size + size / 2 - c * size / 22, y * size + size / 2 + (6 - c) * size / 11 + size / 40, x * size + size / 2.05, y * size + size / 2 + (6 - c) * size / 11 )
+					s.line(x * size + size / 2 + c * size / 22, y * size + size / 2 + (6 - c) * size / 11 + size / 40, x * size + size / 1.95, y * size + size / 2 + (6 - c) * size / 11 )
+					s.line(x * size + size / 2 - c * size / 22, y * size + size / 2 - (6 - c) * size / 11 - size / 40, x * size + size / 2.05, y * size + size / 2 - (6 - c) * size / 11 )
+					s.line(x * size + size / 2 + c * size / 22, y * size + size / 2 - (6 - c) * size / 11 - size / 40, x * size + size / 1.95, y * size + size / 2 - (6 - c) * size / 11 )
+
+				}
+				s.translate(x * size + size / 2, y * size + size / 2);
+				s.rotate(-Math.PI/2);
+				s.translate(-(x * size + size / 2), -(y * size + size / 2));
+				s.strokeWeight(1);
+				s.stroke(0);
 			}
 
 			function drawOscillator(x, y, player, size, health, max, pColors) {
