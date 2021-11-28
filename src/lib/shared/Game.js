@@ -32,6 +32,7 @@ export default class Game {
 		this.currentPhase = 0;
 
 		this.cleanUpArray = [];
+		this.destroyedArray = [];
 	}
 
 	init() {
@@ -46,9 +47,17 @@ export default class Game {
 
 		// create empty grid
 		this.board = create2DArray(tempConfig.boardDimensions[0],tempConfig.boardDimensions[1]);
-
+		for(let j = 0; j < tempConfig.boardDimensions[0]; j = j + 1){
+			this.destroyedArray[j] = [];
+		}
+		for(let x = 0; x < tempConfig.boardDimensions[0]; x = x + 1){
+			for(let y = 0; y < tempConfig.boardDimensions[1]; y = y + 1){
+				this.destroyedArray[x][y] = 0;
+			}
+		}
+		//this.destroyedArray[] = [];
 		//this.placeInitialRandomBases();
-	//this.placeAllInitialBases();
+		//this.placeAllInitialBases();
 		this.currentTurnInitialState = this.createGameSnapshot();
 
 		// creates history (temp)
@@ -275,22 +284,26 @@ collideProjWithObject(proj, obj, x, y) {
 				if (this.gameObjects.get(proj.unit)) {
 					this.gameObjects.get(proj.unit).damageDealt = this.gameObjects.get(proj.unit).damageDealt + (tempHealth - obj.health);
 				}
+				this.destroyedArray[y][x] = 0;
 			}
 			// if object destroyed in collision
 			else {
+				this.destroyedArray[y][x] = 1;
+				console.log("CHECK THIS" + y + " " + x);
+				console.log(this.destroyedArray[y][x]);
 				this.players[obj.player-1].unitsLostThisTurn =	this.players[obj.player-1].unitsLostThisTurn + 1;
 				this.players[proj.player-1].unitsKilledThisTurn =	this.players[obj.player-1].unitsKilledThisTurn + 1;
 				this.players[proj.player-1].damageDealtThisTurn = this.players[proj.player-1].damageDealtThisTurn + (tempHealth - 0);
 				if (this.gameObjects.get(proj.unit)) {
 					this.gameObjects.get(proj.unit).damageDealt = this.gameObjects.get(proj.unit).damageDealt + (tempHealth - 0);
 				}
-
-
 			}
 			if (this.isObjectAlive(obj) === false) {
+
 				this.cleanUpArray.push(obj.id);
 				//this.deleteObjectAtCoord(obj, x, y);
 			}
+			//console.log("CHECK THIS" + x + " " + y);
 		}
 
 		if (proj.ableToBeDestroyed) {

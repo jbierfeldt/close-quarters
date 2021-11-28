@@ -1148,6 +1148,11 @@ export default class Display {
 										if (displayObject.collidedWith.length > 0) {
 											if (displayObject.collidedWith[0] == true) {
 												drawCollision(l, k, si, displayObject.collidedWith[1], animate, this.playerColors);
+												//console.log("CHECK THIS" + this.app.game.destroyedArray[k][l]);
+												// if(this.app.game.destroyedArray[l][k] === 1){
+												// 	s.fill(255,0,0);
+												// 	s.ellipse(k*si + si/2, l * si + si/2, si*10, si*10);
+												// }
 											}
 										}
 									}
@@ -2593,7 +2598,7 @@ export default class Display {
 				//s.triangle(x * size + size / 2, y * size + size / 5, x * size + size / 2, y * size + 4 * size / 5, x * size + size * 9 / 10, y * size + size /2 );
 
 				s.noFill();
-				s.strokeWeight(2);
+				s.strokeWeight(1);
 				s.stroke(0);
 				s.beginShape();
 				s.curveVertex(x * size + size / 10, y * size + size / 2);
